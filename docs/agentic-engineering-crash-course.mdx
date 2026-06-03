@@ -1,0 +1,985 @@
+    # Agentic Engineering Fundamentals: 45-Minute Crash Course
+
+    *8 Concepts, 80% Real Use*
+
+    :::note Prerequisite
+
+    **[Agentic Coding Crash Course](/docs/agentic-coding-crash-course) pehle karo.** Woh page *tools* sikhata hai (Claude Code, OpenCode, plan mode, CLAUDE.md, skills, MCP, hooks). Yeh page woh *discipline* sikhata hai jo aap unke saath use karte ho. Dono complementary hain: tools bina discipline ke vibe code produce karte hain; discipline bina tools ke sirf theory hai.
+
+    :::
+
+    > "Code sasta nahi hai. Bad code jitna mahenga pehle kabhi nahi tha." *Matt Pocock*
+
+    > "Vibe coding software mein har kisi ke liye floor raise karne ke baare mein hai. Agentic engineering professional software mein pehle se maujood quality bar preserve karne ke baare mein hai." *Andrej Karpathy*
+
+    Industry mein ek narrative loose hai: AI ek naya paradigm hai, isliye purane engineering rules ab apply nahi hote; specifications naya source code hain; model compiler hai; diff matter nahi karta jab tak program behave kare. Yeh comforting hai, aur yeh galat hai.
+
+    Is chapter ki thesis, aur is book ke har Digital FTE ki throughline, ulti hai. **Software fundamentals AI era mein pehle se zyada matter karte hain.** Wajah mechanical hai, sentimental nahi. Jo interface aap design karte ho woh hai jis se agent seekhta hai; jo names aap choose karte ho woh hai jo woh reuse karta hai; jo boundaries aap draw karte ho woh hai jo woh respect karta hai. Ek saaf, well-tested codebase mein agent code kai quality tiers upar produce karta hai same agent ke muqable kisi tangled mein. Architecture sirf code ki property nahi; yeh agent ka input hai. Bad code bad agents yield karta hai. Good code agents yield karta hai jo astonishingly competent lagte hain.
+
+    Yeh chapter woh workflow sikhata hai jo us competence ko repeatable banata hai: ek saat-stage pipeline (*idea → grilling → PRD → issues → implementation → review → QA*) chhote, composable [Skills](#skills-as-encoded-process) ke zariye implement kiya hua jo **Claude Code** aur **OpenCode** dono mein identically kaam karte hain.
+
+    Is chapter ke aakhir mein aap kar sakoge:
+
+    1. **Vibe coding ↔ agentic engineering** spectrum par khud ko locate karo aur woh discipline choose karo jo aapke kaam ke stakes se match kare.
+    2. AI coding ke **chhe failure modes** diagnose karo aur har ek ka ilaaj apply karo.
+    3. **Grill → PRD → vertical-slice issues → AFK implementation** loop Claude Code ya OpenCode mein chalao.
+    4. `SKILL.md` likho jo agent sirf tab load kare jab zarurat ho, har turn par tokens jalaane ki bajaye.
+    5. Codebase "shallow modules" se "deep modules" mein refactor karo taaki AI feedback loops actually kaam karein.
+    6. Working vocabulary fluently use karo: **smart zone**, **dumb zone**, **clearing**, **compaction**, **handoff**, **AFK**, **tracer bullet**, **design concept**, **grilling**, **jagged intelligence**.
+
+    ### Pipeline Ek Nazar Mein
+
+    Koi bhi theory se pehle, yahan operating shape hai jo chapter sikhata hai. Saat stages, paanch Skills, ek direction of flow. Baad ka har section ya toh ek row explain karta hai ya code mein dikhata hai.
+
+    | # | Stage | Kya Hota Hai | Input → Output | Skill | Section |
+    |---|-------|-------------|----------------|-------|---------|
+    | 1 | Idea → Aligned concept | Agent aapka Socratically interview karta hai jab tak design shared na ho | wish → design concept | [`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md) | §6.1 |
+    | 2 | Concept → Destination | Conversation ko PRD mein synthesise karo | conversation → PRD | [`to-prd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-prd/SKILL.md) | §6.2 |
+    | 3 | PRD → Backlog | PRD ko vertical-slice tickets mein split karo | PRD → tracer-bullet issues | [`to-issues`](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-issues/SKILL.md) | §6.3 |
+    | 4 | Issue → Slice | Ek slice implement karo, test-first | issue → reviewable diff | [`tdd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md) | §6.4 |
+    | 5 | Slices → Drained backlog | AFK loop sandboxes mein queue drain karta hai | issues → PRs | (orchestrator) | §6.5 |
+    | 6 | Diff → Decision | Human diff padhta hai, QA run karta hai | PR → merge ya new issue | (taste, automated nahi) | §6.6 |
+    | 7 | Codebase health, ongoing | Shallow modules dhundho; deepenings propose karo | codebase → RFC | [`improve-codebase-architecture`](https://github.com/mattpocock/skills/blob/main/skills/engineering/improve-codebase-architecture/SKILL.md) | §7.4 |
+
+    Stages 1–3 **day shift** hain: human loop mein. Stages 4–5 **night shift** hain: agent sandbox mein AFK run karta hai. Stage 6 wapas day shift. Stage 7 weekly cron par chalta hai aur stage 3 mein naye issues feed karta hai.
+
+    <figure>
+    <svg viewBox="0 0 700 100" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '700px'}}>
+      <defs><marker id="arrow4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6Z" fill="#2e8555"/></marker></defs>
+      <rect x="5" y="10" width="80" height="35" rx="6" fill="#2e8555" stroke="none"/>
+      <text x="45" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">Idea</text>
+      <line x1="85" y1="28" x2="95" y2="28" stroke="#2e8555" stroke-width="2" marker-end="url(#arrow4)"/>
+      <rect x="100" y="10" width="80" height="35" rx="6" fill="#2e8555" stroke="none"/>
+      <text x="140" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">Grill</text>
+      <line x1="180" y1="28" x2="190" y2="28" stroke="#2e8555" stroke-width="2" marker-end="url(#arrow4)"/>
+      <rect x="195" y="10" width="80" height="35" rx="6" fill="#2e8555" stroke="none"/>
+      <text x="235" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">PRD</text>
+      <line x1="275" y1="28" x2="285" y2="28" stroke="#2e8555" stroke-width="2" marker-end="url(#arrow4)"/>
+      <rect x="290" y="10" width="80" height="35" rx="6" fill="#2e8555" stroke="none"/>
+      <text x="330" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">Issues</text>
+      <line x1="370" y1="28" x2="380" y2="28" stroke="#2e8555" stroke-width="2" marker-end="url(#arrow4)"/>
+      <rect x="385" y="10" width="90" height="35" rx="6" fill="#25c2a0" stroke="none"/>
+      <text x="430" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">Implement</text>
+      <line x1="475" y1="28" x2="485" y2="28" stroke="#2e8555" stroke-width="2" marker-end="url(#arrow4)"/>
+      <rect x="490" y="10" width="80" height="35" rx="6" fill="#2e8555" stroke="none"/>
+      <text x="530" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">Review</text>
+      <line x1="570" y1="28" x2="580" y2="28" stroke="#2e8555" stroke-width="2" marker-end="url(#arrow4)"/>
+      <rect x="585" y="10" width="80" height="35" rx="6" fill="#2e8555" stroke="none"/>
+      <text x="625" y="32" text-anchor="middle" font-size="8" font-weight="bold" fill="white">QA</text>
+      <rect x="5" y="55" width="270" height="20" rx="4" fill="#e8f5e9" stroke="none"/>
+      <text x="140" y="69" text-anchor="middle" font-size="8" fill="#2e8555" font-weight="bold">Day Shift — Human Loop</text>
+      <rect x="290" y="55" width="185" height="20" rx="4" fill="#d4edda" stroke="none"/>
+      <text x="382" y="69" text-anchor="middle" font-size="8" fill="#1a5e3a" font-weight="bold">Night Shift — AFK Agent</text>
+      <rect x="490" y="55" width="175" height="20" rx="4" fill="#e8f5e9" stroke="none"/>
+      <text x="577" y="69" text-anchor="middle" font-size="8" fill="#2e8555" font-weight="bold">Day Shift — Human</text>
+    </svg>
+    <figcaption>Figure: Saat-stage pipeline — day shift (human) aur night shift (agent AFK) alternate hote hain.</figcaption>
+    </figure>
+
+    :::note Naye Programming Karne Wale? Pehle Yeh Padho.
+
+    Yeh chapter assume karta hai aapne code likha hai, `git` use kiya hai, test suite run ki hai, aur pull request khola hai. Agar yeh familiar hain, yeh box skip karo.
+
+    Agar abhi nahi, chapter **conceptual map** ke tor par padhne layak hai. Aap payenge: workflow ki shape, AI-coding conversations samajhne ke liye vocabulary, common failures ka diagnostic catalogue, aur architectural philosophy.
+
+    Minimum vocabulary:
+    - **Repo**: project ka code folder, `git` se tracked.
+    - **Branch**: repo ka parallel version jahan aap main code affect kiye bina experiment kar sako.
+    - **Commit**: changes ka saved snapshot, chhote message ke saath.
+    - **Pull request (PR)**: merge hone se pehle review ke liye submit kiya gaya proposed change.
+    - **Test / test suite**: code jo doosra code check kare, automatically run hota hai.
+    - **Sandbox (ya container)**: isolated environment jahan agent run kar sake baghair aapke system ko touch kiye.
+    - **Token**: language model process karne wala text unit. Roughly ek English word ka 3/4. 100k-token context window mein roughly 75,000 words.
+    - **Terminal / shell / bash**: computer par commands chalane ka text-based tarika.
+
+    :::
+
+    ---
+
+    ## 1. Vibe Coding Se Agentic Engineering Tak
+
+    Do cheezein ek ke baad ek badli hain. Pehle ne doosre ko zaruri banaya.
+
+    ### 1.1 Software 3.0: Ek Naya Computing Paradigm
+
+    Andrej Karpathy software teen eras mein describe karta hai. **Software 1.0** woh hai jo zyada tar engineers ne apni careers mein likha: explicit code, CPU se execute kiya, structured data par kaam karta. **Software 2.0** learned weights ka era hai: datasets curate kar ke aur neural networks train kar ke program karna. **Software 3.0** woh era hai jisme hum ab hain: *prompting* ke zariye programming, jahan LLM ek qism ka programmable computer hai, aur [context window](https://github.com/mattpocock/dictionary-of-ai-coding#context-window) mein jo aap daalte ho woh lever hai jo aap pull karte ho.
+
+    Eras ke beech jo badlta hai woh *artifact hai jo aap produce karte ho*. 1.0 mein artifact executable code tha. 3.0 mein artifact tezi se **agent ke liye intended text ka piece** ban raha hai. Jab **OpenCode** apna installer ship karta hai, woh bash script ship nahi karta; woh natural language ka paragraph ship karta hai coding agent mein paste karne ke liye meant. Agent environment padhta hai, loop mein debug karta hai, aur working install tak pahunchta hai. Installer ab program nahi hai; yeh ek Skill hai.
+
+    Yeh generalize hota hai. Humans ke liye likhi documentation (*"is URL par jao, Settings click karo…"*) agents ke liye likhi documentation ban jaati hai (*"yeh apne coding agent ko do aur woh aapka project configure kar dega"*). UIs ab sirf interface nahi hain; agent aapke banaye har system ka second-class user ban jaata hai. **Agent-native infrastructure** (APIs, docs, tooling, aur deployment pipelines agents ke liye pehle designed) agla platform layer hai.
+
+    Yeh chapter Software 3.0 mein operate karne ke baare mein hai. Skills (§5) 3.0 artifacts hain. PRDs aur tickets (§6) 3.0 artifacts hain. `AGENTS.md` aur `CONTEXT.md` files (§3, Failure 2) 3.0 artifacts hain. Code khud tezi se sab mein se downstream ho raha hai.
+
+    ### 1.2 Vibe Coding Floor Raise Karta Hai; Agentic Engineering Ceiling Preserve Karta Hai
+
+    Karpathy ne **[vibe coding](https://github.com/mattpocock/dictionary-of-ai-coding#vibe-coding)** bhi coin kiya: agent ko code likhne dena, diff padhe baghair output accept karna, program chale ya nahi is se judge karna. Vibe coding real, useful, aur yahan rehne ke liye hai. Yahi woh hai jis se ek non-programmer ek weekend mein useful tool ship karta hai. Vibe coding **software mein individual zyada produce kar sake ka floor raise karta hai**.
+
+    Ab ek doosri discipline upar emerge ho rahi hai: **agentic engineering**. Jahan vibe coding floor raise karta hai, agentic engineering **ceiling preserve karta hai**: professional software ka quality bar. Agent zyada tar typing karta hai; aap security, data integrity, maintainability, contracts, aur user experience ke liye responsible rehte ho. Vibe coding vulnerabilities introduce nahi karta; careless engineer karta hai. Bar sirf isliye nahi move karta kyunki typist badla.
+
+    | | Vibe Coding | Agentic Engineering |
+    |--|-------------|---------------------|
+    | **Goal** | Buildable ka floor raise karo | Professional ka ceiling preserve karo |
+    | **Reviewer** | Aksar koi nahi; chalata hai ya nahi se judge karo | Human diff padhta hai; automated review upar |
+    | **Architecture** | Jo bhi agent emit kare | Engineer ne design kiya; agent ne implement kiya |
+    | **Tests** | Optional | Non-negotiable; TDD critical path par |
+    | **Codebase health** | Drift accepted | Schedule par refactor; modules deepen karo |
+    | **Failure handling** | "Mere liye kaam karta hai" | Reproducible; tested; explain kiya |
+    | **Sahi setting** | Side projects, prototypes, throwaway tools | Production systems, regulated work, multi-user kuch bhi |
+
+    Is chapter ke principles aur workflows agentic engineering ki discipline hain, vibe coding ki freedom nahi. Jab aap Digital FTE bana rahe ho jis par ek organisation payroll, customer escalations, ya financial reconciliation ke liye trust karegi, vibe coding malpractice hai. Aapko floor *aur* ceiling chahiye.
+
+    Ek mediocre agentic engineer aur strong agentic engineer ke beech gap purane "10× engineer" gap se kahin zyada wider hai. Karpathy: *"10× woh speed-up nahi jo aapko milta hai. Jo log is mein bahut ache hain woh mere perspective se abhi 10× se kahin zyada peak karte hain."*
+
+    ---
+
+    ## 2. Teen Constraints Jo Har Coding Agent Inherit Karta Hai
+
+    Coding agent ek magical engineer nahi; yeh ek model hai [harness](https://github.com/mattpocock/dictionary-of-ai-coding#harness) mein wrapped. Is pairing ki teen properties har workflow ko shape karti hain jo hum upar banate hain: ek finite attention budget, koi persistent state nahi, aur ek jagged capability profile.
+
+    ### 2.1 Smart Zone aur Dumb Zone
+
+    Jab [model](https://github.com/mattpocock/dictionary-of-ai-coding#model) agla [token](https://github.com/mattpocock/dictionary-of-ai-coding#token) predict karta hai, woh [context window](https://github.com/mattpocock/dictionary-of-ai-coding#context-window) mein *har doosre token* ko weigh karta hai. Har token ka finite **attention budget** hota hai: baaki par spend karne ke liye fixed influence ka share. N tokens ki window mein N² order ke attention relationships us fixed budget ke liye compete karte hain.
+
+    Consequence non-negotiable hai. Session mein early agent apne **smart zone** mein hota hai: sharp, focused, recall acha. Jaise session barhta hai, har token ka signal competitors se dilute hota hai. Agent **dumb zone** mein drift karta hai
+
+    <figure>
+    <svg viewBox="0 0 500 180" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '500px'}}>
+      <line x1="50" y1="150" x2="480" y2="150" stroke="#999" stroke-width="1.5"/>
+      <line x1="50" y1="150" x2="50" y2="10" stroke="#999" stroke-width="1.5"/>
+      <text x="265" y="175" text-anchor="middle" font-size="10" fill="#555">Tokens Used</text>
+      <text x="20" y="80" text-anchor="middle" font-size="10" fill="#555" transform="rotate(-90,20,80)">Quality</text>
+      <path d="M60,30 C120,28 180,35 220,50 C260,70 320,110 380,130 C420,140 460,145 470,148" fill="none" stroke="#2e8555" stroke-width="3"/>
+      <rect x="60" y="10" width="140" height="18" rx="4" fill="#e8f5e9" stroke="#2e8555" stroke-width="1"/>
+      <text x="130" y="23" text-anchor="middle" font-size="9" font-weight="bold" fill="#2e8555">Smart Zone</text>
+      <rect x="260" y="130" width="120" height="18" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1"/>
+      <text x="320" y="143" text-anchor="middle" font-size="9" font-weight="bold" fill="#c62828">Dumb Zone</text>
+      <line x1="230" y1="50" x2="230" y2="150" stroke="#c62828" stroke-width="1" stroke-dasharray="4,4"/>
+      <text x="230" y="162" text-anchor="middle" font-size="8" fill="#c62828">~100k</text>
+    </svg>
+    <figcaption>Figure: Quality degradation — smart zone ke baad dumb zone shuru hota hai jab tokens barhte hain.</figcaption>
+    </figure>
+
+    Woh schema bhool jaata hai jo aapne top par paste kiya, aise fields invent karta hai jo type file mein nahi hain, same naam ke do variables ko mis-bind karta hai, apni earlier reasoning se contradict karta hai. Same model, same parameters; sirf zyada mooh same plate se khate hue.
+
+    Practical ceiling, current frontier models mein, regardless ke marketing 200k ya 1M context window claim kare, coding kaam ke liye **advertised window se kahin neeche** baithti hai. Practitioner reports 100k tokens ke aas paas kuch par converge karte hain rough waterline ke tor par pehle drift dikhne se, lekin exact number shape se kam matter karta hai: advertised window ke kuch fraction se aage aapko zyada capability nahi mili; aapko zyada dumb zone mila paison mein spend karne ke liye.
+
+    ```
+    Token usage:    0k ────────── 50k ────── 100k ────── 200k ────── 1M
+    Quality:        ████████████████████░░░░░░░░░░░░░░░░░░░░░░░░░░░
+                    ↑                  ↑
+                smart zone         dumb zone shuru
+    ```
+
+    Real session mein transition kaisi lagti hai:
+
+    ```
+    turn  5  → aap users.ts schema paste karo (8 fields: id, email, name, ...)
+    turn  9  → agent User.email correctly use karta hai
+    turn 23  → agent ek route build karta hai, User.id refer karta hai
+    turn 47  → context ab ~80k tokens hai
+    turn 52  → agent likhta hai  user.emailAddress  ← field exist nahi karta
+    turn 55  → agent invent karta hai user.preferences   ← schema mein bhi nahi
+            ⇒ smart zone exit ho gaya.
+            ⇒ /clear, fresh session mein schema dobara paste karo, continue karo.
+    ```
+
+    Ilaaj push through karna nahi hai. **Kaam ki har unit ko smart zone ke andar fit karne ke liye size karo**, aur jab ek unit done ho, session throw away karo aur naya shuru karo.
+
+    ### 2.2 Memento Problem
+
+    Models [stateless](https://github.com/mattpocock/dictionary-of-ai-coding#stateless) hain. Woh [model provider requests](https://github.com/mattpocock/dictionary-of-ai-coding#model-provider-request) ke across kuch bhi carry nahi karte. Session ke andar continuity woh harness hai jo har turn par context re-feed karta hai; sessions *ke across* continuity woh [memory system](https://github.com/mattpocock/dictionary-of-ai-coding#memory-system) hai jis ne disk par likha aur next session start par reload kiya.
+
+    Yeh feature hai. Agent ke baare mein sabse reliable cheez yeh hai ke **context clear karna use known-good state mein wapas laata hai**. Woh agent jo abhi 40 turns dumb zone mein drift karte hue guzara, wohi agent hai jo `/clear` ke paanch second baad aapka fresh prompt fresh attention budget ke saath padhega aur excellent kaam karega.
+
+    Session bloat hone par recover karne ke do tarike:
+
+    - **[Clearing](https://github.com/mattpocock/dictionary-of-ai-coding#clearing)**: session khatam karo, fresh shuru karo. Total reset.
+    - **[Compaction](https://github.com/mattpocock/dictionary-of-ai-coding#compaction)**: pichle session ko summarise karo aur naye ko summary se seed karo. Lossy.
+
+    Zyada tar developers pehle compaction reach karte hain kyunki less destructive lagta hai. Us instinct ke saath suspicion se treat karo: compaction us dumb-zone reasoning ka kuch preserve karta hai jis ne trouble mein daala. Clearing, ek chhote likhe hue [handoff artifact](https://github.com/mattpocock/dictionary-of-ai-coding#handoff-artifact) ke saath (PRD, ticket, `AGENTS.md`), aglee session ko har baar same starting state deta hai.
+
+    :::tip Working Principle
+
+    Agent ko *Memento* ke protagonist ki tarah treat karo. Uske bhoolne ke aas paas plan karo. Har important fact ko [environment](https://github.com/mattpocock/dictionary-of-ai-coding#environment) mein survive karne do (`AGENTS.md`, `CONTEXT.md`, Skill, ticket), chat history mein nahi.
+
+    :::
+
+    ### 2.3 Jagged Intelligence
+
+    Pehle do constraints is baare mein hain ke agent *kitna* attend kar sakta hai. Teesra *kya* pe acha hai, aur yeh woh hai jo engineers ko sabse off-guard pakadta hai.
+
+    LLMs **jagged** hain. Woh uniformly smart nahi hain; kuch domains mein sharply peak karte hain aur doosron mein stagnate karte hain, human ko kaam kitna mushkil lagta hai is se kam correlation ke saath. State-of-the-art model ek hundred-thousand-line codebase refactor kar sakta hai ya zero-day vulnerability dhundh sakta hai, *aur same session mein* aapko nearby car wash walk karne ko keh sakta hai drive karne ki jagah. Do abilities sirf is se connected hain ke labs ne kis RL environment par train kiya.
+
+    Frontier models verifiable output wale tasks par heavily reinforcement learning ke saath train hote hain: math problems with checkable answers, code jo compile kare aur tests pass kare. Model in circuits ke andar brilliantly seekhta hai kyunki reward signal clean hota hai. Bahar, woh pre-training intuition par operate karta hai comparable feedback ke baghair.
+
+    ```
+    capability   │   │      ╱╲           ╱╲
+                │     ╱  ╲    ╱╲   ╱  ╲
+                │    ╱    ╲  ╱  ╲ ╱    ╲     ╱╲
+                │   ╱      ╲╱    ╲╱      ╲   ╱  ╲
+                │  ╱                      ╲ ╱    ╲___
+                └────────────────────────────────────────►  task
+                    code   refactor  math       car-wash    common-sense
+    ```
+
+    Jagged-intelligence constraint ke char operational implications hain:
+
+    **Pehla, code lucky domain hai.** Aap poori surface ke sabse gehere peaks mein se ek mein kaam kar rahe ho — isliye nahi ke coding intrinsically easier hai, balki isliye ke labs ne economically prioritize kiya aur heavily train kiya.
+
+    **Doosra, aapke feedback loops woh hain jo aapko verifiable circuits mein rakhte hain.** Static types, automated tests, lints, aur compile errors wohi reward signal hai jis ke khilaf model train kiya gaya. Jab agent aapke tests run karta hai aur unhe fail dekhta hai, woh feedback shape mein operate kar raha hai jo training ke dauran uski strongest behaviours produce karti thi. Un signals ke baghair, woh wapas pre-training intuition par hai.
+
+    **Teesra, jaanna zaroori hai ke aap kaunse circuit mein hain.** Jab agent kuch aisa kare jo junior engineer nahi karta, aksar isliye ke aap peak se bahar drift ho gaye. Karpathy ne apne MenuGen project par woh exactly hote dekha: agent identity modelling mein apne strongest circuits se bahar tha. Fix better prompt nahi tha; Karpathy ka explicit architectural guidance ke saath step in karna tha.
+
+    **Chautha, fresh start karte waqt apna stack peak ke andar land karne ke liye choose karo.** Jagged map languages ya frameworks mein symmetric nahi hai. Boris Cherny frank hai ke Claude Code kyun TypeScript aur React mein built hai: *"Yeh model ke liye bahut on-distribution hai."* Jab doosre constraints allow karein, mainstream choices prefer karo: Python aur TypeScript niche languages par, Postgres exotic stores par, popular frameworks hand-rolled par. Aap woh technology nahi chunne jo aap akele likhte; aap woh chun rahe ho jo aapka *agent workforce* mein likhe. Long tail pakdega; tab tak, on-distribution choices kaafi leverage kharidte hain.
+
+    :::note Animals vs. Ghosts
+
+    Karpathy LLMs ko **ghosts** describe karta hai, **animals** nahi: data aur reward se shaped statistical simulations, evolution se shaped biological intelligences nahi. Consequence: agent par chillaana use improve nahi karta; sympathy improve nahi karta; *"think step by step"* dormant cognition nahi jagata. Jo kaam karta hai woh agent ko peak par rakhna hai (clear context, verifiable feedback, well-named code, precise spec) aur trained behaviour fire hone dena. Agent psychology ko physics treat karo, personality nahi.
+
+    :::
+
+    ## 3. AI Coding Ke Chhe Failure Modes
+
+    Teen constraints predictable failures produce karti hain. Chhe khاص طور par itni baar aate hain ke inhe closed catalogue ke tor par treat karo. Neeche table diagnostic hai; baad ke paragraphs har row ko symptom, root cause, aur cure mein expand karte hain.
+
+    | # | Symptom | Root Cause | Ilaaj | Skill | Kahan |
+    |---|---------|-----------|-------|-------|-------|
+    | 1 | "Agent ne woh nahi kiya jo main chahta tha." | Aap aur agent ke beech koi shared design concept nahi | Socratic interview ke zariye koi bhi asset likhne se pehle alignment force karo | [`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md) | §5, §6.1 |
+    | 2 | "Agent bahut zyada verbose hai." | Koi ubiquitous language nahi; aap aur agent same cheezein alag namon se pukaarte hain | Domain terms ki `CONTEXT.md` maintain karo har session mein loaded | [`grill-with-docs`](https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md) | §5, §6.1 |
+    | 3 | "Code kaam nahi karta." | Weak feedback loops; agent blind coding kar raha hai | Loud environment (types, tests, lints) + TDD red-green-refactor | [`tdd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md) | §5, §6.4 |
+    | 4 | "Humne ball of mud bana liya." | Shallow modules; agents inhe humans se tezi se produce karte hain | Module design mein daily invest karo; periodic deepening pass | [`improve-codebase-architecture`](https://github.com/mattpocock/skills/blob/main/skills/engineering/improve-codebase-architecture/SKILL.md) | §7 |
+    | 5 | "Mera dimag saath nahi de raha." | Aap normal pace se 5× har line padh rahe ho | Gray-box principle: interfaces design karo, implementations delegate karo | (architectural habit) | §7.3 |
+    | 6 | "Main jitna bana raha hun us se zyada review kar raha hun." | Throughput ne bottleneck ko review par shift kar diya | Review ko automated + human layers mein split karo; vertical slices diffs chhote rakhte hain | `automated-review` | §6.5, §7 |
+
+    ### Failure 1: *"Agent ne woh nahi kiya jo main chahta tha."*
+
+    Sabse common failure **misalignment** hai. Aapke dimag mein feature ki clear picture thi; agent ne kuch subtly alag banaya; "done" ka matlab kya hai is par aap disagree karte ho. Yeh communication problem hai, model problem nahi. Frederick P. Brooks ne missing cheez ko *The Design of Design* mein naam diya: **[design concept](https://github.com/mattpocock/dictionary-of-ai-coding#design-concept)**, woh shared, ephemeral idea jo build ki ja rahi hai. PRDs, specs, aur conversations *assets* hain jo design concept capture karne ki koshish karte hain; koi bhi *woh nahi hai*.
+
+    **Ilaaj:** design concept ko *pehle* stabilize karne par force karo koi bھی code ya formal asset likhne se pehle. Technique **[grilling](https://github.com/mattpocock/dictionary-of-ai-coding#grilling)** hai: agent aapka Socratically interview karta hai, ek ek decision, design tree ki har branch par chalte hue, jab tak dono sides aligned na hon.
+
+    ### Failure 2: *"Agent bahut zyada verbose hai."*
+
+    Aapke project mein drop kiya gaya fresh agent aapka jargon nahi jaanta. Aapka codebase inhe *lessons* kehta hai aur agent inhe *course units*. Aap dono ek doosre se past baat kar rahe ho aur tokens jalate hue.
+
+    Yeh wohi problem hai jo domain-driven design ne 20+ saal pehle solve ki: **ubiquitous language**. Project ko ek shared vocabulary chahiye jo code, tests, conversation, aur documentation sab use karein. Agents ke saath iska doosra faida bھی hai: tight vocabulary ka matlab hai ambiguity unfolding mein kam thinking tokens aur task par zyada attention.
+
+    **Ilaaj:** repo root par project ke domain terms ke saath `CONTEXT.md` maintain karo, har session mein loaded. Section 5 dikhata hai grilling aur `CONTEXT.md` ek hi Skill mein kaise pair karte hain.
+
+    ### Failure 3: *"Code kaam nahi karta."*
+
+    Aapne agent ke saath align kiya. Clean spec likhi. Agent ne code produce kiya, aur code toot gaya. Diagnosis almost hamesha **weak [feedback loops](https://github.com/mattpocock/dictionary-of-ai-coding#automated-check)** hai. Agent blind coding kar raha hai.
+
+    Pragmatic Programmer **outrunning your headlights** ke khilaf warn karta hai: aise tasks lena jo feedback ki rate se bade hain. Agents yeh constantly karte hain, aur humans se bura, kyunki woh ek hazar lines khushi se likhte hain pehle yeh check kiye baghair ke koi bھی compile hota hai ya nahi.
+
+    **Ilaaj:** environment loud banao — static types, type-checked imports, automated tests, fast lints, pre-commit hook. Phir **test-driven development** enforce karo taaki agent chhote, deliberate steps le: failing test, pass karo, refactor, repeat.
+
+    ### Failure 4: *"Humne ball of mud bana liya."*
+
+    Agents har cheez accelerate karte hain, jis rate par codebase unmaintainable banta hai us bھی. Intervention ke baghair woh **shallow modules** produce karte hain kyunki shallow modules ek ek kar generate karna aasaan hai. Agent jo apna codebase navigate nahi kar sakta woh har pass ke saath worse code produce karta hai.
+
+    John Ousterhout, *A Philosophy of Software Design* mein, alternative deta hai: **deep modules**. Kam large modules simple interfaces ke saath aur bahut functionality unke peeche hidden. Deep modules agents ke liye test karna aasaan hai, reason karna aasaan hai, aur delegate karna aasaan hai.
+
+    **Ilaaj:** module design mein *har roz* invest karo (Kent Beck), aur shallow modules dhundhne aur deepenings propose karne ke liye `improve-codebase-architecture` periodically run karo.
+
+    ### Failure 5: *"Mera dimag saath nahi de raha."*
+
+    Surprising failure mode, aur serious. Senior engineers agents ke saath pehli baar kaam karte hue aksar zyada thake hue report karte hain, zyada code ship karne ke bawajood. Agent normal pace se 3-5× tezi se code produce karta hai; engineer *puri system* ko *naye pace* par dimag mein rakhta hai.
+
+    **Ilaaj:** **gray box principle**. Module interfaces full attention se design karo; implementation agent ko delegate karo; module ko bahar se tests ke zariye verify karo, andar ki har line padh kar nahi. Aap architectural map rakho; agent aintein bharta hai.
+
+    ### Failure 6: *"Main jitna bana raha hun us se zyada review kar raha hun."*
+
+    Throughput ka flip side. Ek baar agent tezi se ship kare, bottleneck code review mein shift hota hai. Ilaaj review ko do layers mein split karna hai: ek high-throughput automated layer jo bulk routine issues pakde, aur ek low-throughput human layer jo woh focus kare jo automated layer nahi kar sakta.
+
+    **Ilaaj:** **`automated-review` Skill** jo fresh session mein chale, sirf diff, project ke coding standards, aur security checklist ke saath input ke tor par, aur human khulne se pehle PR par structured comment produce kare. **Vertical slices** (§6) har diff chhota rakhte hain; **persistent review loops** (§6.5.3) automated reviewer ko schedule par run karne dete hain.
+
+    ---
+
+    ## 4. End-to-End Workflow
+
+    Jo kuch bھی follow karta hai woh is skeleton par hang karta hai: poore pipeline ki shape.
+
+    ### 4.1 Day Shift / Night Shift Model
+
+    Do qismein ka kaam. **Human-in-the-loop** kaam mein keyboard par insaan chahiye: alignment, design, taste, QA. **AFK** ("away from keyboard") kaam sandbox mein unattended chalta hai aur subah diff dikhata hai.
+
+    Pipeline alternates:
+
+    ```
+    Idea → Grill → PRD → Issues (Vertical Slices)
+            ↓
+        [Backlog of Issues]
+            ↓
+    Implementation Loop (TDD per slice) → Automated Review
+            ↓
+        [Review-ready PRs]
+            ↓
+    Human Review → QA → Merge
+            ↓ (QA se naye issues)
+        [Backlog mein wapas]
+    ```
+
+    Har transition ek **[handoff](https://github.com/mattpocock/dictionary-of-ai-coding#handoff)** hai. Har handoff ek chhote, durable artifact se mediate hota hai (CONTEXT.md, PRD, ticket, diff), long-running session se nahi. **Long-running sessions dumb zone mein mar jaate hain; durable artifacts hamesha survive karte hain.**
+
+    ### 4.2 "Specs-to-Code" Ki Limits
+
+    Specs useful hain. §6.2 mein PRDs specs hain. Lekin yahan argument narrower hai: specs ko *poora* workflow treat karne ke khilaf — specification likhna, agent ke zariye compile karna, resulting code ignore karna, aur galat hone par spec edit kar ke recompile karna. Do wajahaat se:
+
+    **Code battleground hai.** Code ke andar hidden hain woh constraints jo spec ne anticipate nahi ki: existing module jis ke saath feature integrate karni hai, data shape database actually return karta hai, woh bug jo sirf tab emerge hota hai jab cache cold ho.
+
+    **Specs decay karte hain.** March mein likhi `gamification-prd.md` July tak ek aisi system ke baare mein document hai jo ab exist nahi karti.
+
+    Sahi model §4.1 mein hai: specs pipeline ke ek stage par **handoff artifacts** hain, system ke source of truth nahi.
+
+    ### 4.3 Vertical Slices aur Tracer Bullets
+
+    §4.1 mein sabse important shape decision PRD ko issues mein kaise split karein. Temptation **horizontally** slice karna hai: ek issue database ke liye, ek API ke liye, ek UI ke liye. Yeh galat hai. Horizontal slicing ke saath agent ko koi end-to-end feedback nahi milta jab tak teesra issue land na ho.
+
+    Sahi shape **vertical slice** hai, **tracer bullet** — Pragmatic Programmer ki analogy ke baad glowing rounds ki jo anti-aircraft gunner ko dikhate hain fire kahan ja raha hai. Har issue *har layer* se thinly cut karta hai jo feature touch karta hai.
+
+    ---
+
+    ## 5. Skills as Encoded Process
+
+    Har ilaaj ek reusable, agent-loadable artifact ke tor par encode hona chahiye. Woh artifact ek **[Skill](https://github.com/mattpocock/dictionary-of-ai-coding#skill)** hai.
+
+    :::note Principle vs. Instance
+
+    Paanch principles yeh pipeline chalate hain: grilling, PRD-synthesis, vertical-slicing, TDD, deepening. Har ek ka current best-in-class implementation kisi ke skill pack mein hai. Implementations evolve hote hain; principles nahi karte. Community Skills ki live registry **[skills.sh](https://skills.sh)** hai; Matt Pocock ka pack [skills.sh/mattpocock](https://skills.sh/mattpocock) par hai.
+
+    :::
+
+    ### 5.1 Skill Kya Hai, aur Kya Nahi
+
+    > **Skill (n.)**: ek teachable capability ek unit ke tor par bundled (ek kaam acha karne ke liye instructions aur resources), environment mein rakha gaya aur context window mein sirf tab load kiya jab relevant ho.
+
+    Skill woh hai jo agent *padhta hai*; **[Tool](https://github.com/mattpocock/dictionary-of-ai-coding#tool)** woh hai jo agent *call karta hai*.
+
+    Skill **on-demand** bھی hai. `AGENTS.md` har turn load hota hai; Skill sirf tab load hoti hai jab agent decide kare ke zaruri hai. Jo har turn context mein hone ki zarurat na ho woh Skill mein jaata hai, `AGENTS.md` mein nahi. Yeh **progressive disclosure** hai action mein.
+
+    Aur Skill **portable** hai. Wohi `SKILL.md` Claude Code aur OpenCode mein unchanged chalti hai.
+
+    ### 5.2 Skills Kahan Rehti Hain
+
+    Dono harnesses session start par well-known directories scan karte hain, har `SKILL.md` ka YAML frontmatter padhte hain, aur agent ko names aur descriptions surface karte hain. Body sirf tab load hoti hai jab agent decide kare Skill relevant hai.
+
+    ```
+    project/
+    └── .agents/
+        └── skills/
+            └── grill-me/
+                └── SKILL.md
+    ```
+
+    OpenCode seedha `.agents/skills/` scan karta hai, isliye install mein extra step nahi:
+
+    ```bash
+    npx skills@latest add mattpocock/skills
+    ```
+
+    Ek Skill invoke karo plain language mein pooch kar. Claude Code ya OpenCode mein, available Skill ko frontmatter description match hone par agent call karta hai.
+
+    ### 5.3 SKILL.md Ki Anatomy
+
+    `SKILL.md` ke do parts hain: YAML frontmatter (metadata jo harness scan karta hai) aur markdown body (instructions jo agent load par padhta hai).
+
+    Matt Pocock ke pack mein sabse-starred Skill, `grill-me`, yahan poori hai: body ki saat lines.
+
+    ```markdown
+    ---
+    name: grill-me
+    description: Interview the user relentlessly about a plan or design until reaching shared understanding, resolving each branch of the decision tree. Use when user wants to stress-test a plan, get grilled on their design, or mentions "grill me".
+    ---
+    Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
+
+    Ask the questions one at a time.
+
+    If a question can be answered by exploring the codebase, explore the codebase instead.
+    ```
+
+    Yahi poori Skill hai, aur `grill-me` ek pack ka sabse-used skill hai jo tens of thousands GitHub stars draw kar chuka hai. Teen observations generalize karte hain:
+
+    1. **Skills ka impactful hone ke liye lamba hona zaruri nahi.** Yeh essentially teen sentences hai.
+    2. **Frontmatter real kaam kar raha hai.** Description specific honi chahiye ke agent sahi moments par load kare.
+    3. **Body agent ko second person mein address karti hai.** "Interview me relentlessly." "Ask the questions one at a time." Direct, declarative, koi hedging nahi.
+
+    ### 5.4 Paanch Daily Principles (aur Aaj Ki Best Skills)
+
+    | Stage | Skill | Kya Karta Hai |
+    |-------|-------|--------------|
+    | Idea → Aligned design concept | [`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md) | Alignment tak Socratic interview. |
+    | Aligned concept → Destination doc | [`to-prd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-prd/SKILL.md) | Conversation ko PRD mein synthesise karta hai user stories, implementation decisions ke saath. |
+    | PRD → Backlog of issues | [`to-issues`](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-issues/SKILL.md) | PRD ko vertical-slice tickets mein todta hai explicit blocking relationships ke saath. |
+    | Issue → Implemented slice | [`tdd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md) | Ek slice par ek baar red–green–refactor. |
+    | Codebase health, ongoing | [`improve-codebase-architecture`](https://github.com/mattpocock/skills/blob/main/skills/engineering/improve-codebase-architecture/SKILL.md) | Shallow modules dhundhta hai; deepenings propose karta hai; RFC issue kholta hai. |
+
+    :::note In Sab Se Pehle
+
+    Matt ka pack ek per-repo bootstrap step expect karta hai, [`setup-matt-pocock-skills`](https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/SKILL.md), jo repo ki issue-tracker config scaffold karta hai. Engineering skills is scaffolding se padhte hain, isliye pack install karne ke baad ek baar setup chalao.
+
+    :::
+
+    ---
+
+    ## 6. Pipeline Practice Mein
+
+    Yeh section workflow ko worked example par end-to-end run karta hai: ek course platform mein **gamification service** add karna.
+
+    ### 6.1 Stage 1: Idea Ko Grill Karna
+
+    Stakeholder se Slack message:
+
+    > *"Hamare retention numbers great nahi hain. Students sign up karte hain, kuch lessons karte hain, phir drop off. Main platform mein gamification add karna chahta hun: points, streaks, levels."*
+
+    Yeh spec nahi; yeh wish hai. `grill-me` invoke karo.
+
+    ```
+    $ opencode
+    > Use the grill-me skill. Read client-brief.md and grill me on adding gamification.
+    ```
+
+    Agent brief padhta hai, codebase explore karta hai (`Lesson`, `Quiz`, `Enrollment` samajhne ke liye), aur sawaal poochna shuru karta hai, ek ek, har ek ke liye recommended answer ke saath:
+
+    ```
+    Q1. Points kya kama karta hai? Meri recommendation: lesson completion + quiz pass.
+    Q2. Kya points existing lesson_progress records ke liye retroactive hain?
+        Meri recommendation: haan, migration par ek baar backfill.
+    Q3. Streak granularity? Meri recommendation: daily, 1-day grace period ke saath.
+    Q4. Level thresholds: linear, quadratic, ya hand-tuned?
+        Meri recommendation: quadratic, level 50 par capped.
+    ...
+    ```
+
+    Sessions 15 se 100 sawalon tak kahin bھی rukti hain. Session tab khatam hoti hai jab agent report kare ke koi decisions unresolved nahi bache aur aapka stable **design concept** hai. **Koi code, koi PRD nahi.**
+
+    ### 6.2 Stage 2: Conversation Se PRD Tak
+
+    Design concept stabilize hone ke baad, `to-prd` invoke karo.
+
+    ```
+    > Use the to-prd skill on this conversation.
+    ```
+
+    Output fixed template follow karne wala markdown document hai:
+
+    ```markdown
+    # PRD: Course Platform Gamification
+
+    ## Problem Statement
+    Students kuch lessons ke baad drop off ho jaate hain...
+
+    ## Solution
+    Points/streaks/levels gamification layer add karo...
+
+    ## User Stories
+    1. Student ke tor par, lesson complete karne par 10 points milte hain.
+    2. Student ke tor par, quiz pass karne par 25 points milte hain.
+    ...
+
+    ## Modules Touched
+    - NEW: gamification_service (deep module, points + streaks + levels own karta hai)
+    - MODIFIED: lesson_progress_service
+    - NEW DB: point_events table, streak_state table
+
+    ## Out of Scope
+    - Leaderboards (alag PRD)
+    - Push notifications (alag PRD)
+    ```
+
+    :::tip PRD Approve Karne Se Pehle Kya Padho
+
+    **Drift ke liye skim karo, proofread mat karo.** Char jagahon par focus karo: *user stories* (koi drop ya invent hua?), *modules touched* (boundary wahi hai?), *implementation decisions* (grilling ke dौران jo calls kiye match karte hain?), aur *out of scope* (boundary creep hua?).
+
+    :::
+
+    ### 6.3 Stage 3: PRD Se Vertical-Slice Issues Tak
+
+    `to-issues` run karo. Gamification PRD ke liye:
+
+    ```
+    ┌────────────────────────────────────────────────────────────┐
+    │ Issue #1 - Lesson completion par points award karo (E2E)   │
+    │   blocked by: kuch nahi.     Type: AFK.                    │
+    │   Touches: schema, service, lesson route, dashboard widget │
+    └────────────────────────────────────────────────────────────┘
+    ┌────────────────────────────────────────────────────────────┐
+    │ Issue #2 - Quiz pass par points award karo (E2E)           │
+    │   blocked by: #1.            Type: AFK.                    │
+    └────────────────────────────────────────────────────────────┘
+    ┌────────────────────────────────────────────────────────────┐
+    │ Issue #3 - Streak counter (E2E)                            │
+    │   blocked by: #1.            Type: AFK.                    │
+    └────────────────────────────────────────────────────────────┘
+    ┌────────────────────────────────────────────────────────────┐
+    │ Issue #4 - Level threshold + UI badge                      │
+    │   blocked by: #2.            Type: AFK.                    │
+    └────────────────────────────────────────────────────────────┘
+    ┌────────────────────────────────────────────────────────────┐
+    │ Issue #5 - Historical lessons ka retroactive backfill      │
+    │   blocked by: #1.            Type: human-in-the-loop.      │
+    └────────────────────────────────────────────────────────────┘
+    ```
+
+    Kuch properties non-accidental hain:
+
+    - **Issue #1 ek working slice ship karta hai.** Sirf #1 merge aur ruk jaate toh platform ka minimal gamification feature kaam karta.
+    - **DAG parallelism admit karta hai.** #2 aur #3 parallel sessions mein run kar sakte hain ek baar #1 merge ho.
+    - **#5 human-in-the-loop flag hai**, AFK nahi. Backfills historical data touch karte hain.
+
+    ### 6.4 Stage 4: Implementation — TDD Ek Slice Par
+
+    `tdd` invoke karo. Skill strict red–green–refactor enforce karti hai: *ek* failing test likho, fail hote dekho, *bas itna code* likho jo pass kare, pass hote dekho, refactor karo sab tests green ke saath, repeat.
+
+    TDD kyun specifically? Do wajahaat:
+
+    1. **Chhote steps force karta hai.** TDD ke baghair, agent 6 files code produce karta hai aur baad mein test layer likha hai. Un tests ka *cheat* karne ka rukjhan hota hai.
+    2. **Har minute feedback deta hai.** Har test pass ek checkpoint hai.
+
+    ```python
+    # gamification/service.py - deep module ka interface
+    from dataclasses import dataclass
+    from datetime import datetime
+    from typing import Protocol
+
+    @dataclass(frozen=True)
+    class PointAward:
+        student_id: str
+        points: int
+        reason: str
+        awarded_at: datetime
+
+    class GamificationService:
+        LESSON_COMPLETION_POINTS = 10
+
+        def __init__(self, store, clock=datetime.utcnow) -> None:
+            self._store = store
+            self._clock = clock
+
+        def award_lesson_completion(self, student_id: str) -> PointAward:
+            award = PointAward(
+                student_id=student_id,
+                points=self.LESSON_COMPLETION_POINTS,
+                reason="lesson_completion",
+                awarded_at=self._clock(),
+            )
+            self._store.append(award)
+            return award
+
+        def total_points(self, student_id: str) -> int:
+            return self._store.total_for_student(student_id)
+    ```
+
+    ```python
+    # gamification/test_service.py - PEHLE LIKHA
+    def test_lesson_completion_awards_ten_points():
+        store = InMemoryStore()
+        svc = GamificationService(store)
+        award = svc.award_lesson_completion("student-42")
+        assert award.points == 10
+        assert svc.total_points("student-42") == 10
+
+    def test_multiple_completions_accumulate():
+        svc = GamificationService(InMemoryStore())
+        for _ in range(3):
+            svc.award_lesson_completion("student-42")
+        assert svc.total_points("student-42") == 30
+    ```
+
+    Yeh **deep module** kaam par hai: do-method public interface (`award_lesson_completion`, `total_points`) ek implementation ke upar jo hazaron lines tak free hai badhne ke liye.
+
+    ### 6.5 Stage 5: AFK Loop
+
+    Aapke paas backlog mein paanch issues hain aur `tdd` Skill installed hai. Aap keyboard par baithna nahi chahte jab agent unhe grind karta hai.
+
+    #### 6.5.1 Minimal AFK Loop (Bash)
+
+    ```bash
+    #!/usr/bin/env bash
+    # ralph.sh - sabse simple AFK loop. Dono harnesses ke saath kaam karta hai.
+    set -euo pipefail
+
+    PROMPT_FILE="${1:-prompts/implement.md}"
+    ISSUES_DIR="${2:-issues}"
+    CMD="${AGENT_CMD:-claude}"
+    PERM_FLAG="${AGENT_PERM_FLAG:---permission-mode acceptEdits}"
+
+    while :; do
+    ISSUES=$(cat "$ISSUES_DIR"/*.md 2>/dev/null || true)
+    COMMITS=$(git log --oneline -5)
+    PROMPT=$(cat "$PROMPT_FILE")
+    RESULT=$($CMD $PERM_FLAG <<EOF
+    $PROMPT
+
+    ## Open issues
+    $ISSUES
+
+    ## Recent commits
+    $COMMITS
+    EOF)
+
+    if echo "$RESULT" | grep -qx "NO_MORE_TASKS"; then
+        echo "queue drain ho gaya - exit kar raha hun"
+        break
+    fi
+    done
+    ```
+
+    ```markdown
+    <!-- prompts/implement.md -->
+    Aap gamification project par AFK operate kar rahe hain.
+    1. Open issues mein se highest-priority issue chunno jis ka `Type:` `AFK` ho
+    aur jis ke sab blockers closed hon.
+    Agar koi nahi, sirf `NO_MORE_TASKS` wali line ke saath reply karo aur ruk jao.
+    2. Jo PRD woh reference karta hai padho.
+    3. Ek vertical slice implement karne ke liye `tdd` skill use karo.
+    4. Project feedback loops run karo (typecheck, tests, lint).
+    Koi bھی fail hone par commit mat karo.
+    5. Issue number reference karte hue commit karo aur issue close karo.
+    ```
+
+    Skills, prompt, aur issues dono harnesses mein byte-identical hain. Jo differ karta hai woh harness binary **aur uska skip-approvals flag** hai:
+
+    ```bash
+    AGENT_CMD="opencode run" \
+    AGENT_PERM_FLAG="--dangerously-skip-permissions" ./ralph.sh
+    ```
+
+    #### 6.5.2 Parallel AFK Orchestrator (TypeScript)
+
+    Bash version slices sequentially run karta hai. Loop par trust hone ke baad, agla leverage point **parallel execution** hai.
+
+    ```typescript
+    // orchestrator.ts - parallel AFK loop sandboxed worktrees ke saath
+    const HARNESS = process.env.AGENT_CMD ?? "claude";
+
+    function unblocked(issues: Issue[]): Issue[] {
+    const closed = new Set(issues.filter((i) => i.closed).map((i) => i.id));
+    return issues.filter(
+        (i) => !i.closed && i.type === "AFK" && i.blockedBy.every((b) => closed.has(b)),
+    );
+    }
+
+    async function main() {
+    let issues = await loadIssues("./issues");
+    while (true) {
+        const ready = unblocked(issues);
+        if (ready.length === 0) {
+        console.log("backlog drain ho gaya - exit");
+        break;
+        }
+        // sab unblocked issues parallel mein run karo, har ek apne sandbox mein
+        const results = await Promise.all(ready.map(runInSandbox));
+        // har successful branch par automated review MERGE SE PEHLE
+        for (const r of results.filter((r) => r.ok)) {
+        await reviewBranch(r.branch);
+        }
+        issues = await loadIssues("./issues");
+    }
+    }
+    ```
+
+    Teen principles orchestrator mein embedded hain:
+
+    1. **Sandboxes mandatory hain.** Har slice fresh container, fresh worktree, koi production credentials nahi.
+    2. **Reviewer alag agent hai.** Implementer ke saath wohi session mein reviewer dumb zone mein review kar raha hai. Fresh session mein reviewer, sirf diff aur standards ke saath, kaam clearly dekhta hai.
+    3. **Loop har iteration mein issues disk se reload karta hai.**
+
+    #### 6.5.3 Persistent Loops aur Ambient Agents
+
+    **Loop**, Boris Cherny ke sense mein, `cron` ke saath scheduled agent invocation hai jo har minute, paanch minute, ya 30 minute mein ek chhote standing job ke khilaf run ho. Har invocation fresh session hai — har baar smart zone mein start.
+
+    Ek project par working loops ka set include kar sakta hai:
+
+    - **PR janitor**: flaky CI rerun, `main` ke khilaf rebase, typo aur lint comments fix.
+    - **CI healer**: jab flaky test intermittently fail ho, investigate aur fix.
+    - **Feedback clusterer**: har 30 minute mein incoming user feedback pull karo, theme se group karo.
+
+    ```bash
+    # crontab -e
+    # har 30 minute, PR-janitor agent project mein chalao
+    */30 * * * * cd /home/me/project && \
+    AGENT_CMD="claude" ./scripts/run-once.sh prompts/pr-janitor.md
+    ```
+
+    Do design rules persistent loops govern karte hain:
+
+    - **Har tick fresh session hai.** Ticks ke beech koi state survive nahi karta siwa woh jo environment mein likha gaya.
+    - **Har loop ka ek kaam hai.** Ek loop jo PR-janitor kaam kare *aur* CI healing kare dono mein se kisi mein bھی acha perform nahi karega.
+
+    ### 6.6 Stage 6: Human Review aur QA
+
+    Loop chalne ke baad subah, aapke paas N pull requests hain. **Diffs padho**, agent ke summary nahi. Summary agent ka word hai; diff woh hai jo actually hua.
+
+    QA pipeline ka sabse valuable artifact produce karta hai: **naye issues**. Har bug, har UX concern, har edge case jo original PRD miss kiya new ticket ban jaata hai Kanban board par. **Yeh loop — human gap dhundhe, ticket queue mein wapas jaye, agent AFK fix kare — pipeline ko self-improving banata hai.**
+
+    Yeh stage bھی woh hai jahan **taste** rehta hai. QA automate karna ek temptation hai resist karne layak: agent reviewing agent ka UI koi opinion reach karta hai jo koi particularly hold nahi karta. Human "yeh padding galat hai" aur "yeh label bahut lamba hai" decide karna irreducible step hai.
+
+    ---
+
+    ## 7. AI-Friendly Codebases Ke Liye Architecture Principles
+
+    Workflow aur codebase inseparable hain: architecture jitna saaf, agent us mein utna better perform karta hai.
+
+    ### 7.1 Deep Modules Shallow Modules Par
+
+    Module **deep** hai jab chhota interface ho aur bahut behaviour peeche; **shallow** jab interface aur implementation roughly same size hon.
+
+    Agent ke liye farq decisive hai. Shallow codebase mein agent kai chhoti files ke beech dependencies trace karta hai; signal-to-noise per token degrade hoti hai. Deep codebase mein agent ek interface padhta hai aur boundary par trust karta hai.
+
+    ```typescript
+    // SHALLOW: interface IS implementation
+    export function awardPoints(studentId: string, reason: string, n: number): void;
+    export function recordStreakActivity(studentId: string, day: Date): void;
+    export function validateAntiCheat(studentId: string, event: PointEvent): boolean;
+    // ... + 6 aur exported functions
+
+    // DEEP: chhota interface, bada hidden body
+    export class GamificationService {
+    awardLessonCompletion(studentId: string): PointAward;
+    totalPoints(studentId: string): number;
+    currentStreak(studentId: string): number;
+    // streak recording, anti-cheat, level calc → sab hidden
+    }
+    ```
+
+    :::tip Heuristic
+
+    Agar aapke IDE ka Outline view ek module ka public interface se lamba hai, module shallow hai. Ise deepen karo.
+
+    :::
+
+    ### 7.2 Interface Par Test Karo
+
+    §7.1 ka corollary. **Tests module interfaces par baithte hain, internal functions par nahi.** Internal function par test implementation pin karta hai; internals refactor karna test todta hai chahe externally visible behaviour correct ho.
+
+    ### 7.3 Interface Design Karo, Implementation Delegate Karo
+
+    Senior engineer ka agents ke saath kaam karne mein sabse important habit.
+
+    **Aap** decide karte ho module kya expose kare: contract, names, invariants. **Agent** decide karta hai contract kaise satisfy ho: internal data structures, helper placement, operation order.
+
+    Yeh **gray box** principle hai. Bahar se module fully specified hai: interface visible, internals design se invisible. Andar se agent excellent kaam karne ke liye free hai, sirf interface contract se constrained.
+
+    Yahi Failure 5 ka brain-saturation problem tractable banata hai. Aap agent ki likhi har line nahi padh sakte; woh rasta burnout tak jaata hai. Aap modul map dimag mein rakh *sakte* ho aur har interface change carefully padh sakte ho.
+
+    ### 7.4 `improve-codebase-architecture` Skill
+
+    Codebases waqt ke saath shallow ki taraf drift karte hain, khaaskar agents ke saath. Fix periodic deepening pass hai.
+
+    ```markdown
+    ---
+    name: improve-codebase-architecture
+    description: Find shallow-module candidates in the codebase and propose deepenings. Run weekly, or after a burst of feature work.
+    ---
+    Aap architecture reviewer hain. Codebase walk karo aur woh jagah dhundho
+    jahan ek concept samajhne ke liye kai chhoti files ke beech bounce karna pade;
+    jahan pure functions sirf testability ke liye extract ki gayi hon; jahan modules
+    seams par tightly coupled hon.
+
+    Deepening candidates ki numbered list surface karo. Har ek ke liye briefly:
+    - Kaunsi existing files naye deep module mein collapse hongi
+    - Naya interface kya hoga (3-5 method signatures, zyada nahi)
+    - Kya behaviour andar jaega, callers ko jaanne se free karte hue
+
+    Changes MAT karo. Highest-value candidate RFC issue kھولو.
+    ```
+
+    Weekly run ek deepening RFC produce karta hai. Woh same Kanban board mein enter hota hai jis se feature kaam flow karta hai.
+
+    ---
+
+    ## 8. Working Vocabulary
+
+    | Term | Matlab |
+    |------|--------|
+    | **Model** | Parameters. Stateless. Next-token prediction karta hai; kuch aur nahi. |
+    | **Harness** | Model ke aas paas sab kuch jo use agent banata hai: tools, system prompt, context-window management. *Claude Code harness hai; OpenCode harness hai.* |
+    | **Agent** | Model + harness context window mein tools ke saath operate karta hua. |
+    | **Context window** | Fixed-size byte view jo model har request par dekhta hai. Finite. |
+    | **Smart zone / dumb zone** | Early-session region jahan attention sharp hai / late-session region jahan attention competing tokens se dilute ho. |
+    | **Hallucination** | Confidently-galat output. |
+    | **Clearing** | Session khatam karo aur fresh shuru karo. Hard reset. |
+    | **Compaction** | Session ko naye ko seed karne ke liye summarise karo. Lossy. |
+    | **Handoff** | Context ek session se doosre mein artifact ke zariye transfer karna. |
+    | **AFK** | "Away from keyboard." User session kick off kare aur sandbox mein unattended chalne de. |
+    | **Skill** | `SKILL.md` file ke tor par bundled teachable capability. On demand load hoti hai. |
+    | **Tracer bullet / vertical slice** | Ek issue jo system ke har layer se thin path ship karta hai. |
+    | **Deep module** | Chhote interface aur badi internal implementation wala module. |
+    | **Design concept** | Jo build ho rahi hai us ka shared, ephemeral idea. Asset nahi. |
+    | **Grilling** | Design concept form karne ki technique: agent user ka Socratically interview karta hai. |
+    | **Vibe coding** | Agent code human review ke baghair accept karna. |
+    | **Agentic engineering** | Professional software ka quality bar preserve karte hue production kaam mein agents use karne ki discipline. |
+    | **Jagged intelligence** | Empirical fact ke LLM capability verifiable RL se train kiye tasks par sharply peak karti hai. |
+    | **On distribution** | Model ke training data mein well-represented hone ki property. |
+    | **Loop / Routine** | Persistent ambient agent: schedule par fresh session invoke hoti hai standing job ke khilaf. |
+
+    ---
+
+    ## 9. Practical Drills
+
+    Teen exercises. Order mein karo. Har ek 30 minute se 2 ghante leta hai.
+
+    **Drill 1: `grill-me` install karo aur real idea par run karo.** Koi feature chunno jo aap scope karne se rok rahe ho. Skill pack install karo, Claude Code ya OpenCode kholo, `/grill-me` invoke karo, aur agent ke rukne tak sawaalon ka jawab do.
+
+    :::tip Acha Kaisa Lagta Hai
+
+    Non-trivial feature par grilling session usually **15–40 sawalon** aur **30–90 minute** tak run karta hai. Under 10 sawalon ka matlab usually idea bahut chhota tha; over 60 ka matlab agent fishing kar raha hai. Akhir mein aapko kam se kam teen decisions paraphrase karne chahiye jo nikal ke aaye jo aapne pehle consider nahi ki thi.
+
+    :::
+
+    **Drill 2: Tracer bullet ki tarah vertical slice likho.** Apne codebase mein koi unfinished feature lo. Ek single user story likho jo sabse chhota possible end-to-end path trace kare. `tdd` Skill ke under implement karo.
+
+    :::tip Acha Kaisa Lagta Hai
+
+    Slice **ek session se kam** mein land honi chahiye test, implementation, aur reviewable diff ek PR mein. Agar nahi hoti, slice bahut thick thi; split karo.
+
+    :::
+
+    **Drill 3: Module deepen karo.** Kisi codebase par `improve-codebase-architecture` run karo jo aap acha jaante ho. Highest-value candidate chunno. Abhi implement mat karo; paper par naya interface sketch karo (3–5 method signatures). Naye interface ki surface area purani se compare karo.
+
+    :::tip Acha Kaisa Lagta Hai
+
+    Genuine deepening typically **kaafi chhoti modules** (5 se 15 ke order par) ko ek deep mein collapse karti hai, public-symbol ratio (purana:naya) **3:1 ya usse zyada** ke order par.
+
+    :::
+
+    **Daily kaam ke liye checklist:**
+
+    - [ ] Kya aaj ki session shuru karne se pehle `/clear` kiya?
+    - [ ] Kya non-trivial change ke liye `grill-me` use kiya?
+    - [ ] Kya mere issues vertical slices hain, horizontal phases nahi?
+    - [ ] Kya har implementation slice `tdd` ke zariye chal rahi hai?
+    - [ ] Kya AFK runs sandbox mein hain?
+    - [ ] Kya reviewer implementer se *alag* session hai?
+    - [ ] Kya maine diff padha, summary nahi?
+
+    ---
+
+    ## 10. Aakhir: Strategic Programmer
+
+    Yahan tasveer hai jo le jaani hai.
+
+    Aapka agent ایک excellent **tactical** programmer hai: ground par sergeant jo koi bھی well-specified hill le sakta hai, kisi bھی language mein, kisi bھی framework mein, raat ke beech, aur subah tak working slice wapas la sakta hai. Use function ya test likhna sikhane ki zarurat nahi.
+
+    Woh sergeant **kaunsi hill** decide nahi kar sakta. Yeh aapka role hai. Stakeholder ke saath alignment. Design concept form karna. Slice chunna. Interface design karna. Diff padhna. Map rakhna.
+
+    Strategic programmer ke tools is chapter mein describe hain. Pipeline (§4). Chhe failures (§3) aur unke ilaaj. Skills (§5) jo ilaaj encode karte hain. Architecture (§7) jo agent ko acha banati hai. Vocabulary (§8) jo sab ke baare mein reason karne deti hai.
+
+    Karpathy ki ek line le jaane layak hai: *"Aap apni soch outsource kar sakte ho, lekin apni understanding nahi."* Agent typing, searching, boilerplate, API-detail recall, tedious refactor karega. Jo bacha uniquely tumhara hai woh *understanding* hai — kyun yeh system ban raha hai, kiska hai, ise kya kabhi nahi karna chahiye.
+
+    ---
+
+    ## Further Reading
+
+    - **Matt Pocock**, *Software Fundamentals Matter More Than Ever*
+    - **Matt Pocock**, *Full Walkthrough: Workflow for AI Coding*
+    - **Matt Pocock**, [*Dictionary of AI Coding*](https://github.com/mattpocock/dictionary-of-ai-coding)
+    - **Matt Pocock**, [*Skills for Real Engineers*](https://github.com/mattpocock/skills)
+    - **Andrej Karpathy**, *From Vibe Coding to Agentic Engineering*
+    - **Boris Cherny (Anthropic)**, *Why Coding Is Solved, and What Comes Next*
+    - **John Ousterhout**, *A Philosophy of Software Design*
+    - **David Thomas & Andrew Hunt**, *The Pragmatic Programmer*
+    - **Eric Evans**, *Domain-Driven Design*
+    - **Kent Beck**, *Extreme Programming Explained*
+    - **Frederick P. Brooks**, *The Design of Design*
+
+    ## Companion Skills (Is Chapter)
+
+    - [`grill-me`](https://github.com/mattpocock/skills/blob/main/skills/productivity/grill-me/SKILL.md)
+    - [`grill-with-docs`](https://github.com/mattpocock/skills/blob/main/skills/engineering/grill-with-docs/SKILL.md)
+    - [`to-prd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-prd/SKILL.md)
+    - [`to-issues`](https://github.com/mattpocock/skills/blob/main/skills/engineering/to-issues/SKILL.md)
+    - [`tdd`](https://github.com/mattpocock/skills/blob/main/skills/engineering/tdd/SKILL.md)
+    - [`improve-codebase-architecture`](https://github.com/mattpocock/skills/blob/main/skills/engineering/improve-codebase-architecture/SKILL.md)
+    - [`setup-matt-pocock-skills`](https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/SKILL.md)
+
+    ---
+
+    ## Flashcards — Yaad Karo
+
+    Yeh section ke key concepts yaad karne mein madad karta hai. Har card pe pehle khud jawab socho, phir reveal karo.
+
+    <details>
+    <summary>**Card 1 / 10** — Software 3.0 kya hai?</summary>
+
+    **Jawab:**
+    Software teen eras mein evolve hua: 1.0 = explicit code, 2.0 = learned weights (ML), 3.0 = *prompting* ke zariye programming. 3.0 mein artifact agent ke liye intended text ka piece ban raha hai — Skills, PRDs, tickets sab 3.0 artifacts hain.
+
+    </details>
+
+    <details>
+    <summary>**Card 2 / 10** — Vibe coding aur agentic engineering mein kya farq hai?</summary>
+
+    **Jawab:**
+    Vibe coding software ka **floor raise** karta hai — non-programmer bhi weekend mein tool ship kar sakta hai. Agentic engineering professional software ka **ceiling preserve** karta hai — quality bar. Vibe coding mein reviewer optional, agentic engineering mein human diff padhta hai. Tests vibe coding mein optional, agentic engineering mein non-negotiable.
+
+    </details>
+
+    <details>
+    <summary>**Card 3 / 10** — Smart zone aur dumb zone kya hain?</summary>
+
+    **Jawab:**
+    Session ke shuru mein agent smart zone mein hota hai — sharp, focused. Jaise tokens barhte hain, har token ka signal competitors se dilute hota hai — agent dumb zone mein drift karta hai. Practical ceiling ~100k tokens ke aas paas hai. Fix: kaam ki har unit ko smart zone ke andar fit karo.
+
+    </details>
+
+    <details>
+    <summary>**Card 4 / 10** — Memento Problem kya hai?</summary>
+
+    **Jawab:**
+    Models stateless hain — sessions ke across kuch bhi carry nahi karte. Clearing (total reset) ya compaction (summary se seed) se recover karo. Clearing better hai kyunki compaction dumb-zone reasoning ka kuch preserve karta hai. Important facts environment mein survive karo (AGENTS.md, ticket), chat history mein nahi.
+
+    </details>
+
+    <details>
+    <summary>**Card 5 / 10** — Jagged Intelligence ka matlab kya hai?</summary>
+
+    **Jawab:**
+    LLMs uniformly smart nahi hain — kuch domains mein sharply peak karte hain, doosron mein stagnate. Code lucky domain hai kyunki labs ne heavily train kiya. Feedback loops (types, tests, lints) woh reward signal hain jis par model train hua. Fresh start karte waqt on-distribution stack choose karo.
+
+    </details>
+
+    <details>
+    <summary>**Card 6 / 10** — Chhe failure modes kaunsi hain?</summary>
+
+    **Jawab:**
+    1. Misalignment — grill-me se fix
+    2. Verbose agent — CONTEXT.md ubiquitous language se fix
+    3. Code kaam nahi karta — TDD se fix
+    4. Ball of mud — deep modules se fix
+    5. Dimag saath nahi — gray box principle se fix
+    6. Review bottleneck — automated + human layers se fix
+
+    </details>
+
+    <details>
+    <summary>**Card 7 / 10** — Skills kya hain aur kahan rehti hain?</summary>
+
+    **Jawab:**
+    Skill ek teachable capability hai SKILL.md file ke tor par bundled. On-demand load hoti hai — har turn nahi. `.agents/skills/` mein rehti hain. Claude Code aur OpenCode mein byte-identical chalti hain. Frontmatter description decide karta hai kab load ho.
+
+    </details>
+
+    <details>
+    <summary>**Card 8 / 10** — Vertical Slices kyun important hain?</summary>
+
+    **Jawab:**
+    Horizontal slices mein agent ko end-to-end feedback nahi milta jab tak teesra issue land na ho. Vertical slice (tracer bullet) har layer se thinly cut karta hai. Issue #1 ek working ship karta hai. DAG parallelism admit karta hai. Chhote diffs review aasaan.
+
+    </details>
+
+    <details>
+    <summary>**Card 9 / 10** — Deep modules kya hain?</summary>
+
+    **Jawab:**
+    Chhota interface, badi hidden implementation. Agent ek interface padhta hai aur boundary par trust karta hai — shallow codebase mein dependencies trace karne se better. Tests module interfaces par baithte hain, internal functions par nahi. IDE ka Outline view agar lamba hai — module shallow hai.
+
+    </details>
+
+    <details>
+    <summary>**Card 10 / 10** — Gray Box Principle kya hai?</summary>
+
+    **Jawab:**
+    Module interfaces full attention se design karo; implementation agent ko delegate karo; module ko bahar se tests se verify karo, andar ki har line padh kar nahi. Aap architectural map rakho; agent aintein bharta hai. Yeh Failure 5 (dimag saath nahi) ka ilaaj hai.
+
+    </details>

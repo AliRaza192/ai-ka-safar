@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 240" role="img" aria-labelledby="wp-title wp-desc">
+  <title id="wp-title">The working pattern: every scenario uses the same rhythm</title>
+  <desc id="wp-desc">A horizontal five-step flow: You paste one sentence, your agent proposes a plan, you approve, the agent executes, you verify. The first three are yours; steps 4 and 5 alternate between agent and you. The agent stops at any seam only you can cross.</desc>
+  <style>
+    .bg { fill: transparent; }
+    .step-box { fill: #ffffff; stroke: #1a1a1a; stroke-width: 2; }
+    .step-box-agent { fill: #dbeafe; stroke: #2563eb; stroke-width: 2; }
+    .step-num { font-family: system-ui, -apple-system, sans-serif; font-size: 18px; fill: #2563eb; text-anchor: middle; font-weight: 800; }
+    .step-name { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; fill: #1a1a1a; text-anchor: middle; font-weight: 700; }
+    .step-actor { font-family: system-ui, -apple-system, sans-serif; font-size: 10px; text-anchor: middle; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .actor-you { fill: #059669; }
+    .actor-agent { fill: #2563eb; }
+    .header { font-family: system-ui, -apple-system, sans-serif; font-size: 16px; fill: #1a1a1a; text-anchor: middle; font-weight: 600; }
+    .caption { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; fill: #555; text-anchor: middle; font-style: italic; }
+    .arrow { stroke: #1a1a1a; stroke-width: 2; fill: none; }
+    .arrow-head { fill: #1a1a1a; }
+    @media (prefers-color-scheme: dark) {
+      .step-box { fill: #1f2937; stroke: #e5e7eb; }
+      .step-box-agent { fill: #1e3a8a; stroke: #60a5fa; }
+      .step-num { fill: #60a5fa; }
+      .step-name { fill: #f9fafb; }
+      .actor-you { fill: #34d399; }
+      .actor-agent { fill: #60a5fa; }
+      .header { fill: #f9fafb; }
+      .caption { fill: #d1d5db; }
+      .arrow { stroke: #e5e7eb; }
+      .arrow-head { fill: #e5e7eb; }
+    }
+  </style>
+  <rect class="bg" width="720" height="240" />
+
+  <!-- Title -->
+  <text x="360" y="28" class="header">Every scenario uses the same rhythm</text>
+
+  <!-- 5 steps -->
+  <!-- Step 1: You paste -->
+  <rect x="20" y="60" width="130" height="100" rx="8" class="step-box" />
+  <text x="85" y="85" class="step-num">1</text>
+  <text x="85" y="105" class="step-actor actor-you">YOU</text>
+  <text x="85" y="125" class="step-name">Paste one</text>
+  <text x="85" y="142" class="step-name">sentence</text>
+
+  <!-- Step 2: Agent proposes plan -->
+  <rect x="170" y="60" width="130" height="100" rx="8" class="step-box-agent" />
+  <text x="235" y="85" class="step-num">2</text>
+  <text x="235" y="105" class="step-actor actor-agent">AGENT</text>
+  <text x="235" y="125" class="step-name">Propose plan,</text>
+  <text x="235" y="142" class="step-name">ask to start</text>
+
+  <!-- Step 3: You approve -->
+  <rect x="320" y="60" width="130" height="100" rx="8" class="step-box" />
+  <text x="385" y="85" class="step-num">3</text>
+  <text x="385" y="105" class="step-actor actor-you">YOU</text>
+  <text x="385" y="125" class="step-name">Approve</text>
+  <text x="385" y="142" class="step-name">(or redirect)</text>
+
+  <!-- Step 4: Agent executes -->
+  <rect x="470" y="60" width="130" height="100" rx="8" class="step-box-agent" />
+  <text x="535" y="85" class="step-num">4</text>
+  <text x="535" y="105" class="step-actor actor-agent">AGENT</text>
+  <text x="535" y="125" class="step-name">Execute, show</text>
+  <text x="535" y="142" class="step-name">output, recover</text>
+
+  <!-- Step 5: You verify -->
+  <rect x="620" y="60" width="80" height="100" rx="8" class="step-box" />
+  <text x="660" y="85" class="step-num">5</text>
+  <text x="660" y="105" class="step-actor actor-you">YOU</text>
+  <text x="660" y="125" class="step-name">Verify</text>
+  <text x="660" y="142" class="step-name">(done-when)</text>
+
+  <!-- Arrows -->
+  <defs>
+    <marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="arrow-head" />
+    </marker>
+  </defs>
+  <path d="M 152 110 L 168 110" class="arrow" marker-end="url(#ah4)" />
+  <path d="M 302 110 L 318 110" class="arrow" marker-end="url(#ah4)" />
+  <path d="M 452 110 L 468 110" class="arrow" marker-end="url(#ah4)" />
+  <path d="M 602 110 L 618 110" class="arrow" marker-end="url(#ah4)" />
+
+  <!-- Caption -->
+  <text x="360" y="195" class="caption">at any step, the agent stops at a seam only you can cross: get a Gemini key, scan a QR, click an OAuth screen.</text>
+  <text x="360" y="220" class="caption">the agent does install/configure/debug; you do decide/approve/act on phone-bound things.</text>
+</svg>

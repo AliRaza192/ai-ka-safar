@@ -1,0 +1,514 @@
+---
+id: workforce-with-paperclip-crash-course
+title: Paperclip se Workforce Banana — 90 Minute ka Crash Course
+sidebar_label: Paperclip Workforce Crash Course
+---
+
+# Paperclip se Workforce Banana: 90 Minute ka Crash Course
+
+*6 Scenarios, Zero se Managed AI Workforce Tak*
+
+Paperclip **company** hai aur OpenClaw **employee** hai. Jahan [OpenClaw crash course](/docs/openclaw-with-general-agents) aapko ek AI Worker deta hai jo aapke laptop pe rehta hai, yeh crash course aapko woh company deta hai jo unhe hire karta hai, govern karta hai, aur audit karta hai. Ek Worker ek function hai; ek workforce ek org chart hai Workers ka jo budgets ke against run hota hai, approvals ke under, audit trail chhodte hue. Paperclip company hai Worker ke ird-gird. Ek caution metaphor pe: Workers ko Paperclip hire karta hai woh runtimes hain jinhe aap point karte hain (ek keyless local stub, ek Gemini-backed agent), aur aap ek OpenClaw instance ko ek ke taur pe wire kar sakte hain, lekin woh optional edge hai, **employee** half ka matlab yahan yeh nahi hai. Picture workers ke ird-gird ki organization hai, ek tool doosre ke andar nested nahi.
+
+Paperclip young hai aur tezi se move kar raha hai: [mid-2026 tak tens of thousands of GitHub stars](https://github.com/paperclipai/paperclip), MIT-licensed, self-hosted, aur yeh aapke laptop pe ek command se chalta hai (koi account nahi, koi credit card nahi, koi cloud setup nahi). Wohi friction-free property jo OpenClaw ne Worker ke liye earn ki, Paperclip uske ird-gird ki company ke liye earn karta hai.
+
+In ninety minutes ke end tak aapke paas ek real AI-native company aapke machine pe running hogi:
+
+- ek company entity jaise defined purpose hai,
+- ek Worker jo ek adapter ke against hired hai aur kaam receive karne ke liye ready hai,
+- ek inbound issue jo assign hua hai aur keyless local Worker ke through completion tak kaam kiya hai,
+- ek approval jo aapke paas (board) file hua hai aur permanent audited record ke saath decide hua hai,
+- ek real LLM-backed Worker add hua hai taake budget ke paas finally enforce karne ke liye data ho, aur
+- ek single SQL query jo milliseconds mein sab kuch reconstruct karti hai jo hua.
+
+Koi demo nahi jo Friday tak bhool jao; ek substrate jo kal touch karoge.
+
+* * *
+
+**Yeh crash course kaise kaam karta hai.** Aap ek chhota folder download karte hain, apne coding agent (Claude Code ya OpenCode) ko dete hain, aur six scenarios walk karte hain. Agent folder padhta hai, Paperclip install karta hai, aapki pehli company set up karta hai, pehla Worker hire karta hai, pehla issue assign karta hai, aur pehla approval file karta hai. Phir woh keyless stub Worker ko real LLM Worker se swap karta hai taake budget ke paas kuch meter karne ko ho, aur activity log query karke CFO-grade audit question ka jawab deta hai. Aap steer karte hain; agent kaam karta hai; Paperclip management plane ban jata hai jiske through aapki workforce chalti hai.
+
+**Reading path · prereqs · the deep version (click to expand)**
+
+<details>
+<summary>Reading path · prereqs · deep version</summary>
+
+**Reading path** (six scenarios + one monthly habit):
+
+1. **Paperclip khada karo aur apni company define karo.** Onboard, dashboard up, ek company configured. ~15 min.
+2. **Apna pehla Worker hire karo.** Ek keyless local Worker (`worker-stub.py`, aapke download mein shamil) jo `http` adapter pe registered hai, heartbeats receive karne ke liye ready. ~15 min.
+3. **Company ko pehla real issue bhejo.** Ek issue create hota hai, create time pe Worker ko assign hota hai, next heartbeat pe pick hota hai, aur resolve hota hai. ~15 min.
+4. **Risky action ke liye approval file karo.** Ek $750 refund ko board sign-off chahiye; aap request file karte hain, decide karte hain, aur audited record padhte hain. ~15 min.
+5. **Real LLM Worker swap karo; budget ko teeth do.** Keyless stub koi billable kaam nahi karta, toh budget kabhi move nahi hota. Ek real Gemini-backed Worker add karo aur spend accrue hote dekho. ~15 min.
+6. **Audit trail ko CFO ki tarah query karo.** Ek SQL query, poori company history, milliseconds mein. ~10 min.
+7. **(Mahine mein ek baar, aaj nahi)** Workforce audit chalao. ~10 min jab waqt aaye.
+
+Har scenario ek runnable success pe khatam hota hai. Agar ek sitting mein ninety minutes zyada hain, toh alag sittings mein lo; sab kuch unke beech persist karta hai. Scenarios 3 se 6 company aur Worker pe build karte hain jo 1 aur 2 mein bane.
+
+**Prerequisites** (yeh page yeh maanta hai):
+
+1. **Claude Code ya OpenCode installed.** Koi bhi chalega. Agar dono nahi hain, toh pehle [Agentic Coding Crash Course](/docs/agentic-coding-crash-course) karo.
+2. **Node.js 20 ya baad mein.** Terminal mein `node --version` chalao. `v20.0.0` se neeche, toh [nodejs.org/en/download](https://nodejs.org/en/download/) se LTS install karo; aapka coding agent aapko walk through karega agar poocho.
+3. **Python 3.** `python3 --version` chalao. Scenario 2 mein jo Worker hire karoge woh ek chhoti Python file hai (`worker-stub.py`, lagbhag 120 lines) jo aapke download mein shamil hai aur sirf standard library use karti hai: kuch bhi `pip install` karne ki zaroorat nahi. macOS aur zyada tar Linux pe Python 3 pehle se hai; Windows pe, aapka coding agent install karne mein madad karega.
+4. **Ek free Gemini API key, sirf Scenario 5 ke liye.** Scenarios 1 se 4 aur Scenario 6 bilkul bina API key chalte hain. Scenario 5 keyless stub ko real LLM Worker se swap karta hai, aur uss ek ko key chahiye. Google ki free tier kaafi hai; yeh wahi key hai jo [OpenClaw crash course](/docs/openclaw-with-general-agents) use karta hai. [aistudio.google.com](https://aistudio.google.com/) pe ek lo, ya jab Scenario 5 pe pahuncho tab.
+5. **Aapne pehle ek AI Workers crash course kiya hai**, ideally [OpenClaw](/docs/openclaw-with-general-agents) ya [Digital FTE](/docs/digital-fte-crash-course). Paperclip ka point ek workforce of Workers ko manage karna hai; aapko pata hona chahiye ki Worker kya hai unhe hire karne se pehle.
+
+**Patient version chahiye?** Do companion crash courses iske dono taraf hain track mein. [From Digital FTE to Production Worker](/docs/ai-agent-nervous-system-crash-course) ek single Worker ko Inngest ke durability envelope mein wrap karta hai: workforce se pehle ka step. [From Fixed to Dynamic Workforce](/docs/dynamic-workforce-crash-course) hiring ko callable capability mein badalta hai: iske baad ka step. Yeh page plus `AGENTS.md` brief management plane end-to-end cover karta hai; woh dono uspe layer karte hain, replace nahi karte.
+
+</details>
+
+* * *
+
+## Collaboration pattern
+
+![Ek single Worker ek function hai: ek queue, ek job, durable lekin ungoverned. Ek workforce ek organization hai: Paperclip ka management plane ek company hold karta hai, Workers jo adapters ke against hired hain, issues jo unhe create time pe directly assign hote hain (koi rules-based routing engine nahi), approvals jo decision records ke taur pe file hote hain, per-Worker budgets, aur activity log jo har action record karta hai.](/img/07-workforce-vs-worker-65cddc82f23b3bfa3b9b8f2f87de53ab.webp)
+
+Is page pe teen actors share karte hain: **aap**, aapka **coding agent**, aur **Paperclip**. Aap prompts paste karte hain aur woh calls lete hain jo sirf insaan le sakta hai. Aapka coding agent Paperclip CLI aur API chalata hai, logs dekhta hai, aur failures se recover karta hai. Paperclip management plane hai: yeh company hold karta hai, Workers ko hire karta hai, kaam unhe heartbeat pe carry karta hai, aur har action record karta hai.
+
+<figure>
+
+![Teen actors is page ko share karte hain: aap, aapka coding agent, aur Paperclip (management plane). Aap prompts paste karte hain aur actions approve karte hain; aapka coding agent Paperclip install aur configure karta hai; Paperclip aapke Workers ko heartbeats pe kaam carry karta hai aur har action record karta hai.](/img/paperclip-collaboration-triangle.svg)
+
+</figure>
+
+Har scenario wohi five-step rhythm use karta hai:
+
+1. **Aap ek sentence paste karte hain** apne coding agent mein. Yeh ek brief hai, script nahi. Aap outcome describe karte hain jo chahiye; steps enumerate nahi karte.
+2. **Aapka agent `AGENTS.md` consult karta hai** (pehle se context mein: folder ka `CLAUDE.md` automatically session start pe import karta hai, toh koi fetch step nahi) aur plan propose karta hai. Woh commands name karta hai jo chalana chahta hai aur koi decision points flag karta hai. Pehle destructive command se pehle poochta hai.
+3. **Aap approve karte hain aur dekhte hain.** Agent install commands chalata hai, API hit karta hai, server log dekhta hai, aur aapko dikhata hai kya dikhta hai. Jab known failure aata hai, woh brief se pattern recognize karta hai aur documented fix apply karta hai.
+4. **Aapka agent seam pe rukta hai.** Kuch moves sirf aap kar sakte hain: dashboard URL kholna, decide karna ki $750 refund dena chahiye ya nahi, API key export karna. Agent seam name karta hai aur wait karta hai.
+5. **Aap tab done hain jab ek observable cheez hoti hai.** Activity log mein nayi row appear hoti hai. Issue `done` pe move hota hai. SQL query expected history return karti hai. Har scenario batata hai kya dekhna hai.
+
+Bas. Agent woh karta hai jo agent acha karta hai: install, configure, debug, query, recover. Aap woh karte hain jo sirf aap kar sakte hain: decide, approve, aur accounts se tied cheezon pe act karna. Yeh rhythm (goal describe karo, plan lo, approve, execute with verification har step pe) wahi prompting pattern hai jo [AI Prompting in 2026 crash course](/docs/ai-prompting-2026) mein sikhaya gaya hai. Neeche har scenario **do chhote paste prompts** use karta hai ek wall of instructions ki jagah, taake aap rhythm experience karo sirf padhne ki jagah.
+
+<figure>
+
+![Har scenario wohi five-step rhythm use karta hai: aap ek sentence paste karte hain; agent AGENTS.md consult karta hai aur plan propose karta hai; aap approve karte hain; agent execute karta hai aur verify karta hai; scenario tab done hota hai jab ek observable cheez hoti hai (activity-log row, issue at done, SQL result).](/img/paperclip-collaboration-rhythm.svg)
+
+</figure>
+
+Poori crash course ke liye ek recovery move
+
+Agar kisi bhi waqt kuch galat ho jaye, aapko CLI commands ya error codes jaanne ki zaroorat nahi. Apne agent ko yeh paste karo:
+
+> Kuch kaam nahi kiya. `paperclipai doctor` chalao, phir sabse recent Paperclip server log padho, mujhe plain language mein batao kya dikhta hai, aur ek fix propose karo jo main approve kar sakoon.
+
+Aapka agent diagnostic chalata hai, log padhta hai, kya dekhta hai woh name karta hai, aur fix propose karta hai. Aap approve karte hain. Har scenario ke liye recovery loop yehi hai.
+
+Agar scenario zyada time le
+
+Har scenario ka budgeted time hai (H2 mein dikha hai). Agar aap uss budget ke 2x se zyada chale jate hain (jaise 15-minute scenario pe 30 minutes se zyada), apne agent ko wapas kheencho aur paste karo: *"Humein kya block kar raha hai, ek sentence mein? Wahan se re-plan karte hain."* Budget se zyada spin karna usually matlab agent improvise kar raha hai; plan pe re-anchoring fix kar deta hai.
+
+Jo base aap download karoge woh do cheezon ke ird-gird centered hai: `AGENTS.md` (kisi bhi coding agent ke liye jo Paperclip ka kaam karta hai, ek compact operational reference) aur `worker-stub.py` (keyless local Worker jo Scenario 2 mein hire karte hain), `CLAUDE.md` (ek line, `@AGENTS.md`) brief ko Claude Code mein automatically wire karta hai aur usual base files saath mein hain (`README`, `.gitignore`, `.env.example`). Brief aur Worker poora environment hain; Paperclip khud aap Scenario 1 mein install karte hain, aur aapka agent setup ka hissa ke taur pe Paperclip ke khud ke operator skills install karta hai.
+
+[Download paperclip-workforce-base.zip](https://github.com/panaversity/agentfactory-manufacturing/releases/latest/download/paperclip-workforce-base.zip)
+
+Base download karo aur folder apne coding agent mein kholo. Aap ek baar setup karte hain: `paperclip-workforce/` aapka folder hai poore course ke liye. Apna coding agent yahan launch karo:
+
+```
+cd paperclip-workforce
+claude
+```
+
+Aapke agent ke paas ab brief loaded hai. Setup ka hissa ke taur pe, woh Paperclip ke khud ke operator skills bhi install karega (ek baar ka `npx skills add`), toh hire-and-recover knowledge seedha Paperclip se aati hai, sirf is brief se nahi. Hum ek time pe ek scenario walk karte hain; har ek agle shuru hone se pehle runnable success pe khatam hota hai. Yeh brief ek capable coding agent maanta hai (Claude Code, ya OpenCode jo current frontier model chala raha ho). Purane ya chhote models drift karenge, sabse zyada Scenario 2 ke Worker-create body ki precise JSON pe aur Scenario 6 ki SQL pe. Agar aapke agent ka pehla plan Scenario 1 mein vague ya generic lagta hai aapki machine ke liye specific hone ki jagah, toh yeh signal hai aage badhne se pehle ek stronger pe switch karo.
+
+* * *
+
+## Scenario 1 se pehle: confirm karo ke aapke agent ke paas brief loaded hai (~30 sec)
+
+Ek paste batata hai ki `CLAUDE.md` ne apna kaam kiya aur `AGENTS.md` ko aapke agent ke context mein pull kiya:
+
+> Tum Paperclip ke liye kya kar sakte ho?
+
+Agar reply specific Paperclip work name karta hai (pre-install probe, company-and-Worker shape, heartbeat contract, create-time issue assignment, approval payload, budget reality, activity-log queries, monthly audit habit), toh loaded hai aur Scenario 1 ke liye ready ho. Agar generic AI capability talk lagti hai bina Paperclip-specific details ke, toh import fire nahi hua: agent band karo, confirm karo ke aap `paperclip-workforce/` folder ke andar ho, aur relaunch karo.
+
+`AGENTS.md` mein kya hai (file jo aapka agent ab padh raha hai)
+
+Aapko khud yeh file padhne ki zaroorat kabhi nahi; wohi point hai. Lekin uska shape jaanna better questions poochne mein madad karta hai ("approvals section se walk karo" kaam karta hai kyunki section exist karta hai). Brief yeh cover karta hai, order mein:
+
+```
+PART 1 :: PRINCIPLES (har jagah apply hote hain)  Versions jispe brief verify hua hai  Source of truth, order mein         ← live docs > this brief > the running install  Critical: discover before you act  ← table of intent → where to confirm  Working pattern (har task)       ← read → propose → ask → execute → verify  Past tense sirf completed actions ke liye  Trust progression                  ← ask each, then blanket; re-acquire on anomaly  Safety rails (non-negotiable)  Secrets discipline  Sourcing claims jo sirf brief mein hainPART 2 :: OPERATIONS (live install ke against verified)  Install and onboard            ← pre-install probe + onboard flow  Configure                      ← second instance, keeping the server alive  Companies                      ← create, goals, projects  Agents (Workers) and adapters  ← real adapter list + verified create body  The heartbeat contract         ← http adapter actually kya POST karta hai  Issues and assignment          ← koi routing engine nahi; create time pe assign karo  Approvals                      ← payload + kyun yeh decision record hai  Budgets                        ← kyun sirf LLM Workers ke liye move karte hain  Audit trail                    ← activity_log + real connection string  Diagnose and recover           ← sabse common failures  Jab tumhe nahi pata kya karna hai ← three-layer fallback
+```
+
+Agar `AGENTS.md` ka koi particular section baad mein relevant lage, toh aap apne agent se pooch sakte ho ki act karne se pehle walk through kare (jaise, "AGENTS.md ke Approvals section se walk karo hum us request file karne se pehle"). Brief is tarah likha gaya hai ki agent khud usse direct kar sake.
+
+Lab path pe note: poori pipeline keyless chalao
+
+Scenario 2 mein jo Worker hire karoge woh `worker-stub.py` hai, ek keyless local Worker jo aapke download mein shamil hai. Yeh Paperclip ke **`http` adapter** pe chalta hai: har heartbeat pe, Paperclip poori issue ko stub ko POST karta hai, stub issue padhta hai aur ek disposition back POST karta hai. Koi LLM nahi, koi API key nahi, koi doosra tool nahi. Aap poora management plane (heartbeats, assignment, approvals, audit) end-to-end chalate hain jo aapke paas pehle se hai, Scenarios 1 se 4 aur Scenario 6 tak. Phir Scenario 5 mein aap **ek** cheez add karte hain, ek free Gemini key, ek deliberate reason ke liye: keyless stub koi billable kaam nahi karta, toh budget ke paas uske against meter karne ko kuch nahi hai. Real LLM Worker woh hai jo budget ko enforce karne ke liye kuch deta hai. Pipeline shape dono taraf identical hai; keyless stub sirf drafted reply ki jagah ek stub disposition produce karta hai.
+
+* * *
+
+## Scenario 1: Paperclip khada karo aur apni company define karo (~15 min)
+
+Goal: Paperclip aapke laptop pe running, ek company configured ("Acme Customer Support" ya jo naam aap lo), dashboard aapke browser mein reachable. Do prompts: plan ke liye poocho, approve aur execute.
+
+### 1a. Onboard aur install verify karo
+
+**Pehla prompt: kya chahiye woh describe karo aur plan ke liye poocho.**
+
+> Main Paperclip apne laptop pe chalana chahta hoon, ek pehli company ke saath jiska naam Acme Customer Support ho. Kuch change karne se pehle, check karo ke mere machine pe kya hai, phir mujhe plain language mein apne plan se walk through karo: kya mila, kya karoge, aur kahan meri zaroorat padegi.
+
+Aapka agent `AGENTS.md` padhta hai, pre-install probe chalata hai (Node version, prior installs, port availability, prior data directory, doosre chalte Paperclip processes), aur plan propose karta hai. Woh ek jagah flag karega jahan shayad aapki zaroorat padegi: agar koi stale state hai (prior `paperclipai` install, default port hold karne wala process), toh woh aapke decision ke liye rukta hai usse chhoone se pehle. Plan padho. Agar kuch galat lage, push back karo. "Yeh kyun kar rahe ho?" poochto aur agent explain karega ya adjust karega.
+
+**Doosra prompt: approve karo aur chalne do.**
+
+> Plan acha lag raha hai, step by step aage badho aur mujhe dikhao kya dikhta hai. Kuch destructive karne se pehle ruko. Jab ho jaye, mujhe dashboard URL do taake main apne browser mein khol sakoon.
+
+Aapka agent brief se onboarding command chalata hai, output dekhta hai, aur operational values capture karta hai jo script print karti hai: API host, dashboard URL, data-directory path, embedded Postgres port, aur config-file path. Yeh sab ek project-local file mein save karta hai jo aap control karte hain (chat mein kabhi wapas echo nahi hota). Ek chhoti si cheez jo brief apne agent se sahi karwata hai: onboard banner apni API line ko `/api` suffix ke saath label karta hai, lekin agent bare host ko uske bina capture karta hai, taake baad mein API calls mein doubled `/api/api/` path na aaye. Yeh aapko khud track karne ki zaroorat nahi; yeh woh tarah ki detail hai jiske liye brief exist karta hai. Default loopback bind mode mein koi bootstrap API key issue nahi hoti (trust loopback-scoped hai), aur aapka agent batayega agar aap poocho ki key kyun nahi aayi. Jab onboarding khatam hoti hai, dashboard typically aapke default browser mein auto-open ho jati hai.
+
+**1a done jab:** agent report kare ki API server listen kar raha hai, aap dashboard URL apne browser mein khol sakte hain, aur dashboard bina errors ke render hoti hai.
+
+### 1b. Apni pehli company define karo
+
+**Apne agent ko yeh paste karo:**
+
+> Ab company set up karo. Iska naam Acme Customer Support rakho, purpose "Respond to customer inquiries within 4 hours, with refund decisions made consistently and within policy." Ek goal do, "Reduce average response time to under 4 hours," aur ek project, "Inbound email triage." Jab ho jaye, mujhe dikhao ab dashboard mein kya hai.
+
+Aapka agent brief ki Companies section padhta hai aur field names running API ke against confirm karta hai (brief note karta hai ki company ka purpose ek `description` field mein jata hai, aur ek unknown field name silently fail hota hai loudly ki jagah). Phir woh company, goal, aur project create karta hai, aur aapko dashboard pe confirm karne le jata hai.
+
+**Aap Scenario 1 mein done hain jab:** aapka dashboard ek company dikhata hai jiska naam "Acme Customer Support" hai ek goal aur ek project ke saath, aur activity log matching creation rows dikhati hai (aapka agent exact action names padhega jo Paperclip ne record kiye; woh `company.created`, `goal.created`, `project.created` jaise dikhte hain). Har future action is baseline ke upar layer karta hai.
+
+Carry-forward into Scenario 2
+
+Company ID jo Paperclip ne assign ki ab project-local file mein hai jo agent ne banayi. Aapka agent har baad ke scenario mein us file se padhta hai, toh aapko khud ID yaad rakhne ki zaroorat nahi. Apne agent ko unzipped folder mein chalate raho taake file uske working directory mein ho.
+
+* * *
+
+## Scenario 2: Apna pehla Worker hire karo (~15 min)
+
+**Concept.** Paperclip mein ek **Worker** ek configured role hai: ek naam, ek runtime, permissions, ek budget, ek heartbeat schedule. (Paperclip ka khud ka API inhe "agents" kehta hai; yeh page har jagah "Worker" kehta hai taake kabhi us coding agent se confusion na ho jisko aap prompts paste kar rahe ho. Jab aapka agent aapko `/agents` pe request dikhata hai, woh wahi cheez hai.) Runtime ek **adapter** ke through plug hota hai. Paperclip inhe ship karta hai: LLM runtimes (`claude_local`, `codex_local`, `gemini_local`, aur aur), ek `openclaw_gateway`, ek `process` adapter jo har heartbeat pe ek command chalata hai, aur ek `http` adapter jo har heartbeat ko ek URL pe POST karta hai jo aap control karte hain. Aapka agent ek API call se current set list kar sakta hai aapke install ke against.
+
+![Bring-your-own-agent heartbeat contract. Paperclip Worker ke URL pe ek heartbeat POST karta hai assigned issue lekar (agentId, runId, aur ek context object poori issue ke saath); yeh authority envelope ya budget push nahi karta, jo server-side rehte hain. Worker HTTP 200 se acknowledge karta hai aur apna disposition separately PATCH karta hai issue ko done karke. Koi bhi runtime jo yeh contract bolta hai (http, process, claude_local, codex_local, gemini_local, aur aur) Worker ke taur pe hireable hai.](/img/02-bring-your-own-agent-40f714c595343dd8f9184f134722683a.webp)
+
+Is crash course ke liye aap apna pehla Worker **`http` adapter** pe hire karoge, `worker-stub.py` ki taraf pointed, jo keyless local Worker hai jo aapke download mein shamil hai. Yeh ek chhoti Python file hai jo sirf standard library use karti hai. Har baar jab Paperclip usse kaam assign karta hai, woh poori issue ko stub ko POST karta hai; stub issue padhta hai aur ek disposition back POST karta hai, jo issue ko `done` pe move karta hai. Ek dispatcher ko imagine karo jo ek field tech ko job radio kar raha hai: Paperclip poori ticket hand over karta hai, Worker kaam karta hai aur radio back karta hai ki ho gaya (wahi disposition hai), aur Paperclip call log karta hai line pe wait karne ki jagah. Koi LLM nahi, koi API key nahi. Pipeline shape (heartbeat, assignment, approval, audit) exactly wahi hai jo real LLM Worker ke liye hogi; sirf work-product drafted reply ki jagah ek stub disposition hai. Scenario 5 hai jahan aap usse real LLM-backed Worker se swap karte ho.
+
+**Authority pe ek note.** Jab aap Worker hire karoge, toh aap plain language mein ek `capabilities` field mein describe karoge ke woh kya kar sakta hai: CRM records padhta hai, replies draft karta hai, $50 se zyada refunds aur outbound external email ko board approval chahiye. Isse apne Worker ka authority envelope samjho. Paperclip 2026 ke release mein woh envelope aapki description ke taur pe store hoti hai, runtime ke through field-by-field enforce nahi hoti; real enforcement seam approval gate hai jo aap Scenario 4 mein wire karoge. Envelope abhi bhi sahi mental model hai: yeh woh line hai, jab ek task usse cross karta hai, toh action ki jagah approval request produce karni chahiye.
+
+![Authority envelope sochne ka mental model hai ki Worker kya kar sakta hai, Paperclip schema nahi. Paperclip 2026 ke release mein aap Worker ki authority plain language mein uski capabilities field mein describe karte hain; runtime woh prose store karta hai structured per-field limits enforce karne ki jagah. Real enforcement seam approval gate hai: jab ek task aapki description ki line cross karta hai, ek board approval file hoti hai action ki jagah.](/img/08-authority-envelope-cascade-f5fac1b046e631cfd4a0c87dc0d1d604.webp)
+
+Aap role define karke aur API ke through register karke hire karte hain. Do prompts: stub shuru karo aur role draft karo, phir register aur verify.
+
+### 2a. Stub Worker shuru karo aur role draft karo
+
+**Pehla prompt: orient karo, phir draft.**
+
+> Main apna pehla Worker hire karna chahta hoon, Tier-1 Customer Support, is folder mein aaye stub pe. Pehle batao `worker-stub.py` kya karta hai aur tum ise kaise shuru karoge. Phir mujhe Worker ka setup dikhao kuch register karne se pehle taake main dekh sakoon, aur budget jaan-bujhke chhota rakhna, Scenario 5 hai jahan budget actually kuch meter karta hai.
+
+Aapka agent `AGENTS.md` ki Agents section padhta hai aur `worker-stub.py` explain karta hai (yeh ek tiny HTTP server hai: Paperclip ke heartbeat POST ke liye listen karta hai, issue payload se padhta hai, aur ek `done` disposition back PATCH karta hai). Phir woh dikhata hai kaise shuru karega (ek `python3` command, ek listening port aur aapke Paperclip API URL ke saath arguments). Phir woh agent-create body draft karta hai aur aapko structure dikhata hai: `name`, `adapterType` (`http`) aur `adapterConfig` (stub ka URL), `capabilities` (plain prose mein authority text), `permissions`, `budgetMonthlyCents`, aur heartbeat schedule `runtimeConfig` ke under. Padho. Agar koi field galat lage, poocho; agent live API ke against confirm karega.
+
+**Doosra prompt: shuru karo, register, verify.**
+
+> Acha lag raha hai, stub shuru karo, Worker register karo, aur confirm karo dashboard mein dikhta hai. Mujhe iska ID batao, agla heartbeat kab fire hota hai, aur stub ka log taake main dekh sakoon ke woh listen kar raha hai.
+
+Aapka agent `worker-stub.py` shuru karta hai (yeh background mein chalta rehta hai, har heartbeat jo receive karta hai log karta hai), API ke through role register karta hai, assigned agent ID ko project-local file mein capture karta hai, aur aapko dashboard refresh karne ko kehta hai.
+
+**Aap Scenario 2 mein done hain jab:** dashboard ek Worker dikhata hai jiska naam "Tier-1 Customer Support" hai, `worker-stub.py` chal raha hai aur uska log file exist karta hai, aur activity log Worker-creation row dikhati hai (aapka agent exact action name padhega; woh `agent.created` jaise dikhta hai). Ek cheez jaan leni hai: **Paperclip Worker ko hire ke baad reconfigure kiya ja sakta hai** (uska budget, aur adapter bhi, API ke through), lekin agent surface pe koi delete nahi hai, toh aap Worker adjust kar sakte ho kabhi remove nahi; truly clean slate ke liye aap fresh install shuru karte ho. Isliye Scenario 5 ek *alag* LLM Worker hire karta hai stub ko re-point karne ki jagah: dono ko side by side chalana hi hai jo aapko keyless versus billable compare karne deta hai.
+
+Carry-forward into Scenario 3
+
+Aapka Worker registered hai aur `worker-stub.py` chal raha hai, lekin Worker ka issue queue khaali hai. Agla scenario usse real kaam deta hai. Stub process chalate raho: agar band kar doge, toh heartbeats ek dead URL pe aayengengi aur issues resolve nahi hongi. Agar aaj ke liye ruk jao, toh aapka agent Scenario 3 wapas lene pe stub restart kar sakta hai.
+
+* * *
+
+## Scenario 3: Company ko pehla real issue bhejo (~15 min)
+
+**Concept.** Company exist karti hai, Worker exist karta hai, lekin kuch assign nahi hua. Real production mein, ek customer email ek event trigger karega jo Paperclip issue create karega. Paperclip 2026 mein koi rules-based routing engine nahi: koi "agar issue X match kare, toh Worker Y ko bhejo" layer nahi. Assignment direct hai, aur *jab* aap karte ho woh matter karta hai. Ek issue jo create time pe ek assignee ke saath create hota hai, heartbeat orchestration mein wire hota hai: woh paidaishi ready hai, aur next heartbeat usse pick karta hai. Ek issue jo bina assignee ke create hota hai, phir baad mein assign hota hai, wohi tarah se pick nahi hota. Toh move yeh hai: issue create karo aur usi step mein Worker ka naam lo.
+
+Aage kya hota hai woh interesting hissa hai: Worker ka next heartbeat fire hota hai, Paperclip poori issue `worker-stub.py` ko POST karta hai, stub padhta hai aur ek `done` disposition back POST karta hai, aur issue `todo` se `in_progress` se `done` pe move hoti hai, har step ko record karti activity-log row ke saath.
+
+Do prompts: issue create aur assign karo, phir Worker ko pick karte dekho.
+
+### 3a. Ek inbound issue create karo, create time pe assigned
+
+**Apne agent ko yeh paste karo:**
+
+> "Inbound email triage" project ke liye ek inbound issue create karo: customer C-4429 damaged product pe $30 refund maang raha hai, ek realistic two-sentence customer email ki tarah likho. Ise Tier-1 Customer Support ko assign karo **jaise hi create karo**. Phir mujhe issue ID aur status dikhao jismein hai.
+
+Aapka agent brief ki Issues section padhta hai, issue create karta hai jismein Worker create command mein assignee ke taur pe named hai, aur aapko issue identifier dikhata hai (woh `ACM-1` jaise dikhta hai).
+
+**3a done jab:** dashboard ka issue queue ek issue dikhata hai jo Tier-1 Customer Support ko assigned hai, status `todo` mein, aur activity log `issue.created` row dikhati hai.
+
+### 3b. Dekho Worker usse pick karta hai
+
+Isse paste karne se pehle ek heads-up. Jisko Worker aapne hire kiya hai uske paas `wake on assignment` set hai, toh issue ko create time pe assign karna immediately heartbeat fire kar chuka hai. Jab tak aap yeh padho, issue shayad pehle se `done` hai. Woh system ka kaam hai, koi step aapne miss nahi kiya. Toh yeh prompt "isko hone do" nahi hai; yeh hai "dikhao kya pehle se ho chuka hai, record mein."
+
+**Apne agent ko yeh paste karo:**
+
+> Mujhe dikhao uss issue ke saath kya pehle se ho chuka hai. Stub ka log aur issue ki rows activity log mein nikaalo, aur mujhe heartbeat se done tak sequence walk through karo, point out karte hue ki kya prove karta hai ki Worker ne actually kaam kiya sirf issue ko done pe flip karne ki jagah. Agar abhi tak done nahi hai, toh pehle haath se heartbeat fire karo, phir walk through karo.
+
+Aapka agent dono records padhta hai aur sequence narrate karta hai jo pehle se chal chuka hai: Worker assignment pe wake hua, Paperclip ne issue stub ko POST ki, stub ne `done` disposition back PATCH ki. Issue `done` pe hai dono `startedAt` aur `completedAt` timestamp set ke saath. Activity log run record karti hai. (Agar heartbeat schedule abhi fire nahi hua hota, toh brief mein on-demand heartbeat ka command bhi hai, toh agent cadence ka wait kiye bina trigger kar sakta hai.)
+
+**Aap Scenario 3 mein done hain jab:** issue `todo` se `in_progress` se `done` pe move ho chuki hai, activity log transition dikhati hai, aur `worker-stub.py` ka log heartbeat dikha raha hai jo usne receive kiya aur disposition jo usne back post ki. Is issue pe koi cost record nahi hai, jo sahi hai: Scenario 5 cover karta hai kyun, aur kahan cost data exist karna shuru hota hai.
+
+Carry-forward into Scenario 4
+
+Aapke Worker ke paas ek issue hai, toh activity log khaali nahi jab aap approval step aage add karoge. Scenario 4 jaan-bujhke ek issue ke saath kaam karta hai jiska action (ek bada refund) Tier-1 Worker ke akele decide karne se zyada hai, taake dikhaye ki board sign-off kaise file aur record hota hai.
+
+* * *
+
+## Scenario 4: Risky action ke liye approval file karo (~15 min)
+
+**Concept.** Kuch actions Tier-1 Worker ke pay grade se zyada hain: ek $750 refund, ek contract change, kuch bhi jo aapne Scenario 2 mein describe ki authority envelope cross karta hai. Paperclip ka jawab **approval** hai: ek tracked board decision record. Ek real LLM Worker, $750 refund ke baare mein reasoning karte hue, recognize karega ki action uski authority se zyada hai aur action lene ki jagah approval request file karega. Aapka keyless stub Worker reason nahi karta, toh is scenario mein **aap board ke hand ke taur pe act karte hain**: aap approval request file karte ho jo Worker file karta, aur phir aap decide karte ho.
+
+Do cheezein shuru se honest honi chahiye, kyunki woh "done" ka matlab shape karti hain:
+
+- **Ek approval decision record hai, state machine nahi.** Approval file karna Worker ko suspend nahi karta, aur approve karna automatically ek ko resume nahi karta, linked issue ka status change nahi karta, ya approved action execute nahi karta. Decision pe act karna alag, explicit step hai. Isse ek signed approval memo ki tarah socho jo file mein giraya gaya: signature record karti hai ki kisne kya aur kyun decide kiya; woh refund dispatch nahi karti usse zyada jitna manager ka 'approved' reply package ship karta hai. Paperclip aapko *durable, audited record* deta hai kisne kya aur kyun decide kiya, kab ke saath. Woh record valuable cheez hai: yeh woh hai jo auditor chhe mahine baad padhta hai.
+- **Teachable moment audit trail hai**, automated unblock nahi. Activity log mein row ke liye dekho, issue ke apne aap move hone ki jagah.
+
+![Ek approval tracked board decision record hai, state machine nahi. Ek request type ke saath file hoti hai (risky action ke liye request_board_approval) aur action, rationale, aur alternatives ka free-form payload; status pending se approved ya rejected mein move hoti hai jab human board decide karta hai, decider aur timestamp stamp karte hue. Approval decide karna automatically Worker ko resume nahi karta ya linked issue ko apne aap change nahi karta; decision pe act karna alag step hai. Value activity_log mein audited chain hai, jismein actor_type human decider ko mark karta hai.](/img/04-approval-gate-af1f5d37df288740fdc3d3338059d33d.webp)
+
+Do prompts: request file karo, phir decide karo.
+
+### 4a. Approval request file karo
+
+**Apne agent ko yeh paste karo:**
+
+> Ek inbound issue create karo: customer C-1138 teen mahine pehle kharide product pe $750 refund chahta hai, kehta hai defective aaya hai, aur photos hain. Abhi Worker ko assign mat karo, isko pehle board sign-off chahiye. Phir, Worker ki tarah act karte hue jab kuch uski authority se zyada ho, ek board approval file karo issue se linked, action capture karte hue ("issue a $750 refund"), rationale (unka history, photos, documented defects pe policy), aur do teen alternatives jo consider kiye (partial refund, store credit, no refund). Mujhe approval `pending` mein dikhao, aur confirm karo ki issue khud untouched hai.
+
+Aapka agent bina assignee ke issue create karta hai (taake stub Worker kabhi usse pick na kare; woh apne default starting status pe baithi hai). Phir woh company ke approvals API ke through approval request file karta hai: board-decision `type`, aur ek free-form `payload` jo action, rationale, aur alternatives verbatim carry karta hai. Woh approval ko issue se link karta hai. Activity log ko ek `approval.created` row milti hai.
+
+**4a done jab:** issue exist karti hai, unassigned aur apne default status pe untouched, dashboard ke approvals queue mein ek `pending` entry hai, aur agent aapko decision hand karne ke liye rukta hai.
+
+### 4b. Decide karo
+
+Yeh hissa aapka hai. Padho request jo aapke agent ne file ki: amount, rationale, alternatives. Decide karo.
+
+**Apne agent ko yeh paste karo jab aap decide kar lo:**
+
+> Maine is refund ko approve karne ka faisla kiya hai (ya reject, main bata dunga kaunsa aur kyun ek line mein). Mera decision record karo, phir mujhe uski activity-log rows walk through karo aur point karo ki kya prove karta hai ki main, human board, decider tha agent ki jagah. Aur mujhe yaad dilaao ki apne aap kya *nahi* hua: issue abhi bhi wahan baithi hai jahan thi, aur main kya karunga decision pe actually act karne ke liye.
+
+Aapka agent aapka decision record karta hai (approval `approved` ya `rejected` pe move hoti hai, decider ki identity aur decision timestamp ke saath stamped). Woh aapko activity log walk through karta hai: `approval.approved` (ya `approval.rejected`) row, `actor_type` `user` pe set aur board ko identify karta `actor_id` ke saath. Phir woh honest hissa name karta hai: linked issue apne aap status change nahi hui. Agar aap issue close karna chahte ho ya refund "issue" karna chahte ho (simulated, kyunki koi payment processor wired nahi), toh woh alag command hai, aur agent karega agar aap poocho.
+
+**Aap Scenario 4 mein done hain jab:**
+
+- activity log mein approval chain hai (request filed, aapke dwara decision recorded),
+- linked issue decision se visibly unchanged hai,
+- aap us field ka naam bata sakte ho jo human decider ko agent action se alag karta hai (`actor_type`), aur
+- aap apne alfaazon mein bata sakte ho ki approval decision record hai automatic unblock ki jagah.
+
+Carry-forward into Scenario 5
+
+Aapke paas ab ek chhoti lekin real activity log hai: do issues, ek approval, unke peeche heartbeat runs. Ek table abhi bhi khaali hai, lekin: koi cost data nahi abhi tak. Scenario 5 hai jahan woh badalta hai, aur yeh ek scenario hai jisko API key chahiye.
+
+* * *
+
+## Scenario 5: Real LLM Worker swap karo; budget ko teeth do (~15 min)
+
+**Concept.** Har Worker ka ek monthly budget hota hai, cents mein set jab aap hire karte ho. Lekin budget ke paas sirf tab enforce karne ko kuch hota hai jab Worker **billable kaam** karta hai: keyless stub koi nahi karta, toh uska spend zero pe rehta hai aur budget kabhi move nahi hota. Yeh cheez ka honest shape hai, lab mein bug nahi. Budget ko actually kuch meter karte dekhne ke liye, aapko ek Worker chahiye jo real LLM runtime backed ho.
+
+Toh yeh scenario swap karta hai. Aap ek **alag** Worker hire karoge `gemini_local` adapter pe (ek fresh hire, taake aapka keyless stub contrast ke liye chalta rahe), usse jaan-bujhke tiny monthly budget do, dollar ya do, aur itna kaam load karo ki budget neeche chal jaye. Phir dekho Paperclip actually kya karta hai jab spend limit ke qareeb aur phir usse cross karta hai. Yeh ek scenario hai jisko API key chahiye: ek free Gemini key, wahi jo OpenClaw crash course use karta hai. Gemini woh path hai jo yeh page walk karta hai kyunki free tier scenario ko keyless-adjacent rakhti hai. Agar aapke paas pehle se kisi aur low-cost runtime ke liye key hai (`codex_local` saste OpenAI model ke saath, misaal ke taur), toh woh identical budget mechanic demonstrate karta hai, aur aapka agent adapter adjust kar sakta hai.
+
+![Budget ek single monthly cents value hai, aur uske paas sirf tab teeth hain jab Worker billable kaam karta hai. Ek keyless stub Worker zero cost generate karta hai: uska monthly spend kabhi move nahi hota aur cost tables khaali rehte hain, chahe kitne bhi heartbeats fire hon. Ek LLM-runtime Worker billable kaam karta hai, toh per-run usage heartbeat records pe record hoti hai aur monthly spend budget ke against climb karta hai. Paperclip kya karta hai jab spend limit ke qareeb pohunchta hai woh aap Scenario 5 mein live observe karte ho.](/img/05-budget-and-throttling-ebf3b6f6fad90ffccf751ee40c692176.webp)
+
+Ek prompt LLM Worker hire karne ke liye, ek usse kaam dene ke liye aur budget dekhne ke liye.
+
+### 5a. LLM Worker hire karo
+
+**Apne agent ko yeh paste karo:**
+
+> Main ab ek real LLM Worker add karna chahta hoon. Main pehle apne shell mein `GEMINI_API_KEY` export karunga, tab batao. Ek alag Worker hire karo, Tier-1 Customer Support (LLM), `gemini_local` adapter pe sabse saste capable Gemini model ke saath, aur jaan-bujhke tiny monthly budget do, ek dollar ya do, taaki main spend build hote dekh sakoon. Mujhe setup dikhao register karne se pehle, aur yaad dilao ki hum alag Worker kyun hire kar rahe hain stub ko re-point karne ki jagah.
+
+Aapka agent yaad dilata hai ki aap alag Worker isliye hire kar rahe ho taake keyless stub contrast ke liye chalta rahe (Worker API ke through re-point ho sakta hai, lekin dono ko side by side rakhna hi hai jo aapko keyless versus billable compare karne deta hai), woh point name karta hai jahan aapko key export karni hai, aur agent-create body draft karta hai: Scenario 2 jaisi hi shape, lekin `adapterType` `gemini_local` pe set aur chhote `budgetMonthlyCents` ke saath. Woh Worker register karta hai jab aap key export kar lo.
+
+### 5b. Usse kaam do aur budget dekho
+
+**Apne agent ko yeh paste karo:**
+
+> Ab LLM Worker ko kaam do: lagbhag das chhoti, varied inbound support issues create karo aur har ek ko usse assign karo jab create karo, phir heartbeats fire karo taake woh unhe kaam kare. Server log mere saath dekho. Main do cheezein dekhna chahta hoon: cost data exist karna shuru (keyless stub ke liye kabhi nahi tha) aur Worker ka monthly spend budget ke against climb karta hua, aur mujhe plain language mein batao Paperclip kya karta hai jab spend limit ke qareeb aur phir cross karta hai.
+
+Aapka agent issues create aur assign karta hai, heartbeats fire karta hai, aur log tail karta hai. Is baar Worker billable kaam karta hai, toh per-run usage data heartbeat records pe land karna shuru hoti hai, aur Worker ka monthly spend zero se move karta hai. Aapka agent narrate karta hai ki Paperclip actually kya karta hai jab budget neeche chalta hai aur aapko plainly report karta hai: yeh live observation hai, scripted outcome nahi, aur aapka agent ka kaam hai batana kya dikhta hai.
+
+**Aap Scenario 5 mein done hain jab:**
+
+- naye LLM Worker ne real issues resolve ki hain,
+- per-run cost data exist karti hai jahan pehle khaali thi,
+- Worker ka monthly spend aapke set budget ke against move ho chuka hai, aur
+- aapke agent ne aapko plain language mein bataya ki Paperclip ne kya kiya jab budget apni limit ke qareeb pohuncha.
+
+API key pe ek baat
+
+Key apne shell mein export karo (`export GEMINI_API_KEY=...`); kabhi project ki file mein paste mat karo, aur apne agent ko kabhi kisi mein likhne mat do. `AGENTS.md` aapke agent ko bhi wahi kehta hai. Agar kabhi key kahin paste kar do jahan nahi honi chahiye, toh rotate karo. Free-tier key low-stakes hai, lekin habit point hai.
+
+Carry-forward into Scenario 6
+
+Aapke paas ab do Workers hain (keyless stub aur LLM-backed ek), ek darjan se zyada issues, ek approval, aur (is scenario mein naya) real cost data. Itna history kaafi hai taake Scenario 6 ki audit query kuch padhne lauta laaye.
+
+* * *
+
+## Scenario 6: Audit trail ko CFO ki tarah query karo (~10 min)
+
+**Concept.** Management plane ka poora point yeh hai ki workforce ke bahar koi (CFO, legal, operations, compliance) database se hi kuch seconds mein reconstruct kar sake kya hua, bina kisi se pooche. Paperclip woh history ek embedded Postgres database mein rakhta hai. Sabse zyada matter karne wali table **`activity_log`** hai: ek row har mutating action ke liye (company created, issue created, approval decided, Worker hired, heartbeat invoked), actor, action, aur entity ke saath jo touch hui. Doosri table, **`cost_events`**, dollar story hold karti hai (provider, model, tokens, cost in cents har billable run ke liye) aur rows sirf tab hoti hain jab LLM Worker ne billable kaam kiya ho, isliye Scenario 5 tak khaali thi.
+
+![activity_log table company ki institutional memory hai: ek row har mutating action ke liye, actor_type, actor_id, ek dotted action name, aur entity ke saath jo touch hui (entity_type plus entity_id, issue_id column nahi). cost_events table dollar story hold karti hai cost_cents per billable run mein aur sirf tab fill hoti hai jab LLM Worker chala ho. Dono milke CFO, legal, operations, ya compliance ko milliseconds mein reconstruct karne dete hain kya hua.](/img/06-audit-trail-bcd8705096b7796fa9cd61b237aa8d3f.webp)
+
+Ek prompt: Postgres kholo, history query aur cost query chalao, jawabon ko padho.
+
+**Apne agent ko yeh paste karo:**
+
+> CFO ka role play karo. Paperclip ki database se connect karo aur hamari company ke liye do queries chalao: pehli, "kya hua, order mein", har action apne actor aur kya touch hua ke saath, sabse purani pehle; phir aaj ki total cost dollars mein. Mujhe dono ke SQL aur results dikhao. Aakhir mein, Scenario 4 mein maine decide ki approval ki activity-log row nikaalo aur un fields ki taraf point karo jo auditor use karega confirm karne ke liye ki main decider tha.
+
+Aapka agent brief ki Audit-trail section padhta hai, aapke install ke config file se Postgres connection string assemble karta hai (iske liye koi shortcut command nahi; brief dikhata hai kaise), aur do queries chalata hai:
+
+1. **Kya hua, order mein:** `activity_log` pe ek `SELECT` aapki company ke liye filtered, time se ordered. Yeh aapke poori run ki full spine return karta hai: company aur project creation, dono Workers hired, har issue created, heartbeats, approval filed aur decided. Yeh query kaam karti hai bina kisi LLM Worker ke bhi; yeh audit story ka keyless dil hai.
+2. **Aaj ki total cost:** `cost_events` pe ek `SELECT SUM(...)`, integer cents column ko dollars mein convert karta, aaj ke liye filtered. Scenario 5 se pehle yeh kuch nahi return karti thi; ab yeh aapke LLM Worker ke runs ki real (chhoti) cost return karti hai.
+
+Phir agent aapko approval ki ek `activity_log` row dikhata hai jo aapne Scenario 4 mein decide ki: action (`approval.approved` ya `approval.rejected`), `actor_type` `user` pe set, board ko identify karta `actor_id`, aur timestamp. Auditor aapka decision aise reconstruct karta hai.
+
+**Aap Scenario 6 mein done hain jab:** history query aapke poore run ki ordered story return karti hai, cost query aapke Scenario 5 Worker se real number return karti hai, aur aap us column ka naam bata sakte ho `activity_log` mein (`actor_type`) jo human decision ko agent action se alag karta hai.
+
+* * *
+
+## Scenario 7: Aapka monthly workforce audit (~10 min/mahina)
+
+**Concept.** Ek company waqt ke saath accumulate hoti hai: Workers hired, budgets set, approvals decided, schedules running. Har addition ek chhota decision tha aapne approve kiya; chain compound hoti hai. Defense har step pe vigilance nahi hai (aap kabhi nahi pakadte jo abhi exist nahi karta); yeh fixed cadence pe ek das-minute review hai. Yeh scenario aapke pehle ninety minutes ka hissa nahi hai; yeh woh move hai jo aap mahine mein ek baar karte ho company ki baqi zindagi ke liye.
+
+**Apne agent ko yeh paste karo (jab waqt aaye):**
+
+> Mera Paperclip monthly workforce audit chalao. Sab kuch walk through karo jo hire hua, configure hua, schedule hua, decide hua, ya pichle audit ke baad pause hua. Flag karo kuch bhi jo maine explicitly sign off nahi kiya, koi Worker jo productive kaam nahi kara, koi budget jo maine set kiya se drift ho gaya, aur koi setting jo honi chahiye se loose hai. Sab kuch ek short report mein summarize karo jo main ya toh approve kar sakoon ya trim kar sakoon.
+
+Aapka agent activity log padhta hai, current Worker roster, budgets, aur audit tables, aur ek one-page report produce karta hai.
+
+**Done jab:** aapne das minute report review karne mein bitaye aur kam se kam ek decision liya (Worker ki authority text tighten karo, budget wapas prune karo, unused Worker retire karo, approval threshold badhao). Next month ke liye calendar mark karo.
+
+* * *
+
+## Yeh kyun kaam karta hai
+
+Do cheezein fresh rehti hain; ek cheez durable rehti hai.
+
+**Fresh #1**: Is page ke scenarios book site pe rehte hain. Aapka agent unhe padhta hai jab aap batate ho kis scenario pe ho.
+
+**Fresh #2**: Current Paperclip commands aur API shape [paperclip.ing/llms.txt](https://paperclip.ing/llms.txt) pe rehte hain, poori docs ka ek LLM-friendly index, plus [docs.paperclip.ing](https://docs.paperclip.ing) patient walkthrough ke liye. Aapka agent unhe kisi bhi non-trivial operation se pehle fresh padhta hai. Paperclip tezi se ship karta hai; yeh tarika hai brief accurate rahe jab individual flags drift karein.
+
+**Durable**: Base jo aapne download kiya woh do chezon ke ird-gird centered hai: `AGENTS.md` (Paperclip kya hai, docs kaise navigate karein, safety rails, verified operational shapes, recovery patterns), `CLAUDE.md` (ek line import marker), aur `worker-stub.py` (keyless Worker khud), aur aapka agent top pe Paperclip ke khud ke operator skills install karta hai. `AGENTS.md` companies, Workers aur adapters, heartbeat contract, issues aur assignment, approvals, budgets, audit, aur diagnosis cover karta hai. Yeh is page se lamba hai kyunki yeh sab kuch cover karta hai jo coding agent se Paperclip ke saath karne ko kaha ja sakta hai, sirf upar ke six scenarios nahi. Base mein kuch bhi stale nahi hota, toh aap ek baar download karte ho aur reuse karte ho.
+
+Pattern chhota by design hai: ek operational reference, ek import marker, ek runnable Worker, plus Paperclip ke khud ke operator skills jo aapka agent install karta hai. Intelligence files mein nahi hai; aapke coding agent mein hai jo unhe padhta hai aur aap jo bhi poocho uspe apply karta hai. Aapne ek demo nahi walk kiya; aapne ek company assemble ki jo kal touch karoge.
+
+* * *
+
+## Ab actually kya chal raha hai
+
+Chhah demos nahi: ek running system. Inventory jo Scenario 6 ke baad persist karta hai:
+
+| Artifact | Yeh actually kya hai | Kal kyun matter karta hai |
+|----------|---------------------|--------------------------|
+| Paperclip server | Ek long-running Node.js process jo API aur embedded Postgres hold karta hai | Aapki company terminal band karne aur reboot survive karti hai |
+| Data directory | Saara company data, encrypted secrets, server logs | Substrate; is directory ko waise backup karo jaise dotfiles karte ho |
+| Ek company | Ek purpose, ek goal, ek project, aur company-scoped isolation unke ird-gird | Woh boundary jiske andar har Worker, issue, aur approval rehta hai |
+| Do Workers | Keyless `worker-stub.py` Worker aur `gemini_local` LLM Worker | Ek Worker pipeline keyless prove karta hai; doosra economics dikhaata hai |
+| `worker-stub.py` | Ek chhota local HTTP process, heartbeats ke liye listen karta hai | Aapka pehla Worker, aur template kisi bhi keyless Worker ke liye jo aage likhoge |
+| Issues aur activity log | Issues assigned aur worked, plus har action ki row-by-row record | Reproducible workforce behavior, queryable history |
+| Ek approval | Ek board decision filed aur decided, permanently recorded | Audited sign-off jo aapki workforce risky actions ke liye use karti hai |
+| Budget ke saath data | LLM Worker ka monthly budget, real spend metered ke saath | Woh number jo "no runaway spend" enforce karne laayak banata hai sirf decorative ki jagah |
+| Audit queries jo chala sakte ho | `activity_log` (aur `cost_events`) pe SQL jo stakeholder questions fast answer karta hai | Woh view jo CFO, legal, ya compliance bina aapse pooche use kar sakte hain |
+| `AGENTS.md` aur recovery line | Durable brief jo aapka agent har session mein padhta hai | Skill jo aap is company ki lifetime ke liye reuse karte ho |
+
+Iske saath ek working day aisa dikhta hai:
+
+1. ek real customer message aata hai;
+2. ek integration (aapki baad mein wire karne ke liye) ek Paperclip issue create karta hai Worker ko assigned;
+3. next heartbeat usse Worker tak carry karta hai;
+4. Worker ek reply draft karta hai;
+5. aap high-stakes wale dashboard mein decide karte ho;
+6. mahine mein ek baar aap audit chalate ho.
+
+Agar in artifacts mein se koi bhi baad mein missing ho jaye (laptop wipe, accidental delete, version upgrade gone wrong), toh brief plus ek fresh onboard plus backup se data directory restore aapko exactly is picture pe wapas le aata hai.
+
+Ek real customer channel wire karne se pehle
+
+Crash course single-user hai: aap human board ho, aur aap woh ho jo testing ke liye issues create kar rahe ho. Ek real inbound source wire karna (support inbox, contact form, aapke existing systems se event) matlab strangers aapki workforce mein likh sakte hain. Yeh karne se pehle, do cheezein true honi chahiye. Har Worker jo inbound content process karta hai uske paas tight, clearly described authority envelope hona chahiye (broad latitude nahi sirf isliye ki kaam "customer support" hai). Aur aapko un inputs ke liye deliberate plan chahiye jo kisi Worker se map nahi hote (koi orphaned issues). Dono ke baare mein sochne tak single-user raho.
+
+* * *
+
+## Aage kahan jana hai
+
+Scenario 6 ke baad, aapke paas ek working AI-native company hai: do Workers, ek demonstrated approval, budget ke saath real data, aur audit trail jo stakeholder questions seconds mein answer karta hai. Yeh surface ka zyada tar hai jo zyada tar logon ko shuru karne ke liye chahiye.
+
+Kisi bhi topic ka patient walkthrough ke liye jo is page ne touch kiya (ya kuch chhoda), kai deeper crash courses getting-started directory mein iske saath hain. Quick map:
+
+| Aapko chahiye... | Jao |
+|------------------|-----|
+| Ek single Worker ko durable workflow engine mein wrap karo fleet manage karne se pehle | [From Digital FTE to Production Worker](/docs/ai-agent-nervous-system-crash-course): Inngest durability envelope |
+| Hiring ko callable capability mein badalo (Workers jo doosre Workers ko policy ke under hire karein) | [From Fixed to Dynamic Workforce](/docs/dynamic-workforce-crash-course): is course ka successor |
+| Paperclip ke REST API ko tools ke taur pe kisi aur agent ke andar se use karo | [docs.paperclip.ing](https://docs.paperclip.ing) pe current MCP server package check karo; version pin karo |
+| Paperclip ko cloud ya shared host pe deploy karo (multi-machine, multi-user) | [docs.paperclip.ing](https://docs.paperclip.ing) pe live docs; rely karne se pehle verify karo kya ship hua hai |
+| OpenClaw ko edge layer ke taur pe humans aur aapki workforce ke beech wire karo | [OpenClaw crash course](/docs/openclaw-with-general-agents) |
+
+Baaki sab ke liye, aapka `AGENTS.md` platform ka zyada tar cover karta hai. Apne coding agent se poocho: "AGENTS.md heartbeat contract ke baare mein kya kehta hai?" ya "AGENTS.md ke approvals section se walk karo." Brief reference hai; yeh page tour hai.
+
+**Meta-lesson**: aapke unzipped folder mein sabse valuable cheez `AGENTS.md` hai. Ek shaam lo ise end to end padhne ke liye (install steps ke liye nahi, balki document ki *shape* ke liye: discover-before-act table, working pattern, task type se operations, diagnostic checklists). Phir ek likho kisi bhi tool ke liye jiske saamne aap coding agent rakhoge. Pattern portable hai: har tool jiski learnable surface hai uska `AGENTS.md` likhne laayak hai. Paperclip ek clean target tha kyunki install agent-driven setup se benefit karta hai aur operations paste-and-watch scenarios mein decompose hoti hain; aap doosre dhundh loge.
+
+* * *
+
+## Flashcards Study Aid
+
+Crash course ke framing mein, Paperclip OpenClaw ke relative mein kya hai?
+
+<details>
+<summary>Jawab dekho</summary>
+
+Paperclip **company** hai aur OpenClaw **employee** hai. Jahan OpenClaw ek AI Worker deta hai jo aapke laptop pe rehta hai, Paperclip woh company hai jo unhe hire karta hai, govern karta hai, aur audit karta hai.
+
+</details>
+
+<details>
+<summary>Kya Paperclip cloud setup mangta hai?</summary>
+
+Nahi. Paperclip MIT-licensed, self-hosted hai, aur aapke laptop pe ek command se chalta hai — koi account nahi, koi credit card nahi, koi cloud setup nahi.
+
+</details>
+
+<details>
+<summary>Paperclip ka management plane kya hold karta hai?</summary>
+
+Company, Workers jo adapters ke against hired hain, issues jo create time pe assign hote hain, approvals jo decision records ke taur pe file hote hain, per-Worker budgets, aur activity log jo har action record karta hai.
+
+</details>
+
+<details>
+<summary>Worker ko Paperclip mein kaise hire karte hain?</summary>
+
+Role define karo (name, adapter, capabilities, permissions, budget) aur API ke through register karo. Runtime adapter ke through plug hota hai: `http`, `gemini_local`, `claude_local`, aur aur.
+
+</details>
+
+<details>
+<summary>Paperclip mein issue assignment kaise kaam karti hai?</summary>
+
+Koi rules-based routing engine nahi. Issue create time pe Worker ko assign karo — woh heartbeat orchestration mein wire hota hai. Baad mein assign karna wohi tarah se pick nahi hota.
+
+</details>
+
+<details>
+<summary>Paperclip mein approval kya hai?</summary>
+
+Ek tracked board decision record hai, state machine nahi. Filing approval Worker ko suspend nahi karta; approving automatically resume nahi karta. Value activity_log mein audited chain hai.
+
+</details>
+
+<details>
+<summary>Budget kab teeth rakhta hai?</summary>
+
+Sirf tab jab Worker billable kaam karta hai. Keyless stub zero cost generate karta hai; LLM-backed Worker per-run cost record karta hai aur monthly spend budget ke against climb karta hai.
+
+</details>
+
+<details>
+<summary>`actor_type` field kyun matter karta hai?</summary>
+
+Yeh human decision ko agent action se alag karta hai. Auditor yeh field use karta hai confirm karne ke liye ki kisne decide kiya.
+
+</details>
+
+<details>
+<summary>Monthly workforce audit kya karta hai?</summary>
+
+Activity log, Worker roster, budgets, aur audit tables review karta hai. Flag karta hai: unsigned changes, inactive Workers, budget drift, loose settings. Ek one-page report produce karta hai decision ke liye.
+
+</details>
+
+<details>
+<summary>`AGENTS.md` kyun valuable hai?</summary>
+
+Yeh operational reference hai jo coding agent ko Paperclip ke saamne self-direct karne deta hai. Discover-before-act table, working pattern, operations by task type, aur diagnostic checklists cover karta hai. Pattern portable hai — har tool ke liye ek `AGENTS.md` likh sakte ho.
+
+</details>

@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 740" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f46e5"/>
+      <stop offset="1" stop-color="#9333ea"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .colhead { font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+      .blkhead { font-size: 14px; font-weight: 700; letter-spacing: .5px; }
+      .blksub { font-size: 12px; }
+      .cardname { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .cardsub { font-size: 12px; fill: #64748b; }
+      .ltitle { font-size: 16px; font-weight: 700; }
+      .lsub { font-size: 12.5px; fill: #475569; }
+      .prim { font-size: 12px; fill: #334155; font-family: "Courier New", monospace; }
+      .badge { font-size: 14px; font-weight: 700; fill: #ffffff; }
+      .arrlab { font-size: 11px; fill: #64748b; font-weight: 700; }
+      .invt { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .invb { font-size: 13px; fill: #334155; }
+      .chip { font-size: 12px; font-weight: 700; }
+      .chiplab { font-size: 11px; fill: #94a3b8; font-weight: 700; letter-spacing: .5px; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1240" height="740" fill="#ffffff"/>
+
+  <text x="620" y="48" text-anchor="middle" class="title" fill="url(#tg)">Give your AI agent a nervous system</text>
+  <text x="620" y="76" text-anchor="middle" class="subtitle">Your agent thinks. The nervous system does the rest: it senses the world, reacts by reflex, and keeps its balance.</text>
+
+  <!-- ===== LEFT: THE WORLD ===== -->
+  <text x="152" y="122" text-anchor="middle" class="colhead" fill="#64748b">THE WORLD</text>
+
+  <g filter="url(#sh)">
+    <rect x="36" y="140" width="232" height="66" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/></g>
+  <rect x="36" y="140" width="6" height="66" rx="3" fill="#0ea5e9"/>
+  <circle cx="64" cy="173" r="9" fill="none" stroke="#0284c7" stroke-width="2"/>
+  <path d="M64,173 L64,167 M64,173 L68,176" stroke="#0284c7" stroke-width="2" stroke-linecap="round"/>
+  <text x="88" y="168" class="cardname">Cron</text>
+  <text x="88" y="190" class="cardsub">a schedule fires</text>
+
+  <g filter="url(#sh)">
+    <rect x="36" y="214" width="232" height="66" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/></g>
+  <rect x="36" y="214" width="6" height="66" rx="3" fill="#0ea5e9"/>
+  <rect x="56" y="240" width="11" height="7" rx="3.5" fill="none" stroke="#0284c7" stroke-width="2" transform="rotate(-30 61 243)"/>
+  <rect x="62" y="244" width="11" height="7" rx="3.5" fill="none" stroke="#0284c7" stroke-width="2" transform="rotate(-30 67 247)"/>
+  <text x="88" y="242" class="cardname">Webhook</text>
+  <text x="88" y="264" class="cardsub">an outside system calls in</text>
+
+  <g filter="url(#sh)">
+    <rect x="36" y="288" width="232" height="66" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/></g>
+  <rect x="36" y="288" width="6" height="66" rx="3" fill="#0ea5e9"/>
+  <rect x="55" y="314" width="18" height="13" rx="2" fill="none" stroke="#0284c7" stroke-width="2"/>
+  <path d="M55,316 L64,323 L73,316" fill="none" stroke="#0284c7" stroke-width="2"/>
+  <text x="88" y="316" class="cardname">Event</text>
+  <text x="88" y="338" class="cardsub">something happened</text>
+
+  <g filter="url(#sh)">
+    <rect x="36" y="362" width="232" height="66" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/></g>
+  <rect x="36" y="362" width="6" height="66" rx="3" fill="#0ea5e9"/>
+  <path d="M58,388 L72,395 L58,402 z" fill="#0284c7"/>
+  <text x="88" y="390" class="cardname">Direct call</text>
+  <text x="88" y="412" class="cardsub">another worker hands off</text>
+
+  <!-- arrow world -> worker -->
+  <line x1="272" y1="300" x2="304" y2="300" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="288" y="290" text-anchor="middle" class="arrlab">in</text>
+
+  <!-- ===== THE PRODUCTION WORKER (wraps nervous system + agent) ===== -->
+  <g filter="url(#sh)"><rect x="310" y="102" width="898" height="476" rx="16" fill="#ffffff" stroke="#cbd5e1"/></g>
+  <text x="759" y="128" text-anchor="middle" class="colhead" fill="#334155">THE PRODUCTION WORKER</text>
+
+  <!-- divider -->
+  <line x1="846" y1="150" x2="846" y2="560" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- nervous system block -->
+  <text x="328" y="170" class="blkhead" fill="#6d28d9">THE NERVOUS SYSTEM</text>
+  <text x="328" y="188" class="blksub" fill="#a78bfa">autonomic &#183; Inngest</text>
+
+  <!-- Layer 1: Senses -->
+  <g filter="url(#sh)"><rect x="326" y="202" width="500" height="114" rx="11" fill="#dcfce7" stroke="#86efac"/></g>
+  <rect x="326" y="202" width="6" height="114" rx="3" fill="#16a34a"/>
+  <circle cx="356" cy="232" r="14" fill="#16a34a"/>
+  <text x="356" y="237" text-anchor="middle" class="badge">1</text>
+  <text x="382" y="232" class="ltitle" fill="#15803d">Senses &#183; Triggers</text>
+  <ellipse cx="800" cy="228" rx="13" ry="8" fill="none" stroke="#16a34a" stroke-width="2"/>
+  <circle cx="800" cy="228" r="3.5" fill="#16a34a"/>
+  <text x="382" y="256" class="lsub">how the world reaches the worker</text>
+  <text x="382" y="294" class="prim">events &#183; crons &#183; webhooks &#183; fan-out</text>
+
+  <!-- Layer 2: Reflexes -->
+  <g filter="url(#sh)"><rect x="326" y="326" width="500" height="114" rx="11" fill="#fef3c7" stroke="#fcd34d"/></g>
+  <rect x="326" y="326" width="6" height="114" rx="3" fill="#d97706"/>
+  <circle cx="356" cy="356" r="14" fill="#d97706"/>
+  <text x="356" y="361" text-anchor="middle" class="badge">2</text>
+  <text x="382" y="356" class="ltitle" fill="#b45309">Reflexes &#183; Durable execution</text>
+  <path d="M803,344 L793,360 L800,360 L797,374 L809,356 L802,356 z" fill="#d97706"/>
+  <text x="382" y="380" class="lsub">stay correct when a step fails midway</text>
+  <text x="382" y="418" class="prim">step.run &#183; memoization &#183; retries &#183; step.sleep</text>
+
+  <!-- Layer 3: Balance -->
+  <g filter="url(#sh)"><rect x="326" y="450" width="500" height="114" rx="11" fill="#ffe4e6" stroke="#fda4af"/></g>
+  <rect x="326" y="450" width="6" height="114" rx="3" fill="#e11d48"/>
+  <circle cx="356" cy="480" r="14" fill="#e11d48"/>
+  <text x="356" y="485" text-anchor="middle" class="badge">3</text>
+  <text x="382" y="480" class="ltitle" fill="#be123c">Balance &#183; Flow control</text>
+  <path d="M789,485 a13,13 0 0 1 24,0" fill="none" stroke="#e11d48" stroke-width="2"/>
+  <line x1="801" y1="485" x2="808" y2="476" stroke="#e11d48" stroke-width="2" stroke-linecap="round"/>
+  <text x="382" y="504" class="lsub">stay healthy under load</text>
+  <text x="382" y="542" class="prim">concurrency &#183; throttle &#183; priority &#183; replay</text>
+
+  <!-- arrow nervous system -> agent -->
+  <line x1="828" y1="300" x2="862" y2="300" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="845" y="290" text-anchor="middle" class="arrlab">runs</text>
+
+  <!-- agent block -->
+  <text x="866" y="170" class="blkhead" fill="#0f172a">THE AGENT</text>
+  <text x="866" y="188" class="blksub" fill="#64748b">it thinks and acts &#183; unchanged</text>
+
+  <g filter="url(#sh)"><rect x="864" y="202" width="328" height="64" rx="9" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <circle cx="884" cy="234" r="4" fill="#6366f1"/>
+  <text x="900" y="230" class="cardname">OpenAI Agents SDK</text>
+  <text x="900" y="250" class="cardsub">the agent runtime</text>
+
+  <g filter="url(#sh)"><rect x="864" y="276" width="328" height="64" rx="9" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <circle cx="884" cy="308" r="4" fill="#6366f1"/>
+  <text x="900" y="304" class="cardname">Skills</text>
+  <text x="900" y="324" class="cardsub">packaged know-how</text>
+
+  <g filter="url(#sh)"><rect x="864" y="350" width="328" height="64" rx="9" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <circle cx="884" cy="382" r="4" fill="#6366f1"/>
+  <text x="900" y="378" class="cardname">MCP server</text>
+  <text x="900" y="398" class="cardsub">custom data and tools</text>
+
+  <g filter="url(#sh)"><rect x="864" y="424" width="328" height="64" rx="9" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <circle cx="884" cy="456" r="4" fill="#6366f1"/>
+  <text x="900" y="452" class="cardname">Neon Postgres</text>
+  <text x="900" y="472" class="cardsub">system of record</text>
+
+  <g filter="url(#sh)"><rect x="864" y="498" width="328" height="64" rx="9" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <circle cx="884" cy="530" r="4" fill="#6366f1"/>
+  <text x="900" y="526" class="cardname">Sandbox</text>
+  <text x="900" y="546" class="cardsub">tool boundary</text>
+
+  <!-- ===== FOOTER: invariant + swap-ready ===== -->
+  <g filter="url(#sh)"><rect x="36" y="596" width="1168" height="116" rx="12" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <text x="58" y="626" class="invt">The architectural invariant</text>
+  <text x="58" y="652" class="invb">Your agent never imports Inngest. The agent (it thinks and acts) and the nervous system (it runs the loop) stay separate,</text>
+  <text x="58" y="674" class="invb">so you can swap the nervous system for another engine and leave the agent untouched.</text>
+
+  <text x="820" y="652" class="chiplab">SWAP-READY</text>
+  <g>
+    <rect x="820" y="664" width="78" height="30" rx="15" fill="#ede9fe" stroke="#c4b5fd"/>
+    <text x="859" y="684" text-anchor="middle" class="chip" fill="#6d28d9">Inngest</text>
+  </g>
+  <g>
+    <rect x="906" y="664" width="86" height="30" rx="15" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="949" y="684" text-anchor="middle" class="chip" fill="#475569">Temporal</text>
+  </g>
+  <g>
+    <rect x="1000" y="664" width="80" height="30" rx="15" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="1040" y="684" text-anchor="middle" class="chip" fill="#475569">Restate</text>
+  </g>
+  <g>
+    <rect x="1088" y="664" width="66" height="30" rx="15" fill="#ffffff" stroke="#cbd5e1"/>
+    <text x="1121" y="684" text-anchor="middle" class="chip" fill="#475569">Dapr</text>
+  </g>
+</svg>

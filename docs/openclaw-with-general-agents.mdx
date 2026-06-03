@@ -1,0 +1,688 @@
+---
+id: openclaw-with-general-agents
+title: OpenClaw General Agents ke Saath — 90 Minute ka Crash Course
+sidebar_label: OpenClaw with General Agents
+---
+
+# OpenClaw General Agents ke Saath: 90 Minute ka Crash Course
+
+*6 Scenarios, Zero se Personal AI Employee Tak*
+
+OpenClaw tumhara **Personal AI Employee** hai: ek open-source assistant jo tumhare apne laptop par chalta hai aur un messaging apps ke zariye reply karta hai jo tum pehle se use karte ho (WhatsApp, Telegram, Discord, Slack, iMessage, aur zyada).
+
+Yeh woh project hai jisne prove kiya ke AI Employees real hain, kaam karte hain, aur log chahte hain. OpenClaw 2026 ka sabse tezi se barhne wala open-source project bana, [laakhon GitHub stars](https://github.com/openclaw/openclaw) apne pehle mahino mein. Jensen Huang ne ise GTC 2026 mein "agla ChatGPT" kaha; NVIDIA ne NemoClaw is par bana liya.
+
+In nawwe minute ke akhir tak tumhare paas ek hoga: tumhare phone par ek AI Employee jo messages ka jawab deta hai, tools aur external services use karta hai, khud ko tumhare mutabiq customize karta hai, apne schedule par chalta hai, aur tumhare laptop par rehta hai. Ek chatbot nahi jis pe tum jaate ho; ek worker jise tum delegate karte ho.
+
+---
+
+**Yeh crash course kaise kaam karta hai.** Tum ek chhota folder download karte ho, apne general agent ko dete ho (Claude Code, OpenCode, Cowork, ya OpenCowork sab kaam karte hain — har ek folder context se `AGENTS.md` auto-import karta hai), aur chhe scenarios se guzarte ho. Agent folder padhta hai, OpenClaw install karta hai aur chalata hai, tumhara phone connect karta hai, naye skills uthata hai, apna brain customize karta hai, aur ek task schedule karta hai jo tumhare baghair chalta hai. Tum steer karo; agent kaam kare; OpenClaw tumhara Personal AI Employee bane.
+
+:::note Kaunsa Agent Use Karoon?
+Chhe scenarios neeche agent-agnostic hain: har "apne agent mein yeh paste karo" prompt chaaron tools mein identical hai. Farq sirf **launch step** mein hai — CLI agents (Claude Code, OpenCode) unzipped folder mein terminal se launch hote hain; desktop agents (Cowork, OpenCowork) folder khol ke. Jo bhi tumhare paas installed hai woh use karo.
+:::
+
+**Reading path:**
+1. **Install & chat** local dashboard mein. ~15 min.
+2. **Ek channel pair karo** apne phone se (WhatsApp / Telegram / Discord). ~15 min.
+3. **Real kaam delegate karo** aur agent loop dekho. ~10 min.
+4. **Tumhari tarah sound karo aur yaad rakho** + identity GitHub par backup karo. ~15 min.
+5. **Extend karo** ek skill + ek external tool ke saath. ~15 min.
+6. **Apne aap act karne do** ek cron job ke saath. ~15 min.
+7. **(Mahine mein ek baar, aaj nahi)** Audit chalao. ~10 min.
+
+**Prerequisites (teen cheezein):**
+1. **Claude Code ya OpenCode installed.** Koi bhi kaam karta hai.
+2. **[Agentic Coding Crash Course](/docs/agentic-coding-crash-course) kar chuke ho.** Tum tool calls approve kar sakte ho, agent output padh sakte ho, jaan sakte ho jab agent stuck hai. Hum in moves par lean karte hain; doobara explain nahi karte.
+3. **Node.js 22.16 ya baad ka** (Node 24 recommended). Terminal mein `node --version` chalao. `v22.16` se neeche → [nodejs.org/en/download](https://nodejs.org/en/download/) se current release install karo (tumhara general agent tumhe walk through karega agar poocho).
+
+**Patient version chahiye?** [**Chapter 56: Meet Your Personal AI Employee**](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee) isi material par saat lessons hai plus voice, multi-agent, security, aur deployment. Agar kuch yahan tez lage, matching Ch56 lesson par jump karo aur wapas aao.
+
+<details>
+<summary>Reading path · prereqs · the deep version (click to expand)</summary>
+
+**Reading path** (chhe scenarios + ek monthly habit):
+
+1. **Install & chat** local dashboard mein. ~15 min.
+2. **Ek channel pair karo** apne phone se (WhatsApp / Telegram / Discord). ~15 min.
+3. **Real kaam delegate karo** aur agent loop dekho. ~10 min.
+4. **Tumhari tarah sound karo aur yaad rakho** + identity GitHub par backup karo. ~15 min.
+5. **Extend karo** ek skill + ek external tool ke saath. ~15 min.
+6. **Apne aap act karne do** ek cron job (ya heartbeat) ke saath jo tumhare baghair chalta hai. ~15 min.
+7. **(Mahine mein ek baar, aaj nahi)** Audit chalao. ~10 min jab waqt aaye.
+
+Har scenario ek runnable success par khatam hota hai. Agar ek baithak mein ninety minute zyada hain, toh alag baithakon mein lo; state unke beech mein persist karti hai. Ek optional appendix Google Workspace cover karta hai; voice, multi-agent safety, aur ACP-spawn dev finale Chapter 56 ki taraf point karte hain.
+
+</details>
+
+---
+
+## Collaboration Pattern
+
+Teen actors is page share karte hain:
+
+![Teen actors is page share karte hain: tum upar, tumhara coding agent (Claude Code ya OpenCode) neeche-left, aur OpenClaw (AI Employee + Gateway) neeche-right.](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MjAgMzYwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0iY29sbC10aXRsZSBjb2xsLWRlc2MiPgogIDx0aXRsZSBpZD0iY29sbC10aXRsZSI+VGhlIGNvbGxhYm9yYXRpb24gdHJpYW5nbGU6IHRocmVlIGFjdG9ycyBzaGFyZSB0aGUgcGFnZTwvdGl0bGU+CiAgPGRlc2MgaWQ9ImNvbGwtZGVzYyI+QSB0cmlhbmdsZSBzaG93aW5nIFlvdSBhdCB0aGUgdG9wLCB5b3VyIGNvZGluZyBhZ2VudCAoQ2xhdWRlIENvZGUgb3IgT3BlbkNvZGUpIGF0IGJvdHRvbS1sZWZ0LCBhbmQgT3BlbkNsYXcgKHRoZSBBSSBFbXBsb3llZSArIEdhdGV3YXkpIGF0IGJvdHRvbS1yaWdodC4gWW91IHBhc3RlIHByb21wdHMgYW5kIGFwcHJvdmUgYWN0aW9uczsgb3VyIGNvZGluZyBhZ2VudCBpbnN0YWxscyBhbmQgY29uZmlndXJlcyBPcGVuQ2xhdzsgT3BlbkNsYXcgcmVwbGllcyBvbiB5b3VyIHBob25lIGFuZCBydW5zIHNjaGVkdWxlZCB0YXNrcy48L2Rlc2M+CiAgPHN0eWxlPgogICAgLmJnIHsgZmlsbDogdHJhbnNwYXJlbnQ7IH0KICAgIC5ib3gtZmlsbCB7IGZpbGw6ICNmZmZmZmY7IH0KICAgIC5ib3gtc3Ryb2tlIHsgc3Ryb2tlOiAjMWExYTFhOyBzdHJva2Utd2lkdGg6IDI7IH0KICAgIC5sYWJlbCB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTVweDsgZmlsbDogIzFhMWExYTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC13ZWlnaHQ6IDYwMDsgfQogICAgLnN1YiB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTFweDsgZmlsbDogIzQ0NDsgdGV4dC1hbmNob3I6IG1pZGRsZTsgfQogICAgLnJvbGUgeyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDEwcHg7IGZpbGw6ICMyNTYzZWI7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtd2VpZ2h0OiA2MDA7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IGxldHRlci1zcGFjaW5nOiAwLjVweDsgfQogICAgLmFycm93IHsgc3Ryb2tlOiAjMWExYTFhOyBzdHJva2Utd2lkdGg6IDEuODsgZmlsbDogbm9uZTsgfQogICAgLmFycm93LWhlYWQgeyBmaWxsOiAjMWExYTFhOyB9CiAgICAuZWRnZS1sYWJlbCB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTFweDsgZmlsbDogIzU1NTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC1zdHlsZTogaXRhbGljOyB9CiAgPC9zdHlsZT4KICA8cmVjdCBjbGFzcz0iYmciIHdpZHRoPSI3MjAiIGhlaWdodD0iMzYwIiAvPgogIDx0ZXh0IHg9IjM2MCIgeT0iMjgiIGNsYXNzPSJsYWJlbCIgc3R5bGU9ImZvbnQtc2l6ZToxNnB4Ij5UaHJlZSBhY3RvcnMgc2hhcmUgdGhpcyBwYWdlPC90ZXh0PgogIDxyZWN0IHg9IjI5MCIgeT0iNTgiIHdpZHRoPSIxNDAiIGhlaWdodD0iODAiIHJ4PSIxMCIgY2xhc3M9ImJveC1maWxsIGJveC1zdHJva2UiIC8+CiAgPHRleHQgeD0iMzYwIiB5PSI3OCIgY2xhc3M9InJvbGUiPkFjdG9yIDE8L3RleHQ+CiAgPHRleHQgeD0iMzYwIiB5PSIxMDAiIGNsYXNzPSJsYWJlbCI+WW91PC90ZXh0PgogIDx0ZXh0IHg9IjM2MCIgeT0iMTIwIiBjbGFzcz0ic3ViIj5zdXBlcnZpc2UsIHBhc3RlLDwvdGV4dD4KICA8dGV4dCB4PSIzNjAiIHk9IjEzMiIgY2xhc3M9InN1YiI+YXBwcm92ZSwgd2F0Y2g8L3RleHQ+CiAgPHJlY3QgeD0iNjAiIHk9IjI0MCIgd2lkdGg9IjE4MCIgaGVpZ2h0PSI5MCIgcng9IjEwIiBjbGFzcz0iYm94LWZpbGwgYm94LXN0cm9rZSIgLz4KICA8dGV4dCB4PSIxNTAiIHk9IjI2MCIgY2xhc3M9InJvbGUiPkFjdG9yIDI8L3RleHQ+CiAgPHRleHQgeD0iMTUwIiB5PSIyODIiIGNsYXNzPSJsYWJlbCI+WW91ciBjb2RpbmcgYWdlbnQ8L3RleHQ+CiAgPHRleHQgeD0iMTUwIiB5PSIyOTgiIGNsYXNzPSJzdWIiPkNsYXVkZSBDb2RlIG9yIE9wZW5Db2RlPC90ZXh0PgogIDx0ZXh0IHg9IjE1MCIgeT0iMzEzIiBjbGFzcz0ic3ViIj5pbnN0YWxscywgY29uZmlndXJlcyw8L3RleHQ+CiAgPHRleHQgeD0iMTUwIiB5PSIzMjYiIGNsYXNzPSJzdWIiPmRlYnVncywgcmVzdGFydHM8L3RleHQ+CiAgPHJlY3QgeD0iNDgwIiB5PSIyNDAiIHdpZHRoPSIxODAiIGhlaWdodD0iOTAiIHJ4PSIxMCIgY2xhc3M9ImJveC1maWxsIGJveC1zdHJva2UiIC8+CiAgPHRleHQgeD0iNTcwIiB5PSIyNjAiIGNsYXNzPSJyb2xlIj5BY3RvciAzPC90ZXh0PgogIDx0ZXh0IHg9IjU3MCIgeT0iMjgyIiBjbGFzcz0ibGFiZWwiPk9wZW5DbGF3PC90ZXh0PgogIDx0ZXh0IHg9IjU3MCIgeT0iMjk4IiBjbGFzcz0ic3ViIj50aGUgQUkgRW1wbG95ZWU8L3RleHQ+CiAgPHRleHQgeD0iNTcwIiB5PSIzMTMiIGNsYXNzPSJzdWIiPnJlcGxpZXMgb24gcGhvbmUsPC90ZXh0PgogIDx0ZXh0IHg9IjU3MCIgeT0iMzI2IiBjbGFzcz0ic3ViIj5ydW5zIHNjaGVkdWxlZCB0YXNrczwvdGV4dD4KICA8ZGVmcz48bWFya2VyIGlkPSJhaDIiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjYiIG1hcmtlckhlaWdodD0iNiIgb3JpZW50PSJhdXRvIj48cGF0aCBkPSJNMCAwIEwxMCA1IEwwIDEwIHoiIGNsYXNzPSJhcnJvdy1oZWFkIiAvPjwvbWFya2VyPjwvZGVmcz4KICA8cGF0aCBkPSJNIDMxMCAxNDIgTCAyMDAgMjM1IiBjbGFzcz0iYXJyb3ciIG1hcmtlci1lbmQ9InVybCgjYWgyKSIgLz4KICA8dGV4dCB4PSIyMjUiIHk9IjE5NSIgY2xhc3M9ImVkZ2UtbGFiZWwiPnBhc3RlIHByb21wdHMsPC90ZXh0PgogIDx0ZXh0IHg9IjIyNSIgeT0iMjA4IiBjbGFzcz0iZWRnZS1sYWJlbCI+YXBwcm92ZSBhY3Rpb25zPC90ZXh0PgogIDxwYXRoIGQ9Ik0gMjQ1IDI4NSBMIDQ3NSAyODUiIGNsYXNzPSJhcnJvdyIgbWFya2VyLWVuZD0idXJsKCNhaDIpIiAvPgogIDx0ZXh0IHg9IjM2MCIgeT0iMjc4IiBjbGFzcz0iZWRnZS1sYWJlbCI+aW5zdGFsbHMsIGNvbmZpZ3VyZXM8L3RleHQ+CiAgPHBhdGggZD0iTSA1NjAgMjM1IEwgNDE1IDE0MiIgY2xhc3M9ImFycm93IiBtYXJrZXItZW5kPSJ1cmwoI2FoMikiIC8+CiAgPHRleHQgeD0iNTIwIiB5PSIxOTUiIGNsYXNzPSJlZGdlLWxhYmVsIj5yZXBsaWVzIG9uIHBob25lLDwvdGV4dD4KICA8dGV4dCB4PSI1MjAiIHk9IjIwOCIgY2xhc3M9ImVkZ2UtbGFiZWwiPmZpcmVzIGhlYXJ0YmVhdHM8L3RleHQ+Cjwvc3ZnPg==)
+
+Har scenario phir same paanch-step rhythm use karta hai:
+
+1. **Tum ek sentence paste karte ho** apne general agent mein.
+2. **Tumhara agent `AGENTS.md` consult karta hai** aur plan propose karta hai.
+3. **Tum approve karte ho aur dekhte ho.** Agent install commands chalaata hai, configuration set karta hai, background service restart karta hai.
+4. **Tumhara agent seam par rukta hai.** Kuch moves sirf tum kar sakte ho: Gemini key lena, QR scan karna, OAuth screens click karna.
+5. **Tum done ho jab ek observable cheez hoti hai.** Real reply dashboard mein. Tumhare phone ka message reply milta hai. File disk par appear hoti hai.
+
+![Har scenario same paanch-step rhythm use karta hai: ek sentence paste; plan propose; approve; execute; done-when verify.](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MjAgMjQwIiByb2xlPSJpbWciPgogIDxzdHlsZT4KICAgIC5iZyB7IGZpbGw6IHRyYW5zcGFyZW50OyB9CiAgICAuc3RlcC1ib3ggeyBmaWxsOiAjZmZmZmZmOyBzdHJva2U6ICMxYTFhMWE7IHN0cm9rZS13aWR0aDogMjsgfQogICAgLnN0ZXAtYm94LWFnZW50IHsgZmlsbDogI2RiZWFmZTsgc3Ryb2tlOiAjMjU2M2ViOyBzdHJva2Utd2lkdGg6IDI7IH0KICAgIC5zdGVwLW51bSB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWk7IGZvbnQtc2l6ZTogMThweDsgZmlsbDogIzI1NjNlYjsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC13ZWlnaHQ6IDgwMDsgfQogICAgLnN0ZXAtbmFtZSB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWk7IGZvbnQtc2l6ZTogMTNweDsgZmlsbDogIzFhMWExYTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC13ZWlnaHQ6IDcwMDsgfQogICAgLnN0ZXAtYWN0b3IgeyBmb250LWZhbWlseTogc3lzdGVtLXVpOyBmb250LXNpemU6IDEwcHg7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtd2VpZ2h0OiA3MDA7IHRleHQtdHJhbnNmb3JtOiB1cHBlcmNhc2U7IH0KICAgIC5hY3Rvci15b3UgeyBmaWxsOiAjMDU5NjY5OyB9CiAgICAuYWN0b3ItYWdlbnQgeyBmaWxsOiAjMjU2M2ViOyB9CiAgICAuaGVhZGVyIHsgZm9udC1mYW1pbHk6IHN5c3RlbS11aTsgZm9udC1zaXplOiAxNnB4OyBmaWxsOiAjMWExYTFhOyB0ZXh0LWFuY2hvcjogbWlkZGxlOyBmb250LXdlaWdodDogNjAwOyB9CiAgICAuYXJyb3cgeyBzdHJva2U6ICMxYTFhMWE7IHN0cm9rZS13aWR0aDogMjsgZmlsbDogbm9uZTsgfQogICAgLmFycm93LWhlYWQgeyBmaWxsOiAjMWExYTFhOyB9CiAgPC9zdHlsZT4KICA8cmVjdCBjbGFzcz0iYmciIHdpZHRoPSI3MjAiIGhlaWdodD0iMjQwIiAvPgogIDx0ZXh0IHg9IjM2MCIgeT0iMjgiIGNsYXNzPSJoZWFkZXIiPkV2ZXJ5IHNjZW5hcmlvIHVzZXMgdGhlIHNhbWUgcmh5dGhtPC90ZXh0PgogIDxyZWN0IHg9IjIwIiB5PSI2MCIgd2lkdGg9IjEzMCIgaGVpZ2h0PSIxMDAiIHJ4PSI4IiBjbGFzcz0ic3RlcC1ib3giIC8+CiAgPHRleHQgeD0iODUiIHk9Ijg1IiBjbGFzcz0ic3RlcC1udW0iPjE8L3RleHQ+CiAgPHRleHQgeD0iODUiIHk9IjEwNSIgY2xhc3M9InN0ZXAtYWN0b3IgYWN0b3IteW91Ij5ZT1U8L3RleHQ+CiAgPHRleHQgeD0iODUiIHk9IjEyNSIgY2xhc3M9InN0ZXAtbmFtZSI+UGFzdGUgb25lPC90ZXh0PgogIDx0ZXh0IHg9Ijg1IiB5PSIxNDIiIGNsYXNzPSJzdGVwLW5hbWUiPnNlbnRlbmNlPC90ZXh0PgogIDxyZWN0IHg9IjE3MCIgeT0iNjAiIHdpZHRoPSIxMzAiIGhlaWdodD0iMTAwIiByeD0iOCIgY2xhc3M9InN0ZXAtYm94LWFnZW50IiAvPgogIDx0ZXh0IHg9IjIzNSIgeT0iODUiIGNsYXNzPSJzdGVwLW51bSI+MjwvdGV4dD4KICA8dGV4dCB4PSIyMzUiIHk9IjEwNSIgY2xhc3M9InN0ZXAtYWN0b3IgYWN0b3ItYWdlbnQiPkFHRU5UPC90ZXh0PgogIDx0ZXh0IHg9IjIzNSIgeT0iMTI1IiBjbGFzcz0ic3RlcC1uYW1lIj5Qcm9wb3NlIHBsYW4sPC90ZXh0PgogIDx0ZXh0IHg9IjIzNSIgeT0iMTQyIiBjbGFzcz0ic3RlcC1uYW1lIj5hc2sgdG8gc3RhcnQ8L3RleHQ+CiAgPHJlY3QgeD0iMzIwIiB5PSI2MCIgd2lkdGg9IjEzMCIgaGVpZ2h0PSIxMDAiIHJ4PSI4IiBjbGFzcz0ic3RlcC1ib3giIC8+CiAgPHRleHQgeD0iMzg1IiB5PSI4NSIgY2xhc3M9InN0ZXAtbnVtIj4zPC90ZXh0PgogIDx0ZXh0IHg9IjM4NSIgeT0iMTA1IiBjbGFzcz0ic3RlcC1hY3RvciBhY3Rvci15b3UiPllPVTwvdGV4dD4KICA8dGV4dCB4PSIzODUiIHk9IjEyNSIgY2xhc3M9InN0ZXAtbmFtZSI+QXBwcm92ZTwvdGV4dD4KICA8dGV4dCB4PSIzODUiIHk9IjE0MiIgY2xhc3M9InN0ZXAtbmFtZSI+KG9yIHJlZGlyZWN0KTwvdGV4dD4KICA8cmVjdCB4PSI0NzAiIHk9IjYwIiB3aWR0aD0iMTMwIiBoZWlnaHQ9IjEwMCIgcng9IjgiIGNsYXNzPSJzdGVwLWJveC1hZ2VudCIgLz4KICA8dGV4dCB4PSI1MzUiIHk9Ijg1IiBjbGFzcz0ic3RlcC1udW0iPjQ8L3RleHQ+CiAgPHRleHQgeD0iNTM1IiB5PSIxMDUiIGNsYXNzPSJzdGVwLWFjdG9yIGFjdG9yLWFnZW50Ij5BR0VOVDwvdGV4dD4KICA8dGV4dCB4PSI1MzUiIHk9IjEyNSIgY2xhc3M9InN0ZXAtbmFtZSI+RXhlY3V0ZSwgc2hvdzwvdGV4dD4KICA8dGV4dCB4PSI1MzUiIHk9IjE0MiIgY2xhc3M9InN0ZXAtbmFtZSI+b3V0cHV0LCByZWNvdmVyPC90ZXh0PgogIDxyZWN0IHg9IjYyMCIgeT0iNjAiIHdpZHRoPSI4MCIgaGVpZ2h0PSIxMDAiIHJ4PSI4IiBjbGFzcz0ic3RlcC1ib3giIC8+CiAgPHRleHQgeD0iNjYwIiB5PSI4NSIgY2xhc3M9InN0ZXAtbnVtIj41PC90ZXh0PgogIDx0ZXh0IHg9IjY2MCIgeT0iMTA1IiBjbGFzcz0ic3RlcC1hY3RvciBhY3Rvci15b3UiPllPVTwvdGV4dD4KICA8dGV4dCB4PSI2NjAiIHk9IjEyNSIgY2xhc3M9InN0ZXAtbmFtZSI+VmVyaWZ5PC90ZXh0PgogIDx0ZXh0IHg9IjY2MCIgeT0iMTQyIiBjbGFzcz0ic3RlcC1uYW1lIj4oZG9uZS13aGVuKTwvdGV4dD4KICA8ZGVmcz48bWFya2VyIGlkPSJhaDQiIHZpZXdCb3g9IjAgMCAxMCAxMCIgcmVmWD0iOSIgcmVmWT0iNSIgbWFya2VyV2lkdGg9IjYiIG1hcmtlckhlaWdodD0iNiIgb3JpZW50PSJhdXRvIj48cGF0aCBkPSJNMCAwIEwxMCA1IEwwIDEwIHoiIGNsYXNzPSJhcnJvdy1oZWFkIiAvPjwvbWFya2VyPjwvZGVmcz4KICA8cGF0aCBkPSJNIDE1MiAxMTAgTCAxNjggMTEwIiBjbGFzcz0iYXJyb3ciIG1hcmtlci1lbmQ9InVybCgjYWg0KSIgLz4KICA8cGF0aCBkPSJNIDMwMiAxMTAgTCAzMTggMTEwIiBjbGFzcz0iYXJyb3ciIG1hcmtlci1lbmQ9InVybCgjYWg0KSIgLz4KICA8cGF0aCBkPSJNIDQ1MiAxMTAgTCA0NjggMTEwIiBjbGFzcz0iYXJyb3ciIG1hcmtlci1lbmQ9InVybCgjYWg0KSIgLz4KICA8cGF0aCBkPSJNIDYwMiAxMTAgTCA2MTggMTEwIiBjbGFzcz0iYXJyb3ciIG1hcmtlci1lbmQ9InVybCgjYWg0KSIgLz4KPC9zdmc+)
+
+Agent woh karta hai jo agent achha karta hai: install, configure, debug, restart, verify, recover. Tum woh karte ho jo sirf tum kar sakte ho: decide, approve, aur phone se tied cheezein karo.
+
+### Poore Crash Course Ke Liye Ek Recovery Move
+
+Agar kuch bhi sideways ho jaaye, CLI commands ya error codes jaanne ki zarurat nahi. Apne agent mein yeh paste karo:
+
+> Kuch kaam nahi kiya. Gateway log padho, plain language mein batao kya dekha, aur fix propose karo jo main approve kar sakoon.
+
+Tumhara agent log padhta hai, kya dekha naam deta hai, aur fix propose karta hai. Tum approve karo. Yahi har scenario ke liye recovery loop hai.
+
+### Agar Scenario Zyada Waqt Le
+
+Har ek scenario ka budgeted time hai (H2 mein dikha hua). Agar tum 2x budget se zyada chale jaate ho (e.g., 15-minute scenario par 30 minute se zyada), apne agent ko wapas kheencho aur paste karo: *"Ek sentence mein batao kya block kar raha hai? Wahan se phir se plan karte hain."* Budget se zyada ghumta hai toh usually matlab agent improvise kar raha hai; plan par re-anchor karna fix karta hai.
+
+---
+
+## Folder Download Karo
+
+Folder mein exactly do files hain: `AGENTS.md` (~600-line operational reference) aur `CLAUDE.md` (ek line: `@AGENTS.md`).
+
+[**openclaw-with-general-agents.zip download karo**](/downloads/openclaw-with-general-agents.zip)
+
+Kahin bhi unzip karo. Unzipped folder mein terminal kholo. Apna general agent launch karo:
+
+```bash
+cd openclaw-with-general-agents
+claude
+```
+
+Tumhara agent ab brief loaded ke saath hai.
+
+---
+
+## Scenario 1 Se Pehle: Confirm Karo Agent Ke Paas Brief Hai (~30 sec)
+
+Ek paste batata hai ke `CLAUDE.md` ne apna kaam kiya ya nahi:
+
+> OpenClaw ke liye tum kya kar sakte ho?
+
+Agar reply specific OpenClaw kaam naam kare (install probes, channels, brain files, skills, MCP servers, schedules, monthly audit), tum loaded ho aur Scenario 1 ke liye tayyar ho. Agar generic AI capability ki baat lage, import nahi chali: agent band karo, confirm karo ke tum unzipped folder ke andar ho, aur relaunch karo.
+
+### `AGENTS.md` mein actually kya hai (file jo tumhara agent ab padh raha hai)
+
+Tumhe khud yeh file padhne ki zarurat nahi; wohi toh point hai. Lekin uski shape jaanna tumhe behtar questions poochne mein madad karta hai ("mujhe gotchas section walk through karo" kaam karta hai kyunke section exist karta hai). Brief mein, is order mein:
+
+```
+PART 1 :: PRINCIPLES (har jagah apply)  Versions checked against  Source of truth, order mein        ← live docs > yeh file > gateway log  Critical: act karne se pehle discover karo ← 17 doc-URL pointers ki table  Working pattern (har task)      ← read → propose → ask → execute → verify  Safety rails (non-negotiable)  Secrets disciplinePART 2 :: OPERATIONS (task type ke hisaab se)  Install & onboard          ← probe + onboard + paid-default gotcha  Configure                  ← config CLI + human-path vs agent-path table  Diagnose & recover         ← 5 sabse common failures aur unke fixes  Channels (WhatsApp / Telegram / Discord + TTY constraint)  Memory & brain             ← 3 layers, brain files, cross-channel proof  Skills (ClawHub ke zariye) · Plugins · MCP servers  The activation dance       ← exists → disabled → enabled → configured  Automation (heartbeats + cron + 3 hook flavors)  Multi-agent · ACP · Safety & security  Jab tumhe nahi pata kya karna hai  ← three-layer fallback  Tone                       ← tumse kaise baat kare
+```
+
+Agar AGENTS.md ka koi particular section baad mein relevant lage, toh agent se pooch sakte ho ke use act karne se pehle walk through kare (e.g., "WhatsApp pair karne se pehle AGENTS.md ka Channels section walk through karo"). Brief is tarah likha gaya hai ke agent khud usse direct kar sake.
+
+---
+
+## Scenario 1: Employee ko install karwao aur chatting shuru karo (~15 min)
+
+**Goal:** OpenClaw aapke laptop par running ho, Gemini free tier par set ho, aur dashboard mein "hi" kehne par jawab aaye. Teen short paste prompts: plan poocho, approve karo aur execute karo, phir verify karo.
+
+### 1a. Install aur configure
+
+**Pehla prompt: describe karo kya chahte ho aur plan poocho.**
+
+> Main OpenClaw apne laptop par running karna chahta hun aur Gemini ke free tier ke through chatting karna chahta hun. Tum kuch bhi touch karne se pehle, mujhe apna plan simple language mein samjhao: tum pehle kya check karoge, kya change karoge, aur mujhe kahan step in karna hoga.
+
+Aapka agent `AGENTS.md` padhta hai, aapki machine dekhta hai, aur ek plan propose karta hai. Woh do jagah flag karega jahan use aapki zaroorat hai: free Gemini API key lena [aistudio.google.com/app/api-keys](https://aistudio.google.com/app/api-keys) se, aur system mein changes karne se pehle confirm karna. Plan padho. Agar reasonable lage to aage badho. Agar kuch off lage to poochho "tum woh kyun kar rahe ho?" - agent explain karega ya adjust karega.
+
+**Doosra prompt: approve karo aur use run karne do.**
+
+> Plan acha lag raha hai. Step by step karo, aur mujhe batao har step par kya dekh rahe ho. Jab tumhe meri Gemini key chahiye, rukna aur batana ke main kaise safe tareeke se doon.
+
+Agent rukega aur aapki key maangega. [aistudio.google.com/app/api-keys](https://aistudio.google.com/app/api-keys) par jao, ek banao (free, no credit card), aur jo bhi safe-handling instruction agent de usko follow karo. Use terminal mein environment variable set karni chahiye aapke chat mein key paste karne se zyada.
+
+**1a done when:** agent report kare ke OpenClaw install ho gaya, configure ho gaya, aur Gemini key jagah par hai.
+
+### 1b. End-to-end verify karo aur dashboard kholo
+
+**Teens ra prompt: end-to-end check karo, phir dashboard mere hawal karo.**
+
+> Pehle apna end-to-end check khud karo (command line se gateway ke through ek quick "hi", jaisa tumhara brief batata hai), phir dashboard mere liye kholo taake main browser se bhi try kar sakun.
+
+**Scenario 1 done when:** aapke agent ka apna CLI check real jawab lekar wapas aaya, AUR dashboard jo usne aapke browser mein khola woh bhi jawab de jab aap `hi` type karo. Dashboard footer mein `google/gemini-2.5-flash` active model ke taur par dikhna chahiye. Agar kuch aur dikhe (especially `pro-preview` model), to apne agent ko batao aur woh aapko free tier par switch kar dega pehle aap par charge lage.
+
+Under the hood, OpenClaw ab teen pieces mein aapke laptop par chal raha hai, sab ek background service se coordinate hote hain jo aapke login par start hoti hai:
+
+![Architecture diagram: messages flow from your phone through Channel adapters into the Gateway (the long-running service on port 18789 that holds sessions and dispatches tool calls), then to the Agent (brain files and state at ~/.openclaw/workspace/). The Gateway is the always-on substrate.](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MjAgMzIwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0iYXJjaC10aXRsZSBhcmNoLWRlc2MiPgogIDx0aXRsZSBpZD0iYXJjaC10aXRsZSI+T3BlbkNsYXcgYXJjaGl0ZWN0dXJlOiB0aHJlZSBwaWVjZXMgcnVubmluZyBvbiB5b3VyIGxhcHRvcDwvdGl0bGU+CiAgPGRlc2MgaWQ9ImFyY2gtZGVzYyI+QSBkaWFncmFtIHNob3dpbmcgaG93IGEgbWVzc2FnZSBmcm9tIHlvdXIgcGhvbmUgZmxvd3MgdGhyb3VnaCBDaGFubmVsIGFkYXB0ZXJzIGludG8gdGhlIEdhdGV3YXksIHdoaWNoIGRpc3BhdGNoZXMgdG8gdGhlIEFnZW50IChicmFpbiBmaWxlcyBhbmQgc3RhdGUgYXQgfi8ub3BlbmNsYXcvd29ya3NwYWNlLykuIFRoZSBHYXRld2F5IGlzIHRoZSBsb25nLXJ1bm5pbmcgc2VydmljZTsgb3BlbmNsYXcgZG9jdG9yIGRpYWdub3NlcyB3aGljaCBwaWVjZSBpcyBtaXNiZWhhdmluZy48L2Rlc2M+CiAgPHN0eWxlPgogICAgLmJnIHsgZmlsbDogdHJhbnNwYXJlbnQ7IH0KICAgIC5ib3gtZmlsbCB7IGZpbGw6ICNmZmZmZmY7IH0KICAgIC5ib3gtc3Ryb2tlIHsgc3Ryb2tlOiAjMWExYTFhOyBzdHJva2Utd2lkdGg6IDI7IH0KICAgIC5ib3gtc3Ryb2tlLWFjY2VudCB7IHN0cm9rZTogIzI1NjNlYjsgc3Ryb2tlLXdpZHRoOiAzOyB9CiAgICAubGFiZWwgeyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDE0cHg7IGZpbGw6ICMxYTFhMWE7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtd2VpZ2h0OiA2MDA7IH0KICAgIC5zdWIgeyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDExcHg7IGZpbGw6ICM0NDQ7IHRleHQtYW5jaG9yOiBtaWRkbGU7IH0KICAgIC5jYXB0aW9uIHsgZm9udC1mYW1pbHk6IHN5c3RlbS11aSwgLWFwcGxlLXN5c3RlbSwgc2Fucy1zZXJpZjsgZm9udC1zaXplOiAxMnB4OyBmaWxsOiAjNTU1OyB0ZXh0LWFuY2hvcjogbWlkZGxlOyBmb250LXN0eWxlOiBpdGFsaWM7IH0KICAgIC5hcnJvdyB7IHN0cm9rZTogIzFhMWExYTsgc3Ryb2tlLXdpZHRoOiAyOyBmaWxsOiBub25lOyB9CiAgICAuYXJyb3ctaGVhZCB7IGZpbGw6ICMxYTFhMWE7IH0KICAgIC5hY2NlbnQtdGV4dCB7IGZpbGw6ICMyNTYzZWI7IGZvbnQtd2VpZ2h0OiA3MDA7IH0KICAgIEBtZWRpYSAocHJlZmVycy1jb2xvci1zY2hlbWU6IGRhcmspIHsKICAgICAgLmJveC1maWxsIHsgZmlsbDogIzFmMjkzNzsgfQogICAgICAuYm94LXN0cm9rZSB7IHN0cm9rZTogI2U1ZTdlYjsgfQogICAgICAuYm94LXN0cm9rZS1hY2NlbnQgeyBzdHJva2U6ICM2MGE1ZmE7IH0KICAgICAgLmxhYmVsIHsgZmlsbDogI2Y5ZmFmYjsgfQogICAgICAuc3ViIHsgZmlsbDogI2QxZDVkYjsgfQogICAgICAuY2FwdGlvbiB7IGZpbGw6ICNkMWQ1ZGI7IH0KICAgICAgLmFycm93IHsgc3Ryb2tlOiAjZTVlN2ViOyB9CiAgICAgIC5hcnJvdy1oZWFkIHsgZmlsbDogI2U1ZTdlYjsgfQogICAgICAuYWNjZW50LXRleHQgeyBmaWxsOiAjNjBhNWZhOyB9CiAgICB9CiAgPC9zdHlsZT4KICA8cmVjdCBjbGFzcz0iYmciIHdpZHRoPSI3MjAiIGhlaWdodD0iMzIwIiAvPgoKICA8IS0tIFRpdGxlIC0tPgogIDx0ZXh0IHg9IjM2MCIgeT0iMjgiIGNsYXNzPSJsYWJlbCIgc3R5bGU9ImZvbnQtc2l6ZToxNnB4Ij5XaGF0J3MgcnVubmluZyBvbiB5b3VyIGxhcHRvcDwvdGV4dD4KCiAgPCEtLSBQaG9uZSAtLT4KICA8cmVjdCB4PSIyMCIgeT0iMTA1IiB3aWR0aD0iOTAiIGhlaWdodD0iMTMwIiByeD0iMTQiIGNsYXNzPSJib3gtZmlsbCBib3gtc3Ryb2tlIiAvPgogIDxjaXJjbGUgY3g9IjY1IiBjeT0iMjIzIiByPSI0IiBjbGFzcz0iYm94LXN0cm9rZSIgZmlsbD0ibm9uZSIgLz4KICA8dGV4dCB4PSI2NSIgeT0iMTQwIiBjbGFzcz0ibGFiZWwiPllvdXIgcGhvbmU8L3RleHQ+CiAgPHRleHQgeD0iNjUiIHk9IjE2MCIgY2xhc3M9InN1YiI+V2hhdHNBcHA8L3RleHQ+CiAgPHRleHQgeD0iNjUiIHk9IjE3NSIgY2xhc3M9InN1YiI+VGVsZWdyYW08L3RleHQ+CiAgPHRleHQgeD0iNjUiIHk9IjE5MCIgY2xhc3M9InN1YiI+RGlzY29yZDwvdGV4dD4KCiAgPCEtLSBDaGFubmVsIGFkYXB0ZXJzIC0tPgogIDxyZWN0IHg9IjE3MCIgeT0iMTIwIiB3aWR0aD0iMTMwIiBoZWlnaHQ9IjEwMCIgcng9IjgiIGNsYXNzPSJib3gtZmlsbCBib3gtc3Ryb2tlIiAvPgogIDx0ZXh0IHg9IjIzNSIgeT0iMTU1IiBjbGFzcz0ibGFiZWwiPkNoYW5uZWw8L3RleHQ+CiAgPHRleHQgeD0iMjM1IiB5PSIxNzMiIGNsYXNzPSJsYWJlbCI+YWRhcHRlcnM8L3RleHQ+CiAgPHRleHQgeD0iMjM1IiB5PSIyMDAiIGNsYXNzPSJzdWIiPnRoZSBjb25uZWN0b3JzPC90ZXh0PgoKICA8IS0tIEdhdGV3YXkgKGVtcGhhc2l6ZWQpIC0tPgogIDxyZWN0IHg9IjM1MCIgeT0iOTAiIHdpZHRoPSIxNjAiIGhlaWdodD0iMTYwIiByeD0iMTAiIGNsYXNzPSJib3gtZmlsbCBib3gtc3Ryb2tlLWFjY2VudCIgLz4KICA8dGV4dCB4PSI0MzAiIHk9IjEyNSIgY2xhc3M9ImxhYmVsIGFjY2VudC10ZXh0IiBzdHlsZT0iZm9udC1zaXplOjE2cHgiPkdhdGV3YXk8L3RleHQ+CiAgPHRleHQgeD0iNDMwIiB5PSIxNTAiIGNsYXNzPSJzdWIiPmxvbmctcnVubmluZyBzZXJ2aWNlPC90ZXh0PgogIDx0ZXh0IHg9IjQzMCIgeT0iMTY3IiBjbGFzcz0ic3ViIj5wb3J0IDE4Nzg5PC90ZXh0PgogIDx0ZXh0IHg9IjQzMCIgeT0iMTkwIiBjbGFzcz0ic3ViIj5zZXNzaW9ucyArPC90ZXh0PgogIDx0ZXh0IHg9IjQzMCIgeT0iMjA1IiBjbGFzcz0ic3ViIj50b29sIGRpc3BhdGNoPC90ZXh0PgogIDx0ZXh0IHg9IjQzMCIgeT0iMjMyIiBjbGFzcz0ic3ViIj4oInRoZSBzdWJzdHJhdGUiKTwvdGV4dD4KCiAgPCEtLSBBZ2VudCAtLT4KICA8cmVjdCB4PSI1NjAiIHk9IjEyMCIgd2lkdGg9IjE0MCIgaGVpZ2h0PSIxMDAiIHJ4PSI4IiBjbGFzcz0iYm94LWZpbGwgYm94LXN0cm9rZSIgLz4KICA8dGV4dCB4PSI2MzAiIHk9IjE1MCIgY2xhc3M9ImxhYmVsIj5BZ2VudDwvdGV4dD4KICA8dGV4dCB4PSI2MzAiIHk9IjE3MCIgY2xhc3M9InN1YiI+bGl2ZXMgYXQ8L3RleHQ+CiAgPHRleHQgeD0iNjMwIiB5PSIxODUiIGNsYXNzPSJzdWIiPn4vLm9wZW5jbGF3LzwvdGV4dD4KICA8dGV4dCB4PSI2MzAiIHk9IjIwMCIgY2xhc3M9InN1YiI+d29ya3NwYWNlLzwvdGV4dD4KCiAgPCEtLSBBcnJvd3MgLS0+CiAgPGRlZnM+CiAgICA8bWFya2VyIGlkPSJhaCIgdmlld0JveD0iMCAwIDEwIDEwIiByZWZYPSI5IiByZWZZPSI1IiBtYXJrZXJXaWR0aD0iNiIgbWFya2VySGVpZ2h0PSI2IiBvcmllbnQ9ImF1dG8iPgogICAgICA8cGF0aCBkPSJNMCAwIEwxMCA1IEwwIDEwIHoiIGNsYXNzPSJhcnJvdy1oZWFkIiAvPgogICAgPC9tYXJrZXI+CiAgPC9kZWZzPgogIDxwYXRoIGQ9Ik0gMTE1IDE3MCBMIDE2NSAxNzAiIGNsYXNzPSJhcnJvdyIgbWFya2VyLWVuZD0idXJsKCNhaCkiIC8+CiAgPHBhdGggZD0iTSAzMDUgMTcwIEwgMzQ1IDE3MCIgY2xhc3M9ImFycm93IiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIgLz4KICA8cGF0aCBkPSJNIDUxNSAxNzAgTCA1NTUgMTcwIiBjbGFzcz0iYXJyb3ciIG1hcmtlci1lbmQ9InVybCgjYWgpIiAvPgoKICA8IS0tIENhcHRpb24gLS0+CiAgPHRleHQgeD0iMzYwIiB5PSIyODUiIGNsYXNzPSJjYXB0aW9uIj53aGVuIHNvbWV0aGluZyBicmVha3M6IG9wZW5jbGF3IGRvY3RvciB0ZWxscyB5b3Ugd2hpY2ggb2YgdGhlIHRocmVlIGlzIG1pc2JlaGF2aW5nPC90ZXh0Pgo8L3N2Zz4K)
+
+Aap har piece se aage ke scenarios mein miloge. Abhi ke liye: yeh install hai, aur jawab de raha hai.
+
+---
+
+## Scenario 2: Apne phone se ek channel pair karo (~15 min)
+
+**Goal:** apne phone se apne AI Employee ko "hi" bhejna aur jawab wapas lena.
+
+**Apne agent ko yeh paste karo:**
+
+> Dashboard mein model jawab de raha hai. Ab main apne phone se apne AI Employee se baat karna chahta hun. Mujhe WhatsApp pair karne ka tareeqa samjhao (preferred), ya Telegram ya Discord par fallback karo agar WhatsApp zyada mushkil hai jahan main rehta hun. Apna plan aur koi bhi setup jo mujhe apni taraf se karna hai woh samjhao.
+
+Aapka agent batayega kaunsa path recommend kar raha hai aur kyun. WhatsApp ke liye use doosra number suggest karna chahiye WhatsApp Business ke saath na ke aapka personal account (underlying library unofficial hai aur Meta personal accounts ko ban kar sakta hai). Telegram ke liye BotFather tak lejayega. Discord ke liye Developer Portal aur teen privacy intents jo aapko toggle on karne hain unke baare mein batayega.
+
+**Ek cheez jo aapka agent aapke liye nahi kar sakta:** login step ek chhoti terminal-based UI use karta hai QR code ya token prompt ke liye, aur woh UI properly render nahi karta jab agent use apne shell tool ke through run karta hai. Toh kisi point par aapka agent rukega aur aapko kahega ke ek fresh terminal window kholo usi folder mein aur login command khud run karo. Phone se QR scan karo (WhatsApp Business → Settings → Linked Devices → Link a Device) ya bot token paste karo jo aapne BotFather ya Developer Portal se liya tha. Agent ko "linked" batao jab aap kar lo.
+
+**Scenario 2 done when:** aap `hi` bhejte ho bound number par aur real jawab wapas aata hai.
+
+Agar aap AI Employee ko WhatsApp group chats mein bhi kaam karna chahte ho (sirf one-on-one nahi), to apne agent ko batao:
+
+> AI Employee ko group chats ke liye bhi khol do. Mujhe samjhao kya changes honge aur main use test group mein kaise add karun.
+
+**Scenario 3 mein carry-forward**
+
+Aapka phone ab OpenClaw service par authenticated path ban chuka hai aapke laptop par. Woh pairing real trust hai jo aapke phone ne abhi di hai. Use credential ki tarah treat karo: pairing files share mat karo, public repo mein commit mat karo, aur agar laptop kho jaye to phone se device revoke kar do (WhatsApp Business → Linked Devices, ya Telegram ya Discord ka equivalent setting).
+
+---
+
+## Scenario 3: Real work delegate karo aur loop watch karo (~10 min)
+
+**Concept.** "AI Employee" ko chatbot se alag karti hai **agent loop**: ek real task aata hai, agent decide karta hai use kis tool ki zaroorat hai (web fetch, calendar, file read, kuch bhi), unhe call karta hai, jo wapas aata hai use padhta hai, aur jawab banata hai. Jab tak aapne loop ko real task par watch nahi kiya, "agent" marketing jaisa lagta hai. Ek baar watch karne ke baad, aap bata sakte ho ke aapka AI Employee actually kya kar raha hai har baar jab woh jawab deta hai.
+
+**Apne agent ko yeh paste karo:**
+
+> Channel kaam kar raha hai. Ab prove karte hain ke yeh sirf chatbot nahi hai. Main apne phone se ek task bhejna chahta hun jiske liye agent ko actual mein ja kar kuch karna pade. Gateway log ka live view set up karo taake main agent loop real time mein dekh sakun, phir mujhe batao kab main task bhejne ke liye ready hun.
+
+Aapka agent ek side terminal kholega (ya aapko khulwane ko kahega) jo gateway log live stream kare. Jab ready ho, apne phone se ek real task bhejo jo aap actually delegate karoge. Apni real life se kuch lo, tutorial demo nahi. Kuch shapes jo pehle task ke liye achi hoti hain:
+
+- **Research lookup:** "Mere liye important competitor/vendor ka entry plan kitne ka hai, aur usme kya shamil hai? Mujhe ek paragraph summary do plus source URL."
+- **Web fetch aur analyze:** "Yeh article URL jo main paste karunga use padho aur mujhe teen claims batao jo mere role/industry ko sabse zyada affect karte hain, ek sentence ke saath ke har claim well-supported hai ya nahi."
+- **Structured task:** "Mere last five outgoing emails dekho `[folder ya label jo main name karunga]` mein; mujhe batao kis email ko sabse zyada follow-up chahiye aur woh follow-up kya hona chahiye."
+
+Point yeh hai: yeh waisa task hai jo ChatGPT refuse karega ya poorly karega. Isme agent ko real data fetch karna hai, uspar reason karna hai, aur kuch structured produce karna hai. Aapka AI Employee fetch karega, reason karega, aur jawab dega.
+
+Log stream mein aap roughly six lines scroll hoti dekhoge:
+
+1. Inbound message aapke channel par aaya.
+2. Model call: agent loop message ko Gemini bhejta hai aur poochta hai kya karna hai.
+3. Tool call: agent invoke karta hai jo bhi tool task ko chahiye (web fetch, file read, calendar lookup).
+4. Tool result: tool ne kya wapas diya, content ke taur par.
+5. Doosra model call: loop result ko Gemini wapas bhejta hai summarize karne ke liye.
+6. Outbound message: jawab aapke channel par wapas ja raha hai.
+
+**Scenario 3 done when:** aapne woh six-line shape scroll hoti dekh li aur jawab aapke phone par aa gaya. Woh shape hi loop hai. Jo kuch bhi aap baad ke scenarios mein add karoge (naya skill, external tool, scheduled task) bas usi loop mein aur tools ya triggers add karta hai.
+
+---
+
+## Scenario 4: Use apni tarah sound karwao aur tumhe yaad rakhe (~15 min)
+
+Aapke AI Employee ka behavior markdown files ke set se aata hai uske workspace mein `~/.openclaw/workspace/` par. Fresh install kuch files bhejta hai; yeh scenario un teen ko touch karta hai jinhe aap day one par customize karne ke liye sabse zyada likely ho (`SOUL.md`, `IDENTITY.md`, `USER.md`), phir aap chauthi banate ho (`MEMORY.md`, jo tab tak exist nahi karti jab tak agent pehli baar use likhta hai). Baaki (`AGENTS.md` agent ke apne operating rules ke liye, aapke zip mein companion `AGENTS.md` se alag; `TOOLS.md` tool policy ke liye; `HEARTBEAT.md` ambient routine ke liye) covered hain [Ch56 Lesson 4: Customize Your Employee's Brain](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/customize-your-employees-brain) mein.
+
+![Which File Do I Edit? A cheat sheet for the seven workspace files at ~/.openclaw/workspace/. Top row: SOUL.md (voice), AGENTS.md (operations), IDENTITY.md (name), USER.md (context). Bottom row: TOOLS.md (capabilities), HEARTBEAT.md (routines), MEMORY.md (memory). Each card lists "edit when you want to change X" and "don't put X here". All files are injected into the system prompt at session start.](/img/04-which-file-to-edit.webp)
+
+- **SOUL.md**: personality and tone (yeh kaise baat karta hai)
+- **IDENTITY.md**: apna naam aur role (yeh apna introduction kaise karta hai)
+- **USER.md**: aapke baare mein kya jaanta hai (persistent context)
+- **MEMORY.md**: durable facts jo woh across channels commit karta hai
+
+Aap har file ko ek baar touch karoge, har edit ke baad ek message bhejoge, aur fark mehsoos karoge. Do cheezein jaanna achi hain shuru karne se pehle: **har file ko lean rakho** (har line context cost hai jo agent har ek turn par pay karta hai, har channel reply aur har scheduled job mein, toh ek do pages each kaafi hai), aur **baad mein inhein churn mat karo** kyunke yeh har reply shape karte hain jo aapka AI Employee bhejta hai.
+
+**Sub-scenarios shuru karne se pehle,** apne general agent ko yeh paste karo quick orientation ke liye:
+
+> Quick orientation isse pehle ke hum kuch customize karein: mera workspace `~/.openclaw/workspace/` kholo aur mujhe ek line mein batao currently `SOUL.md`, `IDENTITY.md`, aur `USER.md` mein kya hai. Sirf defaults; hum agle step mein change karenge, phir `MEMORY.md` saath mein banayenge.
+
+Aapko per-file snapshot milega kahan se start ho raha hai. Aane wale edits specific files mein changes ki tarah feel honge jinhe aapne dekha hai, abstract files mein edits nahi jinhe aapne nahi dekha.
+
+**Brain edits ko load karne ke liye `/reset` chahiye (ek baar padho, 4a-4d par apply hota hai)**
+
+Workspace file (`SOUL.md`, `IDENTITY.md`, `USER.md`, `MEMORY.md`) mein kisi bhi edit ke baad, naya content disk par hai lekin running OpenClaw session ab bhi apna cached system prompt use kar raha hai. Apne phone se (paired channel) `/reset` bhejo OpenClaw ko batane ke liye ke system prompt disk se rebuild kare. Agar aapne Scenario 2 skip kar diya aur paired channel nahi hai, toh dashboard chat se `/reset` bhejo `http://127.0.0.1:18789` par. Neeche har sub-scenario assume karta hai ke yeh step edit aur test message ke beech mein hai.
+
+### 4a. `SOUL.md`: iski voice change karo
+
+**Apne general agent ko yeh paste karo:**
+
+> `SOUL.md` dekho aur teen chhoti changes suggest karo jo replies ko zyada direct aur less hedgy banayein (ya jo bhi style mujh mein missing hai). Pehle diff dikhao; sirf approve karne ke baad apply karo.
+
+Edit lagne ke baad, apne phone se `/reset` bhejo, phir ek casual message jaise `How are you today?`
+
+**Done when:** reply tone visibly different hai uss bland "hi" reply se jo aapko Scenario 1 mein mila tha.
+
+### 4b. `IDENTITY.md`: ise naam do
+
+**Apne general agent ko yeh paste karo:**
+
+> Ise ek naam aur role do. Main chahta hun ke yeh apna introduction kare "Atlas, my research assistant" (ya jo bhi naam aur role tumhe sahi lage aur mujhe batado). Pehle diff dikhao.
+
+Edit lagne ke baad, `/reset` aur poochho `Who are you?` apne phone se.
+
+**Done when:** yeh apna introduction naye naam aur role se karta hai, default se nahi.
+
+### 4c. `USER.md`: ise apne baare mein sikhhao
+
+**Apne general agent ko yeh paste karo:**
+
+> Ise mere baare mein sikhao. Mera full name, mera role, meri timezone, aur teen topics jin mein mujhe sabse zyada help chahiye, yeh sab add karo. Jo kuch tumhe pehle se nahi pata woh mujh se poochho, aur diff dikhana apply karne se pehle.
+
+Jo missing hoga woh poochhega. Edit lagne ke baad, `/reset` aur poochho `What should I prioritize this afternoon, given what you know about me?`
+
+**Done when:** jawab mein aapki timezone aur top topics factor ho, generic advice nahi.
+
+### 4d. `MEMORY.md`: across channels commit karo
+
+Pehli teen files voice shape karti hain. `MEMORY.md` different hai: yeh sirf agent ke main session mein load hoti hai, toh jo kuch bhi aap ise across channels jaanna chahte ho use deliberately commit karna padega. Chaar-step ladder neeche teen layers (session memory, channel cache, long-term commit) ek ek karke prove karti hai.
+
+Test fact neeche kuch temporary aur specific hai aapke week ke liye, stable identity fact nahi: stable facts jaise aapka naam already `USER.md` mein hai 4c se, toh wall fire nahi karegi agar hum unhe use karein. Koi real in-flight thing chuno: "Main [ek real project] Friday tak finish karne ki koshish kar raha hun" ya "Main [ek real client] ke liye Wednesday tak pitch prepare kar raha hun" kaam karta hai.
+
+![Memory layers diagram: three stacked horizontal layers. Session memory lives in RAM and survives only until reset. Channel memory lives on disk per channel and survives gateway restarts. Long-term memory (MEMORY.md at ~/.openclaw/workspace/) is the only layer that requires a deliberate commit to load across channels.](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MjAgMzgwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0ibWVtLXRpdGxlIG1lbS1kZXNjIj4KICA8dGl0bGUgaWQ9Im1lbS10aXRsZSI+VGhyZWUgbWVtb3J5IGxheWVyczogd2hhdCBzdXJ2aXZlcyB3aGF0PC90aXRsZT4KICA8ZGVzYyBpZD0ibWVtLWRlc2MiPlRocmVlIGhvcml6b250YWwgbGF5ZXJzIHN0YWNrZWQgdmVydGljYWxseS4gU2Vzc2lvbiBtZW1vcnkgKHRvcCkgbGl2ZXMgaW4gUkFNIGFuZCBzdXJ2aXZlcyBvbmx5IHVudGlsIHJlc2V0LiBDaGFubmVsIG1lbW9yeSAobWlkZGxlKSBsaXZlcyBvbiBkaXNrIHBlciBjaGFubmVsIGFuZCBzdXJ2aXZlcyBnYXRld2F5IHJlc3RhcnRzLiBMb25nLXRlcm0gbWVtb3J5IChib3R0b20sIE1FTU9SWS5tZCBhdCB+Ly5vcGVuY2xhdy93b3Jrc3BhY2UvKSBsb2FkcyBvbmx5IGluIHRoZSBtYWluIHNlc3Npb24gYW5kIHJlcXVpcmVzIGEgZGVsaWJlcmF0ZSBjb21taXQgdG8gbG9hZCBhY3Jvc3MgY2hhbm5lbHMuPC9kZXNjPgogIDxzdHlsZT4KICAgIC5iZyB7IGZpbGw6IHRyYW5zcGFyZW50OyB9CiAgICAubGF5ZXItZmlsbC0xIHsgZmlsbDogI2ZlZjNjNzsgfQogICAgLmxheWVyLWZpbGwtMiB7IGZpbGw6ICNkYmVhZmU7IH0KICAgIC5sYXllci1maWxsLTMgeyBmaWxsOiAjZGNmY2U3OyB9CiAgICAubGF5ZXItc3Ryb2tlIHsgc3Ryb2tlOiAjMWExYTFhOyBzdHJva2Utd2lkdGg6IDI7IH0KICAgIC5sYWJlbCB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTVweDsgZmlsbDogIzFhMWExYTsgZm9udC13ZWlnaHQ6IDcwMDsgfQogICAgLnN1YiB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTJweDsgZmlsbDogIzFhMWExYTsgfQogICAgLmhlYWRlciB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTZweDsgZmlsbDogIzFhMWExYTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC13ZWlnaHQ6IDYwMDsgfQogICAgLmNhcHRpb24geyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDEycHg7IGZpbGw6ICM1NTU7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtc3R5bGU6IGl0YWxpYzsgfQogICAgLnRhZyB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTFweDsgZmlsbDogIzFhMWExYTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC13ZWlnaHQ6IDcwMDsgfQogICAgQG1lZGlhIChwcmVmZXJzLWNvbG9yLXNjaGVtZTogZGFyaykgewogICAgICAubGF5ZXItZmlsbC0xIHsgZmlsbDogIzQyMjAwNjsgfQogICAgICAubGF5ZXItZmlsbC0yIHsgZmlsbDogIzFlM2E4YTsgfQogICAgICAubGF5ZXItZmlsbC0zIHsgZmlsbDogIzE0NTMyZDsgfQogICAgICAubGF5ZXItc3Ryb2tlIHsgc3Ryb2tlOiAjZTVlN2ViOyB9CiAgICAgIC5sYWJlbCB7IGZpbGw6ICNmOWZhZmI7IH0KICAgICAgLnN1YiB7IGZpbGw6ICNlNWU3ZWI7IH0KICAgICAgLmhlYWRlciB7IGZpbGw6ICNmOWZhZmI7IH0KICAgICAgLmNhcHRpb24geyBmaWxsOiAjZDFkNWRiOyB9CiAgICAgIC50YWcgeyBmaWxsOiAjZjlmYWZiOyB9CiAgICB9CiAgPC9zdHlsZT4KICA8cmVjdCBjbGFzcz0iYmciIHdpZHRoPSI3MjAiIGhlaWdodD0iMzgwIiAvPgoKICA8IS0tIFRpdGxlIC0tPgogIDx0ZXh0IHg9IjM2MCIgeT0iMjgiIGNsYXNzPSJoZWFkZXIiPlRocmVlIG1lbW9yeSBsYXllcnM6IHdoYXQgc3Vydml2ZXMgd2hhdDwvdGV4dD4KCiAgPCEtLSBDb2x1bW4gaGVhZGVycyAtLT4KICA8dGV4dCB4PSIxNjAiIHk9IjU4IiBjbGFzcz0idGFnIj5MQVlFUjwvdGV4dD4KICA8dGV4dCB4PSIzNTAiIHk9IjU4IiBjbGFzcz0idGFnIj5XSEVSRSBJVCBMSVZFUzwvdGV4dD4KICA8dGV4dCB4PSI1MjAiIHk9IjU4IiBjbGFzcz0idGFnIj5TVVJWSVZFUzwvdGV4dD4KICA8dGV4dCB4PSI2NTAiIHk9IjU4IiBjbGFzcz0idGFnIj5BVVRPTUFUSUM/PC90ZXh0PgoKICA8IS0tIExheWVyIDE6IFNlc3Npb24gLS0+CiAgPHJlY3QgeD0iNDAiIHk9Ijc1IiB3aWR0aD0iNjYwIiBoZWlnaHQ9IjgwIiByeD0iNiIgY2xhc3M9ImxheWVyLWZpbGwtMSBsYXllci1zdHJva2UiIC8+CiAgPHRleHQgeD0iNjAiIHk9IjEwNSIgY2xhc3M9ImxhYmVsIj5TZXNzaW9uPC90ZXh0PgogIDx0ZXh0IHg9IjYwIiB5PSIxMjUiIGNsYXNzPSJzdWIiPnRoZSBjb252ZXJzYXRpb248L3RleHQ+CiAgPHRleHQgeD0iNjAiIHk9IjE0MiIgY2xhc3M9InN1YiI+aW4gZmxpZ2h0PC90ZXh0PgogIDx0ZXh0IHg9IjI5MCIgeT0iMTE1IiBjbGFzcz0ic3ViIj5SQU0gKGN1cnJlbnQgY2hhdCk8L3RleHQ+CiAgPHRleHQgeD0iMjkwIiB5PSIxMzUiIGNsYXNzPSJzdWIiIHN0eWxlPSJmb250LXN0eWxlOml0YWxpYyI+bG9zdCBvbiByZXNldDwvdGV4dD4KICA8dGV4dCB4PSI0NjAiIHk9IjExNSIgY2xhc3M9InN1YiI+dW50aWwgL3Jlc2V0PC90ZXh0PgogIDx0ZXh0IHg9IjQ2MCIgeT0iMTM1IiBjbGFzcz0ic3ViIj5vciBnYXRld2F5IHJlc3RhcnQ8L3RleHQ+CiAgPHRleHQgeD0iNjUwIiB5PSIxMjAiIGNsYXNzPSJzdWIiIHRleHQtYW5jaG9yPSJtaWRkbGUiPnllczwvdGV4dD4KCiAgPCEtLSBMYXllciAyOiBDaGFubmVsIC0tPgogIDxyZWN0IHg9IjQwIiB5PSIxNzAiIHdpZHRoPSI2NjAiIGhlaWdodD0iODAiIHJ4PSI2IiBjbGFzcz0ibGF5ZXItZmlsbC0yIGxheWVyLXN0cm9rZSIgLz4KICA8dGV4dCB4PSI2MCIgeT0iMjAwIiBjbGFzcz0ibGFiZWwiPkNoYW5uZWw8L3RleHQ+CiAgPHRleHQgeD0iNjAiIHk9IjIyMCIgY2xhc3M9InN1YiI+cGVyLWNoYW5uZWwgY2FjaGU8L3RleHQ+CiAgPHRleHQgeD0iNjAiIHk9IjIzNyIgY2xhc3M9InN1YiI+b24gZGlzazwvdGV4dD4KICA8dGV4dCB4PSIyOTAiIHk9IjIxMCIgY2xhc3M9InN1YiI+cGVyLWNoYW5uZWwgY2FjaGUgZmlsZTwvdGV4dD4KICA8dGV4dCB4PSIyOTAiIHk9IjIzMCIgY2xhc3M9InN1YiIgc3R5bGU9ImZvbnQtc3R5bGU6aXRhbGljIj5vbiBkaXNrPC90ZXh0PgogIDx0ZXh0IHg9IjQ2MCIgeT0iMjEwIiBjbGFzcz0ic3ViIj5nYXRld2F5IHJlc3RhcnRzLDwvdGV4dD4KICA8dGV4dCB4PSI0NjAiIHk9IjIzMCIgY2xhc3M9InN1YiI+Y2hhbm5lbCByZS1wYWlyaW5nczwvdGV4dD4KICA8dGV4dCB4PSI2NTAiIHk9IjIxNSIgY2xhc3M9InN1YiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+eWVzPC90ZXh0PgoKICA8IS0tIExheWVyIDM6IExvbmctdGVybSAoTUVNT1JZLm1kKSAtLT4KICA8cmVjdCB4PSI0MCIgeT0iMjY1IiB3aWR0aD0iNjYwIiBoZWlnaHQ9IjgwIiByeD0iNiIgY2xhc3M9ImxheWVyLWZpbGwtMyBsYXllci1zdHJva2UiIC8+CiAgPHRleHQgeD0iNjAiIHk9IjI5NSIgY2xhc3M9ImxhYmVsIj5Mb25nLXRlcm08L3RleHQ+CiAgPHRleHQgeD0iNjAiIHk9IjMxNSIgY2xhc3M9InN1YiIgc3R5bGU9ImZvbnQtZmFtaWx5OiB1aS1tb25vc3BhY2UsIG1vbm9zcGFjZSI+TUVNT1JZLm1kPC90ZXh0PgogIDx0ZXh0IHg9IjYwIiB5PSIzMzIiIGNsYXNzPSJzdWIiPm1haW4gc2Vzc2lvbiBvbmx5PC90ZXh0PgogIDx0ZXh0IHg9IjI5MCIgeT0iMzA1IiBjbGFzcz0ic3ViIiBzdHlsZT0iZm9udC1mYW1pbHk6IHVpLW1vbm9zcGFjZSwgbW9ub3NwYWNlIj5+Ly5vcGVuY2xhdy88L3RleHQ+CiAgPHRleHQgeD0iMjkwIiB5PSIzMjUiIGNsYXNzPSJzdWIiIHN0eWxlPSJmb250LWZhbWlseTogdWktbW9ub3NwYWNlLCBtb25vc3BhY2UiPndvcmtzcGFjZS9NRU1PUlkubWQ8L3RleHQ+CiAgPHRleHQgeD0iNDYwIiB5PSIzMDUiIGNsYXNzPSJzdWIiPmZvcmV2ZXIsIHVudGlsPC90ZXh0PgogIDx0ZXh0IHg9IjQ2MCIgeT0iMzI1IiBjbGFzcz0ic3ViIj55b3UgZWRpdCB0aGUgZmlsZTwvdGV4dD4KICA8dGV4dCB4PSI2NTAiIHk9IjMwNSIgY2xhc3M9InN1YiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgc3R5bGU9ImZvbnQtd2VpZ2h0OjcwMCI+bm88L3RleHQ+CiAgPHRleHQgeD0iNjUwIiB5PSIzMjIiIGNsYXNzPSJzdWIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIHN0eWxlPSJmb250LXN0eWxlOml0YWxpYyI+bmVlZHMgYSBjb21taXQ8L3RleHQ+CgogIDwhLS0gQ2FwdGlvbiAtLT4KICA8dGV4dCB4PSIzNjAiIHk9IjM3MCIgY2xhc3M9ImNhcHRpb24iPnRoZSBjcm9zcy1jaGFubmVsIHByb29mIGluIFNjZW5hcmlvIDRkOiBzZXNzaW9uICsgY2hhbm5lbCBhcmUgZnJlZTsgY3Jvc3MtY2hhbm5lbCBuZWVkcyB5b3UgdG8gY29tbWl0LjwvdGV4dD4KPC9zdmc+Cg==)
+
+**Chaar steps.** (Aap sirf teen real messages bhejte ho; baaki short queries hain.)
+
+1. **Apne paired channel se:** `Quick context: Main [apna real in-flight thing] Friday tak finish karne ki koshish kar raha hun. Isko hold onto karo.` Phir turant: `What am I trying to finish by Friday?` Yeh jawab deta hai (session + channel memory, dono automatic).
+2. **Dashboard chat se** (`http://127.0.0.1:18789`, ek different session): `What am I trying to finish by Friday?` Ye *nahi* jaanta. Yeh hai wall: channel memory per-channel hoti hai, across channels shared nahi hoti.
+3. **Wapas apne paired channel mein:** `Commit my Friday goal to your long-term memory.` Aapka agent `MEMORY.md` banata hai (yeh pehli commit tak exist nahi karti thi) aur confirm karta hai.
+4. **Dashboard chat se phir se** (pehle `/reset` bhejo nayi committed `MEMORY.md` load karne ke liye): `What am I trying to finish by Friday?` Ab yeh jaanta hai. Deliberate commit ne wall cross kar di.
+
+Poori memory model ke liye (edge cases, `/reset` har layer ke saath kaise interact karta hai, gateway restarts ke dauran kya hota hai), dekho [Ch56 Lesson 5: Memory and Commands](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/memory-and-commands).
+
+**Voice and memory ladder done when:** Step 4 succeed ho jaye. Aapka AI Employee ab aapki tarah sound karta hai, apna introduction waise karta hai jaise aap chahte ho, aapke baare mein context jaanta hai, aur aapko across channels yaad rakhta hai kyunke kuch deliberately commit kiya gaya tha, sirf cached nahi. Scenario 4 ke poora hone se pehle ek aur step (4e) hai.
+
+### 4e. Jo identity aapne abhi banayi hai use backup karo
+
+Workspace `~/.openclaw/workspace/` HI aapka AI Employee hai: brain files jo aapne abhi customize karein, plus doosri workspace markdown (operating rules, tool policy, heartbeat routine) aur jo kuch bhi aap baad mein add karoge (Scenario 6 mein schedules, installed skills, etc.). Agar aapka laptop aaj raat mar gaya, aap yeh sab kho doge jab tak yeh kahi aur exist nahi karta. Poori workspace ko dotfiles ki tarah treat karo.
+
+**Apne general agent ko yeh paste karo:**
+
+> Mere agent ke workspace `~/.openclaw/workspace/` ko ek private GitHub repo mein backup karo taake main use nahi khoon agar mera laptop mar jaye. Saari workspace files include karo (SOUL/IDENTITY/USER/MEMORY brain files plus `AGENTS.md`, `TOOLS.md`, `HEARTBEAT.md`, aur koi bhi future additions jaise schedule files), aur secrets aur session caches exclude karo. Jitna bhi easiest ho setup karo based on Git tools jo mere paas already hain, aur jab tum kar lo to mujhe ek one-liner do jo main kahi safe save kar sakun jo fresh laptop par OpenClaw install karne ke baad ise wapas clone kar le.
+
+**Scenario 4 done when:** private repo GitHub par exist kare, aapka workspace push ho (brain files plus doosri workspace markdown), aur aapke paas recovery one-liner saved ho (ise kisi note app ya password manager mein paste karo jahan tumhe baad mein mile). Aapke AI Employee ki identity ab laptop wipe se bach gayi.
+
+---
+
+## Scenario 5: Ek skill aur ek tool ke saath extend karo (~15 min)
+
+**Concept.** Apne AI Employee mein capabilities add karne ke do tareeqe hain, alag shapes ke saath:
+
+- **Skill** ek folder hai jisme `SKILL.md` file hoti hai: *expertise* jo agent auto-invoke karta hai jab task match hota hai. Skills ek cross-runtime spec follow karti hain ([agentskills.io](https://agentskills.io)) taake wohi folder OpenClaw, Claude Code, OpenCode, aur 50+ mein kaam kare. Do registries spec ke against distribute karti hain: [skills.sh](https://skills.sh) (broad, cross-runtime) aur [ClawHub](https://clawhub.ai) (OpenClaw-curated, zyada vetted).
+- **MCP tool** ek *capability* hai jo agent call kar sakta hai: ek external service jo Model Context Protocol ke zariye functions expose karta hai (kisi bhi zone mein current time lena, database query karna, calendar invite bhejna, etc.). Configure, restart, verify; agent ko bina code ke naye tools mil jaate hain.
+
+Skills know-how inject karti hain; tools reach add karte hain. Dono same shape follow karte hain: install (ya configure), gateway restart taake OpenClaw unhe pick up kare, verify ke loaded hain, phir phone se test.
+
+Neeche har prompt aapko ek Ch56 lesson URL plus aapka `USER.md` deta hai. Lesson exact commands rakhta hai; aap natural language mein rehte ho jab agent padhta hai, plan karta hai, execute karta hai, aur verify karta hai.
+
+### 5a. Ek skill jo tumhare actual kaam se match kare
+
+**Dhyaan: installed skill jo fire nahi hoti almost always description mismatch hai.** Install kaam kar chuka hai; tumhare message ne sirf skill ke trigger description se match nahi kiya. Yeh description ke baare mein data hai, broken install nahi: gateway log skill-load event dikhata hai jab woh fire hoti hai.
+
+**Pehla prompt: lesson padho, discovery skill lo, propose karo.**
+
+> [https://agentfactory.panaversity.org/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/install-skills-discover-ecosystem](https://agentfactory.panaversity.org/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/install-skills-discover-ecosystem) padho taake tumhe pata ho OpenClaw skills kaise install karta hai (cross-runtime spec, scopes, gateway restart). Phir check karo ke `find-skills` skill pehle se installed hai ya nahi. Agar nahi hai, toh sirf yeh ek skill [skills.sh](https://www.skills.sh/vercel-labs/skills/find-skills) se Global scope mein install karo (taake yeh Claude Code aur OpenClaw dono mein land kare) aur gateway restart karo. Jab `find-skills` available ho, toh isse [skills.sh](https://skills.sh) par mere `USER.md` ke against search karwao aur do teen real skills suggest karo jo meri kaam-tareeqi se match karein. Har ek ke liye batao uska description kis cheez par trigger hota hai (sharp description tab fire hoti hai jab chahiye; vague kabhi nahi fire hoti), main kaise verify karun ke skill fire hui ya vanilla reply hai, aur tum pehle kaunsi pick karoge. Abhi chosen one install mat karo; main pehle pick karna chahta hun.
+
+Tumhe ek short list milegi jo tumhare actual kaam se grounded hai, real install URLs ke saath. Ek pick karo.
+
+**Doosra prompt: dono runtimes par install karo, phir verify karo.**
+
+> [your pick] Global scope mein install karo taake yeh ek saath Claude Code aur OpenClaw dono ke skills directories mein land kare, phir gateway restart karo. Mujhe batao kis directories mein likha taake main dekh sakun. SKILL.md description wapas list karo taake main jaan sakun ke paired channel se kya bhejna hai ise trigger karne ke liye, aur reply mein kya dekhna hai jo prove kare ke skill fire hui ya vanilla model response hai.
+
+Apne paired channel se, woh test input bhejo jo agent ne suggest kiya (meeting transcript, draft email, code snippet, jo bhi skill ke liye hai).
+
+**5a done when:** agent ne confirm kar diya ke skill installed hai (aur dikhaya kahan hai) AUR test input skill ke specific format ya framing ke saath reply produce kare (generic answer nahi). Agar skill fire nahi hoti, toh usually description mismatch hai (tumhara message skill ki description trigger nahi karta) ya missed restart hai; universal recovery prompt paste karo.
+
+### 5b. Ek external tool connect karo (no credentials needed)
+
+Canonical hello-world MCP `mcp-server-time` hai: no API key, do tools (`get_current_time`, `convert_time`). Yeh standard "tumne ek external tool connect kar liya" proof hai. **Dhyaan: MCP silently fail hota hai.** Misconfigured server chat mein koi error produce nahi karta; agent ko tool nahi milta. Gateway log hi ek diagnostic hai.
+
+**Pehla prompt: lesson padho, configure karo, verify karo.**
+
+> [https://agentfactory.panaversity.org/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/connect-external-tools](https://agentfactory.panaversity.org/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/connect-external-tools) padho taake tumhe configure-then-restart shape aur Silent Failure pattern pata ho. Phir lesson se `mcp-server-time` example set up karo (no API key needed). Pehle plan dikhao, phir execute karo. Gateway restart ke baad, prove karo ke `time` 2 tools ke saath registered hai. Agar missing hai ya 0 tools dikhata hai, toh Silent Failure hai: gateway log padho, plain language mein batao kya dekha, aur fix propose karo.
+
+Agent lesson walk karta hai, commands chalaata hai, aur registration list dikhata hai. Tumhe yeh line dekhni hai: `time` with 2 tools. Agar nahi hai, toh agent diagnose karta hai; tum approve karo.
+
+**Doosra prompt: phone se tool trigger karo, dashboard badge ke liye dekho.**
+
+> Time MCP connected hai. Main paired channel se ek real timezone question poochunga. Gateway log live tail karo taake hum `get_current_time` ko real time mein invoked dekh sakein, aur mujhe batao ke dashboard mein `http://127.0.0.1:18789` par kya dekhna hai: ek tool badge honi chahiye jo dikhaye ke agent ne time MCP use kiya hai training data se guess karne ki bajaye.
+
+Apne phone se ek real time question poochho jo tumhare liye matter karta hai. Examples:
+
+- "Agar main yeh proposal abhi apne client ko bhejun [unke city mein], toh unka local time kya hai? Kya yeh email karne ka reasonable hour hai?"
+- "Mera team [doosri timezone mein] kitne ghante mein apna workday khatam karta hai? Kya mujhe kal subah apne time tak wait karna chahiye?"
+- "[Deadline ki timezone mein] deadline kya hai agar abhi mere time 3pm hai?"
+
+**5b done when:** agent ne `time` server registered with 2 tools dikhaya hai, AUR phone se real time question specific live time produce karta hai (generic timezone rule nahi), AUR dashboard mein reply par `get_current_time` tool badge dikhti hai. Badge proof hai ke agent ne tool call kiya hai hallucinate karne ki bajaye.
+
+**Scenario 5 done when:** dono 5a aur 5b done conditions hold.
+
+Raaste mein, agent **activation dance** explicitly naam deta hai: har OpenClaw extension (skills, plugins, MCP servers, channels, hooks) same chaar steps se guzarti hai: **exists → disabled by default → enabled → configured (restart)**. Jab pattern ek baar dikhe, har naya feature familiar lagta hai pehli baar broken ki bajaye.
+
+![Activation dance diagram: chaar-step cycle (Exists, Disabled by default, Enabled, Configured) arrows ke saath jo order dikhaate hain. Har OpenClaw extension in chaar steps se guzarti hai. Jab naya feature pehli baar broken lage, in chaaron se guzro.](data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MjAgMzgwIiByb2xlPSJpbWciIGFyaWEtbGFiZWxsZWRieT0iZGFuY2UtdGl0bGUgZGFuY2UtZGVzYyI+CiAgPHRpdGxlIGlkPSJkYW5jZS10aXRsZSI+VGhlIGFjdGl2YXRpb24gZGFuY2U6IGZvdXIgc3RlcHMgZXZlcnkgT3BlbkNsYXcgZXh0ZW5zaW9uIGZvbGxvd3M8L3RpdGxlPgogIDxkZXNjIGlkPSJkYW5jZS1kZXNjIj5BIGNpcmN1bGFyIGZvdXItc3RlcCBjeWNsZTogRXhpc3RzLCBEaXNhYmxlZCBieSBkZWZhdWx0LCBFbmFibGVkLCBDb25maWd1cmVkLiBFdmVyeSBleHRlbnNpb24gKHNraWxsLCBwbHVnaW4sIE1DUCBzZXJ2ZXIsIGNoYW5uZWwsIGhvb2spIGdvZXMgdGhyb3VnaCB0aGVzZSBmb3VyIHN0ZXBzLiBXaGVuIGEgbmV3IGZlYXR1cmUgZmVlbHMgYnJva2VuIG9uIGZpcnN0IHRyeSwgd2FsayB0aHJvdWdoIHRoZSBmb3VyLjwvZGVzYz4KICA8c3R5bGU+CiAgICAuYmcgeyBmaWxsOiB0cmFuc3BhcmVudDsgfQogICAgLmJveC1maWxsIHsgZmlsbDogI2ZmZmZmZjsgfQogICAgLmJveC1zdHJva2UgeyBzdHJva2U6ICMxYTFhMWE7IHN0cm9rZS13aWR0aDogMjsgfQogICAgLmJveC1maWxsLTEgeyBmaWxsOiAjZmNlN2YzOyB9CiAgICAuYm94LWZpbGwtMiB7IGZpbGw6ICNmZWYzYzc7IH0KICAgIC5ib3gtZmlsbC0zIHsgZmlsbDogI2RiZWFmZTsgfQogICAgLmJveC1maWxsLTQgeyBmaWxsOiAjZGNmY2U3OyB9CiAgICAuc3RlcC1udW0geyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDIycHg7IGZpbGw6ICMyNTYzZWI7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtd2VpZ2h0OiA4MDA7IH0KICAgIC5zdGVwLW5hbWUgeyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDE1cHg7IGZpbGw6ICMxYTFhMWE7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtd2VpZ2h0OiA3MDA7IH0KICAgIC5zdGVwLWRlc2MgeyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDExcHg7IGZpbGw6ICM0NDQ7IHRleHQtYW5jaG9yOiBtaWRkbGU7IH0KICAgIC5zdGVwLWNtZCB7IGZvbnQtZmFtaWx5OiB1aS1tb25vc3BhY2UsIFNGTW9uby1SZWd1bGFyLCBtb25vc3BhY2U7IGZvbnQtc2l6ZTogMTBweDsgZmlsbDogIzFhMWExYTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgfQogICAgLmhlYWRlciB7IGZvbnQtZmFtaWx5OiBzeXN0ZW0tdWksIC1hcHBsZS1zeXN0ZW0sIHNhbnMtc2VyaWY7IGZvbnQtc2l6ZTogMTZweDsgZmlsbDogIzFhMWExYTsgdGV4dC1hbmNob3I6IG1pZGRsZTsgZm9udC13ZWlnaHQ6IDYwMDsgfQogICAgLmNhcHRpb24geyBmb250LWZhbWlseTogc3lzdGVtLXVpLCAtYXBwbGUtc3lzdGVtLCBzYW5zLXNlcmlmOyBmb250LXNpemU6IDEycHg7IGZpbGw6ICM1NTU7IHRleHQtYW5jaG9yOiBtaWRkbGU7IGZvbnQtc3R5bGU6IGl0YWxpYzsgfQogICAgLmFycm93IHsgc3Ryb2tlOiAjMWExYTFhOyBzdHJva2Utd2lkdGg6IDI7IGZpbGw6IG5vbmU7IH0KICAgIC5hcnJvdy1oZWFkIHsgZmlsbDogIzFhMWExYTsgfQogICAgQG1lZGlhIChwcmVmZXJzLWNvbG9yLXNjaGVtZTogZGFyaykgewogICAgICAuYm94LWZpbGwgeyBmaWxsOiAjMWYyOTM3OyB9CiAgICAgIC5ib3gtc3Ryb2tlIHsgc3Ryb2tlOiAjZTVlN2ViOyB9CiAgICAgIC5ib3gtZmlsbC0xIHsgZmlsbDogIzUwMDcyNDsgfQogICAgICAuYm94LWZpbGwtMiB7IGZpbGw6ICM0MjIwMDY7IH0KICAgICAgLmJveC1maWxsLTMgeyBmaWxsOiAjMWUzYThhOyB9CiAgICAgIC5ib3gtZmlsbC00IHsgZmlsbDogIzE0NTMyZDsgfQogICAgICAuc3RlcC1udW0geyBmaWxsOiAjNjBhNWZhOyB9CiAgICAgIC5zdGVwLW5hbWUgeyBmaWxsOiAjZjlmYWZiOyB9CiAgICAgIC5zdGVwLWRlc2MgeyBmaWxsOiAjZDFkNWRiOyB9CiAgICAgIC5zdGVwLWNtZCB7IGZpbGw6ICNmOWZhZmI7IH0KICAgICAgLmhlYWRlciB7IGZpbGw6ICNmOWZhZmI7IH0KICAgICAgLmNhcHRpb24geyBmaWxsOiAjZDFkNWRiOyB9CiAgICAgIC5hcnJvdyB7IHN0cm9rZTogI2U1ZTdlYjsgfQogICAgICAuYXJyb3ctaGVhZCB7IGZpbGw6ICNlNWU3ZWI7IH0KICAgIH0KICA8L3N0eWxlPgogIDxyZWN0IGNsYXNzPSJiZyIgd2lkdGg9IjcyMCIgaGVpZ2h0PSIzODAiIC8+CgogIDwhLS0gVGl0bGUgLS0+CiAgPHRleHQgeD0iMzYwIiB5PSIyOCIgY2xhc3M9ImhlYWRlciI+VGhlIGFjdGl2YXRpb24gZGFuY2U6IGV2ZXJ5IE9wZW5DbGF3IGV4dGVuc2lvbiBmb2xsb3dzIHRoZXNlIGZvdXIgc3RlcHM8L3RleHQ+CgogIDwhLS0gU3RlcCAxOiBFeGlzdHMgKHRvcC1sZWZ0KSAtLT4KICA8cmVjdCB4PSI2MCIgeT0iNzAiIHdpZHRoPSIyNDAiIGhlaWdodD0iMTAwIiByeD0iOCIgY2xhc3M9ImJveC1maWxsLTEgYm94LXN0cm9rZSIgLz4KICA8dGV4dCB4PSI5MiIgeT0iOTgiIGNsYXNzPSJzdGVwLW51bSI+MTwvdGV4dD4KICA8dGV4dCB4PSIxODAiIHk9Ijk4IiBjbGFzcz0ic3RlcC1uYW1lIj5FeGlzdHM8L3RleHQ+CiAgPHRleHQgeD0iMTgwIiB5PSIxMjAiIGNsYXNzPSJzdGVwLWRlc2MiPmJ1bmRsZWQgb3IgaW5zdGFsbGVkIG9uIGRpc2s8L3RleHQ+CiAgPHRleHQgeD0iMTgwIiB5PSIxNDIiIGNsYXNzPSJzdGVwLWNtZCI+b3BlbmNsYXcgcGx1Z2lucyBsaXN0PC90ZXh0PgogIDx0ZXh0IHg9IjE4MCIgeT0iMTU3IiBjbGFzcz0ic3RlcC1jbWQiPmNsYXdodWIgbGlzdCAgwrcgIG9wZW5jbGF3IG1jcCBsaXN0PC90ZXh0PgoKICA8IS0tIFN0ZXAgMjogRGlzYWJsZWQgKHRvcC1yaWdodCkgLS0+CiAgPHJlY3QgeD0iNDIwIiB5PSI3MCIgd2lkdGg9IjI0MCIgaGVpZ2h0PSIxMDAiIHJ4PSI4IiBjbGFzcz0iYm94LWZpbGwtMiBib3gtc3Ryb2tlIiAvPgogIDx0ZXh0IHg9IjQ1MiIgeT0iOTgiIGNsYXNzPSJzdGVwLW51bSI+MjwvdGV4dD4KICA8dGV4dCB4PSI1NDAiIHk9Ijk4IiBjbGFzcz0ic3RlcC1uYW1lIj5EaXNhYmxlZCBieSBkZWZhdWx0PC90ZXh0PgogIDx0ZXh0IHg9IjU0MCIgeT0iMTIwIiBjbGFzcz0ic3RlcC1kZXNjIj5zZWN1cml0eTogbm90aGluZyBhdXRvLWFjdGl2YXRlczwvdGV4dD4KICA8dGV4dCB4PSI1NDAiIHk9IjE0MiIgY2xhc3M9InN0ZXAtZGVzYyI+KHRoaXMgaXMgYSBmZWF0dXJlLDwvdGV4dD4KICA8dGV4dCB4PSI1NDAiIHk9IjE1NyIgY2xhc3M9InN0ZXAtZGVzYyI+bm90IGEgYnVnKTwvdGV4dD4KCiAgPCEtLSBTdGVwIDM6IEVuYWJsZWQgKGJvdHRvbS1yaWdodCkgLS0+CiAgPHJlY3QgeD0iNDIwIiB5PSIyMTAiIHdpZHRoPSIyNDAiIGhlaWdodD0iMTAwIiByeD0iOCIgY2xhc3M9ImJveC1maWxsLTMgYm94LXN0cm9rZSIgLz4KICA8dGV4dCB4PSI0NTIiIHk9IjIzOCIgY2xhc3M9InN0ZXAtbnVtIj4zPC90ZXh0PgogIDx0ZXh0IHg9IjU0MCIgeT0iMjM4IiBjbGFzcz0ic3RlcC1uYW1lIj5FbmFibGVkPC90ZXh0PgogIDx0ZXh0IHg9IjU0MCIgeT0iMjYwIiBjbGFzcz0ic3RlcC1jbWQiPm9wZW5jbGF3IGNvbmZpZyBzZXQ8L3RleHQ+CiAgPHRleHQgeD0iNTQwIiB5PSIyNzYiIGNsYXNzPSJzdGVwLWNtZCI+Jmx0O3BhdGgmZ3Q7LmVuYWJsZWQgdHJ1ZTwvdGV4dD4KCiAgPCEtLSBTdGVwIDQ6IENvbmZpZ3VyZWQgKGJvdHRvbS1sZWZ0KSAtLT4KICA8cmVjdCB4PSI2MCIgeT0iMjEwIiB3aWR0aD0iMjQwIiBoZWlnaHQ9IjEwMCIgcng9IjgiIGNsYXNzPSJib3gtZmlsbC00IGJveC1zdHJva2UiIC8+CiAgPHRleHQgeD0iOTIiIHk9IjIzOCIgY2xhc3M9InN0ZXAtbnVtIj40PC90ZXh0PgogIDx0ZXh0IHg9IjE4MCIgeT0iMjM4IiBjbGFzcz0ic3RlcC1uYW1lIj5Db25maWd1cmVkPC90ZXh0PgogIDx0ZXh0IHg9IjE4MCIgeT0iMjYwIiBjbGFzcz0ic3RlcC1kZXNjIj5mZWF0dXJlLXNwZWNpZmljIHNldHRpbmdzPC90ZXh0PgogIDx0ZXh0IHg9IjE4MCIgeT0iMjgyIiBjbGFzcz0ic3RlcC1jbWQiPm9wZW5jbGF3Z2F0ZXdheSByZXN0YXJ0PC90ZXh0PgoKICA8IS0tIEFycm93czogMeKGkuKGkjjihpI04oaSLmJhY2sgdG8gMSBkYXNoZWQpIC0tPgogIDxkZWZzPjxtYXJrZXIgaWQ9ImFoMyIgdmlld0JveD0iMCAwIDEwIDEwIiByZWZYPSI5IiByZWZZPSI1IiBtYXJrZXJXaWR0aD0iNiIgbWFya2VySGVpZ2h0PSI2IiBvcmllbnQ9ImF1dG8iPjxwYXRoIGQ9Ik0wIDAgTDEwIDUgTDAgMTAgeiIgY2xhc3M9ImFycm93LWhlYWQiIC8+PC9tYXJrZXI+PC9kZWZzPgogIDxwYXRoIGQ9Ik0gMzA1IDEyMCBMIDQxNSAxMjAiIGNsYXNzPSJhcnJvdyIgbWFya2VyLWVuZD0idXJsKCNhaDMpIiAvPgogIDxwYXRoIGQ9Ik0gNTQwIDE3NSBMIDU0MCAyMDUiIGNsYXNzPSJhcnJvdyIgbWFya2VyLWVuZD0idXJsKCNhaDMpIiAvPgogIDxwYXRoIGQ9Ik0gNDE1IDI2MCBMIDMwNSAyNjAiIGNsYXNzPSJhcnJvdyIgbWFya2VyLWVuZD0idXJsKCNhaDMpIiAvPgoKICA8IS0tIENhcHRpb24gLS0+CiAgPHRleHQgeD0iMzYwIiB5PSIzNTAiIGNsYXNzPSJjYXB0aW9uIj53aGVuIGEgbmV3IGZlYXR1cmUgZmVlbHMgYnJva2VuIG9uIGZpcnN0IHRyeSwgcnVuIHRocm91Z2ggdGhlc2UgZm91ci4gc3RlcHMgMS0zIGFuc3dlciAiaXMgaXQgb24/Ijsgc3RlcCA0IGFuc3dlcnMgImlzIGl0IGNvbmZpZ3VyZWQ/IjwvdGV4dD4KPC9zdmc+Cg==)
+
+**Carry-forward into Scenario 6**
+
+Is scenario ki additions apne `USER.md` mein add karo taake scheduled jobs (aane wale) jaan sakein ke yeh exist karti hain. Apne agent ko yeh paste karo:
+
+> Humne abhi jo skill aur MCP tool set up kiye hain unhe mere `USER.md` mein add karo taake jab scheduled jobs chalein toh unhe pata ho kya available hai. Phir 4e se mere backup repo mein updated `USER.md` commit aur push karo.
+
+Aapke AI Employee ki *capabilities*, sirf identity nahi, ab laptop wipe se bach gayi.
+
+---
+
+## Scenario 6: Ise apne aap act karne do (~15 min)
+
+**Concept.** Ab tak tumne AI Employee ko message kiya hai aur usne reply diya hai. **Schedules** woh palat dete hain: agent clock ya interval par act karta hai, *bina* tumhare message ke. OpenClaw mein proactivity ke teen flavors hain:
+
+- **Cron** precise times ke liye ("har subah 7am par", "har Monday 9am par", "end of day par"). Yeh tum sabse zyada use karoge. Tumhari real life clock times ke around organized hai.
+- **Heartbeat** ambient checks ke liye fixed cadence par ("har 30 minute par urgent unread scan karo", "har 4 ghante par calendar prep notes ke liye dekho"). Yeh use karo jab trigger "kuch periodically check karna" ho "exactly X baje yeh karo" ki bajaye.
+- **Hooks** event triggers ke liye (webhook fire, session reset). Yahan scope ke bahar hai; Ch56 dekho agar chahiye.
+
+Is scenario ke do parts hain. Part 6a ek fast heartbeat demo hai jo proactive mechanism wired prove karta hai. Part 6b keeper hai: ek real schedule (usually cron job) jo kal tumhare liye actually kaam karega. 6a ke baad mat ruko; demo jo tum disable karte ho proactive dimension prove nahi karta. Ek real schedule jo daily chalta hai woh karta hai.
+
+### 6a. Ek demo heartbeat fire hote dekho (phir band karo)
+
+**Apne agent ko yeh paste karo:**
+
+> Paanch minute ka demo heartbeat schedule karo ek low-cost task ke saath: har paanch minute, gateway log mein errors check karo aur ek one-line summary post karo. Ek baar jab main log mein fire hote dekh lun, toh sirf yeh demo disable karo taake mera Gemini quota na jale. Hum aage real schedule add karenge.
+
+**Done when:** log mein ek heartbeat-driven tool call dikhe AUR demo disabled ho. Paanch minute ka window log watch karna fair hai.
+
+### 6b. Ek cheez schedule karo jo tum actually rakhoge (cron ya heartbeat)
+
+Demo jo tum disable karte ho prove nahi karta ke tumhara AI Employee kal tool hai jo tum use karoge. Ek real schedule karta hai. Zyada tar first-time keepers ke liye, **cron sahi choice hai**: tumhare real workdays clock times ke around organized hain, check-intervals ke nahi.
+
+**Pehla prompt: mere baare mein jo jaante ho uspar grounded options suggest karo.**
+
+> Main ek real schedule add karna chahta hun jo actually mere kaam aaye, demo nahi jo main bhool jaun. Mere `USER.md` se dekho kya jaante ho aur do teen options suggest karo jo main rakh sakun. Har ek ke liye batao kya karega, kab fire hoga, aur **cron** (precise time) ya **heartbeat** (ambient interval) sahi primitive hai. Main pick karunga.
+
+Agent options offer karega jo aapke `USER.md` se grounded hain (7am summary, Monday morning priorities list, end-of-day outstanding commitments check, interval calendar scan, etc.). Woh pick karo jo kal sabse zyada useful lage.
+
+**Doosra prompt: set up karo aur backup karo.**
+
+> [apna choice] ke saath jao. Set up karo, confirm karo kab next fire hoga, aur schedule file ko 4e se mere backup repo mein commit karo taake laptop wipe se bach jaye.
+
+**Done when:** jo schedule tumne choose kiya woh running hai, backup repo mein committed hai, aur agent ne bataya hai kab next fire hoga. Chalu rakhao. (Agar kal regret karo, toh sirf woh ek schedule disable kar sakte ho bina kuch aur touch kiye.)
+
+---
+
+## Scenario 7: Mahine ka AI Employee audit (~10 min/month)
+
+**Concept.** Tumhara AI Employee waqt ke saath accumulate hota hai: skills jo tumne install kiye, credentials jo capture hui, MCP tools jo connect kiye, memory entries jo likhi, autonomous tool calls logs mein. Har addition ek chhota decision tha tumne approve kiya; chain opaquely compound hoti hai. Defense install time par vigilance nahi hai (jo abhi exist nahi karta woh kabhi nahi pakadte); yeh fixed cadence par das minute ka review hai. Yeh scenario tumhare pehle ninety minutes ka hissa nahi hai; yeh move hai jo tum mahine mein ek baar apne AI Employee ki baqi zindagi ke liye karte ho.
+
+**Apne agent ko yeh paste karo (jab waqt aaye):**
+
+> Mera OpenClaw monthly audit chalao. Pichle audit ke baad se jo kuch bhi install, stored, scheduled, ya likha gaya hai woh walk through karo, aur kuch bhi flag karo jo maine explicitly approve nahi kiya, memory mein kuch revealing lagta hai, aur koi approval setting jo honi chahiye usse loose hai. Sab kuch ek single short report mein summarize karo jo main ya toh approve kar sakun ya trim kar sakun.
+
+Agent running inventory (skills, memory entries, approvals, MCP tools, recent tool calls) plus stored credentials se guzarta hai, phir ek single report likhta hai jo naam deta hai ke last audit ke baad kya change hua aur kahan tighten ya trim karna chahiye.
+
+**Done when:** tumne das minute report review karne mein bitaye aur kam se kam ek decision liya (bhuli hui credential delete, over-broad approval revoke, stale memory entry prune, unused skill uninstall). Next month ke liye calendar mark karo.
+
+---
+
+## Yeh kaam kyun karta hai
+
+Do cheezein fresh rehti hain; ek cheez durable rehti hai.
+
+**Fresh #1**: Is page ke scenarios book site par live hain. Agent har session mein current version fetch karta hai (tum batate ho kaunse scenario par ho, aur woh relevant section padhta hai).
+
+**Fresh #2**: Current OpenClaw commands [docs.openclaw.ai/llms.txt](https://docs.openclaw.ai/llms.txt) par hain, full docs ka ek LLM-friendly index. Tumhara agent har baar jab woh command run karne wala hai jo use sure nahi hai toh use fresh padhta hai. OpenClaw fast ship karta hai; yeh tareeqa hai brief accurate kaise rehta hai jab individual flags drift karti hain.
+
+**Durable**: `AGENTS.md` (tumhare two-file zip se operational reference) rakhta hai ke OpenClaw kya hai, docs kaise navigate karein, safety rails (`sudo` nahi bina poochhe, paid models nahi, keys `~/.openclaw/` ke bahar nahi likhne), recovery patterns, aur activation dance. Yeh poori platform cover karta hai: install, debugging, channels, memory, skills, plugins, MCP, automation, multi-agent, ACP, aur sandboxing. Yeh is page se lamba hai kyunke yeh *sab kuch* cover karta hai jo ek general agent OpenClaw se pooch sakta hai, sirf oopar ke chhe scenarios nahi. Folder mein kuch bhi kabhi stale nahi hota, toh tum ek baar download karo aur reuse karo.
+
+Intelligence files mein nahi hai; yeh tumhare general agent mein hai jo unhe padhta hai aur jo bhi tum aage poochho uspar apply karta hai. Tumne chhe disconnected demos nahi chale; tumne ek tool assemble kiya jo tum kal touch karoge.
+
+---
+
+## Ab kya actually chal raha hai
+
+Chhe demos nahi: ek system. Scenario 6 ke baad jo persist karta hai uska inventory:
+
+| Artifact | Yeh actually kya hai | Kal kyun matter karta hai |
+|----------|---------------------|--------------------------|
+| Background service | OpenClaw, tumhare OS ke saath auto-starting | Tumhara AI Employee terminal band karne aur reboot se bach jata hai |
+| Channel pairing | Tumhare phone aur laptop ke beech trusted link | Path jo tumhara phone service tak use karta hai |
+| Workspace files | Saat markdown files `~/.openclaw/workspace/` mein | Tumhare AI Employee ki identity, context, behavior, aur memory |
+| GitHub backup | Workspace ka private repo plus recovery one-liner | Workspace laptop loss se bachta hai |
+| Ek installed skill | [ClawHub](https://clawhub.ai) se ek expertise pack | Ek real know-how extension jo tumhara agent auto-invoke karta hai |
+| Ek external tool | Ek MCP server jo agent call kar sakta hai | Ek real external service agent ke liye available |
+| Ek scheduled task | Ek cron job ya heartbeat jo tumhare baghair chalta hai | Ek cheez jo *tumhare liye* schedule par chalti hai |
+
+Yeh picture hai. In mein se koi bhi demo nahi jise tumne chala ke disable kiya; yeh sab ek tool ke pieces hain jo tum kal touch karoge.
+
+Ek kaam-din iske saath aisa dikhta hai: tumhara phone 7am par buzz karta hai jo schedule tumne choose kiya (cron job, agar 7am summary keeper hai); mid-morning tum ek quick question reply karte ho jo time MCP ya S5 ki skill trigger karta hai; mid-afternoon tum agent ko teen emails ke replies draft karne ko kehte ho; end of day tum ek naya fact long-term memory mein commit karte ho. Tumne kabhi laptop nahi khola.
+
+Agar in mein se koi bhi artifact baad mein missing ho jaye (laptop wipe, accidental delete, version upgrade gone wrong), toh 4e ka GitHub repo plus fresh OpenClaw install plus recovery one-liner aapko isi exact picture par wapas laata hai.
+
+### Public-facing channel connect karne se pehle
+
+Crash course assume karta hai ke AI Employee sirf **tumhare** messages padhta hai. Agar tum kabhi public-facing channel connect karne ka plan karte ho (support inbox, contact form, kuch bhi jahan ajnawi log likh sakte hain), toh yahan ruko aur pehle [**Chapter 56 Lesson 14: Gate Your Agent's Tools**](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/gate-your-agents-tools) aur [**Lesson 16: Isolate with NemoClaw**](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/isolate-with-nemoclaw) padho. Sandboxed-reader pattern tumhari structural defense hai prompt injection ke khilaf (woh threat jahan adversarial instructions email mein chhupe tumhare AI Employee ko tumhari taraf se actions lene par trick kar sakte hain). Pairing lock down karta hai *kaun tumhare bot ko likh sakta hai*; sandboxing lock down karti hai *tumhara bot kya kar sakta hai jo woh padhta hai*. Dono matter.
+
+---
+
+## Aage kahan jana hai
+
+Scenario 6 ke baad, tumhare paas ek working AI Employee hai jiska workspace customized hai (voice, identity, tumhare baare mein kya jaanta hai, committed memory), workspace GitHub par backed up hai, ek installed skill hai, ek external tool hai, aur ek scheduled task hai jo tumhare liye chalta hai. Yeh zyada tar surface hai jo zyada tar logon ko chahiye.
+
+Kisi bhi topic ka patient walkthrough chahiye jo is page ne touch kiya (ya skip kiya), toh [**Chapter 56**](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee) mein saat lessons hain jo poori platform cover karti hain. Quick map:
+
+| Tumhe kya chahiye... | Jao |
+|---------------------|-----|
+| Voice replies (WhatsApp / Telegram / Discord par audio) | [Ch56 L10: Give it a voice](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/give-it-a-voice) |
+| Reader-agent pattern (untrusted-email safety, sandboxing) | [Ch56 L14: Gate Your Agent's Tools](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/gate-your-agents-tools) |
+| Doosra specialized agent chalana (routing, separate identity) | [Ch56 L11: Add a second agent](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/add-a-second-agent) |
+| AI Employee general agents ko summon karna (`/acp spawn` choreography finale, developers ke liye) | [Ch56 L13: Orchestrate other agents](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/orchestrate-other-agents) |
+| Sandboxing modes aur security hardening | [Ch56 L14](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/gate-your-agents-tools), [L16: Isolate with NemoClaw](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/isolate-with-nemoclaw) |
+| Zyada channels (Slack, Matrix, Signal, iMessage, Zalo) | Apne general agent se poochho: "Walk me through the `channel` setup using your brief." |
+
+Baaki sab ke liye, tumhara `AGENTS.md` platform ka zyada tar cover karta hai. Apne general agent se poochho: "AGENTS.md mein sandboxing ke baare mein kya hai?" Brief reference hai; page tour hai.
+
+**Meta-lesson**: tumhare unzipped folder mein sabse valuable cheez `AGENTS.md` hai. Ek shaam ise end-to-end padho (install steps ke liye nahi, balki document ki *shape* ke liye: discover-before-act table, human-path-vs-agent-path table, working pattern, gotcha catalog, activation dance). Phir ek aise tool ke liye likho jiske saamne tum agla general agent rakhoge. Pattern portable hai: har tool jiski learnable surface hai uske paas ek "little skill" hai likhne laayak. OpenClaw early example tha kyunke install actively agent-driven setup se benefit karta hai; tum aur bhi dhundoge. Agla ek author karo.
+
+---
+
+## Appendix: Google Workspace Connect Karo
+
+**Frame upfront.** Google Cloud Platform OAuth screens ke pandrah minute se zyada, ek real account par jise tum throwaway ki tarah treat karna chahiye. Google consent flows time-bound hain (kuch links das minute mein expire ho jaate hain) aur click-heavy hain. Yeh specifically Google ko integrate karne ki price hai; iska OpenClaw se koi taluq nahi hai, aur koi aur integration aasan nahi banayega.
+
+Apne agent ko yeh paste karo:
+
+> Google Workspace (Gmail, Calendar, Drive) mere AI Employee se connect karo. Ek throwaway Google account use karo; mujhe GCP aur OAuth steps walk through karo with explicit STOP conditions agar koi consent screen mujhe un scopes ko grant karne ko kahe jo tumne nahi bataye.
+
+Agent live Workspace plugin docs fetch karta hai, plugin install karta hai (usually `gog` ya similar naam; assume karne se pehle verify karo), browser mein OAuth flow open karta hai, env-var-backed reference se consent token capture karta hai, aur ek chhoti probe se verify karta hai (e.g., "meri next teen calendar events list karo").
+
+**STOP conditions.** Koi bhi quota ya permission error jo ek fix attempt ke baad bhi recur kare. Koi indication ke tumhe un scopes ko grant karne ko kaha ja raha hai jo agent ne nahi bataye. Koi sign ke GCP project khud misconfigured hai (yeh appendix clean throwaway account assume karta hai; existing GCP project ki auth debug karna crash-course scope se bahar hai).
+
+**Pointer.** Deep walkthrough [Ch56 Lesson 12: Connect Google Workspace](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/connecting-google-workspace) mein hai.
+
+---
+
+## Flashcards Study Aid
+
+Neeche crash course ki key concepts par flashcards hain. Har card ka answer dekhne ke liye click karo.
+
+<details>
+<summary>OpenClaw crash-course companion zip ke andar kaunsi do files hain?</summary>
+
+`AGENTS.md` (~600-line operational reference) aur `CLAUDE.md` (ek line: `@AGENTS.md`, jo Claude Code ko brief automatically import karne ko kehta hai).
+
+</details>
+
+<details>
+<summary>OpenClaw kya hai? Ek line mein batao.</summary>
+
+OpenClaw tumhara **Personal AI Employee** hai: ek open-source assistant jo tumhare apne laptop par chalta hai aur WhatsApp, Telegram, Discord jaise messaging apps ke zariye reply karta hai.
+
+</details>
+
+<details>
+<summary>"Agent loop" kya cheez hai? Chhe lines mein explain karo.</summary>
+
+Agent loop yeh shape hai:
+1. Inbound message aata hai channel par.
+2. Model call: agent loop message ko Gemini ko bhejta hai aur poochta hai kya kare.
+3. Tool call: agent jo tool chahiye woh invoke karta hai (web fetch, file read, calendar lookup).
+4. Tool result: tool ne kya return kiya, content chunk ke tor par.
+5. Doosri model call: loop result ko Gemini ko wapas bhejta hai summarize karne ke prompt ke saath.
+6. Outbound message: reply channel par wapas jaata hai.
+
+</details>
+
+<details>
+<summary>Har scenario mein paanch-step rhythm kya hai?</summary>
+
+1. **Tum ek sentence paste karte ho** apne general agent mein.
+2. **Tumhara agent `AGENTS.md` consult karta hai** aur plan propose karta hai.
+3. **Tum approve karte ho aur dekhte ho.**
+4. **Tumhara agent seam par rukta hai** — kuch moves sirf tum kar sakte ho.
+5. **Jab ek observable cheez ho jaye toh tum done ho.**
+
+</details>
+
+<details>
+<summary>Scenario 1 ka "done when" kya hai?</summary>
+
+Tumhare agent ka apna CLI check real reply ke saath wapas aaya, AUR dashboard mein browser mein bhi `hi` type karne par reply aaye. Dashboard footer mein `google/gemini-2.5-flash` active model dikhana chahiye.
+
+</details>
+
+<details>
+<summary>WhatsApp pair karte waqt "ek cheez jo agent nahi kar sakta" kya hai?</summary>
+
+Login step ek chhoti terminal-based UI use karta hai QR code ya token prompt ke liye, aur woh UI properly render nahi hoti jab agent ise apne shell tool se chalata hai. Tumhe khud fresh terminal window kholna padta hai aur login command run karna padta hai.
+
+</details>
+
+<details>
+<summary>Scenario 2 ka "done when" kya hai?</summary>
+
+Tum `hi` bhejte ho apne phone se bound number par aur ek real reply wapas aata hai.
+
+</details>
+
+<details>
+<summary>Scenario 3 mein agent loop ke chhe lines kya hain?</summary>
+
+1. Inbound message channel par aata hai.
+2. Model call (Gemini ko message bhejta hai).
+3. Tool call (jo tool chahiye invoke karta hai).
+4. Tool result (content chunk).
+5. Doosri model call (summarize karne ke liye).
+6. Outbound message (reply wapas channel par).
+
+</details>
+
+<details>
+<summary>SOUL.md, IDENTITY.md, USER.md, MEMORY.md mein kya farq hai?</summary>
+
+- **SOUL.md**: personality aur tone (kaise baat karta hai)
+- **IDENTITY.md**: apna naam aur role (kaise introduce karta hai)
+- **USER.md**: tumhare baare mein kya jaanta hai (persistent context)
+- **MEMORY.md**: durable facts jo cross channels commit karta hai
+
+</details>
+
+<details>
+<summary>Brain files edit karne ke baad kya karna padta hai aur kyun?</summary>
+
+Phone se `/reset` bhejna padta hai. Kyunke naya content disk par hai lekin running OpenClaw session abhi bhi system prompt ka cached snapshot use kar raha hai. `/reset` OpenClaw ko system prompt disk se rebuild karne ko kehta hai.
+
+</details>
+
+<details>
+<summary>Memory ki teen layers kaunsi hain?</summary>
+
+1. **Session memory** — RAM mein, sirf reset tak rehti hai.
+2. **Channel memory** — disk par per-channel, gateway restarts se bachti hai.
+3. **Long-term memory (MEMORY.md)** — sirf main session mein load hoti hai, deliberate commit chahiye taake cross channels kaam kare.
+
+</details>
+
+<details>
+<summary>MEMORY.md cross channels kaam kaise karta hai?</summary>
+
+Tum apne paired channel se kehte ho: "Commit my Friday goal to your long-term memory." Agent `MEMORY.md` banata hai (pehli baar commit tak exist nahi karta) aur confirm karta hai. Phir dashboard chat se `/reset` bhejte ho aur poochte ho — ab woh jaanta hai. Deliberate commit ne wall cross ki.
+
+</details>
+
+<details>
+<summary>Workspace backup kyun zaruri hai? Kahan save hona chahiye?</summary>
+
+Workspace (`~/.openclaw/workspace/`) hi tumhara AI Employee hai: brain files, operating rules, tool policy, heartbeat routine, schedules, installed skills. Agar laptop mar jaye toh sab kuch kho jaata hai. Private GitHub repo mein hona chahiye — dotfiles ki tarah treat karo.
+
+</details>
+
+<details>
+<summary>Skill aur MCP tool mein kya farq hai?</summary>
+
+- **Skill** ek folder hai jisme `SKILL.md` hai: *expertise* jo agent auto-invoke karta hai jab task match hota hai.
+- **MCP tool** ek *capability* hai jo agent call kar sakta hai: external service jo Model Context Protocol ke zariye functions expose karta hai.
+
+Skills know-how inject karti hain; tools reach add karte hain.
+
+</details>
+
+<details>
+<summary>"Activation dance" ke chaar steps kaunse hain?</summary>
+
+Har OpenClaw extension (skills, plugins, MCP servers, channels, hooks) in chaar steps se guzarti hai:
+
+1. **Exists** — bundled ya installed on disk
+2. **Disabled by default** — security: kuch auto-activate nahi hota
+3. **Enabled** — `openclaw config set`
+4. **Configured** — gateway restart
+
+</details>
+
+<details>
+<summary>MCP "Silent Failure" kya hai? Kaise diagnose karte ho?</summary>
+
+Misconfigured MCP server chat mein koi error produce nahi karta; agent ko tool nahi milta. Gateway log hi ek diagnostic hai. Agar server missing hai ya 0 tools dikhata hai, toh gateway log padho aur fix propose karo.
+
+</details>
+
+<details>
+<summary>OpenClaw proactivity ke teen flavors kaunse hain?</summary>
+
+1. **Cron** — precise times ke liye ("har subah 7am par").
+2. **Heartbeat** — ambient checks fixed cadence par ("har 30 minute par scan karo").
+3. **Hooks** — event triggers ke liye (webhook fire, session reset).
+
+</details>
+
+<details>
+<summary>Monthly audit mein kya check karna chahiye?</summary>
+
+Skills jo install kiye, credentials jo capture hui, MCP tools jo connect kiye, memory entries jo likhi, autonomous tool calls logs mein, approval settings, aur kuch bhi jo explicitly approve nahi kiya ya memory mein revealing lagta hai.
+
+</details>
+
+<details>
+<summary>Public-facing channel connect karne se pehle kya padhna chahiye?</summary>
+
+[Chapter 56 Lesson 14: Gate Your Agent's Tools](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/gate-your-agents-tools) aur [Lesson 16: Isolate with NemoClaw](/docs/Building-OpenClaw-Apps/meet-your-personal-ai-employee/isolate-with-nemoclaw). Sandboxed-reader pattern prompt injection ke khilaf structural defense hai.
+
+</details>
+
+<details>
+<summary>Recovery prompt kya hai jo poore crash course ke liye kaam karta hai?</summary>
+
+"Kuch kaam nahi kiya. Gateway log padho, plain language mein batao kya dekha, aur fix propose karo jo main approve kar sakoon."
+
+Agent log padhta hai, naam deta hai, aur fix propose karta hai. Tum approve karo.
+
+</details>
+
+<details>
+<summary>`AGENTS.md` ka source of truth kis order mein hai?</summary>
+
+1. Live docs (sabse pehle)
+2. Yeh file (`AGENTS.md`)
+3. Gateway log
+
+</details>
+
+<details>
+<summary>OpenClaw ke teen pieces kya hain jo laptop par chalte hain?</summary>
+
+1. **Channel adapters** — phone se connectors (WhatsApp, Telegram, Discord)
+2. **Gateway** — long-running service port 18789 par, sessions aur tool dispatch
+3. **Agent** — brain files aur state `~/.openclaw/workspace/` mein
+
+</details>

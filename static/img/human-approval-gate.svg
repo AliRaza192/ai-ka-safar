@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 620" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#9333ea"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .ph { font-size: 14px; font-weight: 700; fill: #334155; letter-spacing: .3px; }
+      .bname { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .bsub { font-size: 12px; fill: #64748b; }
+      .big { font-size: 16px; font-weight: 700; }
+      .mono { font-size: 12.5px; font-family: "Courier New", monospace; }
+      .arrlab { font-size: 11px; font-weight: 700; fill: #64748b; }
+      .foot { font-size: 13px; fill: #334155; }
+      .foott { font-size: 14px; font-weight: 700; fill: #0f172a; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1240" height="620" fill="#ffffff"/>
+
+  <text x="620" y="44" text-anchor="middle" class="title" fill="url(#tg)">The human-approval gate: the mind re-enters the loop</text>
+  <text x="620" y="72" text-anchor="middle" class="subtitle">The agent drafts; the function suspends at zero compute; a person decides; it resumes.</text>
+
+  <!-- PHASE 1 -->
+  <text x="40" y="112" class="ph">PHASE 1: the agent runs</text>
+  <g filter="url(#sh)"><rect x="40" y="126" width="332" height="56" rx="9" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="60" y="150" class="bname">agent investigates</text><text x="60" y="170" class="bsub">looks up the case</text>
+  <g filter="url(#sh)"><rect x="40" y="192" width="332" height="56" rx="9" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="60" y="216" class="bname">drafts the action</text><text x="60" y="236" class="bsub">writes the reply and the refund</text>
+  <g filter="url(#sh)"><rect x="40" y="258" width="332" height="56" rx="9" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="60" y="282" class="bname">asks for approval</text><text x="60" y="302" class="bsub">then pauses</text>
+
+  <!-- arrow P1 -> P2 -->
+  <line x1="376" y1="286" x2="424" y2="200" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="398" y="250" class="arrlab">suspends</text>
+
+  <!-- PHASE 2 -->
+  <text x="430" y="112" class="ph">PHASE 2: suspend</text>
+  <g filter="url(#sh)"><rect x="430" y="126" width="360" height="120" rx="11" fill="#fef3c7" stroke="#fcd34d"/></g>
+  <text x="610" y="162" text-anchor="middle" class="big" fill="#b45309">FUNCTION SUSPENDED</text>
+  <text x="610" y="188" text-anchor="middle" class="mono" fill="#92400e">step.wait_for_event</text>
+  <text x="610" y="216" text-anchor="middle" class="bsub">zero compute, for as long as it takes</text>
+
+  <line x1="610" y1="246" x2="610" y2="298" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrow)"/>
+  <text x="660" y="276" class="arrlab">waits for</text>
+
+  <g filter="url(#sh)"><rect x="430" y="300" width="360" height="96" rx="11" fill="#f1f5f9" stroke="#cbd5e1"/></g>
+  <text x="610" y="332" text-anchor="middle" class="big" fill="#334155">HUMAN REVIEWER</text>
+  <text x="610" y="356" text-anchor="middle" class="bsub">reviews in Slack or an admin UI</text>
+  <text x="610" y="376" text-anchor="middle" class="bsub">clicks Approve or Reject</text>
+
+  <!-- arrow human -> P3 -->
+  <line x1="792" y1="330" x2="836" y2="232" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="858" y="300" class="arrlab">approval event, resume</text>
+
+  <!-- PHASE 3 -->
+  <text x="838" y="112" class="ph">PHASE 3: resume and branch</text>
+  <g filter="url(#sh)"><rect x="838" y="126" width="362" height="62" rx="9" fill="#dcfce7" stroke="#86efac"/></g>
+  <text x="858" y="152" class="bname" fill="#15803d">Approve</text><text x="858" y="172" class="bsub">issue the refund</text>
+  <g filter="url(#sh)"><rect x="838" y="198" width="362" height="62" rx="9" fill="#ffe4e6" stroke="#fda4af"/></g>
+  <text x="858" y="224" class="bname" fill="#be123c">Reject</text><text x="858" y="244" class="bsub">record a blocked refund</text>
+  <g filter="url(#sh)"><rect x="838" y="270" width="362" height="62" rx="9" fill="#f1f5f9" stroke="#cbd5e1"/></g>
+  <text x="858" y="296" class="bname" fill="#475569">Timeout</text><text x="858" y="316" class="bsub">record a blocked refund</text>
+  <text x="838" y="366" class="bsub">Every branch writes a row to audit_log.</text>
+
+  <!-- footer -->
+  <g filter="url(#sh)"><rect x="40" y="450" width="1160" height="120" rx="12" fill="#f8fafc" stroke="#e2e8f0"/></g>
+  <text x="62" y="484" class="foott">While it waits</text>
+  <text x="62" y="512" class="foot">Zero compute. The function is paged out of memory; the event, or a timeout, brings it back exactly where it left off.</text>
+  <text x="62" y="538" class="foot">The human is the principal: the agent proposes the action, and a person decides whether it fires.</text>
+</svg>

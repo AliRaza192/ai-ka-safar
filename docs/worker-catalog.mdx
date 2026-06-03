@@ -1,0 +1,1058 @@
+---
+sidebar_position: 5.1
+title: Worker Catalog
+---
+
+# AI Worker Catalog
+
+*Agent Factory Thesis ka companion. Business verticals mein role-based AI Workers (Digital FTEs) ka living reference.*
+
+---
+
+## Yeh Document Kaise Parhein
+
+Thesis architecture define karti hai: saat invariants, do layers, ek factory. Yeh catalog us ke neeche chalti hai. Yahan specifics hain: har vertical mein kaunse Workers hain, woh kya karte hain, kya padhte likhte hain, kaun supervise karta hai.
+
+**Teen Zaroori Baatein:**
+
+<figure>
+<svg viewBox="0 0 550 200" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '550px'}}>
+  <rect x="175" y="5" width="200" height="40" rx="10" fill="#2e8555" stroke="none"/>
+  <text x="275" y="25" text-anchor="middle" font-size="11" font-weight="bold" fill="white">Human Supervisor</text>
+  <text x="275" y="38" text-anchor="middle" font-size="8" fill="#e8f5e9">Intent + Verification</text>
+  <line x1="275" y1="45" x2="275" y2="65" stroke="#2e8555" stroke-width="2"/>
+  <rect x="175" y="65" width="200" height="30" rx="6" fill="#25c2a0" stroke="none"/>
+  <text x="275" y="85" text-anchor="middle" font-size="10" font-weight="bold" fill="white">AI Worker Fleet</text>
+  <line x1="200" y1="95" x2="90" y2="115" stroke="#25c2a0" stroke-width="1.5"/>
+  <line x1="275" y1="95" x2="275" y2="115" stroke="#25c2a0" stroke-width="1.5"/>
+  <line x1="350" y1="95" x2="460" y2="115" stroke="#25c2a0" stroke-width="1.5"/>
+  <rect x="20" y="115" width="140" height="30" rx="6" fill="#e8f5e9" stroke="#2e8555" stroke-width="1.5"/>
+  <text x="90" y="135" text-anchor="middle" font-size="9" fill="#1a1a2e">GTM Workers</text>
+  <rect x="205" y="115" width="140" height="30" rx="6" fill="#e8f5e9" stroke="#2e8555" stroke-width="1.5"/>
+  <text x="275" y="135" text-anchor="middle" font-size="9" fill="#1a1a2e">Finance Workers</text>
+  <rect x="390" y="115" width="140" height="30" rx="6" fill="#e8f5e9" stroke="#2e8555" stroke-width="1.5"/>
+  <text x="460" y="135" text-anchor="middle" font-size="9" fill="#1a1a2e">Support Workers</text>
+  <line x1="90" y1="145" x2="90" y2="165" stroke="#2e8555" stroke-width="1"/>
+  <line x1="275" y1="145" x2="275" y2="165" stroke="#2e8555" stroke-width="1"/>
+  <line x1="460" y1="145" x2="460" y2="165" stroke="#2e8555" stroke-width="1"/>
+  <rect x="20" y="165" width="140" height="25" rx="4" fill="#f5f5f5" stroke="#999" stroke-width="1"/>
+  <text x="90" y="182" text-anchor="middle" font-size="8" fill="#555">CRM (SoR)</text>
+  <rect x="205" y="165" width="140" height="25" rx="4" fill="#f5f5f5" stroke="#999" stroke-width="1"/>
+  <text x="275" y="182" text-anchor="middle" font-size="8" fill="#555">General Ledger (SoR)</text>
+  <rect x="390" y="165" width="140" height="25" rx="4" fill="#f5f5f5" stroke="#999" stroke-width="1"/>
+  <text x="460" y="182" text-anchor="middle" font-size="8" fill="#555">Ticketing (SoR)</text>
+</svg>
+<figcaption>Figure: Human Supervisor → AI Worker Fleet → System of Record hierarchy.</figcaption>
+</figure>
+
+<figure>
+<svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '680px'}}>
+  {/* LEFT: THESIS */}
+  <rect x="10" y="10" width="270" height="320" rx="12" fill="#fefce8" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="145" y="38" text-anchor="middle" font-size="16" font-weight="bold" fill="#713f12">THESIS</text>
+  <text x="145" y="55" text-anchor="middle" font-size="10" fill="#a16207">Constitutional · Invariant · Stays put</text>
+
+  {/* Thesis items */}
+  <rect x="25" y="70" width="240" height="36" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="145" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">7 Invariants</text>
+  <text x="145" y="100" text-anchor="middle" font-size="9" fill="#a16207">Principal → Trigger</text>
+
+  <rect x="25" y="112" width="240" height="36" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="145" y="130" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">Two-Layer Model</text>
+  <text x="145" y="142" text-anchor="middle" font-size="9" fill="#a16207">Edge + Workforce</text>
+
+  <rect x="25" y="154" width="240" height="36" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="145" y="172" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">10-80-10 Rule</text>
+  <text x="145" y="184" text-anchor="middle" font-size="9" fill="#a16207">Intent · Execute · Verify</text>
+
+  <rect x="25" y="196" width="240" height="36" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="145" y="214" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">Per-Worker Engine</text>
+  <text x="145" y="226" text-anchor="middle" font-size="9" fill="#a16207">Job ko runtime se match karo</text>
+
+  <rect x="25" y="238" width="240" height="36" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="145" y="256" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">Authority Envelope</text>
+  <text x="145" y="268" text-anchor="middle" font-size="9" fill="#a16207">Budgets · Scope · Ceilings</text>
+
+  {/* ARROW */}
+  <line x1="290" y1="165" x2="350" y2="165" stroke="#ca8a04" stroke-width="2" marker-end="url(#arrowhead)"/>
+  <text x="320" y="155" text-anchor="middle" font-size="9" fill="#ca8a04">operationalizes</text>
+  <text x="320" y="185" text-anchor="middle" font-size="9" fill="#ca8a04">into</text>
+  <defs><marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#ca8a04"/></marker></defs>
+
+  {/* RIGHT: CATALOG */}
+  <rect x="360" y="10" width="310" height="320" rx="12" fill="#f0fdf4" stroke="#2e8555" stroke-width="1.5"/>
+  <text x="515" y="38" text-anchor="middle" font-size="16" font-weight="bold" fill="#14532d">YEH CATALOG · v0.1</text>
+  <text x="515" y="55" text-anchor="middle" font-size="10" fill="#16a34a">Operational · Versioned · Badalta hai</text>
+
+  <rect x="375" y="70" width="280" height="36" rx="6" fill="#dcfce7" stroke="#2e8555" stroke-width="1"/>
+  <text x="515" y="88" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">6 Verticals</text>
+  <text x="515" y="100" text-anchor="middle" font-size="9" fill="#16a34a">GTM · Finance · Support · Eng · HR · Legal</text>
+
+  <rect x="375" y="112" width="280" height="36" rx="6" fill="#dcfce7" stroke="#2e8555" stroke-width="1"/>
+  <text x="515" y="130" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">Worker Fleets</text>
+  <text x="515" y="142" text-anchor="middle" font-size="9" fill="#16a34a">Role-based, unbundled, focused</text>
+
+  <rect x="375" y="154" width="280" height="36" rx="6" fill="#dcfce7" stroke="#2e8555" stroke-width="1"/>
+  <text x="515" y="172" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">Supervisors</text>
+  <text x="515" y="184" text-anchor="middle" font-size="9" fill="#16a34a">CRO · Controller · EM · GC · CHRO</text>
+
+  <rect x="375" y="196" width="280" height="36" rx="6" fill="#dcfce7" stroke="#2e8555" stroke-width="1"/>
+  <text x="515" y="214" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">Systems of Record</text>
+  <text x="515" y="226" text-anchor="middle" font-size="9" fill="#16a34a">CRM · GL · Tickets · Repo · ATS · CLM</text>
+
+  <rect x="375" y="238" width="280" height="36" rx="6" fill="#dcfce7" stroke="#2e8555" stroke-width="1"/>
+  <text x="515" y="256" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">Engines</text>
+  <text x="515" y="268" text-anchor="middle" font-size="9" fill="#16a34a">Dapr · Claude Managed · OpenAI SDK</text>
+
+  {/* Bottom labels */}
+  <rect x="10" y="290" width="270" height="35" rx="6" fill="#fef9c3" stroke="#ca8a04" stroke-width="1"/>
+  <text x="145" y="310" text-anchor="middle" font-size="10" font-weight="bold" fill="#713f12">Thesis constitutional hai — badalta nahi</text>
+
+  <rect x="360" y="290" width="310" height="35" rx="6" fill="#dcfce7" stroke="#2e8555" stroke-width="1"/>
+  <text x="515" y="310" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">Catalog operational hai — workforce reality ke saath badalta hai</text>
+</svg>
+<figcaption>Figure: Thesis (constitutional) operationalizes into Catalog (versioned). Har invariant specific Workers, Supervisors, aur SoRs mein translate hota hai.</figcaption>
+</figure>
+
+1. **Worker role nahi hota** — "GTM Worker" ek single AI employee nahi jo sab GTM kare. Har vertical role-based Workers ki fleet mein unbundle hota hai.
+
+2. **Human relocate hota hai — gayab nahi hota** — Har vertical mein human supervisor hota hai. Unka kaam execution (80%) se intent aur verification (10%+10%) ki taraf shift hota hai.
+
+3. **System of Record substrate hai** — Har Worker ek durable store se padhta aur likhta hai jo agent session ke baad bhi survive kare — GTM ke liye CRM, Finance ke liye General Ledger, Support ke liye ticketing.
+
+<figure>
+<svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '700px'}}>
+  {/* Panel 1: Worker is not the Role */}
+  <rect x="5" y="5" width="225" height="270" rx="8" fill="#fafaf9" stroke="#d4d4d4" stroke-width="1"/>
+  <text x="117" y="28" text-anchor="middle" font-size="12" font-weight="bold" fill="#1f2937">1 · Worker role nahi hai</text>
+  <text x="117" y="44" text-anchor="middle" font-size="9" fill="#6b7280">Vertical specialists mein unbundle hota hai</text>
+
+  <rect x="40" y="58" width="150" height="24" rx="4" fill="#dc2626" fill-opacity="0.1" stroke="#dc2626" stroke-width="1"/>
+  <text x="115" y="74" text-anchor="middle" font-size="10" fill="#dc2626" font-weight="bold">"GTM" — monolithic role</text>
+
+  <line x1="115" y1="82" x2="115" y2="96" stroke="#6b7280" stroke-width="1" stroke-dasharray="3,2"/>
+  <text x="115" y="94" text-anchor="middle" font-size="8" fill="#6b7280">unbundles into</text>
+
+  {['Lead Enrichment', 'Outreach Sequencer', 'CRM Hygiene', 'Pipeline Analyst', 'Proposal Generator', 'Demo Customizer', 'Attribution'].map((w, i) => (
+    <g key={i}>
+      <rect x="30" y={108 + i * 21} width="170" height="17" rx="3" fill="#dcfce7" stroke="#2e8555" stroke-width="0.8"/>
+      <text x="115" y={120 + i * 21} text-anchor="middle" font-size="8" fill="#14532d">{w}</text>
+    </g>
+  ))}
+  <text x="117" y="268" text-anchor="middle" font-size="8" fill="#2e8555" font-style="italic">Har ek specify, supervise, verify ho sakta hai</text>
+
+  {/* Panel 2: Human Relocates */}
+  <rect x="237" y="5" width="225" height="270" rx="8" fill="#fafaf9" stroke="#d4d4d4" stroke-width="1"/>
+  <text x="350" y="28" text-anchor="middle" font-size="12" font-weight="bold" fill="#1f2937">2 · Human relocate hota hai</text>
+  <text x="350" y="44" text-anchor="middle" font-size="9" fill="#6b7280">Kaam ke beech se edges par shift</text>
+
+  <rect x="270" y="60" width="160" height="35" rx="6" fill="#2e8555"/>
+  <text x="350" y="76" text-anchor="middle" font-size="11" font-weight="bold" fill="white">10%</text>
+  <text x="350" y="90" text-anchor="middle" font-size="9" fill="#e8f5e9">Intent — spec banao</text>
+
+  <rect x="270" y="100" width="160" height="55" rx="6" fill="#25c2a0"/>
+  <text x="350" y="122" text-anchor="middle" font-size="13" font-weight="bold" fill="white">80%</text>
+  <text x="350" y="138" text-anchor="middle" font-size="9" fill="white">Workers Execute</text>
+  <text x="350" y="150" text-anchor="middle" font-size="8" fill="#e8f5e9">Budget · Envelope</text>
+
+  <rect x="270" y="160" width="160" height="35" rx="6" fill="#2e8555"/>
+  <text x="350" y="176" text-anchor="middle" font-size="11" font-weight="bold" fill="white">10%</text>
+  <text x="350" y="190" text-anchor="middle" font-size="9" fill="#e8f5e9">Verify — review, approve, sign-off</text>
+
+  <text x="350" y="218" text-anchor="middle" font-size="9" fill="#1f2937" font-weight="bold">Supervisor ki authority hai</text>
+  <text x="350" y="232" text-anchor="middle" font-size="9" fill="#1f2937" font-weight="bold">jo Worker fleet ko legitimate banati hai.</text>
+  <text x="350" y="252" text-anchor="middle" font-size="9" fill="#6b7280" font-style="italic">Human gayab nahi hota — relocate hota hai.</text>
+
+  {/* Panel 3: SoR is the Substrate */}
+  <rect x="469" y="5" width="225" height="270" rx="8" fill="#fafaf9" stroke="#d4d4d4" stroke-width="1"/>
+  <text x="582" y="28" text-anchor="middle" font-size="12" font-weight="bold" fill="#1f2937">3 · SoR substrate hai</text>
+  <text x="582" y="44" text-anchor="middle" font-size="9" fill="#6b7280">Workers authoritative state par chalte hain</text>
+
+  {/* Workers */}
+  <rect x="490" y="58" width="70" height="30" rx="4" fill="#25c2a0"/>
+  <text x="525" y="72" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Worker</text>
+  <text x="525" y="83" text-anchor="middle" font-size="7" fill="#e8f5e9">read</text>
+
+  <rect x="570" y="58" width="70" height="30" rx="4" fill="#25c2a0"/>
+  <text x="605" y="72" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Worker</text>
+  <text x="605" y="83" text-anchor="middle" font-size="7" fill="#e8f5e9">write</text>
+
+  <rect x="490" y="94" width="70" height="30" rx="4" fill="#25c2a0"/>
+  <text x="525" y="108" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Worker</text>
+  <text x="525" y="119" text-anchor="middle" font-size="7" fill="#e8f5e9">read+write</text>
+
+  <rect x="570" y="94" width="70" height="30" rx="4" fill="#25c2a0"/>
+  <text x="605" y="108" text-anchor="middle" font-size="8" fill="white" font-weight="bold">Worker</text>
+  <text x="605" y="119" text-anchor="middle" font-size="7" fill="#e8f5e9">read</text>
+
+  {/* Arrows to SoR */}
+  <line x1="555" y1="124" x2="555" y2="150" stroke="#2e8555" stroke-width="1.5"/>
+  <line x1="582" y1="124" x2="582" y2="150" stroke="#2e8555" stroke-width="1.5"/>
+
+  {/* SoR box */}
+  <rect x="480" y="150" width="170" height="40" rx="6" fill="#14532d"/>
+  <text x="565" y="168" text-anchor="middle" font-size="10" font-weight="bold" fill="white">SYSTEM OF RECORD</text>
+  <text x="565" y="183" text-anchor="middle" font-size="8" fill="#86efac">CRM · GL · Tickets · Repo · ATS · CLM</text>
+
+  <text x="582" y="210" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">SoR ke baghair agents state hallucinate</text>
+  <text x="582" y="222" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">karte hain, double-write karte hain,</text>
+  <text x="582" y="234" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">aur sessions ke beech kaam lose karte hain.</text>
+
+  <text x="582" y="258" text-anchor="middle" font-size="9" fill="#1f2937" font-weight="bold">Truth agent session se</text>
+  <text x="582" y="270" text-anchor="middle" font-size="9" fill="#1f2937" font-weight="bold">zyada lamba survive karta hai.</text>
+</svg>
+<figcaption>Figure: Vertical kyun unbundle hota hai, human kyun relocate hota hai, aur SoR kyun zaroori hai.</figcaption>
+</figure>
+
+---
+
+## The Catalog Template — 8 Fields
+
+Har vertical entry inhi 8 fields ko follow karti hai, isi order mein:
+
+1. **Definition** — yeh function plain language mein kya karta hai.
+2. **System of Record** — authoritative store jis ke khilaf Worker fleet chalti hai. Session se bachta hai.
+3. **Worker Fleet** — is vertical mein role-based Workers ki unbundled list.
+4. **Authority Envelope** — supervisor kya delegate karta hai, budgets aur limits ke saath.
+5. **Human Supervisor** — kaun spec, budget, aur outcome ka malik hai. Named, generic nahi.
+6. **Verification Checkpoints** — kahan humans action commit hone se pehle review karte hain.
+7. **Reference Engines** — current engine choices har Worker class ke liye. Replaceable.
+8. **Failure Modes** — kya galat hota hai jab envelope, SoR, ya verification gate missing ho.
+
+<figure>
+<svg viewBox="0 0 650 430" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="28" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">8-Field Template</text>
+  <text x="325" y="44" text-anchor="middle" font-size="10" fill="#6b7280">Har vertical entry inhi 8 sawalon ka jawab deti hai, isi order mein.</text>
+
+  {[
+    {num: '1', title: 'Definition', desc: 'Yeh function plain language mein kya karta hai. Pehle scope set karo.', ex: 'e.g. "Sales, marketing, aur revenue motion..."', color: '#2e8555'},
+    {num: '2', title: 'System of Record', desc: 'Authoritative store jis ke khilaf Worker fleet chalti hai. Session se bachta hai.', ex: 'e.g. CRM, General Ledger, Ticketing', color: '#2563eb'},
+    {num: '3', title: 'Worker Fleet', desc: 'Is vertical mein role-based AI Workers ki unbundled list.', ex: 'e.g. Lead Enrichment, Outreach Sequencer, CRM Hygiene...', color: '#7c3aed'},
+    {num: '4', title: 'Authority Envelope', desc: 'Supervisor kya delegate karta hai — budgets aur limits ke saath.', ex: 'e.g. "$X/month cap, pre-approved discount bands..."', color: '#b45309'},
+    {num: '5', title: 'Human Supervisor', desc: 'Kaun spec, budget, aur outcome ka malik hai. Named, generic nahi.', ex: 'e.g. CRO · Controller · GC · CHRO · Head of Support', color: '#dc2626'},
+    {num: '6', title: 'Verification', desc: 'Kahan humans action commit hone se pehle review aur approve karte hain.', ex: 'e.g. Proposal review, JE approval, PR merge gate', color: '#0891b2'},
+    {num: '7', title: 'Reference Engines', desc: '2026 engine choices har Worker class ke liye. Spec todey baghair replaceable.', ex: 'e.g. Dapr Agents, Claude Managed, OpenAI SDK', color: '#4f46e5'},
+    {num: '8', title: 'Failure Modes', desc: 'Kya galat hota hai jab envelope, SoR, ya verification gate missing ho.', ex: 'e.g. "Outreach Worker spam cannon ban jata hai..."', color: '#dc2626'},
+  ].map((f, i) => (
+    <g key={i}>
+      <rect x="20" y={60 + i * 45} width="36" height="36" rx="8" fill={f.color}/>
+      <text x="38" y={84 + i * 45} text-anchor="middle" font-size="14" font-weight="bold" fill="white">{f.num}</text>
+      <text x="68" y={76 + i * 45} font-size="12" font-weight="bold" fill="#1f2937">{f.title}</text>
+      <text x="68" y={90 + i * 45} font-size="9" fill="#6b7280">{f.desc}</text>
+    </g>
+  ))}
+
+  <text x="325" y="430" text-anchor="middle" font-size="10" fill="#2e8555" font-weight="bold">In order parho — 8 fields ek vertical ko completely specify karti hain: build, supervise, verify.</text>
+</svg>
+<figcaption>Figure: Catalog ka 8-field template. Har vertical isi structure ko follow karti hai.</figcaption>
+</figure>
+
+Neeche jo reference engines hain woh **2026 ke realizations** hain, invariants nahi. Worker fleet, SoR, aur verification structure durable hain. Engines badlenge.
+
+---
+
+## Vertical ki Anatomy
+
+6 entries se pehle, yeh schema hai jo sab share karti hain. Har vertical ek hi architectural shape follow karti hai: top par human supervisor, beech mein unbundled Workers ki fleet, neeche system of record, fleet ke ird-gird authority envelope, side par verification checkpoints, aur har Worker ke neeche engine choice.
+
+<figure>
+<svg viewBox="0 0 650 480" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Vertical ki Anatomy</text>
+  <text x="325" y="42" text-anchor="middle" font-size="10" fill="#6b7280">Har vertical entry isi shape ko follow karti hai. Boxes ka content badalta hai; architecture nahi badalta.</text>
+
+  {/* Human Supervisor */}
+  <rect x="175" y="55" width="300" height="45" rx="8" fill="#2e8555"/>
+  <text x="325" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="white">HUMAN SUPERVISOR</text>
+  <text x="325" y="90" text-anchor="middle" font-size="9" fill="#e8f5e9">Spec set karo · budget rakho · outcome approve karo</text>
+
+  {/* Arrows down from supervisor */}
+  <line x1="260" y1="100" x2="260" y2="120" stroke="#2e8555" stroke-width="1.5"/>
+  <line x1="390" y1="100" x2="390" y2="120" stroke="#2e8555" stroke-width="1.5"/>
+  <text x="325" y="115" text-anchor="middle" font-size="8" fill="#2e8555">pehle 10% · aakhri 10%</text>
+  <text x="325" y="126" text-anchor="middle" font-size="8" fill="#2e8555">authority envelope ke andar delegate karta hai</text>
+
+  {/* Authority Envelope box */}
+  <rect x="55" y="135" width="540" height="170" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="150" text-anchor="middle" font-size="11" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — budgets · scope · ceilings</text>
+
+  {/* Workers */}
+  {['Worker A', 'Worker B', 'Worker C', 'Worker D', 'Worker E', 'Worker F', 'Worker G'].map((w, i) => (
+    <g key={i}>
+      <rect x={75 + i * 80} y="165" width="70" height="45" rx="6" fill="#25c2a0"/>
+      <text x={110 + i * 80} y="184" text-anchor="middle" font-size="9" font-weight="bold" fill="white">{w}</text>
+      <text x={110 + i * 80} y="198" text-anchor="middle" font-size="7" fill="#e8f5e9">role-based</text>
+    </g>
+  ))}
+  <text x="325" y="228" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">Har Worker focused hai — independently specify, supervise, aur verify ho sakta hai.</text>
+
+  {/* Verification Checkpoints */}
+  <rect x="55" y="240" width="260" height="58" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="185" y="256" text-anchor="middle" font-size="10" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="185" y="270" text-anchor="middle" font-size="8" fill="#0891b2">Pre-action review · Threshold approval</text>
+  <text x="185" y="282" text-anchor="middle" font-size="8" fill="#0891b2">Periodic certification · Policy update review</text>
+  <text x="185" y="294" text-anchor="middle" font-size="7" fill="#0891b2" font-style="italic">Supervisor ka aakhri 10% yahan rehta hai</text>
+
+  {/* SoR */}
+  <rect x="340" y="310" width="280" height="50" rx="8" fill="#14532d"/>
+  <text x="480" y="330" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD</text>
+  <text x="480" y="346" text-anchor="middle" font-size="9" fill="#86efac">Authoritative state · har agent session se bachta hai</text>
+
+  {/* Arrows from workers to SoR */}
+  <line x1="325" y1="210" x2="325" y2="310" stroke="#2e8555" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="340" y1="240" x2="340" y2="310" stroke="#2e8555" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="333" y="265" font-size="8" fill="#2e8555">read · write</text>
+
+  {/* Reference Engines */}
+  <rect x="55" y="375" width="540" height="35" rx="6" fill="#4f46e5" fill-opacity="0.1" stroke="#4f46e5" stroke-width="1"/>
+  <text x="325" y="393" text-anchor="middle" font-size="10" font-weight="bold" fill="#4f46e5">REFERENCE ENGINES</text>
+  <text x="325" y="406" text-anchor="middle" font-size="8" fill="#4f46e5">Har Worker ke liye choose hoti hain, company ke liye nahi</text>
+
+  <text x="325" y="435" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">Neeche 6 verticals isi shape ko concrete content se instantiate karti hain.</text>
+  <text x="325" y="450" text-anchor="middle" font-size="9" fill="#6b7280" font-style="italic">Cross-vertical pattern recognition catalog ki central teaching device hai.</text>
+</svg>
+<figcaption>Figure: Har vertical isi architectural shape ko follow karti hai — supervisor top par, fleet beech mein, SoR neeche.</figcaption>
+</figure>
+
+---
+
+## 1. Go-To-Market (GTM)
+
+**Definition:** Sales, marketing, aur revenue motion jo prospects ko paying customers mein badalta hai.
+
+**System of Record:** CRM — Salesforce, HubSpot, Pipedrive
+
+**Worker Fleet:**
+
+| Worker | Kya Karta Hai | Engine |
+|--------|--------------|--------|
+| **Lead Enrichment Worker** | Inbound leads mein firmographic aur intent data add karta hai | Dapr Agents |
+| **Outreach Sequencer Worker** | Email, LinkedIn, SMS par multi-touch sequences draft aur dispatch karta hai | Dapr Agents |
+| **CRM Hygiene Worker** | Contacts deduplicate karta hai, account hierarchies normalize karta hai | Dapr Agents |
+| **Pipeline Analyst Worker** | Stalled deals flag karta hai, weekly forecast deltas generate karta hai | Claude Managed |
+| **Proposal Generator Worker** | Opportunity record se tailored proposals banata hai | Claude Managed |
+| **Demo Customizer Worker** | ICP ke hisaab se tailored product demos assemble karta hai | Claude Managed |
+| **Attribution Worker** | Touchpoint data reconcile karta hai, CRM mein outcomes likhta hai | Dapr Agents |
+
+**Authority Envelope:** Outreach Sequencer N emails per ICP per day bhej sakta hai, budget $X/month capped across sequencing tools. Proposal Generator pre-approved discount bands ke andar quote kar sakta hai; band se bahar ke liye human approval chahiye. Pipeline Analyst stage fields par read-only hai; flag kar sakta hai lekin deal move nahi kar sakta bina human sign-off ke. Lead Enrichment ka per-record cost ceiling hai.
+
+**Human Supervisor:** Head of GTM / CRO / VP Sales. ICP definitions, sequencing strategy, discount policy, aur forecast methodology ka spec rakhta hai. Weekly forecast outputs verify karta hai aur deal-size threshold se upar ke proposal drafts review karta hai.
+
+**Verification Checkpoints:**
+- Outbound sequences campaign launch se pehle approve
+- Deal-size threshold se upar proposals human review
+- Pipeline Worker output se weekly forecast review (output se input, output se nahi)
+- Quarterly attribution review — channel mix decisions ke liye
+
+**Reference Engines:** Outreach Sequencer aur CRM Hygiene Dapr Agents par chalte hain (SoR mein likhte waqt durability aur idempotency critical hai). Proposal Generator Claude Managed Agents par chalta hai (long-context document work, tailored prose). Pipeline Analyst OpenAI Agents SDK ya Claude Managed Agents par. Lead Enrichment Dapr Agents par.
+
+**Failure Modes:** Envelope ke baghair Outreach Worker spam cannon ban jata hai aur company domain-blacklisted ho jati hai. SoR contract ke baghair Pipeline Worker deal stages hallucinate karta hai aur forecast fiction ban jata hai. Verification ke baghair Proposal Worker policy se bahar quote karta hai aur revenue accidentally discount ho jata hai.
+
+<figure>
+<svg viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Go-To-Market</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Sales · Marketing · Revenue motion · 7-Worker fleet · CRM substrate</text>
+
+  {/* Supervisor */}
+  <rect x="150" y="50" width="350" height="38" rx="8" fill="#2e8555"/>
+  <text x="325" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SUPERVISOR · Head of GTM / CRO / VP Sales</text>
+  <text x="325" y="82" text-anchor="middle" font-size="8" fill="#e8f5e9">ICP definitions · sequencing strategy · discount policy · forecast methodology</text>
+
+  {/* Envelope */}
+  <rect x="30" y="100" width="590" height="165" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="115" text-anchor="middle" font-size="9" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — sequence caps · discount bands · per-record ceilings</text>
+
+  {/* Workers */}
+  {[
+    {name: 'Lead Enrichment', sub: 'enrich inbound', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Outreach Sequencer', sub: 'multi-touch', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'CRM Hygiene', sub: 'dedup · normalize', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Pipeline Analyst', sub: 'forecast deltas', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Proposal Generator', sub: 'tailored proposals', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Demo Customizer', sub: 'ICP-tailored demos', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Attribution', sub: 'touchpoint reconcile', engine: 'Dapr Agents', color: '#2563eb'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x={40 + i * 84} y="130" width="78" height="50" rx="5" fill={w.color}/>
+      <text x={79 + i * 84} y="148" text-anchor="middle" font-size="8" font-weight="bold" fill="white">{w.name}</text>
+      <text x={79 + i * 84} y="160" text-anchor="middle" font-size="7" fill="white" opacity="0.85">{w.sub}</text>
+      <text x={79 + i * 84} y="175" text-anchor="middle" font-size="6" fill="white" opacity="0.7">{w.engine}</text>
+    </g>
+  ))}
+  <text x="325" y="200" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">Saat Workers jo SaaS era mein "GTM Engineers" haath se karte the.</text>
+
+  {/* Verification */}
+  <rect x="30" y="215" width="590" height="48" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="325" y="230" text-anchor="middle" font-size="9" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="120" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Sequence approval — campaign se pehle</text>
+  <text x="325" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Proposal review — deal-size threshold se upar</text>
+  <text x="530" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Forecast review — weekly · output = input</text>
+  <text x="325" y="256" text-anchor="middle" font-size="7" fill="#0891b2">Attribution review — quarterly · channel mix</text>
+
+  {/* SoR */}
+  <rect x="150" y="275" width="350" height="40" rx="8" fill="#14532d"/>
+  <text x="325" y="293" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD · CRM</text>
+  <text x="325" y="308" text-anchor="middle" font-size="9" fill="#86efac">Salesforce · HubSpot · Pipedrive — leads, contacts, accounts, opportunities</text>
+
+  {/* Failure */}
+  <rect x="30" y="330" width="590" height="35" rx="6" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+  <text x="325" y="348" text-anchor="middle" font-size="8" fill="#dc2626">Envelope missing → Outreach Worker spam cannon · Pipeline forecast hallucinates · Proposal Worker discounts revenue by accident</text>
+
+  <text x="325" y="395" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">7 Workers replace what "GTM Engineers" did by hand in the SaaS era.</text>
+  <text x="325" y="410" text-anchor="middle" font-size="9" fill="#6b7280" font-style="italic">Reference engines 2026 ke hain — fleet aur verification structure durable hain.</text>
+</svg>
+<figcaption>Figure: GTM vertical — 7-Worker fleet, CRM substrate, CRO supervisor.</figcaption>
+</figure>
+
+---
+
+## 2. Finance
+
+**Definition:** Close, accounts receivable, accounts payable, financial planning, tax, aur statutory reporting.
+
+**System of Record:** General Ledger — NetSuite, QuickBooks, Xero, SAP, Oracle
+
+**Worker Fleet:**
+
+| Worker | Kya Karta Hai | Engine |
+|--------|--------------|--------|
+| **Close Worker** | Period-close checklist: accruals, reclasses, journal entries | Dapr Agents |
+| **AR Worker** | Invoices issue karta hai, cash apply karta hai, dunning sequences | Dapr Agents |
+| **AP Worker** | Vendor invoices receive, POs match, payment runs schedule | Dapr Agents |
+| **FP&A Worker** | Variance analysis, management reports, scenario models | Claude Managed |
+| **Reconciliation Worker** | Bank accounts, credit cards GL se tie karta hai | Dapr Agents |
+| **Tax Worker** | Indirect tax filings draft karta hai | Claude Managed |
+| **Audit Trail Worker** | Auditor-ready packages produce karta hai | Dapr Agents |
+
+**Authority Envelope:** AP Worker per-vendor aur per-batch ceiling tak payment runs schedule kar sakta hai; is se upar controller approval chahiye. Close Worker materiality threshold tak journal entries post kar sakta hai; is se upar posting se pehle human review chahiye. Tax Worker draft karta hai lekin file nahi karta. FP&A Worker actuals par read-only hai; scenario models mein likh sakta hai.
+
+**Human Supervisor:** Controller / VP Finance / CFO. Accounting policies, materiality thresholds, close calendar, aur statutory filing approvals ka spec rakhta hai. Period close certify karta hai.
+
+**Verification Checkpoints:**
+- Materiality threshold se upar har journal entry posting se pehle reviewed
+- Period close controller-certified — books lock hone se pehle
+- Statutory filings human tax practitioner review — submission se pehle
+- Auditor packages controller review — release se pehle
+
+**Reference Engines:** Close Worker, AR Worker, AP Worker, aur Reconciliation Worker Dapr Agents par chalte hain — finance mein durability, idempotency, aur replayability zaroori hai. FP&A Worker aur Tax Worker Claude Managed Agents par (analytical aur document-heavy kaam). Audit Trail Worker Dapr Agents par.
+
+**Failure Modes:** Envelope ke baghair AP Worker vendors ko double-pay karta hai. SoR contract ke baghair Close Worker books reality se drift karta hai. Materiality threshold ke baghair har JE human par block hota hai aur close kabhi finish nahi hota. Statutory filings ki verification ke baghair company woh file karti hai jo defend nahi kar sakti.
+
+<figure>
+<svg viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Finance</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Close · AR · AP · FP&A · Tax · 7-Worker fleet · General Ledger substrate · Legally significant</text>
+
+  <rect x="150" y="50" width="350" height="38" rx="8" fill="#2e8555"/>
+  <text x="325" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SUPERVISOR · Controller / VP Finance / CFO</text>
+  <text x="325" y="82" text-anchor="middle" font-size="8" fill="#e8f5e9">Accounting policies · materiality thresholds · close calendar · statutory approvals</text>
+
+  <rect x="30" y="100" width="590" height="165" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="115" text-anchor="middle" font-size="9" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — payment ceilings · materiality threshold · sirf drafts for filings</text>
+
+  {[
+    {name: 'Close Worker', sub: 'accruals · reclasses · JEs', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'AR Worker', sub: 'invoice · cash · dunning', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'AP Worker', sub: '3-way match · pay runs', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'FP&A Worker', sub: 'variance · scenarios', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Reconciliation', sub: 'bank · sub-ledger ties', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Tax Worker', sub: 'indirect tax drafts', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Audit Trail', sub: 'workpapers · tie-outs', engine: 'Dapr Agents', color: '#2563eb'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x={40 + i * 84} y="130" width="78" height="50" rx="5" fill={w.color}/>
+      <text x={79 + i * 84} y="148" text-anchor="middle" font-size="8" font-weight="bold" fill="white">{w.name}</text>
+      <text x={79 + i * 84} y="160" text-anchor="middle" font-size="7" fill="white" opacity="0.85">{w.sub}</text>
+      <text x={79 + i * 84} y="175" text-anchor="middle" font-size="6" fill="white" opacity="0.7">{w.engine}</text>
+    </g>
+  ))}
+  <text x="325" y="200" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">Finance mein durability aur replayability zaroori — zyada tar Workers Dapr par chalte hain.</text>
+
+  <rect x="30" y="215" width="590" height="48" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="325" y="230" text-anchor="middle" font-size="9" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="120" y="244" text-anchor="middle" font-size="7" fill="#0891b2">JE above materiality — posting se pehle reviewed</text>
+  <text x="325" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Period close — controller-certified</text>
+  <text x="530" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Statutory filings — human tax practitioner</text>
+  <text x="325" y="256" text-anchor="middle" font-size="7" fill="#0891b2">Auditor packages — controller review</text>
+
+  <rect x="150" y="275" width="350" height="40" rx="8" fill="#14532d"/>
+  <text x="325" y="293" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD · General Ledger</text>
+  <text x="325" y="308" text-anchor="middle" font-size="9" fill="#86efac">NetSuite · QuickBooks · Xero · SAP · Oracle — auditors, tax authorities, regulators padhte hain</text>
+
+  <rect x="30" y="330" width="590" height="35" rx="6" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+  <text x="325" y="348" text-anchor="middle" font-size="8" fill="#dc2626">Envelope missing → AP double-pay · Close drifts books · filing without verification = company can't defend</text>
+
+  <text x="325" y="395" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">Finance mein durability aur replayability zaroori hai — most Workers Dapr par chalte hain.</text>
+</svg>
+<figcaption>Figure: Finance vertical — 7-Worker fleet, General Ledger substrate, Controller supervisor.</figcaption>
+</figure>
+
+---
+
+## 3. Customer Support
+
+**Definition:** Customer issues resolve karna, escalation manage karna, learnings product mein feed karna.
+
+**System of Record:** Ticketing system — Zendesk, Intercom, Freshdesk + Knowledge Base
+
+**Worker Fleet:**
+
+| Worker | Kya Karta Hai | Engine |
+|--------|--------------|--------|
+| **Triage Worker** | Inbound tickets classify, route, priority set | Claude Managed |
+| **Resolution Worker** | KB se known issues answer, novel ones draft | Claude Managed |
+| **Escalation Worker** | First-line scope se bahar tickets route karta hai | Claude Managed |
+| **KB Curation Worker** | High-volume topics ke liye articles draft, stale update | Claude Managed |
+| **CSAT Analysis Worker** | Survey responses read, satisfaction patterns surface | Claude Managed |
+| **Macro Generation Worker** | Recurring patterns se canned responses propose | Dapr Agents |
+| **Voice-of-Customer Worker** | Ticket themes ko product feedback mein synthesize | OpenAI SDK |
+
+**Authority Envelope:** Resolution Worker pre-approved patterns match hone par confidence threshold tak auto-respond kar sakta hai; is se neeche human par route hota hai. Macro Generation Worker draft karta hai lebin bina human approval ke macros deploy nahi karta. KB Curation Worker staging state mein articles draft karta hai; humans publish karte hain.
+
+**Human Supervisor:** Head of Support / Director of Customer Experience. Escalation policies, KB editorial standards, severity definitions, aur CSAT targets ka spec rakhta hai.
+
+**Verification Checkpoints:**
+- Confidence threshold se neeche auto-responses send se pehle reviewed
+- New KB articles publication se pehle reviewed
+- New macros deployment se pehle approved
+- Weekly escalation patterns review — routing rules update ke liye
+
+**Reference Engines:** Triage Worker aur Resolution Worker Claude Managed Agents par chalte hain (conversational, context-heavy). KB Curation Worker Claude Managed Agents par. CSAT Analysis Worker aur Voice-of-Customer Worker OpenAI Agents SDK ya Claude Managed Agents par (analytical synthesis). Macro Generation Worker Dapr Agents par.
+
+**Failure Modes:** Envelope ke baghair Resolution Worker confidently misanswer karta hai aur customers churn. Verification ke baghair KB Curation Worker hallucinated guidance se knowledge base pollute karta hai. Escalation thresholds ke baghair hard tickets first-line queues mein rehte hain jab tak complaints nahi ban jaate.
+
+<figure>
+<svg viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Customer Support</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Triage · Resolution · Escalation · KB · 7-Worker fleet · Ticketing system + KB substrate</text>
+
+  <rect x="150" y="50" width="350" height="38" rx="8" fill="#2e8555"/>
+  <text x="325" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SUPERVISOR · Head of Support / Director Customer Experience</text>
+  <text x="325" y="82" text-anchor="middle" font-size="8" fill="#e8f5e9">Escalation policies · KB editorial standards · severity definitions · CSAT targets</text>
+
+  <rect x="30" y="100" width="590" height="165" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="115" text-anchor="middle" font-size="9" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — confidence thresholds · staging-only KB · macros require approval</text>
+
+  {[
+    {name: 'Triage', sub: 'classify · route', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Resolution', sub: 'KB-grounded answers', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Escalation', sub: 'structured handoff', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'KB Curation', sub: 'draft · update · retire', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'CSAT Analysis', sub: 'drivers · patterns', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Macro Gen', sub: 'recurring patterns', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Voice-of-Cust', sub: 'themes → product', engine: 'OpenAI SDK', color: '#dc2626'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x={40 + i * 84} y="130" width="78" height="50" rx="5" fill={w.color}/>
+      <text x={79 + i * 84} y="148" text-anchor="middle" font-size="8" font-weight="bold" fill="white">{w.name}</text>
+      <text x={79 + i * 84} y="160" text-anchor="middle" font-size="7" fill="white" opacity="0.85">{w.sub}</text>
+      <text x={79 + i * 84} y="175" text-anchor="middle" font-size="6" fill="white" opacity="0.7">{w.engine}</text>
+    </g>
+  ))}
+  <text x="325" y="200" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">Conversational aur context-heavy kaam primarily Claude Managed Agents par chalta hai.</text>
+
+  <rect x="30" y="215" width="590" height="48" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="325" y="230" text-anchor="middle" font-size="9" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="120" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Auto-responses — confidence threshold se neeche</text>
+  <text x="325" y="244" text-anchor="middle" font-size="7" fill="#0891b2">KB articles — publish se pehle reviewed</text>
+  <text x="530" y="244" text-anchor="middle" font-size="7" fill="#0891b2">New macros — deploy se pehle approved</text>
+  <text x="325" y="256" text-anchor="middle" font-size="7" fill="#0891b2">Routing rules — weekly escalation review</text>
+
+  <rect x="150" y="275" width="350" height="40" rx="8" fill="#14532d"/>
+  <text x="325" y="293" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD · Ticketing System + KB</text>
+  <text x="325" y="308" text-anchor="middle" font-size="9" fill="#86efac">Zendesk · Intercom · Freshdesk · HelpScout — tickets, conversations, resolutions</text>
+
+  <rect x="30" y="330" width="590" height="35" rx="6" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+  <text x="325" y="348" text-anchor="middle" font-size="8" fill="#dc2626">Envelope missing → Resolution confidently misanswers · KB pollutes guidance · hard tickets sit until complaints</text>
+
+  <text x="325" y="395" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">Conversational aur context-heavy kaam primarily Claude Managed Agents par chalta hai.</text>
+</svg>
+<figcaption>Figure: Support vertical — 7-Worker fleet, Ticketing + KB substrate, Head of Support supervisor.</figcaption>
+</figure>
+
+---
+
+## 4. Engineering
+
+**Definition:** Company ke software systems design, ship, operate, aur maintain karna.
+
+**System of Record:** Code repo (GitHub/GitLab) + CI/CD + Observability stack (Datadog, Grafana)
+
+**Worker Fleet:**
+
+| Worker | Kya Karta Hai | Engine |
+|--------|--------------|--------|
+| **Code Review Worker** | PRs review karta hai correctness, security, coverage ke liye | Claude Managed |
+| **Refactor Worker** | Pre-specified refactors execute karta hai | Claude Managed |
+| **Deploy Worker** | Builds environments mein promote karta hai | Dapr Agents |
+| **Test Generation Worker** | Unit, integration, e2e tests produce karta hai | Claude Managed |
+| **Incident Response Worker** | Telemetry pull, incident timelines draft, post-mortems | Claude Managed |
+| **Dependency Update Worker** | Security patches ke liye PRs open karta hai | Dapr Agents |
+| **Doc Generation Worker** | Code se technical documentation produce karta hai | Claude Managed |
+| **On-Call Triage Worker** | Alerts ka first responder, severity classify | Dapr Agents |
+
+**Authority Envelope:** Deploy Worker bina approval ke staging par promote kar sakta hai; production deploys ke liye human gate chahiye. Refactor Worker pre-approved refactor spec par kaam karta hai, freelancing nahi karta. Dependency Update Worker pre-approved dependencies ke andar green test suite pass hone par patches merge kar sakta hai; major versions ke liye human review chahiye. Incident Response Worker ka default access read-only hai.
+
+**Human Supervisor:** Engineering Manager / Tech Lead / Head of Platform. Code style, deploy policy, test coverage targets, refactor priorities, aur incident response runbooks ka spec rakhta hai.
+
+**Verification Checkpoints:**
+- PRs main mein merge hone se pehle humans review
+- Production deploys human approval gate
+- Incident commander hamesha human hota hai; Incident Response Worker assist karta hai, lead nahi karta
+- Major dependency upgrades merge se pehle reviewed
+
+**Reference Engines:** Code Review Worker, Refactor Worker, aur Test Generation Worker Claude Managed Agents par chalte hain (Claude Code iske liye purpose-built hai aur sahi default hai). Deploy Worker, Dependency Update Worker, aur On-Call Triage Worker Dapr Agents par (durability aur retry semantics ops ke liye matter karte hain). Incident Response Worker Claude Managed Agents par. Coding-agent events Claude Code Routines se fire hote hain; baaki sab Inngest se.
+
+**Failure Modes:** Envelope ke baghair Deploy Worker unreviewed code production mein ship karta hai. SoR contract ke baghair Incident Response Worker stale telemetry se reason karta hai. Production deploys par human gate ke baghair Saturday raat 3 baje regressions ship hote hain.
+
+<figure>
+<svg viewBox="0 0 650 450" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Engineering</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Code · Ship · Operate · Maintain · 8-Worker fleet · Repo + CI/CD + Observability substrate</text>
+
+  <rect x="150" y="50" width="350" height="38" rx="8" fill="#2e8555"/>
+  <text x="325" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SUPERVISOR · Engineering Manager / Tech Lead / Head of Platform</text>
+  <text x="325" y="82" text-anchor="middle" font-size="8" fill="#e8f5e9">Code style · deploy policy · coverage targets · refactor priorities · incident runbooks</text>
+
+  <rect x="30" y="100" width="590" height="165" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="115" text-anchor="middle" font-size="9" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — staging only by default · prod gated · refactor specs only · read-only ops</text>
+
+  {[
+    {name: 'Code Review', sub: 'PR comments', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Refactor', sub: 'spec-driven changes', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Deploy', sub: 'env promote · rollback', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Test Gen', sub: 'unit · int · e2e', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Incident Resp', sub: 'timeline · root cause', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Dep Update', sub: 'patches · minor bumps', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Doc Gen', sub: 'code → docs', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'On-Call Triage', sub: 'first responder', engine: 'Dapr Agents', color: '#2563eb'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x={35 + i * 76} y="130" width="70" height="50" rx="5" fill={w.color}/>
+      <text x={70 + i * 76} y="148" text-anchor="middle" font-size="7.5" font-weight="bold" fill="white">{w.name}</text>
+      <text x={70 + i * 76} y="160" text-anchor="middle" font-size="7" fill="white" opacity="0.85">{w.sub}</text>
+      <text x={70 + i * 76} y="175" text-anchor="middle" font-size="6" fill="white" opacity="0.7">{w.engine}</text>
+    </g>
+  ))}
+  <text x="325" y="200" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">Coding kaam → Claude Managed Agents (Claude Code). Ops kaam → Dapr (durability, retries).</text>
+  <text x="325" y="212" text-anchor="middle" font-size="8" fill="#6b7280">Coding-agent events Claude Code Routines se fire hote hain · baaki sab Inngest se.</text>
+
+  <rect x="30" y="220" width="590" height="48" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="325" y="235" text-anchor="middle" font-size="9" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="120" y="249" text-anchor="middle" font-size="7" fill="#0891b2">PR review — human merge gate</text>
+  <text x="325" y="249" text-anchor="middle" font-size="7" fill="#0891b2">Production deploy — human approval gate</text>
+  <text x="530" y="249" text-anchor="middle" font-size="7" fill="#0891b2">Incident command — human-led, Worker assists</text>
+  <text x="325" y="261" text-anchor="middle" font-size="7" fill="#0891b2">Major upgrades — reviewed before merge</text>
+
+  <rect x="150" y="280" width="350" height="40" rx="8" fill="#14532d"/>
+  <text x="325" y="298" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD · Code Repo + CI/CD + Observability</text>
+  <text x="325" y="313" text-anchor="middle" font-size="9" fill="#86efac">GitHub · GitLab · CI/CD · Datadog · Grafana · Honeycomb — har domain ke liye alag stores</text>
+
+  <rect x="30" y="335" width="590" height="35" rx="6" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+  <text x="325" y="353" text-anchor="middle" font-size="8" fill="#dc2626">Envelope missing → Deploy ships unreviewed code · Incident reasons from stale telemetry · regressions ship Saturday 3am</text>
+
+  <text x="325" y="405" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">Coding work → Claude Managed Agents (Claude Code). Ops work → Dapr (durability, retries).</text>
+</svg>
+<figcaption>Figure: Engineering vertical — 8-Worker fleet, Repo + CI/CD + Observability substrate, EM supervisor.</figcaption>
+</figure>
+
+---
+
+## 5. Human Resources (People)
+
+**Definition:** Workforce source, hire, onboard, develop, aur retain karna.
+
+**System of Record:** ATS (Greenhouse, Lever) + HRIS (Rippling, Workday) + Performance system (Lattice)
+
+**Worker Fleet:**
+
+| Worker | Kya Karta Hai | Engine |
+|--------|--------------|--------|
+| **Sourcing Worker** | Candidate databases search, outreach draft | Claude Managed |
+| **Screening Worker** | Applications role spec ke khilaf review, shortlists draft | Claude Managed |
+| **Scheduling Worker** | Interview loops coordinate | Dapr Agents |
+| **Onboarding Worker** | Accounts provision, meetings schedule, checklists track | Dapr Agents |
+| **Performance Tracking Worker** | Performance signal gather, review packages draft | Claude Managed |
+| **Compensation Benchmarking Worker** | Compensation data pull, ranges draft | Claude Managed |
+| **Engagement Worker** | Pulse surveys run, themes surface | Dapr Agents |
+| **Policy Q&A Worker** | Benefits, leave, policy questions answer | Claude Managed |
+
+**Authority Envelope:** Sourcing Worker pre-approved templates aur daily volume cap ke andar outreach bhej sakta hai. Screening Worker shortlist karta hai lekin bina human review ke reject nahi karta. Scheduling Worker pre-approved time windows ke andar book kar sakta hai. Onboarding Worker sirf pre-approved tools provision karta hai. Compensation Benchmarking Worker ranges draft karta hai; humans approve karte hain.
+
+**Human Supervisor:** Head of People / VP Talent / CHRO. Role definitions, hiring rubrics, compensation philosophy, performance criteria, aur policy ka spec rakhta hai.
+
+**Verification Checkpoints:**
+- Shortlists interview se pehle hiring managers review
+- Offers extension se pehle human sign-off required
+- Performance reviews delivery se pehle manager-reviewed
+- Sourcing outreach templates quarterly reviewed
+- Compensation ranges publication se pehle approved
+
+**Reference Engines:** Sourcing Worker, Screening Worker, aur Policy Q&A Worker Claude Managed Agents par chalte hain. Scheduling Worker, Onboarding Worker, aur Engagement Worker Dapr Agents par (durability matter karti hai; log notice karte hain jab onboarding step skip ho). Performance Tracking Worker aur Compensation Benchmarking Worker Claude Managed Agents par.
+
+**Failure Modes:** Envelope ke baghair Sourcing Worker EEO standards ya company brand violate karta hai. Verification ke baghair Screening Worker biased proxies par candidates filter karta hai. SoR contract ke baghair Onboarding Worker galat systems mein galat logon ke liye accounts provision karta hai.
+
+<figure>
+<svg viewBox="0 0 650 450" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Human Resources (People)</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Source · Hire · Onboard · Develop · Retain · 8-Worker fleet · ATS + HRIS + PM substrate</text>
+
+  <rect x="150" y="50" width="350" height="38" rx="8" fill="#2e8555"/>
+  <text x="325" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SUPERVISOR · Head of People / VP Talent / CHRO</text>
+  <text x="325" y="82" text-anchor="middle" font-size="8" fill="#e8f5e9">Role definitions · hiring rubrics · comp philosophy · performance criteria · policy</text>
+
+  <rect x="30" y="100" width="590" height="165" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="115" text-anchor="middle" font-size="9" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — pre-approved templates · volume caps · shortlist not reject · sirf drafts</text>
+
+  {[
+    {name: 'Sourcing', sub: 'candidates · outreach', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Screening', sub: 'role-spec scoring', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Scheduling', sub: 'interview loops', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Onboarding', sub: 'provision · checklists', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Performance', sub: 'review packages', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Comp Bench', sub: 'ranges · anomalies', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Engagement', sub: 'pulse · themes', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Policy Q&A', sub: 'benefits · leave', engine: 'Claude Managed', color: '#7c3aed'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x={35 + i * 76} y="130" width="70" height="50" rx="5" fill={w.color}/>
+      <text x={70 + i * 76} y="148" text-anchor="middle" font-size="7.5" font-weight="bold" fill="white">{w.name}</text>
+      <text x={70 + i * 76} y="160" text-anchor="middle" font-size="7" fill="white" opacity="0.85">{w.sub}</text>
+      <text x={70 + i * 76} y="175" text-anchor="middle" font-size="6" fill="white" opacity="0.7">{w.engine}</text>
+    </g>
+  ))}
+  <text x="325" y="200" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">Log notice karte hain jab onboarding step skip ho — Dapr durable workflows handle karta hai.</text>
+  <text x="325" y="212" text-anchor="middle" font-size="8" fill="#6b7280">Conversational aur document-heavy kaam Claude Managed Agents par chalta hai.</text>
+
+  <rect x="30" y="220" width="590" height="48" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="325" y="235" text-anchor="middle" font-size="9" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="100" y="249" text-anchor="middle" font-size="7" fill="#0891b2">Shortlists — hiring manager review</text>
+  <text x="260" y="249" text-anchor="middle" font-size="7" fill="#0891b2">Offers — human sign-off required</text>
+  <text x="420" y="249" text-anchor="middle" font-size="7" fill="#0891b2">Performance — manager-reviewed</text>
+  <text x="560" y="249" text-anchor="middle" font-size="7" fill="#0891b2">Comp — approved before publish</text>
+
+  <rect x="150" y="280" width="350" height="40" rx="8" fill="#14532d"/>
+  <text x="325" y="298" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD · ATS + HRIS + Performance System</text>
+  <text x="325" y="313" text-anchor="middle" font-size="9" fill="#86efac">Greenhouse · Lever · Ashby · Rippling · Workday · BambooHR · Lattice · 15Five</text>
+
+  <rect x="30" y="335" width="590" height="35" rx="6" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+  <text x="325" y="353" text-anchor="middle" font-size="8" fill="#dc2626">Envelope missing → Sourcing breaches EEO/brand · Screening filters on biased proxies · Onboarding wrong systems for wrong people</text>
+
+  <text x="325" y="405" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">People notice when an onboarding step gets skipped — Dapr handles durable workflows.</text>
+</svg>
+<figcaption>Figure: HR vertical — 8-Worker fleet, ATS + HRIS + PM substrate, CHRO supervisor.</figcaption>
+</figure>
+
+---
+
+## 6. Legal
+
+**Definition:** Contracts draft, review, redline, manage; risk advise; regulatory compliance ensure karna.
+
+**System of Record:** CLM (Ironclad, DocuSign CLM) + Matter management + Compliance register
+
+**Worker Fleet:**
+
+| Worker | Kya Karta Hai | Engine |
+|--------|--------------|--------|
+| **Contract Review Worker** | Inbound contracts read, structured risk summary produce | Claude Managed |
+| **Redline Worker** | Playbook based redlines propose | Claude Managed |
+| **Intake Worker** | Legal request queue handle, classify, route | Claude Managed |
+| **NDA Worker** | NDA review, redline, dispatch end-to-end | Dapr Agents |
+| **Vendor Risk Assessment Worker** | Vendor questionnaires review, risk recommendations | Claude Managed |
+| **Compliance Monitoring Worker** | Regulatory changes track, obligations map | Claude Managed |
+| **Discovery Worker** | Litigation discovery support, privilege flagging | Claude Managed |
+
+**Authority Envelope:** NDA Worker playbook ke andar NDAs end-to-end execute kar sakta hai; playbook se bahar escalate hota hai. Redline Worker positions propose karta hai lekin bina human counsel review ke counterparty ko nahi bhejta. Vendor Risk Assessment Worker score karta hai lekin approve nahi karta. Compliance Monitoring Worker flag karta hai lekin company ko regulatory position mein commit nahi karta.
+
+**Human Supervisor:** General Counsel / Head of Legal / Deputy GC. Contract playbook, risk thresholds, regulatory positions, aur litigation strategy ka spec rakhta hai.
+
+**Verification Checkpoints:**
+- NDA-tier se upar har redline counter-signing se pehle human counsel review
+- Regulatory positions commitment se pehle human counsel approval required
+- Discovery production release se pehle reviewed
+- Playbook updates GC quarterly review
+
+**Reference Engines:** Contract Review Worker, Redline Worker, Vendor Risk Assessment Worker, aur Compliance Monitoring Worker Claude Managed Agents par chalte hain (long-context document work; precise legal language). NDA Worker Dapr Agents par (fleet mein sirf yehi Worker end-to-end execute karta hai aur durability chahiye). Discovery Worker Claude Managed Agents par.
+
+**Failure Modes:** Envelope ke baghair Redline Worker company ko aisi position mein commit karta hai jo GC kabhi approve nahi karega. Verification ke baghair Compliance Monitoring Worker regulatory obligations misclassify karta hai. SoR contract ke baghair contracts do systems mein do terms ke saath sign hote hain, aur legal team ko renewal par pata chalta hai.
+
+<figure>
+<svg viewBox="0 0 650 420" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Legal</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Contracts · Risk · Compliance · 7-Worker fleet · CLM + matter mgmt + compliance register substrate</text>
+
+  <rect x="150" y="50" width="350" height="38" rx="8" fill="#2e8555"/>
+  <text x="325" y="68" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SUPERVISOR · General Counsel / Head of Legal / Deputy GC</text>
+  <text x="325" y="82" text-anchor="middle" font-size="8" fill="#e8f5e9">Contract playbook · risk thresholds · regulatory positions · litigation strategy</text>
+
+  <rect x="30" y="100" width="590" height="165" rx="8" fill="none" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="115" text-anchor="middle" font-size="9" font-weight="bold" fill="#b45309">AUTHORITY ENVELOPE — NDAs end-to-end · baaki sab sirf propose · GC approves positions</text>
+
+  {[
+    {name: 'Contract Review', sub: 'structured risk summary', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Redline', sub: 'playbook fallbacks', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Intake', sub: 'classify · route · prep', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'NDA', sub: 'end-to-end execution', engine: 'Dapr Agents', color: '#2563eb'},
+    {name: 'Vendor Risk', sub: 'questionnaires · posture', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Compliance Mon', sub: 'reg-change tracking', engine: 'Claude Managed', color: '#7c3aed'},
+    {name: 'Discovery', sub: 'privilege flagging', engine: 'Claude Managed', color: '#7c3aed'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x={40 + i * 84} y="130" width="78" height="50" rx="5" fill={w.color}/>
+      <text x={79 + i * 84} y="148" text-anchor="middle" font-size="8" font-weight="bold" fill="white">{w.name}</text>
+      <text x={79 + i * 84} y="160" text-anchor="middle" font-size="7" fill="white" opacity="0.85">{w.sub}</text>
+      <text x={79 + i * 84} y="175" text-anchor="middle" font-size="6" fill="white" opacity="0.7">{w.engine}</text>
+    </g>
+  ))}
+  <text x="325" y="200" text-anchor="middle" font-size="8" fill="#6b7280" font-style="italic">NDA sirf Worker hai jo end-to-end execute karta hai — baaki sab human counsel ke liye propose karte hain.</text>
+
+  <rect x="30" y="215" width="590" height="48" rx="6" fill="#0891b2" fill-opacity="0.1" stroke="#0891b2" stroke-width="1"/>
+  <text x="325" y="230" text-anchor="middle" font-size="9" font-weight="bold" fill="#0891b2">VERIFICATION CHECKPOINTS</text>
+  <text x="120" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Redlines &gt; NDA tier — human counsel review</text>
+  <text x="325" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Regulatory positions — counsel approval</text>
+  <text x="530" y="244" text-anchor="middle" font-size="7" fill="#0891b2">Discovery — release se pehle reviewed</text>
+  <text x="325" y="256" text-anchor="middle" font-size="7" fill="#0891b2">Playbook updates — GC-reviewed quarterly</text>
+
+  <rect x="150" y="275" width="350" height="40" rx="8" fill="#14532d"/>
+  <text x="325" y="293" text-anchor="middle" font-size="11" font-weight="bold" fill="white">SYSTEM OF RECORD · CLM + Matter Mgmt + Compliance Register</text>
+  <text x="325" y="308" text-anchor="middle" font-size="9" fill="#86efac">Ironclad · DocuSign CLM · LinkSquares — contracts, matters, regulatory obligations</text>
+
+  <rect x="30" y="330" width="590" height="35" rx="6" fill="#dc2626" fill-opacity="0.08" stroke="#dc2626" stroke-width="1"/>
+  <text x="325" y="348" text-anchor="middle" font-size="8" fill="#dc2626">Envelope missing → Redline commits to positions GC wouldn't approve · Compliance misclassifies · contracts in two systems with two terms</text>
+
+  <text x="325" y="395" text-anchor="middle" font-size="10" fill="#1f2937" font-weight="bold">NDA is the only Worker that executes end-to-end — everything else proposes for human counsel.</text>
+</svg>
+<figcaption>Figure: Legal vertical — 7-Worker fleet, CLM + matter mgmt substrate, GC supervisor.</figcaption>
+</figure>
+
+---
+
+## Cross-Vertical Workers
+
+Kuch Workers kisi ek vertical ke nahi — har function ko serve karte hain:
+
+| Worker | Kaun Use Karta Hai |
+|--------|-------------------|
+| **Document Generation Worker** | GTM (proposals), Finance (audit packages), Legal (contracts), HR (offer letters) |
+| **Notification Worker** | Har vertical |
+| **Translation Worker** | GTM, Support, HR, Legal |
+| **Meeting Worker** | Har vertical |
+| **Data Extraction Worker** | Finance, Legal, HR, Support |
+
+Yeh cross-vertical Workers **infrastructure** hain — ek baar banao, Paperclip se govern karo, kisi bhi vertical se call karo. Vertical Workers se kam important nahi hain — yeh connective tissue hain.
+
+Jab ek capability teen ya zyada verticals mein aaye, toh usse factor out karo. Catalog chota rehta hai; platform compound karta hai.
+
+<figure>
+<svg viewBox="0 0 650 320" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="15" font-weight="bold" fill="#1f2937">Cross-Vertical Workers</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Paanch shared Workers har vertical ko serve karte hain. Ek baar banao, Paperclip se govern, kahin se call karo.</text>
+
+  {/* Verticals on left */}
+  {['GTM', 'Finance', 'Support', 'Engineering', 'HR', 'Legal'].map((v, i) => (
+    <g key={i}>
+      <rect x="20" y={55 + i * 38} width="90" height="30" rx="5" fill="#2e8555"/>
+      <text x="65" y={75 + i * 38} text-anchor="middle" font-size="10" font-weight="bold" fill="white">{v}</text>
+    </g>
+  ))}
+
+  {/* Lines connecting to cross-vertical workers */}
+  {/* GTM → Doc Gen, Notification, Translation, Meeting */}
+  <line x1="110" y1="70" x2="200" y2="70" stroke="#25c2a0" stroke-width="0.8" opacity="0.5"/>
+  {/* Finance → Doc Gen, Notification, Data Extraction */}
+  <line x1="110" y1="108" x2="200" y2="108" stroke="#25c2a0" stroke-width="0.8" opacity="0.5"/>
+  {/* Support → Translation, Meeting, Notification */}
+  <line x1="110" y1="146" x2="200" y2="146" stroke="#25c2a0" stroke-width="0.8" opacity="0.5"/>
+  {/* Eng → Doc Gen, Notification, Meeting */}
+  <line x1="110" y1="184" x2="200" y2="184" stroke="#25c2a0" stroke-width="0.8" opacity="0.5"/>
+  {/* HR → Doc Gen, Translation, Notification */}
+  <line x1="110" y1="222" x2="200" y2="222" stroke="#25c2a0" stroke-width="0.8" opacity="0.5"/>
+  {/* Legal → Doc Gen, Translation, Data Extraction */}
+  <line x1="110" y1="260" x2="200" y2="260" stroke="#25c2a0" stroke-width="0.8" opacity="0.5"/>
+
+  {/* Cross-vertical workers */}
+  {[
+    {name: 'Document Gen', desc: 'PDFs · slides · spreadsheets'},
+    {name: 'Notification', desc: 'email · Slack · SMS · push'},
+    {name: 'Translation', desc: 'domain-aware vocabulary'},
+    {name: 'Meeting', desc: 'transcribe · summarize · actions'},
+    {name: 'Data Extraction', desc: 'PDFs · emails · images → structured'},
+  ].map((w, i) => (
+    <g key={i}>
+      <rect x="200" y={55 + i * 48} width="180" height="40" rx="6" fill="#25c2a0"/>
+      <text x="290" y={73 + i * 48} text-anchor="middle" font-size="10" font-weight="bold" fill="white">{w.name}</text>
+      <text x="290" y={87 + i * 48} text-anchor="middle" font-size="8" fill="#e8f5e9">{w.desc}</text>
+    </g>
+  ))}
+
+  {/* Right side: connection lines to verticals */}
+  <text x="520" y="55" text-anchor="middle" font-size="10" font-weight="bold" fill="#1f2937">Kaun use karta hai</text>
+
+  {[
+    {name: 'GTM', items: 'Proposals · Trans · Notif · Meetings'},
+    {name: 'Finance', items: 'Audit packages · Data ext · Notif'},
+    {name: 'Support', items: 'Translation · Meetings · Notif'},
+    {name: 'Engineering', items: 'Doc gen · Notif · Meetings'},
+    {name: 'HR', items: 'Offer letters · Trans · Notif'},
+    {name: 'Legal', items: 'Contracts · Trans · Extraction'},
+  ].map((v, i) => (
+    <g key={i}>
+      <rect x="420" y={70 + i * 38} width="200" height="30" rx="4" fill="#f0fdf4" stroke="#2e8555" stroke-width="1"/>
+      <text x="520" y={85 + i * 38} text-anchor="middle" font-size="8" font-weight="bold" fill="#14532d">{v.name}</text>
+      <text x="520" y={95 + i * 38} text-anchor="middle" font-size="7" fill="#16a34a">{v.items}</text>
+    </g>
+  ))}
+
+  <rect x="200" y="300" width="420" height="20" rx="4" fill="#14532d"/>
+  <text x="410" y="314" text-anchor="middle" font-size="9" fill="white">Ek baar banao · Paperclip se govern · kisi bhi Worker se call karo</text>
+</svg>
+<figcaption>Figure: Cross-vertical Workers — har vertical inhe use karta hai. Infrastructure hain, vertical-specific nahi.</figcaption>
+</figure>
+
+---
+
+## Frontier Verticals (Aage Aayenge)
+
+| Vertical | Kya Hai |
+|---------|---------|
+| **RevOps** | GTM, Customer Success, Finance ka cross-functional backbone |
+| **Procurement** | Agents-as-economic-actors ka cleanest demonstration |
+| **Customer Success** | Retention, expansion, health — alag SoR |
+| **Marketing** | Brand, content, demand generation |
+| **Product** | Research, prioritization, spec drafting |
+| **Data & Analytics** | Pipelines, anomaly detection, dashboards |
+| **Compliance & Risk** | Risk register, control testing, audit response, regulatory reporting |
+
+<figure>
+<svg viewBox="0 0 650 480" xmlns="http://www.w3.org/2000/svg" width="100%" style={{maxWidth: '650px'}}>
+  <text x="325" y="22" text-anchor="middle" font-size="16" font-weight="bold" fill="#1f2937">Catalog Roadmap</text>
+  <text x="325" y="38" text-anchor="middle" font-size="10" fill="#6b7280">Solid = v0.1 mein shipped · Dashed = frontier · Faded = future trajectory</text>
+
+  {/* v0.1 label */}
+  <text x="80" y="65" text-anchor="start" font-size="12" font-weight="bold" fill="#2e8555">v0.1 — Mature verticals</text>
+
+  {/* v0.1 verticals */}
+  {[
+    {name: 'GTM', desc: 'Sales · Marketing', workers: '7-Worker fleet'},
+    {name: 'Finance', desc: 'Close · AR · AP', workers: '7-Worker fleet'},
+    {name: 'Support', desc: 'Triage · Resolve', workers: '7-Worker fleet'},
+    {name: 'Engineering', desc: 'Code · Ship · Operate', workers: '8-Worker fleet'},
+    {name: 'HR', desc: 'Source · Hire · Onboard', workers: '8-Worker fleet'},
+    {name: 'Legal', desc: 'Contracts · Compliance', workers: '7-Worker fleet'},
+  ].map((v, i) => (
+    <g key={i}>
+      <rect x="30" y={80 + i * 35} width="120" height="28" rx="5" fill="#2e8555"/>
+      <text x="90" y={98 + i * 35} text-anchor="middle" font-size="9" font-weight="bold" fill="white">{v.name}</text>
+      <text x="165" y={93 + i * 35} font-size="8" fill="#1f2937" font-weight="bold">{v.desc}</text>
+      <text x="165" y={104 + i * 35} font-size="7" fill="#6b7280">{v.workers}</text>
+    </g>
+  ))}
+
+  {/* Boundary line */}
+  <line x1="30" y1="295" x2="620" y2="295" stroke="#b45309" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="325" y="290" text-anchor="middle" font-size="8" fill="#b45309" font-weight="bold">v0.1 boundary — current scope</text>
+
+  {/* Frontier section */}
+  <text x="80" y="318" text-anchor="start" font-size="12" font-weight="bold" fill="#b45309">Frontier — clearly in scope, future versions ke liye queued</text>
+
+  {[
+    {name: 'RevOps', desc: 'Cross-functional operational backbone (GTM/CS/Fin)'},
+    {name: 'Procurement', desc: 'Agents-as-economic-actors · ACP · AP2 · x402 · MPP'},
+    {name: 'Customer Success', desc: 'Retention · expansion · health · Customer health platform SoR'},
+    {name: 'Marketing', desc: 'Brand · Content · Demand · Lifecycle · Distinct fleets'},
+    {name: 'Product', desc: 'Research · prioritize · spec · Release notes · roadmap'},
+    {name: 'Data & Analytics', desc: 'Pipelines · anomalies · Har vertical ke neeche baithta hai'},
+    {name: 'Compliance & Risk', desc: 'Risk register · control testing · Audit response · reg reporting'},
+  ].map((v, i) => (
+    <g key={i}>
+      <rect x="30" y={332 + i * 30} width="120" height="24" rx="5" fill="#b45309" fill-opacity="0.8"/>
+      <text x="90" y={348 + i * 30} text-anchor="middle" font-size="8" font-weight="bold" fill="white">{v.name}</text>
+      <text x="165" y={344 + i * 30} font-size="7" fill="#6b7280">{v.desc}</text>
+    </g>
+  ))}
+
+  {/* Future trajectory */}
+  <text x="325" y="460" text-anchor="middle" font-size="9" fill="#6b7280" font-style="italic">Har naya vertical isi 8-field template ko follow karta hai.</text>
+
+  {/* Embodied AI note */}
+  <rect x="400" y="310" width="220" height="80" rx="8" fill="#fefce8" stroke="#ca8a04" stroke-width="1"/>
+  <text x="510" y="330" text-anchor="middle" font-size="9" font-weight="bold" fill="#713f12">Trajectory horizon — software se aage</text>
+  <text x="510" y="345" text-anchor="middle" font-size="7" fill="#a16207">Embodied AI Workers</text>
+  <text x="510" y="357" text-anchor="middle" font-size="7" fill="#a16207">Warehouse · logistics · manufacturing</text>
+  <text x="510" y="369" text-anchor="middle" font-size="7" fill="#a16207">Fully autonomous economic agents</text>
+  <text x="510" y="381" text-anchor="middle" font-size="7" fill="#a16207">Identity · payment · reputation</text>
+</svg>
+<figcaption>Figure: Catalog Roadmap — v0.1 ke 6 verticals shipped, frontier queued, future trajectory.</figcaption>
+</figure>
+
+---
+
+## Physical Workers par Ek Note
+
+Thesis embodied AI Workers ko trajectory ke taur par name karti hai. Jab woh frontier aaye, toh is catalog mein naye verticals judenge: warehouse operations, last-mile logistics, manufacturing floor operations, autonomous vehicles. Architecture nahi badalti — wohi authority envelopes, wohi manager API, wohi systems of record. Compute layer mein ek body jud jati hai. Catalog woh reflect karega jab waqt aaye.
+
+---
+
+*Factory Company banati hai; Company Workers employ karti hai; Workers system of record ke khilaf chalte hain.* Thesis rule name karti hai. Yeh catalog Workers name karti hai.
+
+---
+
+## Flashcards — Yaad Karo
+
+Yeh section ke key concepts yaad karne mein madad karta hai. Har card pe pehle khud jawab socho, phir reveal karo.
+
+<details>
+<summary>**Card 1 / 7** — Worker role se kyun alag hai?</summary>
+
+**Jawab:**
+"GTM Worker" ek single AI employee nahi jo sab GTM kare. Har vertical role-based Workers ki fleet mein unbundle hota hai — Lead Enrichment, Outreach Sequencer, CRM Hygiene, etc. Har Worker specific kaam karta hai.
+
+</details>
+
+<details>
+<summary>**Card 2 / 7** — Human supervisor ka role kya hai?</summary>
+
+**Jawab:**
+Human relocate hota hai — gayab nahi hota. Execution (80%) se intent aur verification (10%+10%) ki taraf shift hota hai. Har vertical mein human supervisor hota hai: Head of GTM, Controller, Head of Support, etc.
+
+</details>
+
+<details>
+<summary>**Card 3 / 7** — System of Record kyun zaroori hai?</summary>
+
+**Jawab:**
+Har Worker ek durable store se padhta aur likhta hai jo agent session ke baad bhi survive kare — GTM ke liye CRM, Finance ke liye General Ledger, Support ke liye ticketing. SoR ke baghair Worker hallucinate karta hai.
+
+</details>
+
+<details>
+<summary>**Card 4 / 7** — GTM vertical ke Workers kaunse hain?</summary>
+
+**Jawab:**
+Lead Enrichment, Outreach Sequencer, CRM Hygiene, Pipeline Analyst, Proposal Generator, Demo Customizer, Attribution Worker. System of Record: CRM (Salesforce, HubSpot). Supervisor: Head of GTM / CRO.
+
+</details>
+
+<details>
+<summary>**Card 5 / 7** — Finance vertical ke Workers kaunse hain?</summary>
+
+**Jawab:**
+Close, AR, AP, FP&A, Reconciliation, Tax, Audit Trail Workers. System of Record: General Ledger (NetSuite, QuickBooks). Supervisor: Controller / CFO. Key verification: materiality threshold se upar entries reviewed.
+
+</details>
+
+<details>
+<summary>**Card 6 / 7** — Support vertical ke Workers kaunse hain?</summary>
+
+**Jawab:**
+Triage, Resolution, Escalation, KB Curation, CSAT Analysis Workers. System of Record: Ticketing system (Zendesk, Intercom). Supervisor: Head of Support.
+
+</details>
+
+<details>
+<summary>**Card 7 / 7** — Envelope ke baghair Worker kya ban jata hai?</summary>
+
+**Jawab:**
+Envelope (guardrails) ke baghair: Outreach Worker **spam cannon** ban jata hai, AP Worker **double-pay** karta hai, Close Worker books **drift** karta hai. Verification checkpoints zaroori hain: outbounds approve karo, deal-size threshold se upar proposals human review, etc.
+
+</details>

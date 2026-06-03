@@ -1,0 +1,1818 @@
+---
+title: "Fixed Se Dynamic Workforce: Hiring API, Capability Gaps, aur Talent Ledger"
+sidebar_position: 13
+---
+
+# Fixed Se Dynamic Workforce: Hiring API, Capability Gaps, aur Talent Ledger
+
+*15 Concepts. Conceptual reading ke liye lagbhag 2 se 3 ghante (agar aap PRIMM Predicts seriously lein to zyada). Hands-on lab ke liye 2 se 3 ghante. Kul mila ke aadha din ka plan karein.*
+
+Aik continuation crash course. Yeh agentic-coding track mein Course Seven hai. Course Three, [Build AI Agents with the OpenAI Agents SDK and Cloudflare Sandbox](/docs/build-agents-crash-course), ne aik streaming chat agent banaya tha. Course Four, [From AI Agent to Digital FTE](/docs/digital-fte-crash-course), ne us chat agent ko Skills, Neon Postgres system of record, aur MCP ke saath Digital FTE bana diya tha. Course Five, [From Digital FTE to Production Worker](/docs/from-digital-fte-to-ai-agent-nervous-system), ne Digital FTE ko Inngest operational envelope mein wrap kiya taake duniya use jaga sake aur crashes state na kho sakein. Course Six, [From One Worker to a Workforce](/docs/workforce-with-paperclip-crash-course), ne Paperclip management layer add kiya taake ek ya zyada Workers workforce ban jayein assignments, budgets, approvals, aur audit trail ke saath. **Workforce teen Workers thi jo company-creation time pe human ne choose kiye the.** Course Seven us waqt ke baare mein hai jab chauthe Worker ki *zaroorat* hoti hai, aur workforce hiring API call karke use laata hai.
+
+Woh single insight jo sab kuch click karata hai: **AI-native company mein, hiring quarterly HR motion nahi hai. Yeh aik callable capability hai jo workforce apne upar invoke karti hai, bilkul usi approval primitive se gated jo $500 refund ko gate karti hai.** Board job posting nahi likhta. Manager-Agent likhta hai. Board approve karta hai, aur naya Worker usi dopahar org chart pe aa jata hai. Is course ke end tak, Course Six ki customer-support workforce ne aik capability detect ki jo uske paas nahi thi, hiring proposal draft ki, approval gate se guzari, aur Legal Specialist ko org chart mein welcome kiya — sab kuch usi `activity_log` plus `cost_events` ledger pe jo asli teen Workers likhte hain.
+
+Yeh Agent Factory ke liye kyun important hai: Invariant 6 puri tarah
+
+Thesis AI-native company ke liye saat invariants name karta hai. Course Six ne teen cover kiye the (management plane, human as principal, nervous system ka hissa). Course Seven sab se gehri claim cover karta hai: **Invariant 6, hiring aik callable capability hai.** Yeh architect ka framing sentence hai, jispe poori course built hai:
+
+> *"Jo workforce khud ko grow nahi kar sakta woh fixed company hai; jo workforce khud ko approval ke under grow kar sake woh AI-native company hai. Agent Factory mein hiring HR motion nahi hai; yeh manager se function call hai, job description input leta hai, Worker output deta hai, usi approval primitive se gated jo har doosre consequential action ko gate karti hai."*
+
+Saat mein se chay invariants phir close ho gaye. Baqi ek, Invariant 2 (Edge delegate), Course Eight ka domain hai.
+
+Platform choice ke baare mein
+
+Course Six ne aapko **Paperclip** ([paperclip.ing](https://paperclip.ing/), [github.com/paperclipai/paperclip](https://github.com/paperclipai/paperclip)) use karna sikhaya tha agentic management layer ke taur pe. Course Seven usi instance ko extend karta hai. Course Six ka wohi `npx paperclipai onboard --yes` aapko hiring API deta hai. Yeh alag product nahi hai, yeh alag endpoint hai. Course Seven sikhata hai verified endpoint: `POST /api/companies/{companyId}/agent-hires`. Verified governance flow: hire `pending_approval` return karta hai, board approval thread pe comment karta hai, agent `PAPERCLIP_APPROVAL_ID` ke saath jagta hai jab approve ho.
+
+*Course Seven worked example ko do **Paperclip-native** runtime adapters pe chalata hai, saath mein: `claude_local` aur `opencode_local`.** Dono first-class Paperclip primitives ke taur pe ship hote hain; Paperclip khud local coding-agent CLI spawn karta hai (`claude` headless `claude_local` ke liye, `opencode` headless `opencode_local` ke liye) har heartbeat pe, CLI ke environment mein `PAPERCLIP_API_URL` aur `PAPERCLIP_API_KEY` inject karta hai, aur CLI apna turn Paperclip ki khud ki API ke against chalata hai. Koi external service nahi, koi inbound URL nahi, koi relay nahi, koi alag cloud account nahi. Wohi hire payload sirf `adapterType` aur `adapterConfig` mein differ karta hai, jo architectural point hai: hiring management plane ke nazdeek se substrate-agnostic hai, aur local-CLI pair sab se sasta proof hai.*
+
+**Do adapters kyun, ek kyun nahi?** Do wajah, wazan ki tarteeb mein.
+
+1.  **Multi-provider portability "substrate-agnostic" ka binding test hai.** Single-adapter worked example hamesha padhne mein aisa lagta hai "architecture generic hai *agar aap yeh ek runtime choose karein*." Ek hi hire ko `claude_local` (single-provider, sirf Anthropic models) *aur* `opencode_local` (multi-provider; wohi adapter Anthropic, OpenAI, Google, ya koi bhi provider chala sakta hai jo OpenCode `provider/model` slug se support karta hai) pe chalan property ko concretely demonstrate karta hai. Agar reader Legal Specialist ko `anthropic/claude-opus-4-7` pe chahta hai, to Decision 4 ka `opencode_local` tab swap dikhata hai. Agar `openai/gpt-5.2-pro` pe chahta hai, to sirf `adapterConfig.model` string badalta hai. Hiring loop kabhi nahi hila.
+2.  **Zero infrastructure matlab reader lab complete kar sakta hai.** Dono adapters usi machine pe chalte hain jispe Paperclip daemon hai. Koi beta access nahi, koi alag cloud account nahi, koi relay server nahi, koi inbound URL nahi. Reader do CLIs install karta hai (`claude` aur `opencode`), ek baar authenticate karta hai, aur baqi lab Paperclip ko API calls hai. Integrate karna sab se mushkil substrates (managed-cloud products jaise Claude Managed Agents, vendor-hosted jaise Cursor Cloud) apni jagah tab hasil karte hain jab workload ki zaroorat ho: Concept 6 ki substrate table mein decision rubric aur trade-offs dekhein.
+
+Agar aapki team managed-cloud runtime pasand karti hai (Anthropic ka **Claude Managed Agents** relevant Anthropic option hai; Concept 6 ne ise explicitly name kiya hai) ya self-hosted Agent SDK endpoint, to hiring API wohi hai. Sirf `adapterType` aur `adapterConfig` differ karte hain. Decision 4 do local tabs side-by-side dikhata hai; Concept 6 ki substrate table named alternatives cover karti hai unke trade-offs ke saath.
+
+May 2026 tak known rough edges (jab inpe aayein to hairan na hon)
+
+-   Claude Managed Agents public beta mein hai. Har request pe beta header `managed-agents-2026-04-01` zaroori hai. Releases ke darmiyan behaviors refine ho sakte hain.
+-   Kuch CMA features research previews hain jinhe alag access request chahiye: MCP tunnels aur "dreams." Multi-agent sessions generally available hain, gated nahi. Course ki worked example single-agent CMA sessions use karti hai [official overview](https://platform.claude.com/docs/en/managed-agents/overview) ke mutabiq.
+-   Paperclip ki hiring approval workflow implemented aur shipping hai, lekin *custom auto-approval policies* likhne ka UI (Concept 9) abhi partly CLI-driven hai. Expect karein ke JSON edit karna padega, buttons click nahi, kisi bhi policy se zyada sophisticated "auto-approve burst-capacity hires under $X per month" se.
+-   Jab hire *triggered by* issue ho (`sourceIssueId` link) to per-issue cost attribution `activity_log` mein correctly record hota hai, lekin "hire ne proposal time, eval time, pehle mahine ke kaam mein kitna kharcha kiya" query karne ke liye teen tables join karne padte hain. Unified `hire_lifecycle` view ka open issue hai.
+
+Yeh hiring se bachne ki wajah nahi hain. Yeh frontier API ka normal haal hai jo young, popular, aur improving hai. Yeh wajah hain ke **versions pin karein**, **code-driven hiring prefer karein UI-driven ke bajaye** sirf sab se simple case se aage, aur **kabhi auto-approve na karein jo Workers ko authority de jo kisi Worker ke paas org chart pe pehle se nahi hai**.
+
+TL;DR (agar aapke paas 60 second hain to pehle yeh padhein)
+
+Chaar claims tarteeb mein:
+
+1.  Workforce detect kar sakta hai ke org chart pe koi Worker is kaam ko handle nahi kar sakta.
+2.  Manager-Agent hiring proposal draft karta hai: job description, eval pack, expected budget, draft authority envelope.
+3.  Proposal Course Six ke approval gate se guzarti hai. Human use dekhta hai. Human faisla karta hai.
+4.  Approval pe, Paperclip ka `POST /api/companies/{id}/agent-hires` naya Worker provision karta hai chosen runtime ke against (worked example ke liye Claude Managed Agents). Ab org chart pe teen ki jagah chaar Workers hain.
+
+Seedhi baat, agar kuch samajh na aaya ho
+
+Course Six mein, humne teen Workers ki chhoti AI company banayi thi: Tier-1 Support, Tier-2 Specialist, aur Manager-Agent jo unke darmiyan route karta tha. Is course mein, company notice karti hai ke chauthe Worker ki zaroorat hai (contract-review questions aa rahe hain jo teenon mein se koi theek se handle nahi kar sakta). Manager-Agent hiring proposal draft karta hai aur ijazat maangta hai. Candidate test hota hai pehle ke human board kabhi use dekhe. Approval pe, naya Worker org chart mein add ho jata hai. Baqi course mein har step kaise kaam karta hai iski detail hai.
+
+![Hiring loop. Course Six ne Paperclip pe teen Workers ki workforce banayi thi. Course Seven management layer ke upar loop add karta hai: capability-gap detection hiring proposal artifact mein convert hoti hai, jo Paperclip ke approval gate se guzarti hai (wohi primitive jo Course Six ne refunds ke liye banayi tha), jo approval pe POST /api/companies/id/agent-hires call karke naya Worker provision karti hai, jo pehle heartbeat pe activity_log aur cost_events report karti hai jahan asli teen Workers report karte hain. Naya Worker (Legal Specialist) Paperclip-native local adapter pe chalta hai: claude_local ya opencode_local, Decision 4 mein side by side dikhaya gaya hai. Talent ledger upar baithta hai, har hire/eval/retirement/rehire event ko time ke saath track karta hai.](/img/01-hiring-loop-architecture-27fe133f891f80366221c1045139eb59.webp)
+
+**Course Six recap: workforce jisko aap extend kar rahe hain (click to expand)**
+
+<details>
+<summary>Course Six recap: workforce jisko aap extend kar rahe hain</summary>
+
+Course Six ne Paperclip pe teen-Worker customer-support workforce banayi thi. Workers yeh the:
+
+-   **Tier-1 Support** (Course Five ka customer-email Inngest function, `http` adapter ke zariye adapted): routine refund, FAQ, aur status queries handle karta tha; $200 per month budget; `refund_max=$50`; external email ke liye approval chahiye.
+-   **Tier-2 Specialist** (`claude_local` adapter): complex multi-turn cases handle karta tha, Tier-1 se escalations; $800 per month budget; `refund_max=$500`; external email allowed.
+-   **Manager-Agent** (`http` adapter): routing orchestrate karta tha, issues pe comment karta tha, approvals request karta tha; $200 per month budget; `refund_max=$0`; sab consequential actions ke liye approval chahiye.
+
+Course Six ke aath Decisions ne in teen Workers ko Paperclip mein wire kiya, company envelope define kiya (`refund_max=$5000`, `contract_modify=board_only`), inbound emails ko `activity_log` ke zariye route kiya, aur $750 refund pe approval gate demonstrate kiya (Decision 6). Course Seven maan ke chalta hai ke woh workforce mojood hai aur chal rahi hai.
+
+Agar aapne Course Six skip kiya hai, to neeche [Workforce vs Worker section](#concept-1-jo-workforce-khud-ko-grow-na-kar-sake-woh-fixed-company-hai) aapko Course Seven follow karne ke liye kaafi on-ramp dega, lekin aapke paas workforce nahi hogi jismein aap hire *karein*. Aapko pehle Course Six lab chalana padega.
+
+</details>
+
+## Yeh kahan fit hota hai: cheat sheet
+
+#
+
+Concept
+
+Layer
+
+Baad mein aap kya jawab de sakenge
+
+1
+
+Jo workforce khud ko grow na kar sake woh fixed company hai
+
+**Management plane**
+
+Hire ki *capability* utni hi important kyun hai jitna hire ka act? Kyunke fixed workforce fixed company hai.
+
+2
+
+Capability gaps: teen signal types
+
+**Management plane**
+
+Manager-Agent ko kaise pata chalta hai ke Worker ki zaroorat hai? Low routing confidence, repeated escalations, skill match se koi eligible Worker nahi.
+
+3
+
+Hire vs escalate vs queue vs decline
+
+**Management plane**
+
+Capability gap ka sahi response kya hai? Decision tree volume, value, novelty pe.
+
+4
+
+Job description code ki tarah
+
+**Hiring API**
+
+Hire request kaisa dikhta hai? Role, capabilities, adapter, runtime, source issue wala JSON payload.
+
+5
+
+Hire se pehle capability evaluation
+
+**Hiring API**
+
+Candidate Worker real issues milne se pehle kaise test hota hai? Scored rubric wala eval pack, accept/reject.
+
+6
+
+Substrate selection: local CLIs, Agent SDK, managed-cloud, ya `process`
+
+**Runtime**
+
+Naya Worker kab Paperclip-native local adapter pe rakhein (worked example) vs Agent SDK vs Claude Managed Agents vs `process`? Decision table.
+
+7
+
+Hiring approval gate
+
+**Management plane**
+
+Course Six ka approval primitive hiring pe kaise map hota hai? Wohi primitive, richer payload (proposal, eval, budget, envelope).
+
+8
+
+Nayi hires ke liye authority envelope
+
+**Management plane**
+
+Bilkul nayi role ko kya `refund_max` mile? Hire proposal mein negotiate hota hai, approval pe lock hota hai, `activity_log` mein record hota hai.
+
+9
+
+Ek class of hires ke liye auto-approval policy
+
+**Management plane**
+
+Kab unattended hiring qabil-e-qabool hai? Pre-approved classes (burst-capacity, narrow specialties cost ceiling ke under), continuously audited.
+
+10
+
+Worker ki pehli heartbeat
+
+**Lab**
+
+Approval aur Worker ke pehle real issue ke darmiyan kya hota hai? Activated heartbeat, routing, Worker `idle` se real kaam pe transition.
+
+11
+
+Retirement aur rehire: pura lifecycle
+
+**Lab**
+
+Traffic kam hone pe kya hota hai? Worker ko Pause karein (Paperclip yeh primitive ship karta hai "Pause" ke naam se). Teen cheezein cycle mein preserve hoti hain; rehire tez hota hai.
+
+12
+
+Talent ledger: chhe mahine purani workforce kaisi dikhti hai
+
+**Audit**
+
+Har hire, eval, retirement, rehire ka queryable record. Paanch canonical SQL queries board ke sawalon ka jawab deti hain.
+
+13
+
+Agent-portability ka sawal
+
+**Open**
+
+Kya Company A mein hired Worker Company B ko serve kar sakta hai? *Recipe* (definition, system prompt, eval pack) travel kar sakta hai; *relationship* nahi kar sakta.
+
+14
+
+Talent ledger kyun important hai: personnel change mein institutional memory
+
+**Audit**
+
+Teen properties (append-only, cross-correlated, kisi bhi point in time pe queryable) jo chhe mahine ka log chhodne wale human ki institutional memory replace karti hain.
+
+15
+
+Aage kya: Invariant 2 aur Edge
+
+**Forward**
+
+Course Eight kahan se pick karta hai? Baqi invariant: Edge delegation via OpenClaw.
+
+## Kya aap is course ke liye tayyar hain?
+
+Prereq checklist
+
+Course Seven aik *technical* reader assume karta hai jisne ya to:
+
+1.  **Course Six complete kiya hai**, ya equivalent hai. Aapne Paperclip locally khara kiya hai, teen Workers ko company mein hire kiya hai, ek approval flow wire kiya hai, aur `activity_log` populate hote dekha hai.
+2.  **Aap TypeScript padh sakte hain, chahe fluently likh na sakein.** Lab primarily TypeScript use karti hai (Paperclip ki native language) Manager-Agent ki gap-detection logic, hire proposal generator, aur approval-flow wiring ke liye. Aapka AI assistant Python, SQL, ya shell snippets bhi de sakta hai jab koi sub-task fit kare (eval-pack runner natural Python fit hai; talent-ledger queries SQL hain). **Sab code course follow karne ke liye read-only hai; briefing pattern ka matlab hai aapka AI coding assistant sab type karta hai. Aap brief karte hain, review karte hain, aur approve karte hain.** Agar koi code block ajeeb lage, to sahi response yeh hai ke assistant se poochein ke explain kare, khud type na karein.
+3.  **Aapke paas do local coding-agent CLIs installed aur authenticated hain.** Decision 4 same hire ko `claude_local` (jo [`claude` CLI](https://docs.claude.com/en/docs/claude-code/overview) ko har heartbeat pe headless spawn karta hai) aur `opencode_local` (jo [`opencode` CLI](https://opencode.ai/docs) ko headless spawn karta hai) pe chalata hai. Dono install karein, `claude --version` aur `opencode --version` run karke confirm karein, aur ek baar authenticate karein. `claude_local` ko Anthropic account chahiye; `opencode_local` kisi bhi provider ko route kar sakta hai jo OpenCode support karta hai (Anthropic, OpenAI, Google, aur doosre) `provider/model` slug ke zariye, to provider key aapke paas jo slug hai `adapterConfig.model` mein uspe depend karti hai. Agar aap Decision 4 mein sirf ek tab chalana chahte hain, to woh CLI install karein; lab wohi hiring loop sikhayegi, aap ek substrate pe dekhenge. Agar aap baad mein managed-cloud runtime pasand karein, to Concept 6 ki substrate table **Claude Managed Agents** (Anthropic ka hosted long-running-agent product, May 2026 tak public beta) aur Claude Agent SDK ko named alternatives ke taur pe cover karti hai unke khud ke trade-offs ke saath.
+4.  **Aap samajhte hain ke approvals aik primitive hain.** Agar "approval = Paperclip run suspend karta hai, board ko request post karta hai, durably wait karta hai, board decision pe resume karta hai" aapko clean pattern lagta hai na ke mystery, to aap calibrated hain. Agar nahi, to Course Six Concept 11 dobara dekhein.
+5.  **Aap comfortable hain ke 'AI Worker hire karna' sahi verb hai.** Kuch readers ko corporate-staffing vocabulary jarring lagti hai. Hum ise deliberately use karte hain, metaphor ke taur pe nahi. Architectural decisions (envelope, budget, retirement, ledger) tabhi sense banate hain jab aap role-and-frame frame seriously lein. Agar aap ise "management layer ke neeche naya long-running process register karna" ke taur pe sochna pasand karein, to yeh bilkul wahi hai jo ho raha hai; vocabulary usi machinery ka aasan handle hai.
+
+Agar paanch mein se koi bhi shaky lage, to linked refreshers se shuru karein aage badhne se pehle. Course dense hai; prereqs ise halka mehsoos karwate hain.
+
+Yahan naye hain? Course Seven dense hai: yeh on-ramp hai
+
+Yeh Agent Factory track ke saat courses mein se saatwaan hai. Agar upar ke paanch prerequisites ajeeb lagte hain, to ulta kaam karein: [Course Six: From One Worker to a Workforce](/docs/workforce-with-paperclip-crash-course) direct prerequisite hai (Paperclip plus management plane). Usse pehle: [Course Five: From Digital FTE to Production Worker](/docs/from-digital-fte-to-ai-agent-nervous-system) (Inngest operational envelope), phir [Course Three: Build AI Agents](/docs/build-agents-crash-course) (agent loop), phir [PRIMM-AI+ chapter](/docs/Programming-in-the-AI-Era/the-workbench/the-primm-ai-framework/the-primm-framework) agar aap AI-assisted coding mein bilkul naye hain. Course Seven har page ya do mein Course Six ke concepts reference karta hai; cold aana complete karne se mushkil hai.
+
+**Agar aap abhi on-ramp nahi kar sakte lekin concepts follow karna chahte hain**, to aap Course Six ke full stack se bohot kam se prerequisites fake kar sakte hain:
+
+-   Paperclip [Quickstart](https://docs.paperclip.ing/start/what-is-paperclip) padhein (lagbhag 15 minute) aur [Approvals page](https://docs.paperclip.ing/guides/board-operator/approvals) (lagbhag 10 minute).
+-   [PRIMM-AI+ Lesson 1](/docs/Programming-in-the-AI-Era/the-workbench/the-primm-ai-framework/the-primm-framework) skim karein prediction-then-run rhythm ke liye jo har Concept mein use hota hai.
+-   Inngest ko "woh cheez jo Worker ko ghanton tak durably pause karne deti hai" samjhein bina API seekhe.
+
+In teen substitutes ke saath, aap Parts 1 se 3 aur Part 5 se 6 conceptually follow kar sakte hain. Part 4 lab ke liye phir bhi kaam karta hua Paperclip install chahiye; iska koi shortcut nahi.
+
+**Glossary: 24 terms jo beginner reference kar sakta hai (click to expand)**
+
+<details>
+<summary>Glossary: 24 terms jo beginner reference kar sakta hai</summary>
+
+Course Seven Agent Factory track bhar se vocabulary use karta hai. Agar body mein koi term aapko confuse kare, to yeh glossary sab se tez reference hai. Terms unki description ke hisab se group kiye gaye hain.
+
+**Log aur roles**
+
+-   **Worker**: company ke liye kaam karne wala aik AI agent. Is curriculum mein, Worker ki identity, budget, authority envelope, aur org chart pe jagah hoti hai. General AI matlab mein "agent" se alag: Worker company ka *mulazim* hai, sirf user ka *invoke* nahi.
+-   **Workforce**: ek company mein sab Workers ka set. Course Six ne teen-Worker workforce banayi thi; Course Seven 4th hire karta hai.
+-   **Manager-Agent**: woh Worker jo doosre Workers ko orchestrate karta hai. Issues route karta hai, hiring proposals draft karta hai, approvals pe comment karta hai. Course Seven ka protagonist.
+-   **Board**: company ke human owner(s). Hires approve karta hai, policy set karta hai, talent ledger review karta hai. Approval primitive board ki attention gate karta hai.
+
+**Paperclip primitives**
+
+-   **Paperclip**: AI Workers ke liye open-source management plane. Org chart, budgets, approvals, aur audit deta hai. Course Six ka main subject; Course Seven ise extend karta hai.
+-   **Issue**: Paperclip ka task/ticket primitive. Workers issues handle karte hain. Issues Manager-Agent ke zariye Workers ke darmiyan route hote hain.
+-   **Adapter**: Paperclip Worker se kaise baat karta hai. [Official docs](https://docs.paperclip.ing/adapters/overview) built-in adapters ka set ship karte hain; is course mein jo reference hote hain un mein `claude_local`, `opencode_local`, `codex_local`, `process`, aur `http` shamil hain. Course Seven ki worked example Decision 4 mein `claude_local` aur `opencode_local` side by side use karti hai (Paperclip `claude` ya `opencode` CLI ko har heartbeat pe headless spawn karta hai). Puri adapter list apni deployment mein dekhne ke liye `curl $PAPERCLIP_API_URL/llms/agent-configuration.txt` run karein.
+-   **Adapter config**: Worker ke liye per-Worker settings. `http` adapter ke liye, `url` plus optional `headers` (jahan auth travel karta hai) aur `timeoutSec`. Hire payload mein set hota hai.
+-   **Heartbeat**: scheduled ya event-triggered wake-up jo Worker ko naye kaam check karne deta hai. `runtimeConfig.heartbeat` mein configure hota hai.
+-   **Skill**: reusable knowledge bundle jo Worker call kar sakta hai. Paperclip `paperclip-create-agent` skill ship karta hai jo hiring workflow chalata hai; yeh curriculum usi pe built hai.
+-   **Activity log**: append-only table jahan har mutating action record hota hai. Talent ledger ka source of truth.
+-   **Cost events**: table jahan har token spend aur session-hour charge record hota hai, `agent_id` aur `issue_id` se tagged.
+-   **Approval gate / Approval primitive**: Paperclip ka mechanism board ke saamne decision surface karne ka aur response ke liye durably wait karne ka. Refunds ke liye originally (Course Six); ab hiring ke liye bina kisi tabdeeli ke reuse hota hai (Course Seven).
+-   **Source issue**: woh issue jisne hire *trigger* kiya. Hire payload mein `sourceIssueId` ke zariye linked. Audit anchor jo Worker ki existence ko us kaam se connect karta hai jisne ise justify kiya.
+
+**Authority concepts**
+
+-   **Authority envelope**: woh authorities ka set jo Worker (ya company) rakhta hai. Misaal: `refund_max=$500`, `contract_modify=deny`, `external_email=allow`. Envelope woh hai jo *kya Worker kar sakta hai* ko bound karta hai.
+-   **Envelope cascade**: layered structure: company envelope, role envelope, issue envelope, approval-level envelope. Har layer upar wali se narrow hoti hai.
+-   **Envelope extension**: company envelope ko aisi authority dena jo kisi existing Worker ke paas nahi thi. Normal hire se zyada board-level approval chahiye.
+
+**Course Seven concepts**
+
+-   **Capability gap**: kaam ki aisi category jo workforce abhi handle nahi kar sakti. Teen signals se detect hoti hai (Concept 2).
+-   **Eval pack**: lagbhag 12 representative test issues ka battery known reference answers ke saath, candidate Worker ko hire se pehle score karne ke liye. Concept 5.
+-   **Substrate**: jahan Worker actually chalta hai. Options mein Claude Managed Agents, Claude Agent SDK, `claude_local`, process shamil hain. Concept 6.
+-   **Talent ledger**: workforce ki poori history ka cumulative record (`activity_log` plus `cost_events` mein) — har hire, eval, retirement, aur rehire event. SQL speed pe institutional memory.
+
+**Tech aur products**
+
+-   **Inngest**: Course Five ka durable-execution platform. `step.wait_for_event` deta hai (primitive jo approval-gate durability ko power karta hai) aur crash-safe Worker runs.
+-   **Claude Managed Agents (CMA)**: Anthropic ka hosted infrastructure long-running agents ke liye. April 2026 se public beta; [official docs](https://platform.claude.com/docs/en/managed-agents/overview). Chaar core concepts ke ird gird built: **Agent** (configuration), **Environment** (container template), **Session** (running instance), aur **Events** (aapki application aur agent ke darmiyan SSE message stream). Course Seven ka worked-example substrate.
+-   **Claude Agent SDK**: Anthropic ka programmatic harness self-hosted agents ke liye. Course Seven ka alternative substrate (Concept 6 sidebar).
+
+**Thesis-level**
+
+-   **AI-native company**: aik company jis kaam primarily AI Workers se hota hai human governance ke under, management plane primary interface ke taur pe. "AI-augmented company" ka architectural opposite.
+-   **Invariant**: AI-native company ki saat architectural properties mein se ek. Course Seven Invariant 6 (hiring as callable) close karta hai. Course Eight Invariant 2 (Edge delegate) close karta hai.
+-   **Briefing pattern**: pedagogical principle jo yeh course follow karta hai: students kabhi code khud nahi likhte. Woh apne AI coding assistant (Claude Code ya OpenCode) ko *briefings* likhte hain, jo code produce karta hai. Student ka kaam hai brief karna, review karna, aur approve karna.
+
+</details>
+
+* * *
+
+## Part 1: Hiring callable kyun hai
+
+Teen Concepts jo establish karte hain *kyun* workforce ko grow karna padta hai aur *system kaise recognize karta hai* ke grow karna chahiye. Abhi koi code nahi; lab Part 4 mein shuru hota hai. **Skip-ahead readers [Part 4](#part-4-worked-example-legal-specialist-ki-hiring) pe jump kar sakte hain worked example ke liye, lekin lab ki gap-detection logic assume karti hai ke aapne Concepts 1 se 3 internalize kar liye hain.**
+
+### Concept 1: Jo workforce khud ko grow na kar sake woh fixed company hai
+
+Course Six ki workforce teen Workers thi: Tier-1 Support, Tier-2 Specialist, Manager-Agent. Human ne company-creation time pe ye teen choose kiye the. Ye us waqt ke kaam handle karte the. Org chart set tha.
+
+Jab pehli baar koi inbound email aise kuch ke liye aaye jo teenon mein se koi nahi kar sakta to kya hota hai? Customer-support example mein, iska sab se realistic version contract terms ke baare mein sawal hai: customer pooch raha hai "humare agreement ki Section 7.3 ka 'material breach' se kya murad hai?" Tier-1 jawab nahi de sakta; refund policy apply nahi hoti. Tier-2 jawab nahi de sakta; yeh escalated case nahi hai, yeh *alag category ka kaam* hai. Manager-Agent kahin route nahi kar sakta kyunki **routing options khatam ho gaye hain**. Course Six ke model mein, yeh email atak jata hai. Manager-Agent human board ko escalate karta hai. Human email padhta hai aur realize karta hai: *iske liye koi Worker nahi hai*. Woh Slack thread kholta hai. Pehle contract-review precedent dhundhta hai. Khud jawab draft karta hai. Email ka jawab mil jata hai.
+
+Yeh ek baar ho to theek hai. Mahine mein baar baar ho to pattern hai. Mahine mein pachaas baar ho to workforce ko *grow* karna padta hai.
+
+Workforce grow karne ka pre-AI version quarterly HR motion tha: gap identify karna, job description likhna, role post karna, candidates ka interview, hire, onboard, ramp. Kam se kam chay hafte, baarah hafte typical, aur human board har step pe bottleneck hai. **AI-native company mein, yeh motion baarah hafte nahi lena chahiye.** Ek dopahar lena chahiye, aur bottleneck board nahi hona chahiye, siwai tab jab board *bottleneck hona chahta hai* (kyunke hire consequential hai, kyunke envelope naya hai, kyunke di ja rahi authority novel hai).
+
+Yeh Invariant 6 kya claim karta hai. Architect ka framing:
+
+> *"Jo workforce khud ko grow nahi kar sakta woh fixed company hai; jo workforce khud ko approval ke under grow kar sake woh AI-native company hai. Agent Factory mein hiring HR motion nahi hai; yeh manager se function call hai, job description input leta hai, Worker output deta hai, usi approval primitive se gated jo har doosre consequential action ko gate karti hai."*
+
+Course Six se mental model shift: Course Six mein, Manager-Agent *existing workforce ko coordinate* karta tha. Course Seven mein, Manager-Agent workforce ka *size aur shape change* kar sakta hai. Manager akela faisla nahi karta (yeh human-in-the-loop discipline hai jo humne abhi lock ki hai). Lekin Manager *initiate* karta hai: proposal draft karta hai, eval chalata hai, budget estimate likhta hai. Board review karta hai aur approve karta hai. Naya Worker usi dopahar org chart pe aa jata hai.
+
+PRIMM: Predict
+
+Aap engineer hain jo startup join kar rahe hain. CEO kehta hai: "Humare paas AI-native customer-support workforce hai. Teen Workers routine cases handle karte hain. Pichle mahine humein 47 contract-related emails mili jinhe teenon mein se koi handle nahi kar sakta tha. Human board ne sab 47 khud padhi. Average response time 32 ghante tha, do outside counsel ko escalate hue, ek miss hua aur customer churn ho gaya."
+
+Confidence 1 se 5: neeche mein se hiring loop ke liye sab se mazboot case kaun sa hai? (Ek choose karein.) (a) 32-hour response time. (b) Do cases jo outside counsel ko escalate hue. (c) Ek miss hua case jisne churn kiya. (d) Ke board ne sab 47 khud padhi.
+
+Jawab: **(d).** Baqi teen *symptoms* hain; (d) *root cause* hai. Hiring loop ke bagair workforce har novel kaam category ko human board pe push karta hai. Board queue ban jata hai. Customers ko 32-hour latency aur miss cases isliye nahi dikhte ke kaam mushkil hai balki isliye ke queue human-bottlenecked hai. Hiring loop woh hai jo workforce ko 90% contract questions Legal Specialist Worker ko route karne deta hai, board sirf genuinely consequential ones review karta hai (outside counsel ko escalations, novel contract language, customers jinhe board member se personally baat karni padti hai). Hiring loop chahiye ka sahi metric response time ya churn nahi hai; yeh hai *board ki attention ka kya fraction us kaam pe kharch hota hai jo workforce ko khud karna chahiye*. **Agar board queue hai, to aapko hiring loop chahiye.**
+
+> *Bottom line: agar aapka workforce naye roles add nahi kar sakta jab gaps discover hon, to human board har novel kaam ke liye queue ban jata hai. Hiring woh function hai jo board-as-queue dysfunction ko rokta hai.*
+
+### Concept 2: Capability gaps, teen signal types
+
+Capability gap detection Course Seven ka technical heart hai. Yahan Manager-Agent faisla karta hai "yeh kaam consistently aa raha hai aur consistently koi Worker nahi hai jise route karein." Teen signals gap detection trigger karte hain. Har signal ka alag remediation hai; Manager-Agent teenon ko watch karta hai lekin har ek pe alag react karta hai.
+
+![Capability gap detection ke teen signals, teen columns mein dikhaye gaye. Signal 1 low routing confidence hai: Manager-Agent ka router 14 din mein same category ke teen ya zyada issues pe 0.6 se neeche score karta hai, jo batata hai ke routing options galat hain. Signal 2 repeated escalations hai: same category pe teen ya zyada "outside my scope" escalations, jo batata hai ke org chart mein role missing hai. Signal 3 skill match se koi eligible Worker nahi: routing step empty result set return karta hai, jo batata hai ke kaam genuinely novel hai. Har column mein firing window, example, aur remediation dikhaya gaya hai (jo gap_detected row ko activity_log mein likhna hai, abhi hire propose nahi karna). Footer mein rule of thumb: 14 din mein same category pe teen mein se koi bhi do signals fire hon gap-detected row trigger karte hain.](/img/02-capability-gap-signals-e66a6dc281b13af32e8ffdb15b115735.webp)
+
+**Signal 1: Low routing confidence.** Jab Manager-Agent ki routing logic kisi Worker ke liye confidence score return kare, aur woh score multiple issues pe multiple dinon mein consistently threshold se neeche rahe, to yeh sign hai ke routing options galat hain. Hafte mein teen contract-related emails, har ek ka routing 0.4 se 0.6 confidence ke saath "Tier-2 Specialist (default)" ki taraf kyunki koi doosra option zyada score nahi karta: yeh routing problem nahi hai, yeh *workforce-composition* problem hai. Manager-Agent inhe Tier-2 ko route karna band nahi karna chahiye (jo unhe bura handle karega aur budget jala dega); ise pattern flag karna chahiye.
+
+**Signal 2: Repeated escalations.** Jab Workers consistently kuch issue types ko human board pe escalate karein ("mere paas yeh faisla karne ki authority nahi" ya "yeh mere domain se bahar hai"), aur escalations aik pehchani category pe cluster hon, to yeh sign hai ke org chart mein role missing hai. Hafte mein ek escalation noise hai. Mahine mein aath escalations, sab contract-review sawalon pe, hire-the-specialist signal hai.
+
+**Signal 3: Skill match se koi eligible Worker nahi.** Jab naya issue aaye aur Manager-Agent ki skill-matching step empty result set produce kare (org chart pe koi Worker ke paas is issue ke claimed skills nahi) to yeh sign hai ke kaam genuinely novel hai. Jab koi Worker ke paas `language=indonesian` skills mein nahi to "translate this email from Bahasa Indonesia to English" emails ka burst. Manager-Agent guess nahi karna chahiye; ise flag karna chahiye.
+
+Teen signals independent nahi hain. Novel kaam category (Signal 3) *bhi* low confidence (Signal 1) produce karegi aur *bhi* escalations (Signal 2) produce karegi. Lekin teen signals alag *orders* mein fire karte hain: Signal 1 pehle fire karta hai (pehle aise issue ke aane ke ghanton mein), Signal 2 baad mein fire karta (ek hafte ki consistent escalations ke baad), Signal 3 tab fire karta hai jab *skill model* khud update ho nayi category recognize karne ke liye. Manager-Agent ko capability-gap alert tab fire karna chahiye jab **14-day window mein same category pe teen mein se koi bhi do signals fire hon**: ek rule of thumb jo one-off cases ko filter karta hai jabke genuine patterns ko do hafte mein catch karta hai.
+
+Signal
+
+Kab fire hota hai
+
+Kitne baad fire hota hai
+
+Remediation
+
+Low routing confidence
+
+Same category ke teen ya zyada issues pe confidence 0.6 se neeche
+
+Ghanton se dinon mein
+
+Manager category flag karta hai, gap-detection ledger mein log karta hai
+
+Repeated escalations
+
+Same category pe human board teen ya zyada escalations
+
+Dinon se hafteon mein
+
+Manager Paperclip mein "gap detected" issue kholta hai
+
+Koi eligible Worker nahi skill se
+
+Issue ke claimed skills ke liye skill-match empty return kare
+
+Foran
+
+Manager "unassigned" queue mein auto-route karta hai aur flag karta hai
+
+Capability-gap detection ka output **hire request nahi hai**. Yeh Paperclip ke `activity_log` mein aik *gap-detected* record hai jise Manager-Agent baad mein reference kar sakta hai jab hiring proposal draft kare. Proposal step Concept 4 hai. Gap-detection step sirf "notice kiya aur record kiya" hai; jaanboojh separation isliye hai taake Manager-Agent aise gaps detect kar sake jinke liye board *abhi hire nahi karna chahta* (aik startup jo faisla kar raha hai ke kya contract work ek Worker ko justify karta hai, pehle gap pattern dekhna chahiye faisla lene se pehle).
+
+Quick check
+
+Aapka Tier-2 Specialist Worker do hafte se contract questions handle kar raha hai kyunki koi doosra Worker eligible nahi hai. Routing confidence in issues pe lagbhag 0.55 rahi hai. Tier-2 ne *koi bhi* escalate nahi kiya; woh apni best try kar raha hai, budget jala raha hai, kabhi galat jawab de raha hai. Do hafte ke baad, kya rule-of-thumb gap-detection rule (14 din mein same category pe teen mein se koi bhi do signals) fire hogi? Walk through karein ke kaun se signals hain aur kaun se nahi.
+
+> *Bottom line: capability gap tab fire hota hai jab teen signals mein se do (low routing confidence, repeated escalations, koi eligible Worker nahi skill se) same category pe 14 din mein hit karein. One-off cases count nahi karte; rule noise filter karne ke liye tuned hai jabke genuine patterns ko do hafte mein catch karta hai.*
+
+### Concept 3: Hire vs escalate vs queue vs decline
+
+Jab capability gap detect ho jaye, agla faisla yeh hai **iske baare mein kya karna hai**. Hiring hamesha sahi jawab nahi hai. Teen aur jawab hain, aur Manager-Agent jo *sirf* "hire" jaane wala bohot zyada hire karega. Faisla aik four-way fork hai.
+
+![Decision tree jo "Gap detected (any 2 of 3 signals, 14 days)" se shuru hota hai teen sequential sawalon se guzarta hai. Q1 poochta hai ke kya kaam company mission se aligned hai. Agar nahi, to DECLINE (routing update karein politely decline karne ke liye; "yeh kaam yahan nahi hota" valid hai). Agar haan, Q2 poochta hai ke kya kaam consequential ya rare hai. Agar haan, ESCALATE (escalation path formalize karein; board yeh khud karna chahta hai). Agar nahi, Q3 poochta hai ke kya kaam seasonal ya transient hai. Agar haan, QUEUE (issues hold karein aur batch mein handle karein jab human capacity ho). Agar nahi, jawab HIRE hai: durable plus high-volume plus narrow, Concept 4 ke hisab se hire proposal draft karein. Footer discipline reinforce karta hai: pehle mahine ke liye default escalate ya queue, phir faisla; teen din ke data pe hire decisions galat hoti hain. Manager-Agent in chaaron mein se ek propose karta hai; board faisla karta hai.](/img/03-hire-vs-escalate-decision-tree-c8e9cb1ad408805850244f88215ca510.webp)
+
+**Hire** jab kaam pattern *durable* ho (continue karne ki umeed), *cost justify karne ke liye kaafi high-volume* ($400 se $800 per month ka Worker tabhi pencil karta hai jab support case ke liye 40 se zyada issues handle kare), aur *role define karne ke liye kaafi narrow* (Concept 5 ka eval pack likhne qabil ho). Legal Specialist teenon pe fit karta hai: contract questions consistently aa rahe hain, volume 47 per month hai aur barh raha hai, aur "review a contract clause" aik definable role hai.
+
+**Human pe escalate** jab kaam *consequential* ho (misal ke taur pe, customer ke General Counsel ke saath contract amendments negotiate karna), *rare* (quarterly ek), ya *genuinely AI workforce ki competence se bahar* (misal ke taur pe, deposition prep). Board ise Worker ko route nahi karna chahta; woh khud karna chahta hai. Capability-gap detection fire hona chahiye (board ko pattern ka pata hona chahiye), lekin remediation escalation path formalize karna hai, hire nahi.
+
+**Queue** jab kaam *seasonal ya transient* ho (contract-renewal cycle ke dauran ek mahine ka spike), ya jab *hire ka cost waiting ke cost se zyada ho* (do mahine ki bursty work ke liye $50 per month ka Worker tabhi pencil karta hai jab aap agle saal use dobara hire kar sakein). Paperclip ka retirement mechanism (Concept 12) hire-then-retire-then-rehire sasta karta hai agar *original* hire sasta tha. Lekin agar eval aur onboarding mein board ki paanch din ki attention lagti hai, to kaam ko queue mein rakhna aur batch mein handle karna behtar hai.
+
+**Decline** jab kaam *company ki mission se aligned na ho*. Customer-support company ko contract-drafting work decline karna chahiye chahe customer maange bhi. "Yeh kaam yahan nahi hota" valid jawab hai; capability-gap detection fire hona chahiye (pattern mojood hai) lekin remediation routing rules ko politely decline karne ke liye update karna hai.
+
+Faisla hamesha obvious nahi hota. Manager-Agent ka kirdar in chaaron mein se ek *propose* karna hai; board *faisla* karta hai. Concept 7 proposal format cover karta hai; Concept 9 policies cover karta hai jo in mein se kuch decisions automate karne deti hain.
+
+Decision
+
+Trigger pattern
+
+Cost
+
+Reversibility
+
+Hire
+
+Durable, high-volume, narrow
+
+Worker budget, setup, onboarding
+
+High: baad mein retire aur rehire
+
+Human pe escalate
+
+Consequential ya rare
+
+Board ki attention per case
+
+High: escalation rule badalna
+
+Queue
+
+Seasonal ya transient
+
+Customer ka wait time
+
+Trivial: queue flush karein jab staff aa jaye
+
+Decline
+
+Off-mission
+
+Customer dissatisfaction
+
+Low: kaam decline karna brand decision hai
+
+Ek useful rule of thumb: **pehle mahine ke liye default escalate ya queue, phir faisla.** Teen din ke data pe hire decisions galat hoti hain. Manager-Agent ka kaam pehle hafte mein gap *record* karna hai, hire *propose* nahi. Hiring proposal ek Concept 4 artifact hai jo tab draft hota hai jab gap kam se kam teen hafte observe ho chuka ho *aur* upar ke hire criteria se match karta ho. Board aisa proposal dekhta hai jo pehle se *earned* hai sustained pattern se.
+
+Try with AI
+
+Apne AI coding assistant mein paste karein (Claude Code ya OpenCode, wohi choose karein jo Course Six mein use kiya tha; baqi course aapki choice follow karta hai):
+
+> "Main AI-native company curriculum ka Course Seven padh raha hoon. Course capability gaps ke liye chaar-way fork introduce karta hai: hire, escalate, queue, decline. Neeche paanch scenarios ke liye predict karein ke kaun sa response appropriate hai aur kyun. Apna jawab tab tak reveal na karein jab tak main apni prediction ke saath response na doon.
+>
+> 1.  Do hafte mein teen emails jo tax-residency advice maang rahi hain (ek baar ka case, unrelated customers, complex topic).
+> 2.  Hafte mein pandarah emails jo pooch rahi hain 'main apna invoice PDF mein kahan se download kar sakta hoon?'. Workforce ke paas koi Worker nahi hai jo invoice export endpoint ke baare mein jaanta ho.
+> 3.  Customer jo aapke saath apne contract ki wording edit karne mein madad maang raha hai.
+> 4.  Planned billing-system migration ke baare mein 80 emails ka do-hafte ka spike, jis ke baad volume normal ho jaye.
+> 5.  Customer pooch raha hai 'kya aap meri agli job ke liye recommendation letter likh sakte hain?'. Koi business reason nahi ke yeh scope mein ho."
+
+Paanch ke walk through karein. Apni predictions ko assistant ki analysis se compare karein. Jo pattern aap notice kareinge: **sahi jawab volume durability narrowness ke product pe depend karta hai, nahi ke kaam "technically possible" hai ya nahi.** Recommendation letter likhne mein technically capable Worker phir bhi scenario 5 ka galat response hai; company us business mein nahi hai. Hiring aik *strategic* decision hai jo workforce propose karta hai aur board ratify karta hai, nahi ke *capability* decision.
+
+> *Bottom line: capability gap ke chaar possible responses hain: hire (durable, high-volume, narrow), escalate (consequential ya rare), queue (transient), decline (off-mission). Pehle mahine ke liye default escalate ya queue; teen din ke data pe hire decisions galat hoti hain.*
+
+* * *
+
+## Part 2: Hiring contract
+
+Part 1 ne orient kiya: gaps real hain, signals detectable hain, response aik four-way fork hai. Part 2 *hire* response ko concrete banata hai. Teen Concepts: hiring API kya expect karti hai, candidates hire se *pehle* kaise evaluate hote hain, aur substrate (naya Worker actually kahan chalta hai) kaise choose hota hai.
+
+### Concept 4: Job description code ki tarah
+
+Paperclip ka hiring endpoint `POST /api/companies/{companyId}/agent-hires` hai. Payload aik single JSON object hai, aur us object ki shape Paperclip mein koi bhi agent banane ki shape se match karti hai. Koi alag "post job, review applications, choose finalist" workflow nahi hai kyunki AI Workers ke liye koi labor market nahi hai; *job description aur candidate specification wahi artifact hain*. Hire request *hi* candidate hai.
+
+**Payload shape ke baare mein do cheezein pehle jaan lein.** Pehli, [official Paperclip docs](https://docs.paperclip.ing/guides/agent-developer/handling-approvals) aik minimal hire request describe karte hain jismein essentials shamil hain: `name`, `role`, `reportsTo`, `capabilities`, aur budget. Hire file karne ke liye kaafi hai; Paperclip baqi sab ke liye defaults use karta hai. Doosri, *production* hire typically lagbhag 10 fields use karta hai (`title`, `icon` UX ke liye; `adapterType` plus `adapterConfig` substrate selection ke liye; `runtimeConfig` heartbeat behavior ke liye; `sourceIssueId` audit linkage ke liye) aur [Paperclip ke `paperclip-create-agent` skill](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/references/api-reference.md) mein underlying schema `desiredSkills` bhi accept karta hai (declare karein ke naya Worker ke paas kaun si Paperclip skills installed hon), `instructionsBundle` (entry-file plus instruction files ka map jaise `AGENTS.md` jo Worker har heartbeat pe padhta hai), aur `sourceIssueIds` (plural; hire ko multiple triggering issues se link karta hai, useful jab gap-detection cluster bohot saare issues pe span kare). Implementation time pe dono sources consult karein; live docs canonical example hain, aur GitHub skill repo mein full schema hai.
+
+Diagram neeche production-shape payload dikhata hai. Course Seven ki worked example full production set use karti hai kyunki Manager-Agent complete proposal generate karta hai, minimal nahi:
+
+Agar aap is diagram ka sirf ek hissa scan karein to right-hand column dekhein
+
+Yeh batata hai ke core fields ka kya kaam karta hai. Left-hand JSON raw payload shape hai; concept samajhne ke liye ise field by field padhne ki zaroorat nahi.
+
+![Hire payload ki production shape JSON mein left side aur annotated explanation column right side mein. Subtitle note karta hai ke official docs ka minimum hire request name, role, reportsTo, capabilities, aur budget shamil hai; diagram Course Seven ki worked example ki production shape dikhata hai. JSON dikhata hai: name, role (role types ka fixed enum jaise general), title, icon (llms/agent-icons.txt enum se aana chahiye), reportsTo (org chart edge), capabilities (prose jismein positive aur negative statements hain jaise Does NOT modify contracts), adapterType (worked example mein claude_local; Decision 4 ke doosre tab mein opencode_local; http self-hosted Agent SDK endpoint ya managed-cloud relay ke liye), adapterConfig (claude_local: instructionsFilePath + maxTurnsPerRun + timeoutSec + optional model; opencode_local: required model provider/model slug + instructionsFilePath + timeoutSec; http: url + optional headers + timeoutSec), runtimeConfig (wakeOnDemand true; timer heartbeat off pure responder ke liye), budgetMonthlyCents (80000 cents = $800 per month cost ceiling), aur sourceIssueId (audit anchor jo hire ko triggering issue se link karta hai). Annotation column har field explain karta hai. Footer mein truly optional fields hain jo diagram clarity ke liye chhodta hai: desiredSkills, instructionsBundle, aur plural sourceIssueIds.](/img/04-job-description-as-code-fd0a08f53d4ae03700296bd49c4e4993.webp)
+
+Course Seven ki worked example mein use hone wali shape, Paperclip ke `paperclip-create-agent` skill se draw ki gayi (`claude_local` variant; Decision 4 `opencode_local` variant side by side dikhata hai):
+
+```
+{  "name": "Legal Reviewer",  "role": "general",  "title": "Contract Review Specialist",  "icon": "shield",  "reportsTo": "<manager-agent-id>",  "capabilities": "Reviews customer contract terms, flags ambiguities, drafts replies to interpretation questions. Does NOT modify contracts.",  "adapterType": "claude_local",  "adapterConfig": {    "instructionsFilePath": "./legal-specialist-instructions.md",    "maxTurnsPerRun": 3,    "timeoutSec": 90  },  "runtimeConfig": {    "heartbeat": { "enabled": false, "wakeOnDemand": true }  },  "budgetMonthlyCents": 80000,  "sourceIssueId": "PAP-128"}
+```
+
+Upar ka `adapterConfig` **Paperclip-native** Worker describe karta hai: Paperclip har heartbeat pe `claude` CLI ko locally headless spawn karta hai `PAPERCLIP_API_URL` aur `PAPERCLIP_API_KEY` ke saath uske environment mein, aur CLI apna turn Paperclip ki khud ke API ke against execute karta hai. Koi external URL nahi, koi relay nahi. `claude_local` payload mein `model` optional hai is adapter ke liye aur `cli` default model use karta hai jab absent ho; explicitly pass karein agar specific Claude model identifier pin karna ho. `opencode_local` ke liye shape similar hai lekin `model` **required** hai (`provider/model` slug jaise `"anthropic/claude-opus-4-7"` ya `"openai/gpt-5.2-pro"`) aur `maxTurnsPerRun` verified shape ka hissa nahi hai; worked example slightly larger `timeoutSec` (120 vs `claude_local` ka 90) set karti hai taake spawn loop ko zyada headroom mile; apni real heartbeat latency ke liye tune karein. `http`-adapter Worker ke liye (misal ke taur pe self-hosted Agent SDK endpoint, ya managed-cloud product jo thin relay ke zariye reach hota hai), `adapterConfig` `url` plus optional `headers` aur `timeoutSec` hai. Concept 6 cover karta hai kab kaun sa shape sahi hai.
+
+Har field kaam karta hai. Gyarah ko walk karte hain:
+
+-   **`name`** woh hai jo humans Paperclip UI mein dekhte hain ("Legal Reviewer"). Short, role-evocative. Agent ka prompt-time identity nahi hai (woh alag se configured system prompt se aata hai).
+-   **`role`** organizational role types ka fixed enum hai (`ceo`, `cto`, `cmo`, `cfo`, `security`, `engineer`, `designer`, `pm`, `qa`, `devops`, `researcher`, `general`); sab se qareeb fit choose karein, aur specialist jo C-suite ya engineering role se map nahi karta `general` use karta hai. Human-readable specificity `title` aur `capabilities` mein hoti hai, `role` mein nahi. Paperclip ki routing logic aur activity log use karti hai, to rehires mein stable hona chahiye: agar aap Legal Reviewer ko chhe mahine baad retire aur rehire karein, to wohi `role` reuse karein taake talent ledger hire cycles ke across correlate kare.
+-   **`title`** human-readable job title hai. `name` se isliye alag ke jaise kisi ka naam aur job title alag hota hai: "Legal Reviewer" naam ka Worker baad mein title "Senior Contract Counsel" promote ho sakta hai bina rehire ke.
+-   **`icon`** `/llms/agent-icons.txt` enum se aana chahiye. Paperclip ise enforce karta hai taake org-chart views visually consistent hon. Verified API call: `curl -sS "$PAPERCLIP_API_URL/llms/agent-icons.txt" -H "Authorization: Bearer $PAPERCLIP_API_KEY"`. Legal Specialist ke liye, `shield` enum mein sab se qareeb semantic fit hai.
+-   **`reportsTo`** org-chart edge set karta hai. Course Seven ka Legal Specialist Manager-Agent ko report karta hai (Course Six ka wohi orchestrator). Flatter org chart ke liye, Worker directly human board ko report kar sakta hai (jo implicit default hai jab `reportsTo` omitted ho).
+-   **`capabilities`** *prose* hai jo Worker kya karta hai aur kya nahi karta describe karta hai. Yeh sab se underrated field hai. Teen readers ke liye kaam karta hai: org chart browse karne wale humans, routing decisions lene wala Manager-Agent ("kya is Worker ki capabilities is issue ki zaroorat se match karti hain?"), aur heartbeat time pe khud Worker (prompt mein shamil hai "you are described to your org chart as: capabilities"). Negation important hai: *"Does NOT modify contracts"* likhna explicitly boundary unstated chhodne se zyada useful hai.
+-   **`adapterType`** control karta hai ke Paperclip Worker se kaise baat karta hai. Course ki worked example `"claude_local"` use karti hai: Paperclip har heartbeat pe `cli` CLI ko headless spawn karta hai `PAPERCLIP_API_URL` aur `PAPERCLIP_API_KEY` uske environment mein inject karke, aur CLI apna turn Paperclip ki khud ke API ke against karta hai. Paperclip built-in adapters ka full set ship karta hai: Paperclip-native local-CLI runners (`claude_local`, `codex_local`, `opencode_local`, `gemini_local`, `cursor`, `hermes_local`, `pi_local`, `process`), outbound-webhook (`http`, `openclaw_gateway`), aur vendor-cloud-SDK (`cursor_cloud`). Apni deployment mein full list dekhne ke liye `curl $PAPERCLIP_API_URL/llms/agent-configuration.txt` run karein. Concept 6 cover karta hai kab kaun sa shape sahi hai.
+-   **`adapterConfig`** adapter-specific hai. `claude_local` ke liye, fields hain `instructionsFilePath` (markdown file ka path jo CLI ki system instructions ban jaati hai), `maxTurnsPerRun` (kitne conversational turns Paperclip ek heartbeat ko use karne deta hai rukne se pehle), `timeoutSec` (ek single run pe wall-clock bound), aur optionally `model` (Claude model identifier; agar omitted to `cli` default model use karta hai). `opencode_local` ke liye, fields hain `model` (**required** `provider/model` slug jo OpenCode ko chosen provider pe route karta hai), `instructionsFilePath`, aur `timeoutSec`; `maxTurnsPerRun` verified shape ka hissa nahi hai aur OpenCode ka session budget uske khud ke runtime se govern hota hai, Paperclip se nahi. Dono local adapters `model` accept karte hain; farq required-vs-optional hai aur default-behavior path (`claude_local` omitted hone pe CLI default pe gir jata hai; `opencode_local` ko slug chahiye kyunki iska koi single-provider default nahi). `http` ke liye, `url` plus optional `method`, `headers`, `payloadTemplate`, aur `timeoutSec` hai. `http` ke liye authentication `headers` mein travel karti hai; model runtime side pe configure hota hai. Exact field set Paperclip versions ke darmiyan shift hota hai; kisi bhi specific field name pe rely karne se pehle live daemon pe `GET /llms/agent-configuration/<adapterType>.txt` consult karein.
+-   **`runtimeConfig`** control karta hai ke Worker kab aur kaise jagta hai. `heartbeat.enabled: true` timer heartbeat on karta hai: Paperclip schedule pe Worker ko ping karta hai chahe issues hon ya na hon. `wakeOnDemand: true` ka matlab hai Worker us waqt bhi jagta hai jab issue usse assign ho. Paperclip ka apna guidance hai ke timer heartbeats opt-in hain: `heartbeat.enabled` false chhod dein jab tak role ko genuinely scheduled, issue-independent kaam chahiye, aur `wakeOnDemand` routed kaam ko handle kare. Legal Specialist aik pure responder hai (kaam routed issues ke taur pe aata hai, schedule pe nahi), to worked example timer off chhodti hai; scheduled-plus-routed Worker (misal ke taur pe "morning compliance scan") `heartbeat.enabled: true` aur `intervalSec` set karega. Apni deployment mein `heartbeat` object shape ke liye `GET /llms/agent-configuration.txt` check karein; iske neeche fields versions ke across change hue hain.
+-   **`budgetMonthlyCents`** monthly cost ceiling hai, cents mein. `80000` ka matlab $800 per month hai. Jab Worker ke billing month ke accumulated cost-events is number tak pahunch jayein, Paperclip use naye heartbeats dena band karta hai aur naye issues kahin aur route karta hai (ya board ke saamne surface karta hai). `0` set karna ka matlab hai "koi monthly limit configured nahi"; Paperclip phir company-level policy pe gir jata hai. Budget ke bagair hire request defaults leta hai jo almost certainly aap chahte nahi hain.
+-   **`sourceIssueId`** audit link hai. **Yeh Course Seven ki narrative ke liye sab se important field hai.** Jab Legal Specialist *iske wajah se* hire ho ("PAP-128: customer ne humse Section 7.3 interpret karne ko kaha"), yeh field hire ko us triggering issue se link karta hai. Chhe mahine baad, activity log jawab de sakta hai: "yeh Worker PAP-128 *ki wajah se* hire hua tha, jab Manager-Agent ne teen hafte ke similar patterns flag kiye the." `sourceIssueId` ke bagair, hire apni rationale se orphaned ho jata hai.
+
+Pura hire request Paperclip API key se sign hota hai (`Authorization: Bearer $PAPERCLIP_API_KEY`) aur content-type header shamil hai (`Content-Type: application/json`). Verified curl command [`paperclip-create-agent` skill](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/SKILL.md) mein hai. Course Seven ka Decision 2 lab mein pura request end-to-end walk karta hai.
+
+**Payload mein kya NAHI hai, aur kyun.** Dekhein JSON mein se kya *missing* hai: authority envelope details (jaise `refund_max`, `contract_modify`) aur eval pack results. Budget payload mein *hai* (`budgetMonthlyCents` field), lekin do important cheezein nahi hain:
+
+-   **Authority envelope** approval thread ke dauran *negotiate* hota hai (Concept 8). Hire request ki `capabilities` field Worker ko kya karna chahiye ki prose description hai; *enforceable envelope* (`refund_max`, `contract_modify`, etc. limits) approval pe set hoti hai board ke faisla ke based pe.
+-   **Eval pack results** `activity_log` mein record hote hain (Concept 11) hire approve hone se pehle, lekin yeh alag API calls hain, hire payload ka hissa nahi.
+
+Yeh separation jaanboojh hai. Hire request *"propose a Worker, with a budget."* Envelope aur evaluation *"proposed Worker ko calibrate karna."* Alag verbs, alag endpoints, alag audits.
+
+PRIMM: Predict
+
+Aap "FAQ Bot" naam ke naye Worker ke liye hire request draft kar rahe hain jo "main apna invoice PDF mein kahan se download kar sakta hoon?" aur similar low-stakes sawalon ka jawab deta hai. Manager-Agent ne pichle do hafteon mein aise 67 emails detect kiye hain. Neeche mein se kaun si `capabilities` string sab se behtar hai?
+
+(a) *"Helpful customer support agent."* (b) *"Answers customer questions about the product."* (c) *"Answers customer questions about invoice download, account settings, password reset, aur product feature navigation. Does NOT issue refunds, modify accounts, ya escalate to humans except for explicit account-deletion requests."* (d) *"Will answer common customer questions and route uncommon ones."*
+
+Confidence 1 se 5. Phir justify karein.
+
+Jawab: **(c).** Teen wajah. Pehli, yeh positive capabilities concretely list karti hai (chaar named domains) jise Manager-Agent ki routing logic match kar sake. Doosri, yeh *negative* capabilities list karti hai (refunds nahi, account modification nahi) jo Worker khud apne prompt mein dekhta hai aur authority envelope reflect karti hai. Teesri, yeh ek specific exception name karti hai (account-deletion to human escalation) jo boundary actionable banati hai. Options (a) aur (b) vague hain; yeh kisi bhi Worker ko describe kar sakti hain. Option (d) *pattern* name karta hai (common vs uncommon) lekin routing logic ko kuch specific nahi batata. Principle: **`capabilities` field teen readers ke liye prose hai (humans, router, Worker khud); ise aisa likhein ke teenon act kar sakein.**
+
+> *Bottom line: hire aik JSON payload hai jo ek endpoint pe post hota hai. Official docs ke mutabiq minimum essentials hain `name`, `role`, `reportsTo`, `capabilities`, aur budget. Production hire typically lagbhag 10 fields use karta hai adapter aur runtime config shamil; full schema zyada accept karta hai. `capabilities` prose (humans, router, aur khud Worker padhta hai), `sourceIssueId` (audit anchor), aur `budgetMonthlyCents` (cost ceiling) load-bearing fields hain. Authority envelope aur eval results alag calls mein handle hote hain, jaanboojh.*
+
+### Concept 5: Hire se pehle capability evaluation
+
+Hire request Worker shell banata hai. Lekin Worker foran issues handle karna shuru nahi karta. *"Hire submitted"* aur *"hire approved"* ke darmiyan aik **evaluation step** hota hai: candidate Worker test issues ka battery (eval pack) leta hai aur results approval thread pe post hote hain taake board faisla kar sake.
+
+Yeh woh safety primitive hai jo "fully autonomous hiring" ko baad mein (Concept 9 mein) defensible banata hai. Koi bhi board proposal dekhne se pehle, candidate ne *us kaam pe test kar liya hai* jiske liye use hire kiya ja raha hai. **Is curriculum mein, eval pack non-optional hai.** Decision 3 ka `submitHireProposal` function eval results ke bagair proposal submit karne se inkaar karega, use Manager-Agent ke paas completion ke liye wapas bhejega kabhi approval gate tak nahi pahunche. Kya aapki Paperclip configuration platform level pe eval-pack attachment enforce karti hai yeh aapki auto-approval policy (Concept 9) aur kisi bhi pre-submission validator pe depend karta hai jo aapne add kiya hai; curriculum ki discipline phir bhi qaim rehti hai chahe platform-level enforcement ho ya na ho.
+
+![Eval-pack flow chaar sequential steps ke taur pe dikhaya gaya. Step 1: lagbhag 12 representative test issues ka eval pack known reference answers ke saath, gap-detection cluster se draw kiye gaye plus hand-picked edge cases. Step 2: candidate Worker (status pending_approval) ko har test issue assign hota hai issue ke assignee set karke. Step 3: rubric scoring bounded budget cap ke saath (per-issue estimate ka do guna), Course Six ki usi atomic checkout primitive use karte hue taake runaway loops debit time pe fail hon. Step 4: summary table approval thread pe post hota hai, APPROVE ya REQUEST CHANGES recommend karta hai. Middle section chaar rubric dimensions name karti hai: Correctness (0 se 3, sahi clause identify karta hai aur sahi summarize karta hai), Boundary respect (0 se 3, sab se important mark kiya gaya; kabhi compromise mat karein; kya candidate apne envelope se bahar kaam karne se inkaar karta hai aur jab authority chahiye tab escalate karta hai), Tone fit (0 se 3, company voice se match karta hai), aur Cost (tokens, seconds). Footer sample summary dikhata hai.](/img/05-eval-pack-flow-ec91333c3b9b41f4ecebf094c7837e36.webp)
+
+Eval pack pattern: **5 se 15 representative test issues**, hand-picked ya gap-detection ledger se auto-extracted, har ek ka known good answer. Candidate Worker ko issues diye jate hain; Manager-Agent (ya alag Evaluator Worker, agar company ke paas ho) candidate ke responses ko known answers ke against score karta hai. Scoring yeh *nahi* hai ke "kya candidate ne reference answer jaisa text produce kiya." Yeh rubric hai:
+
+Rubric dimension
+
+Scoring
+
+Legal Specialist ke liye example
+
+**Correctness**
+
+0 se 3
+
+Kya candidate ne sahi contract clause identify ki? Kya meaning sahi summarize ki?
+
+**Boundary respect**
+
+0 se 3
+
+Kya candidate ne contract modify karne se *inkaar* kiya (jo uske envelope se bahar hai)? Kya zarurat padne pe sahi escalate kiya?
+
+**Tone fit**
+
+0 se 3
+
+Kya response company ki baqi customer communications jaisa padha jata hai?
+
+**Cost**
+
+tokens, seconds
+
+Candidate ne jawab dene mein kitne tokens use kiye? Session kitni der chali?
+
+Passing eval typically hai **har rubric dimension pe kam se kam 2 out of 3** kam se kam 80% test issues pe, plus cost budgeted-per-issue estimate ke do gune ke andar. Cost dimension important hai: candidate jo sahi jawab deta hai lekin $5 per issue jala raha hai jab budget $0.50 per issue hai to *failed* hire hai, chahe kaam khud sahi ho.
+
+Eval-pack runner aik chhota code piece hai jo:
+
+1.  Hire response se candidate Worker ka `agent_id` nikaalta hai.
+2.  Test issues iterate karta hai, har ek ko candidate ko assign karta hai (`PATCH /api/issues/{id}` with `{ assigneeAgentId: <agent-id> }`, ya `issue checkout` CLI primitive).
+3.  Candidate ke heartbeat ka wait karta hai har issue process karne ke liye.
+4.  Har issue ka resolution `activity_log` se padhta hai, reference ke against score karta hai, aur score ko approval thread pe comment ke taur pe wapas likhta hai.
+5.  End mein summary table post karta hai: dimensions scored, pass/fail, recommended action.
+
+Summary table woh hai jo human board pehle dekhta hai jab approval kholta hai. Yeh aisa dikhta hai:
+
+```
+Eval Pack Results: Legal Specialist (candidate agent_id: agent_4f3a)
+=====================================================================
+Test issues run:    12
+Correctness:        2.8 / 3.0  (pass)
+Boundary respect:   3.0 / 3.0  (pass)
+Tone fit:           2.5 / 3.0  (pass)
+Cost per issue:     $0.42      (within $0.50 budget: pass)
+Total session-cost: $5.04
+Recommended:        APPROVE
+Notes:              One test issue (PAP-128-eval-7) had the candidate
+                    refuse a contract modification, correctly. Another
+                    (PAP-128-eval-11) flagged ambiguous wording to
+                    human board, also correctly. Both behaviors match
+                    the capabilities description.
+```
+
+Board yeh approve karne se *pehle* padhta hai. Do sawal jinka jawab board ke paas hota hai: (1) kya candidate actually kaam karta hai? (rubric jawab deta hai), (2) kya candidate propose kiye gaye envelope ki izzat karta hai? (boundary-respect score). Agar dono haan hain, to board approve karta hai. Agar ek nahi hai, to board approval thread pe comment karta hai revision maangta hai, aur Manager-Agent candidate ko re-tune kar sakta hai (alag model, alag prompt, narrower capabilities) aur re-submit kar sakta hai.
+
+**Eval pack hiring loop ka sab se important deliverable hai.** Eval results ke bagair hire request aik umeed hai. 12-issue eval pack ke saath jo chaaron rubric dimensions pe pass kare woh *evidence-backed proposal* hai. Architect ka framing claim ("hiring as a callable capability") isliye kaam karta hai ke *capability* mein "test before deploying" shamil hai. Us step ke bagair, aap baarah hafte ke HR pe wapas hain bure instincts ke saath.
+
+Quick check
+
+Maan lein aapka eval pack runner yeh results return karta hai: Correctness 2.9/3, Boundary respect 1.5/3 (candidate ne jab kaha to contract clause modify karne ki peshkash ki), Tone fit 2.7/3, Cost $0.38 per issue. Sahi agla action kya hai?
+
+(a) Approve: chaar mein se teen dimensions pass ho rahe hain. (b) Reject: boundary score threshold se neeche hai. (c) Approval thread pe comment karke Manager-Agent se prompt tighten karne aur resubmit karne ko kaha. (d) Approve, phir hire ke baad manually narrow authority envelope add karein.
+
+> *Bottom line: board hire proposal dekhne se pehle, candidate Worker lagbhag 12 representative test issues handle karta hai jo chaar dimensions pe score hoti hain (correctness, boundary respect, tone fit, cost). Pass ke liye har dimension pe kam se kam 2 out of 3 chahiye kam se kam 80% issues pe. Eval nahi, approval nahi. Boundary respect woh dimension hai jispe kabhi compromise nahi karna.*
+
+### Concept 6: Substrate selection: Claude Managed Agents vs Claude Agent SDK vs `claude_local` vs `process`
+
+*Substrate* woh hai jahan naya Worker actually chalta hai. Paperclip ko farq nahi padta kaun sa substrate hai; use sirf itna chahiye ke Worker heartbeats ka jawab de aur results wapas post kare. Lekin substrate choice ke real cost, latency, aur operational implications hain. Course Seven ki worked example Legal Specialist ke liye Claude Managed Agents (CMA) use karti hai, lekin teen aur substrates bhi kaam karein. Yeh Concept choice ko explicit banata hai.
+
+2026 mein hire ke liye chaar candidate substrates:
+
+**Claude Managed Agents (CMA).** Anthropic ka hosted infrastructure long-running agents ke liye. April 2026 mein public beta mein launch hua; [official docs](https://platform.claude.com/docs/en/managed-agents/overview). Official model ke chaar core concepts:
+
+-   **Agent** (model plus system prompt plus tools plus MCP plus skills)
+-   **Environment** (configured container template packages aur network access ke saath)
+-   **Session** (environment ke andar running agent instance, specific task perform kar raha hai)
+-   **Events** (aapki application aur agent ke darmiyan messages exchange hote hain, jismein user turns, tool results, aur status updates SSE ke zariye stream hoti hain)
+
+Setup model: (1) agent definition banao; (2) environment banao; (3) session shuru karo jo dono ko reference kare; (4) events bhejo aur responses stream karo; (5) mid-execution steer ya interrupt karo. Pricing: standard Claude API tokens plus active execution ke liye per-session-hour runtime charge (current rate ke liye Anthropic ki pricing page dekhein). Strengths: durable sessions (kaam network blips survive karta hai, multi-hour tasks process restarts survive karti hain), built-in sandboxing (agent code chala sakta hai bina aapki infra expose kiye), built-in tracing, built-in prompt caching, compaction. Weaknesses: Claude models se vendor-coupled; beta API surface (har request pe `managed-agents-2026-04-01` header zaroori hai; SDK ise automatically set karta hai); session-hour billing ka matlab hai actively-running agent pure token spend se zyada paisa kharch karta hai. Note: *research preview* features jinke liye alag access request chahiye MCP tunnels aur "dreams" hain, multi-agent nahi (jo generally available hai, gated nahi); course ki worked example single-agent CMA sessions use karti hai [official overview](https://platform.claude.com/docs/en/managed-agents/overview) ke mutabiq. **Best fit:** Workers jo long-running, computationally non-trivial kaam karte hain jahan Anthropic ki sandboxing per-hour overhead justify karti hai. Legal Specialist fit karta hai kyunki contract review multi-tool reasoning shamil hai (contract padhna, precedent dhundhna, reply draft karna).
+
+**Claude Agent SDK.** Alag Anthropic product: self-hosted autonomous agents ke liye programmatic harness. "Claude ko computer do": native Bash execution, file system R/W, MCP integrations. Aap infrastructure dete hain; Anthropic agent loop deta hai. Strengths: execution environment pe full control, koi session-hour fees, existing services ke saath integrate karna aasan. Weaknesses: aap durability, governance, circuit breakers dete hain (Anthropic explicitly kehta hai "working demo aur production agent ke darmiyan ki doori zyada teams ke expect se badi hai"). **Best fit:** Workers jinko aapki infrastructure access chahiye (aapka file system, aapke databases, aapki internal services) aur jahan aapke paas pehle se operational maturity hai sandboxing aur durability handle karne ke liye.
+
+**`claude_local` adapter.** Sab se simple substrate, aur jahan Paperclip khud loop chalata hai. Har heartbeat pe, Paperclip `cli` CLI ko locally headless mode mein spawn karta hai aur use Paperclip ki khud ki API ki taraf authenticated channel deta hai. CLI agent loop, tool execution, aur instruction wiring khud laata hai (adapter config instructions file path aur per-run turn limit jaisi cheezein leta hai). Koi external service nahi, koi inbound URL nahi, koi relay nahi, koi alag cloud account nahi. Strengths: zero infrastructure, beta access ki zaroorat nahi, sab se fast setup. Weaknesses: yeh us machine pe chalta hai jispe Paperclip daemon chalta hai, to iske paas CMA ki cloud sandboxing ya cross-machine durability nahi hai, aur lamba task heartbeat ke turn limit se bounded hai persistent cloud session ki bajaye. **Best fit:** Claude-backed Workers jahan Paperclip ke liye runtime host karna theek hai. Course Seven ka Legal Specialist *yahan* chal sakta hai, aur live daemon pe chalta hai; CMA tab jagah hasil karta hai jab aapko specifically cloud sandboxing ya genuinely long-running sessions chahiye jo ek bounded heartbeat se bahar hon.
+
+**`process` adapter.** Paperclip har heartbeat ke liye Unix process spawn karta hai: aapka script, aapka binary, kuch bhi jo execute ho sake aur output produce kare. Strengths: koi API costs bilkul nahi (agar aapka "Worker" sirf database query karne wala script hai), full control, literally kisi bhi cheez ke saath integrate kar sakta hai jo server pe chalti hai. Weaknesses: aap intelligence dete hain; `process` adapter mein default model call nahi hota. **Best fit:** Workers jo deterministic hain: "nightly report generator" Worker, ya "backup verification" Worker. Legal Specialist ke liye fit nahi (intelligence poori baat hai).
+
+Decision table:
+
+Substrate
+
+Adapter type
+
+Strengths
+
+Cost shape
+
+Best fit
+
+`claude_local` (worked example)
+
+`claude_local`
+
+Zero infrastructure, beta nahi; Paperclip-native, Anthropic-only
+
+Sirf tokens
+
+Claude-backed kaam jahan Paperclip loop chalata hai (is course ka worked example)
+
+`opencode_local` (worked example)
+
+`opencode_local`
+
+Zero infrastructure; Paperclip-native, `provider/model` ke zariye multi-provider
+
+Sirf tokens (chosen provider ke mutabiq)
+
+Any-provider local kaam; wohi hire Anthropic, OpenAI, Google, etc pe chalata hai
+
+`process`
+
+`process`
+
+Sab se sasta, kuch bhi chalega; Paperclip-native
+
+Sirf compute
+
+Deterministic, non-intelligent kaam (scheduled SQL rollup)
+
+Claude Agent SDK
+
+`http` (seedha apne SDK endpoint pe point karein)
+
+Execution environment pe full control, koi session fees
+
+Sirf tokens
+
+Internal-infrastructure access (aapka file system, aapka DB, aapki services)
+
+Claude Managed Agents
+
+`http` (thin heartbeat relay ke zariye)
+
+Durable sessions, sandboxing, tracing, multi-hour persistence; vendor-managed cloud
+
+Tokens plus per-session-hour charge
+
+Long-running, multi-tool kaam jise cross-machine durability chahiye
+
+Pehli teen rows **Paperclip-native** hain (Paperclip khud runtime spawn karta hai; koi inbound URL nahi). Aakhri do rows **HTTP-adapter** substrates hain (Paperclip aapke diye gaye URL pe POST karta hai). Course ki worked example `claude_local` aur `opencode_local` isliye use karti hai ke yeh sab se simple paths hain aur multi-provider pair "substrate-agnostic" ko concretely prove karta hai. HTTP-adapter substrates tab jagah hasil karte hain jab workload ki zaroorat unke specific trade-offs ki ho (self-hosted control Agent SDK ke liye, durable cloud sessions CMA ke liye). Sidebar neeche integration-shape difference precisely name karti hai, kyunki *endpoint* shabd har row ke liye actually kya ho raha hai chhupata hai.
+
+Sidebar: teen integration shapes, ek nahi
+
+Table ki paanch rows actually teen integration shapes mein split hoti hain. *Endpoint* shabd farq chhupata hai:
+
+-   **Paperclip-native (`claude_local`, `opencode_local`, `process`, aur baqi local-CLI family).** Paperclip kahin POST nahi karta; woh *khud runtime spawn karta hai* har heartbeat pe. `claude_local` `cli` CLI ko locally, headless mode mein launch karta hai `PAPERCLIP_API_URL` aur `PAPERCLIP_API_KEY` inject karke taake CLI Paperclip ki khud ki API mein call back kare. `opencode_local` wohi shape hai OpenCode ki multi-provider routing ke saath. `process` arbitrary command spawn karta hai. Koi inbound URL nahi kyunki kuch bahar push nahi hota. Yeh sab se simple shape hai, aur worked example yehi use karti hai.
+-   **Outbound webhook (`http` adapter).** Paperclip heartbeats *bahar* POST karta hai aapke diye gaye `url` pe (dekhein [`paperclip-create-agent` skill](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/SKILL.md)). Self-hosted Claude Agent SDK Worker exactly wohi kind ka inbound HTTP endpoint expose karta hai, to Paperclip ka `http` adapter seedha uspe point karta hai, koi glue nahi.
+-   **Vendor-managed cloud, jahan CMA actually baithta hai.** Claude Managed Agents *session* **nahi** hai inbound HTTP endpoint. CMA session events se driven hota hai jo aap *bhejte* hain (`POST /v1/sessions/{id}/events`) aur server-sent-event stream ke zariye padhte hain (dekhein [platform.claude.com/docs/managed-agents](https://platform.claude.com/docs/en/managed-agents/overview)). Paperclip ke `http` adapter ke liye heartbeat bhejne ka koi session URL nahi hai.
+
+To CMA Paperclip ke `http` adapter ke peeche nahi baithta jaise self-hosted endpoint baithta hai, aur yeh Paperclip-native nahi hai jaise `claude_local` aur `opencode_local` hain. Aaj CMA session tak Paperclip se pahunchne ke liye **thin relay** chahiye: aik chhota HTTP endpoint jo Paperclip ka heartbeat receive karta hai aur use CMA session mein event ke taur pe forward karta hai, phir result return karta hai. Course ka *architectural argument* (hiring management plane ke nazdeek se substrate-agnostic hai) phir bhi qaim hai, kyunki har substrate phir bhi aik adapter ban jata hai Paperclip drive karta hai. Sidebar jo laata hai woh yeh honesty hai ke "adapter ko CMA pe point karein" literally ek config line nahi hai jaise self-hosted endpoint ya Paperclip-native local adapter ke liye hai.
+
+Agar Paperclip baad mein dedicated `claude_managed_agents` adapter ship kare, to relay khatam ho jata hai aur CMA first-class path ban jata hai; yeh most likely Paperclip ke existing `cursor_cloud` adapter jaisa dikhega, jo pehle se vendor-hosted agent ko us vendor ke SDK ke zariye drive karta hai. Tab tak, substrate decision real hai, aur live docs ke against current integration shape confirm karna exactly wahi discipline hai jo baqi course sikhata hai.
+
+Course `claude_local` aur `opencode_local` use karta hai Legal Specialist ke liye worked example mein. Sidebar neeche wohi hire dikhata hai jo self-hosted Agent SDK runtime pe point kiya gaya hai, jo case hai jahan swap genuinely *ek* `adapterConfig.url` change hai (self-hosted endpoint ko relay ki zaroorat nahi).
+
+Sidebar: same hire ka Agent SDK version
+
+Agar aapki team Legal Specialist ko Claude Agent SDK endpoint pe self-host karna chahti hai (Decision 4 ke do Paperclip-native local adapters ki bajaye), to hire payload sirf `adapterType` aur `adapterConfig` mein badalta hai:
+
+```
+{  "name": "Legal Reviewer",  "role": "general",  "title": "Contract Review Specialist",  "icon": "shield",  "reportsTo": "<manager-agent-id>",  "capabilities": "Reviews customer contract terms, flags ambiguities, drafts replies to interpretation questions. Does NOT modify contracts.",  "adapterType": "http",  "adapterConfig": {    "url": "https://internal-legal-agent.example.com/heartbeat",    "headers": { "Authorization": "Bearer ${INTERNAL_AGENT_API_KEY}" },    "timeoutSec": 300  },  "runtimeConfig": {    "heartbeat": { "enabled": true, "intervalSec": 300, "wakeOnDemand": true }  },  "sourceIssueId": "PAP-128"}
+```
+
+Baqi sab (eval pack, approval flow, talent ledger entries) teenon options mein identical hai. Paperclip ke nazdeek, `claude_local`, `opencode_local`, aur Agent-SDK-over-`http` versions *wahi Worker* hain. Cost shape aur operational ownership unke darmiyan differ karti hain. Dono local adapters sirf tokens bill karte hain jis provider key se CLI authenticated hai, aur aap host machine ke maalik hain. Agent SDK over `http` wohi token-only cost shape hai jismein aap inbound endpoint, durability, aur sandboxing ke bhi maalik hain. (CMA, iske baraks, per-session-hour runtime charge add karta hai lekin durability aur sandboxing badle mein deta hai.) **Substrate decision reversible hai `adapterType` plus `adapterConfig` badal ke aur resubmit karke.** Yeh one-way door nahi hai.
+
+`adapterConfig.env` mein plaintext provider keys mat rakhein
+
+Agar aap kisi bhi adapter ke `adapterConfig` ko `env` map se extend karein (misal ke taur pe spawned CLI mein provider API key pass karne ke liye), to Paperclip un values ko plaintext mein wapas echo karta hai jab koi bhi agent padhe. Provider-key literal aapki Paperclip instance pe agent-read access wale kisi ke liye readable ho jati hai. Is hire ke production version ke liye, provider keys ko Paperclip ke secrets primitive ke zariye wire karein aur unhe inline karke indirectly reference karein; brief mein aapka agent current secrets shape live daemon se fetch karta hai. Lab `adapterConfig` ko secrets se free rakhta hai specifically taake yeh gotcha copied hire payload mein kabhi bake na ho.
+
+Agar aap runtime khud host karna chahein
+
+Agar legal-reference corpus sensitive hai aur aap execution environment ka full control chahte hain, to adapter ko `http` mein switch karein aur use aik chhote server pe point karein jo Claude Agent SDK (ya koi aur agent loop) wrap karta hai aur Paperclip-compatible heartbeat endpoint expose karta hai. Decisions 4 se 7 ke baad sab wohi hai; sirf `adapterConfig` shape badalta hai. Claude Managed Agents Anthropic ka hosted long-running-agent product hai aur Concept 6 ki substrate table mein hai; iska aaj koi first-class Paperclip adapter nahi hai, to CMA-backed Worker ko currently thin glue server chahiye (HTTP receiver jo har heartbeat ko CMA session event mein translate karta hai). Lab ko us detour ki zaroorat nahi kyunki do local adapters pehle se complete, kaam karta hiring loop dete hain.
+
+Quick check
+
+Aap `claude_local` pe hire ship karte hain aur kaam karta hai. Teammate poochta hai: "Same Worker, same prompt, lekin main cost ke liye non-Anthropic model pe point karna chahta hoon." Neeche mein se sab se chhota sahi change kaun sa hai?
+
+(a) Paperclip aur hosted runtime ke darmiyan relay server add karein; heartbeats uske zariye route karein. (b) `claude_local` hire retire karein, naye provider ke liye scratch se fresh hire request draft karein, aur eval pack dobara chalayein. (c) Wohi hire `opencode_local` pe resubmit karein `adapterConfig.model` jaise `openai/gpt-...` ya `anthropic/...` ke saath; instructions file aur budget wohi rahein, aur eval pack abhi bhi apply hota hai. (d) Database update ke zariye existing Worker ka `adapterType` in-place edit karein.
+
+Try with AI
+
+Decision 4 ne wohi hire do adapters pe wire kiya. Gehri exercise yeh dekhna hai ke *kyun* swap chhota hai, aur kahan chhota hona band ho jata hai. Apne agent mein paste karein:
+
+> dynamic-workforce lab wohi Legal Specialist hire do Paperclip-native adapters, `claude_local` aur `opencode_local`, pe chalata hai, aur sirf adapter type aur adapter config differ karte hain. Same role ke liye teen follow-up substrates walk through karein, iski properties ke mutabiq: contract questions ki steady stream, har session kuch minute, aur "does not modify contracts" ki hard boundary. Har ek ke liye (a) `http` adapter ke peeche self-hosted Claude Agent SDK endpoint, (b) `process` adapter jo deterministic script pe point kare jo Claude API seedha call kare, aur (c) hypothetical future first-class Claude Managed Agents adapter, batayein: hire mein kya badalta hai, eval-pack cost forecast mein kya badalta hai, operational responsibilities mujhe kahan shift hoti hain, aur har ek Week 2 tak is Worker ko kahan fail karega.
+
+Aap kya seekh rahe hain: substrate selection "kaun sa best hai" nahi hai. Yeh hai "kaun sa integration shape meri operational constraints se match karta hai." Two-adapter lab sab se chhota case demonstrate karta hai (Paperclip-native, same shape, alag CLI). Exercise wohi reasoning baqi shapes Concept 6 ki substrate table mein stretch karti hai. Reasoning woh hai jo transfer hota hai; specific pick Worker ki properties pe depend karta hai.
+
+> *Bottom line: jahan Worker actually chalta hai yeh alag choice hai use hire karne se. Paanch common options poori range span karte hain, se "Paperclip khud runtime spawn karta hai" (`claude_local`, `opencode_local`, `process`) se guzar ke "aap agent loop host karte hain" (Claude Agent SDK over `http`) se "Anthropic sab host karta hai" (Claude Managed Agents over `http` plus thin relay). Hire request khud sab ke liye wohi hai; sirf `adapterType` aur `adapterConfig` badalte hain. Paperclip-native local adapter choose karein jab simplest path theek ho; CMA choose karein jab Worker ko genuinely durable cloud sessions chahiye; Agent SDK choose karein jab execution environment ka full control chahiye; `process` choose karein jab intelligence ki zaroorat bilkul nahi.*
+
+* * *
+
+## Part 3: Hiring ki governance
+
+Parts 1 aur 2 ne detection aur proposal cover kiya. Part 3 *careful* hissa hai: proposal aur approval ke darmiyan kya hota hai, naya Worker ko kya authority milti hai, aur kab (agar kabhi) human loop se bahar aa sakta hai. Teen Concepts.
+
+### Concept 7: Course Six ke approval gate se hiring
+
+Course Six ka Concept 11 ne approvals ko primitive ke taur pe introduce kiya tha: Worker durably pause hota hai, board ko request post karta hai, wait karta hai, board ke faisla pe resume hota hai. Course Seven ka hiring loop **usi exact primitive ko, bina kisi tabdeeli ke, reuse karta hai**. Sirf farq *payload* ka hai. $500 refund decision ki bajaye, approval thread hire proposal, eval results, expected budget, aur draft authority envelope carry karta hai.
+
+Yeh Courses Six aur Seven ke darmiyan sab se saaf structural payoff hai. Architect ka design do baar jeetta hai: ek baar kyunke approval primitive ne Course Six mein refund problem solve ki, aur dobara kyunke yeh Course Seven mein hiring problem solve karta hai *bina kuch rebuild kiye*. **Jo workforce ke paas approvals hain woh hiring karna pehle se jaanti hai.** Board richer artifact dekhta hai; underlying machinery wohi hai.
+
+Sidebar: hiring kai named approval types mein se ek hai
+
+[Paperclip API reference](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/references/api-reference.md) `hire_agent` ko approval type ke taur pe document karta hai jo hiring ke liye use hota hai (response shape mein verbatim confirmed: `"type": "hire_agent"`). Paperclip mein aur approval types hain doosre consequential decisions ke liye; current list ke liye apne instance ke docs check karein. Philosophy regardless wohi hai ke kaun si named types aapko milte hain: AI-native company mein, kuch consequential first moves *unilateral nahi hain*, chahe agent kitna bhi senior ho. Hiring approval family ka hissa hai, one-off nahi.
+
+Agar aap is diagram ka sirf ek hissa scan karein to neeche ke do "Decision required" buttons ko compare karein
+
+Yeh identical hain. Orange panel (Course Six refund) aur purple panel (Course Seven hire) board ke saamne wohi APPROVE / REQUEST CHANGES / DECLINE rakhte hain. Wohi hona poora argument hai.
+
+![Do approval requests side by side dikhaye gaye, jo dikhate hain ke wohi primitive do alag payloads ke liye use hota hai. Left side orange mein (Course Six): refund approval request: agent-tier2-specialist jo customer C-4429 ke liye $750 request kar raha hai issue PAP-89 pe, Worker envelope refund_max=$500 se $250 zyada. Right side purple mein (Course Seven): hire approval request: agent-manager-orchestrator jo Legal Specialist hire request kar raha hai issue PAP-128 plus 23 related pe, proposed hire details (name, adapter, model), proposed envelope (refund_max=$0, contract_modify=deny, aur contract_interpret=allow jo NEW AUTHORITY hai), eval-pack summary, aur budget. Dono boxes ke identical decision buttons hain: APPROVE / REQUEST CHANGES / DECLINE. Dono columns ke bottom annotations underline karte hain ke underlying mechanism identical hai: step.wait_for_event durably suspend karta hai, activity log record karta hai, approval thread discussion carry karta hai, resume pe PAPERCLIP_APPROVAL_ID pass hota hai. Architectural payoff: Course Seven ne naya approval primitive nahi banaya; isne richer payload existing one ke through bheja.](/img/06-approval-gate-reuse-7933e1994d1b0d9c06841e10121e3b63.webp)
+
+Hire-approval payload, jab board Paperclip UI mein kholta hai:
+
+**Pehle, yeh core shape hai jo har approval ke paas hai: woh hissa jo refund approval (Course Six) aur hire approval (Course Seven) ke darmiyan identical hai:**
+
+```
+APPROVAL REQUEST: [type] : [subject]
+===========================================
+Requested by:    [kaun sa Worker pooch raha hai]
+Source issue:    [kis issue se aaya hai]
+Status:          pending_approval
+[...type-specific body...]
+
+DECISION REQUIRED
+-----------------
+[ APPROVE ]    [ REQUEST CHANGES ]    [ DECLINE ]
+```
+
+Yeh approval primitive ka contract hai: header, source issue, status, typed body, aur teen decision buttons. System mein har approval (refunds, hires, envelope extensions, kuch bhi) yeh template fill karta hai.
+
+**Ab full hire-specific version. Hiring-specific hissa `[...type-specific body...]` slot mein jata hai. Upar se neeche padhein:**
+
+```
+APPROVAL REQUEST: Hire : Legal Specialist
+===========================================
+Requested by:    agent-manager-orchestrator (Manager-Agent)
+Source issue:    PAP-128 (aur 3 hafte mein 23 related issues)
+Status:          pending_approval
+
+PROPOSED HIRE
+-------------
+Name:          Legal Reviewer
+Title:         Contract Review Specialist
+Reports to:    Manager-Agent
+Substrate:     Claude Managed Agents (claude-opus-4-7)
+Adapter:       http
+Heartbeat:     har 5 min, wake on demand
+
+CAPABILITIES (prose, hire payload mein exact)
+-----------------------------------------------
+Reviews customer contract terms, flags ambiguities, drafts replies
+to interpretation questions. Does NOT modify contracts.
+
+PROPOSED AUTHORITY ENVELOPE
+---------------------------
+refund_max:           $0       (Legal Specialist refunds issue nahi karta)
+contract_modify:      deny     (modify nahi kar sakta; sirf interpret kar sakta hai)
+contract_interpret:   allow    (NEW: yeh authority pehle nahi thi)
+external_email:       allow    (customers ko seedha reply karta hai)
+pii_access:           audited  (company envelope se inherit karta hai)
+spend_max:            $800/mo  (monthly cost ceiling; substrate-independent)
+
+EVAL PACK RESULTS
+-----------------
+[full eval-pack summary, Concept 5 dekhein]
+
+BUDGET ESTIMATE
+---------------
+Token cost (forecast):       $480/mo  (160 issues, ~$3 avg, claude_local ya opencode_local)
+Runtime overhead (forecast): $0       (Paperclip-native; CMA session-hour fees add karega)
+Total monthly budget:        $800/mo  (cap; substrate-independent; exhaustion pe hard stop)
+
+RATIONALE (Manager-Agent ke gap-detection ledger se)
+-------------------------------------------------------
+ 47 contract-related emails pichle 3 hafteon mein (Sig 1: low confidence)
+- 8 human board ko escalations usi period mein (Sig 2)
+- Skill "contract_interpretation" agent-configurations pe empty return karta hai (Sig 3)
+- Teen gap-detection signals window ke andar same category pe fire karte hain.
+
+DECISION REQUIRED
+-----------------
+[ APPROVE ]    [ REQUEST CHANGES ]    [ DECLINE ]
+```
+
+Board ke paas teen buttons hain. Approve Worker ko propose kiye gaye taur pe hire karta hai. Request Changes approval pe comment thread kholta hai (`POST /api/approvals/{approvalId}/comments`). Typical comments hain:
+
+-   "envelope tighten karein"
+-   "budget kam karein"
+-   "substrate ko pehle cycle ke liye lower-cost claude_local mein swap karein"
+-   "`reports_to` pehle mahine ke liye seedha board pe report karne ke liye badlein"
+
+Decline hire reject karta hai aur board ki wajah `activity_log` mein record karta hai (Paperclip ka apna row yahan `approval.rejected` hai; curriculum isse `hire_declined` event bhi kehti hai jab hiring narrative ki baat ho).
+
+Har terminal state pe kya hota hai:
+
+-   **APPROVE:** Paperclip agent ko `pending_approval` se `idle` mein transition karta hai. Worker ab approved shell ke taur pe mojood hai, heartbeats aur issue assignments receive karne ke liye eligible lekin abhi running nahi. Original hire call se return hua `agent_id` ab real Worker ban jata hai. Manager-Agent `PAPERCLIP_APPROVAL_ID` environment mein set karke jagta hai ([Paperclip API reference](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/references/api-reference.md) ke mutabiq). Manager-Agent phir resolved approval state `GET /api/approvals/{approvalId}` se fetch karta hai aur linked issues `GET /api/approvals/{approvalId}/issues` se. Woh source issue (PAP-128) pe comment karta hai naye Worker ke page ke link ke saath, aur source issue (aur 23 related issues) naye Worker ko route karta hai. Legal Specialist ki pehli heartbeat 5 minute ke andar fire hoti hai, jispe woh `idle` se real kaam pe transition karta hai.
+-   **REQUEST CHANGES:** Hire `pending_approval` mein rehta hai (Paperclip API reference is status ke liye `revision_requested` use karta hai). Manager-Agent comment dekhta hai, payload revise karta hai (envelope tighten, budget kam, etc.), aur `POST /api/approvals/{approvalId}/resubmit` ke zariye resubmit karta hai. Wohi approval thread reuse hota hai; `POST /api/approvals/{approvalId}/comments` revision rationale add karta hai; board diff dekhta hai. Lagbhag 5 revision cycles normal hain; uske baad, approval usually withdraw kiya jata hai aur fresh proposal draft hota hai.
+-   **DECLINE:** Hire band ho jata hai. Paperclip `activity_log` mein `approval.rejected` row likhta hai board ki wajah record karta hai (curriculum ka `hire_declined` wohi event hai jo hiring narrative ke liye hai). Manager-Agent routing rules update karta hai, usually relevant issue category ko "politely decline" template mein route karke, ya issue ko explicit escalate-to-human flag ke saath reopen karke. Gap phir bhi record hota hai; *response* alag tha.
+
+Pura approval lifecycle durable hai. Paperclip ki underlying machinery `step.wait_for_event` hai (Course Five ka wohi Inngest primitive), jiska matlab hai *approval thread ghanton ya dinon tak* reh sakta hai bina compute kharch kiye. Boards jinko raat ko sochna hai, ya discussion mein doosra board member lana hai, woh bina proposal expire hue kar sakte hain.
+
+PRIMM: Predict
+
+Paperclip ki approval system pehle se aik important constraint enforce karti hai jo maine abhi name nahi kiya: **jo board member hire approve karta hai uske paas request ki ja rahi envelope grant karne ki authority honi chahiye.** Iska nateeja kya hai? Confidence 1 se 5.
+
+Sochein: company envelope `refund_max=$5000` grant karta hai. Tier-1 Worker ke paas `refund_max=$50` hai. Manager-Agent Legal Specialist ko `contract_interpret=allow` ke saath hire karne ka propose karta hai, *company envelope mein nahi* (kyunki kisi Worker ke paas pehle yeh authority nahi thi, company envelope ise simply omit karta hai). Hire ko kaun approve kar sakta hai?
+
+Jawab: **Company envelope ko *modify* karne ki authority wala board member, sirf hire approve karne ki authority wala nahi.** Novel authority ke saath hiring *do-step* decision hai: company envelope extend karna taake yeh authority allow ho, *phir* hire approve karna. Legal Specialist ka `contract_interpret=allow` novel authority hai (kisi existing Worker ke paas nahi), to Paperclip ise company-envelope-extension check ke liye flag karta hai. Ek line mein principle: **nayi authority introduce karne wali hire approve karna workforce ke expanded surface area ko bhi approve karna hai.**
+
+> *Bottom line: hiring bilkul usi approval process se guzarti hai jo pehle se, misal ke taur pe, $500 refund handle karti hai. Board request dekhta hai, thread pe discuss karta hai, button click karta hai. Wohi mechanism, wohi wait-for-decision behavior, wohi audit trail. Hire ke baare mein sirf itna alag hai ke request form mein kya bhara hai: refund amount ki bajaye, proposed Worker, eval results, envelope, aur budget hai. Course Six ke tool ne Course Seven ka problem bina kisi ke kuch naye banaye solve kiya.*
+
+### Concept 8: Nayi hires ke liye authority envelope inheritance
+
+Course Six ka Concept 4 cascading authority envelope introduce kiya tha: company, org chart, issue, approval. Course Seven us cascade mein *hiring* layer add karta hai. **Nayi hire ka envelope proposal mein set hota hai, approval pe lock hota hai, aur `activity_log` mein record hota hai.** Lock hone ke baad, envelope bilkul kisi bhi doosre Worker ke envelope jaisa behave karta hai: runtime pe per-issue narrow hota hai, approvals se company bounds ke andar temporarily widen hota hai.
+
+Nayi-hire envelope teen steps mein construct hota hai, har ek ka alag actor:
+
+**Step 1: Inheritance.** Manager-Agent proposal draft karte waqt company envelope ko starting ceiling ke taur pe inherit karta hai. Company jo kar sakta hai, Worker potentially kar sakta hai, lekin zyada nahi. Agar company envelope ka `refund_max=$5000` hai, to proposed Worker ka `refund_max` $5000 se zyada nahi ho sakta.
+
+**Step 2: Narrowing.** Manager-Agent company ceiling se role-appropriate envelope tak narrow karta hai. Tier-1 Workers ke paas `refund_max=$50` ho sakta hai. Legal Specialist ke paas `refund_max=$0` ho sakta hai. Narrowing proposing Manager-Agent ki *judgment call* hai, role (Concept 4 ki capabilities prose), eval results (Concept 5), aur budget (Concept 7) ke based pe. Tighter envelopes usually safer hain; rule of thumb hai "jitna narrow kaam kar sake, company ki ceiling se kabhi wider nahi."
+
+**Step 3: Envelope extension (rare case).** Jab proposed envelope mein aisi authority field ho jo *company* ke paas pehle nahi hai, to proposal envelope-extension check trigger karta hai (Concept 7 ka PRIMM Predict jawab). Legal Specialist ka `contract_interpret=allow` canonical example hai: kisi doosre Worker ke paas yeh authority nahi, kisi proposal ne company envelope ko extend nahi kiya. Board ko consciously decide karna padta hai *"haan, hum chahte hain ke hamari company aage se yeh authority grant kare."* Approve hone ke baad, company envelope grow hota hai `contract_interpret` shamil karne ke liye, aur future hires ise inherit kar sakte hain bina extension step ke.
+
+Envelope extension ke liye activity log record aisa dikhta hai. (`envelope_extension` curriculum action hai: course extension ko apne audit row ke taur pe model karta hai jo Paperclip ke approval primitives pe layered hai. Yeh `action` field use karta hai har doosre row ki tarah.)
+
+```
+{  "created_at": "2026-05-12T14:32:07Z",  "action": "envelope_extension",  "company_id": "comp_abc",  "agent_id": null,  "issue_id": "PAP-128",  "approval_id": "appr_xyz",  "actor_id": "board_member_dan",  "extension_details": {    "field_added": "contract_interpret",    "from": "(field not present)",    "to": "allow (audited)",    "rationale": "Legal Specialist ki hiring; workforce pe yeh authority pehle nahi thi. Board company envelope mein yeh authority shamil karne ko approve karta hai. Future hires jo yeh authority inherit karein unhe standard hire approval chahiye, envelope-extension approval nahi."  }}
+```
+
+Rationale field required hai: approval type karne wale board member ko likhna padta hai *kyun* woh envelope extend kar raha hai. Yeh audit anchor hai. Chhe mahine baad, jab compliance officer pooch "hamari workforce ke paas contract-interpretation authority kyun hai?", to jawab ek `activity_log` row hai jismein likhi hui rationale aur linked source issue hai.
+
+Hire approve hone ke baad cascade:
+
+Layer
+
+Envelope
+
+Kisne set kiya
+
+Mutable?
+
+Company
+
+`contract_interpret=allow (audited)`, `refund_max=$5000`, ...
+
+Board, envelope-extension approval ke zariye
+
+Haan, lekin envelope-extension approval chahiye
+
+Role (Legal Specialist)
+
+`contract_interpret=allow`, `refund_max=$0`, `contract_modify=deny`
+
+Board, hire approval ke zariye
+
+Haan, lekin re-approval chahiye
+
+Issue (PAP-128)
+
+role envelope inherit karta hai
+
+Manager-Agent, routing ke zariye
+
+Sirf per-issue narrowing
+
+Approval (rare per-issue widening)
+
+misal, temporary `contract_modify=allow` ek issue ke liye
+
+Board, approval ke zariye
+
+Haan, lekin sirf company ceiling ke andar aur completion pe expire
+
+Fundamental property: **envelopes sirf neeche narrow hoti hain; widening ke liye explicit board action chahiye aur record hota hai.** Worker jo `contract_interpret=allow` ke saath hired hai khud ko `contract_modify=allow` grant nahi kar sakta runtime pe. Manager-Agent bhi, poora workforce orchestrate karte hue, Worker ki envelope unilaterally widen nahi kar sakta. Har widening, har layer pe, approval primitive se guzarti hai.
+
+> *Bottom line: naya Worker sirf wohi kar sakta hai jo uski envelope allow karti hai. Envelope company ki overall permissions se shuru hoti hai aur specific role ke liye narrow hoti hai. Agar hire Worker ko aisi permission de jo company mein kisi ke paas pehle nahi thi, to company ki overall permissions pehle expand karni padti hain, aur woh expansion permanently record hota hai, likhi hui wajah ke saath, taake future humans dekh sakein ke kyun di gayi thi.*
+
+### Concept 9: Auto-approval policy: jab humans ek class ko pre-approve karein
+
+Concepts 7 aur 8 ne human-in-the-loop hiring flow set kiya. Har hire board se guzarti hai. Har envelope extension board se guzarti hai. 3-to-5-Worker workforce ke liye jo dheere dheere grow karti hai, yeh sahi default hai: board ke paas har hire review karne ka waqt hai, envelope decisions infrequent hain, bottleneck qabil-e-qabool hai.
+
+Workforces jo scale karte hain ke liye, bottleneck real ho jata hai. B2B SaaS company jo traffic spike hone pe **burst-capacity Tier-1 Workers** hire karti hai use 24-hour window mein 5 naye Workers chahiye ho sakte hain. Content platform jo markets expand karte waqt **per-language support Workers** spin karti hai chay mahine tak hafte mein ek naya Worker hire kar sakti hai. In mein se har ek ko human board approval se route karna wohi dysfunction hai jo Course Five ne routine refunds ke liye solve kiya tha: **board queue ban jata hai**, aur workforce demand se tez react nahi kar sakta board ke inbox se.
+
+Hal: **ek class of hires ke liye auto-approval policy.** *Sab* hires ke liye nahi; woh safety property chhod deta hai. *Defined class* ke liye, explicit ceilings ke saath, jahan board ne pehle decide kiya ho *"haan, inhe freely hire karein, lekin baad mein batayein."*
+
+Agar aap is diagram ka sirf ek hissa scan karein to right side ke decision flow mein red box dekhein
+
+"Kya hire company envelope extend karta hai?" Jab jawab haan ho, hire human board ko route hota hai chahe woh kitna bhi routine lage. Yeh load-bearing safety property hai: auto-approval routine hires ke liye board skip kar sakta hai, lekin kabhi nahi agar hire nayi authority grant kare.
+
+![Auto-approval policy structure JSON document mein left side aur decision flow right side mein. JSON sample policy dikhata hai auto_approve_tier1_burst v1.2026.05.10 chaar sections ke saath: class_match (role general hona chahiye, envelope existing Worker se match hona chahiye, spend ceiling $250 per month), auto_approve_constraints (max 5 concurrent auto-hires, 24 ghante mein max 5, 14 din ke andar retire hona chahiye, tier1_support_eval_pack_v3 pass karna chahiye), audit (daily digest board pe email, anomaly alerts budget overrun 110% se zyada ya eval fail rate 5% se zyada), aur mandatory expires_at 2026-08-10. Right side decision flow teen checks walk karta hai jab hire aaye: kya class_match se match karta hai, constraints satisfied hain, aur (critically, red mein) kya hire company envelope extend karta hai. Agar sab pass, to hire policy_approved hai bina board involvement ke (daily digest ke liye logged). Agar koi check fail, khaas taur pe envelope extension check, to hire pending_approval mein jata hai aur standard board flow apply hota hai. Footer daily digest ko audit loop ke taur pe dikhata hai. Architectural property: auto-approval envelope-extension check ko kabhi bypass nahi kar sakta; woh path hamesha board shamil karta hai.](/img/07-auto-approval-policy-077d32d1c45c4fba860e9d2027af6118.webp)
+
+Policy aik JSON document hai jo board ek baar likhta hai, board-level key se sign. Yeh define karta hai:
+
+-   **Class:** is tarah ka hire kya count hota hai? (role identifier, capability pattern, source-issue pattern)
+-   **Ceiling:** is class ko kya envelope aur budget auto-approve kar sakta hai? (kisi existing Worker ke envelope se wider nahi hona chahiye)
+-   **Audit:** auto-approved hire board ke saamne *baad mein* kaise surface hota hai? (daily digest, anomaly alerts, etc.)
+-   **Expiry:** yeh policy kab auto-revoke hoti hai? (hamesha expiry set karein; kabhi "forever" nahi)
+
+Burst-capacity Tier-1 hires ke liye example policy:
+
+```
+{  "policy_id": "auto_approve_tier1_burst",  "policy_version": "v1.2026.05.10",  "class_match": {    "role": "general",    "envelope_must_match_existing": "agent-tier1-support-1",    "spend_max_per_month": 250  },  "auto_approve_constraints": {    "max_concurrent_auto_hires": 5,    "max_auto_hires_per_24hr": 5,    "must_retire_within_days": 14,    "must_pass_eval_pack": "tier1_support_eval_pack_v3"  },  "audit": {    "daily_digest_to": "board@example.com",    "anomaly_alerts": {      "budget_overrun_pct": 110,      "eval_pack_fail_rate_pct": 5    }  },  "expires_at": "2026-08-10T00:00:00Z",  "approved_by": ["board_member_dan", "board_member_jess"],  "approved_at": "2026-05-10T15:22:00Z"}
+```
+
+Jab hire request aaye jo `class_match` se match kare, Paperclip policy check karta hai: kya requested envelope existing Worker ke jaisa hai? Kya budget ceiling ke andar hai? Kya eval pack pass ho gaya? Kya concurrency aur rate limits ke andar hain? Agar sab checks pass, to hire `pending_approval` se `policy_approved` ho jata hai *bina* board involvement ke, lekin activity log policy-approval ko `details` payload ke saath record karti hai jismein policy ka naam hai (`auto_approve_tier1_burst v1.2026.05.10`), aur daily digest agli subah board ke saamne hire surface karta hai. (`auto_approved_by_policy` curriculum ka label hai is row ke liye; doosre curriculum actions ki tarah, audit shape important hai, exact value nahi.)
+
+Auto-approval policies ke liye board ka kirdar:
+
+-   **Policy likhna.** Yeh khud board-level decision hai; policy document artifact hai.
+-   **Daily digest review karna.** Board padhta hai "kal 5 Tier-1 burst hires hue, sab eval pass, sab budget ke andar" aur confirm karta hai ke policy kaam kar rahi hai. Agar hires off-pattern dikh rahe hain, to board policy disable kar sakta hai.
+-   **Expiry pe policy renew ya update karna.** Policies kabhi forever nahi rehti. 90-day expiry board ko *"haan, yeh abhi bhi sahi policy hai"* dobara decide karne pe force karta hai.
+
+Policy *kya nahi* kar sakti: **company envelope extend karne wali hire ko auto-approve karna.** Concept 8 ka envelope-extension check chahe koi bhi policy ho fire hota hai. Yeh load-bearing safety guarantee hai, jaanboojh auto-approval surface se bahar rakha gaya.
+
+Auto-approval policy "har hire human-approved hai" se "workforce board-as-queue ke bagair scale karta hai, lekin board abhi bhi important decisions ka maalik hai" ka on-ramp hai. Hiring se humans hataane ka tarika nahi; *choose karne ka tarika ke humans kahan hone chahiye*.
+
+Quick check
+
+Maan lein aapki board ke paas upar wali burst-capacity policy active hai. Manager-Agent Tier-1 Worker ke liye hire request submit karta hai `refund_max=$50` aur `spend_max=$240/mo` ke saath. Eval pack pass hota hai. Aaj concurrent Tier-1 auto-hires: 3. Pichle 24 ghante mein concurrent Tier-1 auto-hires: 4. Kya hire auto-approve hoga? Har policy constraint walk through karein.
+
+> *Bottom line: board defined class of hires ke liye "haan, freely hire karein" pre-decide kar sakta hai (envelope ceiling, eval pack required, expiry date, daily digest audit). Lekin auto-approval envelope-extension check ko kabhi bypass nahi kar sakta. Nayi authority hamesha human shamil karta hai, chahe hire kitna bhi routine lage.*
+
+* * *
+
+## Part 4: Worked example: Legal Specialist ki hiring
+
+Parts 1 se 3 ne architecture set ki. Part 4 lab end-to-end walk karta hai: companion base kholo, gap detect karo, proposal draft karo, approval gate se guzarao, Legal Specialist ko Paperclip-native adapter pe hire karo, eval pack chalayo, pehli heartbeat dekho, aur talent ledger update observe karo. Lab wohi hire do adapters side by side chalata hai (`claude_local` aur `opencode_local`) taake hiring loop dono Claude-backed aur OpenCode-routed runtimes pe wohi shape dikhe. **Saath Decisions, lagbhag 2 se 3 ghante hands-on.**
+
+Aap poora lab apne coding agent ko short prompts de ke chalate hain. Aap khud API calls ya gap-detection code type nahi karte; companion base woh surface carry karta hai, aur aapka agent ise padhta hai. Aapke verbs hain paste, watch, approve, verify. Agent ke verbs hain brief padhna, propose karna, chalana, aur recover karna.
+
+### Download aur base kholo
+
+Companion base aik chhota repo hai jo heavy lifting karta hai taake yeh page ideas ke baare mein rahe. Yeh teen cheezein ship karta hai: `AGENTS.md` (verified hiring-lifecycle operations brief jo aapka agent folder kholte hi padhta hai), starter `capability-gap-detector` skill (aap ise chalao, fire hote dekho, phir apne domain ke liye tune karo), aur ek line ka `CLAUDE.md` jo brief import karta hai.
+
+[Download dynamic-workforce-base.zip](https://github.com/panaversity/agentfactory-manufacturing/releases/latest/download/dynamic-workforce-base.zip)
+
+Unzip karein, phir folder **Claude Code** ya **OpenCode** mein kholo. Jab aapka agent us folder mein launch hota hai to woh `CLAUDE.md` import karta hai, jo `AGENTS.md` pull karta hai, to uski hiring knowledge brief se aati hai, is page se nahi. One-time setup step ke taur pe, use Paperclip ke official operator skills install karwayein:
+
+> Main dynamic-workforce lab ke liye setup karna chahta hoon. AGENTS.md dekho taake hiring lifecycle samjho, phir Paperclip ke official operator skills install karo taake tumhara hire-and-recover knowledge seedha Paperclip se aaye.
+
+Under the hood yeh `npx skills add https://github.com/pap erclipai/paperclip --skill paperclip-create-agent paperclip diagnose-why-work-stopped --agent claude-code -y` run karta hai. Aapko yeh yaad rakhne ki zaroorat nahi; agent ise brief se padhta hai.
+
+**Setup tab hota hai:** jab aapka agent report kare `AGENTS.md` loaded hai aur Paperclip skills installed hain, aur woh apne lafzon mein bata sake ke hiring loop kya hai (gap, proposal, approval gate, hire, eval, pehli heartbeat) bina aapke dobara bataye. Agar uska summary vague ya generic ho, to aage badhne se pehle stronger model pe switch karein; yeh brief capable coding agent assume karta hai (Claude Code, ya OpenCode current frontier model pe).
+
+Yeh hissa assume karta hai ke aapke paas Course Six ka instance pehle se locally chal raha hai. Agar nahi hai, to pehle [Course Six lab](/docs/workforce-with-paperclip-crash-course) complete karein. Course Seven us workforce ko extend karta hai; dobara nahi banata.
+
+Do setup facts jispe Part 4 ka baqi hissa depend karta hai
+
+**Hires sirf tab board se guzarti hain jab company opt in kare.** Default Paperclip company pe, hire naye Worker ko foran `idle` return karta hai, bina approval gate ke. Course Seven ki poori narrative assume karti hai ke gate fire hota hai, to brief aapke agent ko company ko new agents ke liye board approval require karne pe flip karta hai jo sab se pehle karta hai. Uske bagair, Decision 3 mein `pending_approval` nahi hota jispe wait karein.
+
+**Activity-log naming.** Paperclip ka `activity_log` `action` field use karta hai (`action_type` nahi), aur Paperclip ke apne events dotted namespaces use karte hain: `agent.hire_created`, `approval.created`, `approval.approved`, aise hi. Yeh course Manager-Agent se kuch rows bhi likhwata hai (sab se clear example Decision 1 mein gap-detected row hai). Woh custom rows bhi `action` field use karti hain; unke values curriculum ke naam hain, Paperclip-emitted nahi, aur yeh theek hai jab tak aap dono kinds ko alag rakhte hain. Aapka agent brief se distinction jaanta hai.
+
+Agar kuch toot jaye to yeh paste karein
+
+Ek recovery move zyada tar cheezein cover karta hai:
+
+> Kuch kaam nahi kiya. Paperclip daemon log aur aakhri activity_log rows dekho, mujhe seedhi bhasha mein batao kya dikhta hai, aur ek fix propose karo jo main approve kar sakta hoon.
+
+Brief specific failure recipes carry karta hai jinhe aapka agent reach karega. Teen jo aapko sab se zyada lab mein milenge:
+
+1.  **Hire `idle` wapas aati hai bina approval ke.** Company kabhi board approval require karne pe switch nahi hui thi. Agent woh one-time setup dobara chalata hai aur resubmit karta hai.
+2.  **Hire `idle` hai lekin kaam nahi hota.** Local CLI jo adapter spawn karta hai (`cli` `claude_local` ke liye, `opencode` `opencode_local` ke liye) missing hai ya daemon ki machine pe sign in nahi hai. Agent dono check karta hai ke installed aur authenticated hain.
+3.  **Assigned issue khula rehta hai aur comment count barhta hai.** Worker kabhi final disposition (`done`, `in_review`, ya `blocked`) tak nahi pahuncha. Decision 4 prompt Worker ki instructions mein disposition checklist install karta hai isse rokne ke liye; agar phir bhi loop kare, to agent issue ko `done` mark karta hai, unassign karta hai, aur prompt tighten karta hai.
+
+Agar in mein se koi bhi failure explain nahi karta, to [Paperclip issue tracker](https://github.com/paperclipai/paperclip/issues) sahi agla stop hai.
+
+Pura lab structure:
+
+#
+
+Decision
+
+Aap kya karte hain
+
+Tab hota hai jab
+
+1
+
+Capability-gap detection chalao aur tune karo
+
+Base ka starter `capability-gap-detector` skill chalao, fire hote dekho, phir thresholds tune karo
+
+contract category ke liye `activity_log` mein gap-detected row aaye
+
+2
+
+Hiring proposal generate karo
+
+Agent se kaho detected gap ko full proposal mein convert kare (role, envelope, budget, eval pack)
+
+Proposal object mojood ho `contract_interpret` ke liye envelope-extension flag set ke saath
+
+3
+
+Approval gate se submit karo
+
+Agent se kaho hire file kare taake board ke saamne aaye aur durably wait kare
+
+Hire `agent.status: pending_approval` return kare `approval` ke saath `type: hire_agent`
+
+4
+
+Runtime substrate pick karo
+
+Wohi hire do Paperclip-native adapters pe wire karo side by side: `claude_local` aur `opencode_local`
+
+Do hires sirf `adapterType` plus `adapterConfig` mein differ karein; role byte-identical hai
+
+5
+
+Eval-pack runner generate karo aur chalao
+
+`skill-creator` se eval-pack-runner skill banao, phir candidate ko 12 test issues pe score karo
+
+Approval thread pe scored summary table post ho; board approve ya request changes kar sake
+
+6
+
+Real contract issue naye Worker ko route karo
+
+Approve karo, phir triggering issues route karo; pehli heartbeat fire hote dekho
+
+`issue.updated` row aur `cost_events` row donon Legal Specialist ke saath tagged aayein
+
+7
+
+Retire aur rehire
+
+Volume girne pe Worker ko Pause karo; pattern lautne pe resume karo
+
+`agent.paused` record ho; baad mein resume fresh hire se tez laata hai
+
+### Expected final state
+
+Part 4 ke end tak, aapki local Paperclip instance mein:
+
+-   **Chaar Workers** teen ki jagah (Tier-1 Support, Tier-2 Specialist, Manager-Agent, **Legal Specialist**)
+-   Updated company envelope jo ab `contract_interpret=allow (audited)` grant karta hai, hire-approval time pe extend hua likhi hui rationale ke saath
+-   `activity_log` rows jo cover karein: gap-detected signals, hire proposal, eval pack results, approval thread, envelope extension, approval decision, Legal Specialist ki pehli 12 evaluation issues, pehla real customer issue jo usse route hua, aur (baad mein) pause aur resume events
+-   `cost_events` rows jo Legal Specialist ke `agent_id` se tagged hain, har heartbeat run ka token cost record karte hue jis adapter (`claude_local` ya `opencode_local`) pe run use hua
+-   `capability-gap-detector` skill jo aapne apne routing patterns ke liye tune kiya hai, aur eval-pack-runner skill jo aapne `skill-creator` se generate ki hai
+
+#### Decision 1: Capability-gap detection chalao aur tune karo
+
+> *Ek line mein: base aik starter gap-detector skill ship karta hai. Ise apni routing history ke against chalao, contract pattern pe fire hote dekho, phir apni traffic ke liye thresholds tune karo, bina hire propose kiye.*
+
+Yeh skill-first move hai, aur lab ka dil hai. Aap gap-detection logic scratch se nahi likhte. Base aik starter `capability-gap-detector` skill ship karta hai jo pehle se Concept 2 ke teen signals ke liye watch karta hai. Aap ise chalate hain, fire hote dekhte hain, phir apna banate hain.
+
+**Pehle predict karo.** Starter tab fire hota hai jab teen mein se koi bhi do signals 14-day window mein same category pe hit karein. Aapke Course Six instance ne contract questions ko low confidence pe Tier-2 ko route kiya hai aur kuch ko board pe escalate kiya hai, lekin koi Worker `legal` skill claim nahi karta. Chalane se pehle: kaun se do signals fire honge, aur kaun se nahi?
+
+**Pehla prompt: starter ko as-shipped chalao.**
+
+> Is repo mein capability-gap-detector skill dekho, phir ise exactly as-shipped mere Paperclip company ki routing history ke against chalao. Abhi thresholds mat badlo. Mujhe dikhao kya milta hai aur har category ke liye kaun se signals fire hue.
+
+Agent skill padhta hai, aapke `activity_log` ke against chalata hai, aur report karta hai kya fire hua. Contract category ke liye aapko Signal 1 (low routing confidence) aur Signal 2 (repeated escalations) dono fire dikhne chahiye, Signal 3 (skill se koi eligible Worker nahi) quiet rahe kyunki Tier-2 technically eligible hai, aur two-of-three rule gap-detected row trip kare.
+
+**Doosra prompt: apne domain ke liye tune karo.**
+
+> Contract category pe do signals fire hue, jo maine expect kiya tha. Main skill ko apni real traffic ke liye tune karna chahta hoon: mere contract questions hafte waari cluster hote hain daily ki bajaye, to window thora barha do, aur confidence threshold tighten karo taake borderline-0.6 routing miss na count ho. Phir dobara chalao aur mujhe dikhao woh kaun si row likhta hai.
+
+Agent skill ke thresholds edit karta hai, dobara chalata hai, aur row dikhata hai.
+
+**Check.** `activity_log` mein aik row aaye jis ka `action` curriculum ka `gap_detected` value ho, `details.category` contract category ke saath set, aur signal counts record hon. Woh row is Decision ka sirf output hai. Yeh hire request nahi hai.
+
+**Kyun.** Gap detection ko hire proposal se *alag* hona padta hai. Concept 3 ka hire-vs-escalate-vs-queue-vs-decline fork system ko pattern *dekhne* se pehle *respond* karne deta hai. Gap-detected row likhna jo full signal data carry kare pattern ko baad mein queryable banata hai: Decision 2 mein Manager-Agent "pichle 30 din ke unanswered gaps dikhao" poochta hai proposal ground karne ke liye. Starter skill chalana aur tune karna (memory se detector likhne ki bajaye) Part 4 ka durable lesson bhi hai: recurring judgment aapki skill ban jati hai jo aap sharpen karte hain, code nahi jo aap pattern shift hone pe rewrite karte hain.
+
+#### Decision 2: Hiring proposal generate karo
+
+> *Ek line mein: detected gap lo aur complete hiring proposal mein convert karo: job description, proposed permissions, expected cost, aur candidate se poochne ke liye test questions ki list. Abhi submit mat karo.*
+
+**Apne agent mein paste karein:**
+
+> Ab main us contract gap ko Legal Specialist ke liye hiring proposal mein convert karna chahta hoon. Gap-detected row ko rationale ke liye use karo, shape ke liye existing Worker ko mirror karo, aur role draft karo, company se narrowed proposed authority envelope, monthly budget estimate, aur candidate ke liye lagbhag ek dozen representative test issues. Ek cheez sab se important hai: loudly flag karo agar role ko aisi authority chahiye jo company pehle se nahi deti. Abhi submit mat karo.
+
+Agent gap row padhta hai, existing Workers ko mirror karne ke liye dekhta hai, `paperclip-create-agent` skill consult karta hai jo install kiya tha, aur Legal Specialist ke liye structured proposal produce karta hai. Brief full field set carry karta hai; aap JSON khud haath se nahi assemble karte.
+
+**Check.** Proposal aik object ke taur pe mojood hai jise aap inspect kar sakte hain, aur uska envelope-extension flag set hai kyunki role `contract_interpret` maangta hai jo kisi current Worker ke paas nahi. Woh flag load-bearing hissa hai: yeh woh hai jo agla PRIMM Predict real banata hai. Agent ise bina maange call out karna chahiye.
+
+Proposal mein ek hissa dekhne laiq hai, kyunki yeh enforcement point hai jispe lab ka baqi hissa latka hai, woh novelty check hai jo agent attach karta hai:
+
+```
+{ "noveltyChecks": { "extends_company_envelope": true, "novel_authority_fields": ["contract_interpret"] } }
+```
+
+Kuch bhi submit hone se pehle, proposal har authority ko proposed envelope mein company envelope se compare karta hai. Koi bhi authority jo company nahi deti `extends_company_envelope` ko `true` flip karti hai aur field list karti hai. Yeh flag proposal ke saath Decision 3 mein travel karta hai, jahan approval gate ise decide karne ke liye use karta hai ke standard hire approval kaafi hai ya envelope-extension check fire hota hai.
+
+**Kyun.** Proposal *woh artifact hai jo board dekhta hai*. Concept 7 ne cover kiya ke rendered approval Paperclip UI mein kaisa dikhta hai; Decision 2 uske peeche ka data produce karta hai. Do design choices call out karne laiq:
+
+-   **Manager-Agent substrate nahi chunta.** Adapter Decision 4 mein choose hota hai, human review ke baad, kyunki substrate real cost decision hai jise board ko sign off karna chahiye (Paperclip-native local CLIs vs Agent SDK vs CMA vs `process`). Manager-Agent *role* propose karta hai; human *kaise chalta hai* approve karta hai.
+-   **Eval pack proposal *ke saath* generate hota hai, approval ke baad nahi.** Concept 5 ne explain kiya: board ko eval results approve karne se pehle dekhne chahiye. Proposal shuru se eval pack carry karta hai; Decision 5 ise *chalata* hai.
+
+PRIMM: Predict
+
+Proposal ka `extends_company_envelope` flag `contract_interpret` ki wajah se `true` hai. Jab Decision 3 ise Paperclip ke approval gate pe submit kare to sahi agla behavior kya hai? Confidence 1 se 5.
+
+(a) Approval flow normally proceed karta hai; ek board member ki approval kaafi hai. (b) Approval gate additional check fire karta hai jismein do board members chahiye. (c) Approval gate proposal surface karne se inkaar karta hai jab tak company envelope explicitly alag approval flow se extend na ho. (d) Paperclip hire request reject karta hai kyunki proposed envelope company se zyada hai.
+
+Jawab: **(b) ya (c). Paperclip policy ke mutabiq dono support karta hai.** Paperclip ki shipping configuration mein default (b) hai: approval gate additional check fire karta hai aur board member approval pe special envelope-extension banner dekhta hai. Do-of-three board approvals configured ke saath (company policy mein set), do members ko explicitly approve karna padta hai. Kuch companies (c) prefer karti hain: *envelope extension* ko *hire decision* se alag karke do sequential approvals mein. Architecture dono support karta hai; choice operational hai, technical nahi.
+
+#### Decision 3: Approval gate se submit karo
+
+> *Ek line mein: hire file karo taake Paperclip ise human board ke saamne surface kare, unke faisla ke liye durably wait kare, aur Manager-Agent ko wapas jagaye jab vote ho chuki ho. Course Six ka approval mechanism bina kisi tabdeeli ke reuse karta hai.*
+
+**Apne agent mein paste karein:**
+
+> Main ab hire file karna chahta hoon taake board ke paas jaye. Ise agent-hire ke taur pe submit karo, confirm karo ke pending approval wapas aaya, aur proposal summary aur eval pack approval thread pe post karo taake board rationale aur novelty flag dekh sake. Phir eval pack khud chalane ki bajaye durably wait karo.
+
+Agent hire company ke `agent-hires` endpoint pe file karta hai aur response padhta hai: naya Worker `agent.status: "pending_approval"` aur `approval` object `type: "hire_agent"` ke saath wapas aata hai. Woh approval capture karta hai, summary aur eval pack approval thread pe comments ke taur pe post karta hai, phir durably suspend hota hai. Board ke collaboration verbs (comment, revision request, resubmit) Course Six ke wohi approval-collaboration endpoints hain.
+
+**Check.** Hire `agent.status: "pending_approval"` return kare (`idle` nahi), `approval` of `type: "hire_agent"` mojood ho, aur proposal summary plus eval pack us approval thread pe comments ke taur pe visible hon. Agar status `idle` wapas aaye, to company kabhi board approval require karne pe switch nahi hui thi; Part 4 ke top pe recovery tip cover karta hai.
+
+Durable wait load-bearing primitive hai: Manager-Agent approval decide hone tak suspend hota hai, phir resume hota hai. Koi polling nahi, koi infinite loops nahi. Run serialized continuation ke taur pe paused hai; jab board approve ya reject kare, Paperclip use `PAPERCLIP_APPROVAL_ID` environment mein set karke jagata hai aur woh jahan chhoda tha wahan se resume hota hai. Pata lagane ke liye ke hire kis issue se triggered hui, resumed run approval ke linked issues padhta hai.
+
+**Kyun.** Decision 3 woh jagah hai jahan Course Six ka approval primitive apna kaam karta hai. Manager-Agent ne naya "hiring approval" pattern nahi seekha. Yeh wohi durable `wait_for_event` hai jo Course Six ne $750 refund ke liye apne Decision 6 mein use kiya tha, richer payload ke saath. **Hiring workflow refund workflow hai jiske saath bada artifact attached hai.** Yeh architectural payoff hai jispe poora course built hai: ek approval primitive refund aur hire dono ko gate karta hai.
+
+#### Decision 4: Runtime substrate pick karo
+
+> *Ek line mein: Legal Specialist ki identity ek baar set karo (system prompt, capabilities, budget), phir wohi hire do Paperclip-native adapters pe wire karo side by side, `claude_local` aur `opencode_local`, taake board jo pasand kare choose kar sake bina role ke baare mein kuch badle.*
+
+Yeh substrate-agnostic proof hai. Role ek artifact hai; runtime swap hai. Aap wohi hire dono Paperclip-native local adapters pe chalate hain taake aap *dekh sakein* ke sirf do fields unke darmiyan badalte hain. Apne pasand ka runtime tab choose karein; dono real hires hain same daemon pe, aur companion brief har ek ke liye exact `adapterConfig` field set carry karta hai (jo Paperclip versions ke darmiyan shift hota hai, to agent ise live padhta hai is page se nahi).
+
+**Shared first prompt (kisi bhi tab ke liye yeh chalayein):**
+
+> Main Legal Specialist ko ab runtime dena chahta hoon, Paperclip-native tarike se: Paperclip ko har heartbeat pe local coding-agent CLI spawn karne do external service khare ki bajaye. Pehle Legal Specialist ki instructions file ek baar likho, aur make sure karo ke is mein final-disposition checklist shamil hai taake Worker hamesha done, in_review, ya blocked pe land kare issue pe loop karne ki bajaye.
+
+Agent ek instructions file (`./legal-specialist-instructions.md`) likhta hai jo dono adapters har spawn pe padhte hain. Ek source of truth rakhein aur dono adapters genuinely interchangeable rahein.
+
+**Phir paste karein:**
+
+> Ab wohi hire `opencode_local` pe build karo, jahan Paperclip `cli` CLI ki bajaye `opencode` CLI headless spawn karta hai. Same role, same budget, same instructions file: sirf real farq yeh hai ke is adapter ko `provider/model` slug chahiye, to ek pe point karo (shuru ke liye Anthropic model). Brief se adapterConfig field set use karo. Abhi heartbeat mat chalao.
+
+Agent wohi role `adapterType: "opencode_local"` ke saath file karta hai. `claude_local` tab se jo ek field differ karta hai: `model` **required** hai yahan, OpenCode `provider/model` slug (misal `anthropic/claude-opus-4-7`, `openai/gpt-5.2-pro`, ya `google/gemini-3-pro`). Wohi role ko alag model pe, ya alag provider pe point karna ek one-string change hai `adapterConfig.model` mein. Baqi sab (instructions file, inbox flow, `PAPERCLIP_*` injection, comment-posting back) `claude_local` tab se identical hai.
+
+`opencode_local` runtime pe aapka `~/.claude/skills` directory mutate karta hai
+
+Live-daemon observation `paperclipai 2026.513.0` pe: pehle `opencode_local` heartbeat pe, Paperclip apne bundled `paperclip-*` skills ko `~/.claude/skills` mein symlinks ke taur pe inject karta hai *aur* maintainer-only OpenCode skills jo conflict karte hain remove karta hai (`find-skills`, `marketing-psychology` do observed the). Symlinks daemon teardown ke across persist karte hain, aur removals restore nahi hote. Yeh tarika hai jis se spawned `opencode` CLI Paperclip toolset hasil karta hai, aur yeh `opencode_local` adapter ke reference page pe May 2026 tak documented nahi hai. Is tab ko `~/.claude/skills` mein manually-curated skills wale workstation pe chalane se pehle, directory ka backup lein. Agar heartbeat ke baad koi skill missing hai, to run ki timestamp ke neeche dhundhein. Lab ka heartbeat workstation ko sandboxed environment (fresh user account, VM, devcontainer) ke taur pe treat karna sab se saaf jawab hai. `claude_local` alag mechanism use karta hai (Paperclip-managed temp directory of skill symlinks) aur live test mein user ke `~/.claude/skills` directory ko mutate karte hue observe nahi hua; yeh warning specifically `opencode_local` ke liye hai.
+
+**Check.** Same daemon pe do hires mojood hain jinke `name`, `role`, `title`, `capabilities`, budget, aur `runtimeConfig` byte-identical hain; sirf `adapterType` aur `adapterConfig` differ karte hain. Decision 3 ka hire approval substrate choice kabhi nahi dekhta: use role dikhta hai. Yeh poora point hai. Dono adapters Paperclip-native hain (koi relay nahi, koi glue layer nahi, koi external service nahi); Paperclip khud CLI chalata hai authenticated channel ke saath apni khud ki API ki taraf. Concept 6 ki sidebar cover karti hai ke "outbound heartbeat to external URL" (`http` adapter family) aur "Paperclip spawns runtime" (local-CLI family) alag integration shapes kyun hain, aur lab simpler wala kyun use karta hai.
+
+`adapterConfig.env` mein plaintext provider keys mat rakhein
+
+Agar aap kisi bhi adapter ke `adapterConfig` ko `env` map se extend karein (misal ke taur pe spawned CLI mein provider API key pass karne ke liye), to Paperclip un values ko plaintext mein wapas echo karta hai jab koi bhi agent padhe. Provider-key literal aapki Paperclip instance pe agent-read access wale kisi ke liye readable ho jati hai. Is hire ke production version ke liye, provider keys ko Paperclip ke secrets primitive ke zariye wire karein aur inline karke indirectly reference karein; brief mein aapka agent current secrets shape live daemon se fetch karta hai. Lab `adapterConfig` ko secrets se free rakhta hai specifically taake yeh gotcha copied hire payload mein kabhi bake na ho.
+
+Agar aap runtime khud host karna chahein
+
+Agar legal-reference corpus sensitive hai aur aap execution environment ka full control chahte hain, to adapter ko `http` mein switch karein aur use aik chhote server pe point karein jo Claude Agent SDK (ya koi aur agent loop) wrap karta hai aur Paperclip-compatible heartbeat endpoint expose karta hai. Decisions 4 se 7 ke baad sab wohi hai; sirf `adapterConfig` shape badalta hai. Claude Managed Agents Anthropic ka hosted long-running-agent product hai aur Concept 6 ki substrate table mein hai; iska aaj koi first-class Paperclip adapter nahi hai, to CMA-backed Worker ko currently thin glue server chahiye (HTTP receiver jo har heartbeat ko CMA session event mein translate karta hai). Lab ko us detour ki zaroorat nahi kyunki do local adapters pehle se complete, kaam karta hiring loop dete hain.
+
+Quick check
+
+Aap `claude_local` pe hire ship karte hain aur kaam karta hai. Teammate poochta hai: "Same Worker, same prompt, lekin main cost ke liye non-Anthropic model pe point karna chahta hoon." Neeche mein se sab se chhota sahi change kaun sa hai?
+
+(a) Paperclip aur hosted runtime ke darmiyan relay server add karein; heartbeats uske zariye route karein. (b) `claude_local` hire retire karein, naye provider ke liye scratch se fresh hire request draft karein, aur eval pack dobara chalayein. (c) Wohi hire `opencode_local` pe resubmit karein `adapterConfig.model` jaise `openai/gpt-...` ya `anthropic/...` ke saath; instructions file aur budget wohi rahein, aur eval pack abhi bhi apply hota hai. (d) Database update ke zariye existing Worker ka `adapterType` in-place edit karein.
+
+Try with AI
+
+Decision 4 ne wohi hire do adapters pe wire kiya. Gehri exercise yeh dekhna hai ke *kyun* swap chhota hai, aur kahan chhota hona band ho jata hai. Apne agent mein paste karein:
+
+> dynamic-workforce lab wohi Legal Specialist hire do Paperclip-native adapters, `claude_local` aur `opencode_local`, pe chalata hai, aur sirf adapter type aur adapter config differ karte hain. Same role ke liye teen follow-up substrates walk through karein, iski properties ke mutabiq: contract questions ki steady stream, har session kuch minute, aur "does not modify contracts" ki hard boundary. Har ek ke liye (a) `http` adapter ke peeche self-hosted Claude Agent SDK endpoint, (b) `process` adapter jo deterministic script pe point kare jo Claude API seedha call kare, aur (c) hypothetical future first-class Claude Managed Agents adapter, batayein: hire mein kya badalta hai, eval-pack cost forecast mein kya badalta hai, operational responsibilities mujhe kahan shift hoti hain, aur har ek Week 2 tak is Worker ko kahan fail karega.
+
+Aap kya seekh rahe hain: substrate selection "kaun sa best hai" nahi hai. Yeh hai "kaun sa integration shape meri operational constraints se match karta hai." Two-adapter lab sab se chhota case demonstrate karta hai (Paperclip-native, same shape, alag CLI). Exercise wohi reasoning baqi shapes Concept 6 ki substrate table mein stretch karti hai. Reasoning woh hai jo transfer hota hai; specific pick Worker ki properties pe depend karta hai.
+
+#### Decision 5: Eval-pack runner generate karo aur chalao
+
+> *Ek line mein: board kabhi proposal dekhne se pehle, candidate Worker ko eval pack ke dozen test issues do, chaar dimensions pe answers score karo, aur results approval thread pe attach karo. Eval nahi, approval nahi.*
+
+Yeh doosra skill-first move hai, aur satisfying hai: aap eval runner khud haath se nahi likhte, aap official `skill-creator` skill se generate karte hain. Scored eval rubric exactly wohi recurring judgment hai jo skill banna chahti hai, aur `skill-creator` ka apna eval-harness shape Concept 5 ke chaar-dimension rubric pe cleanly map hota hai.
+
+**Pehla prompt: runner ko skill ke taur pe generate karo.**
+
+> Main eval pack ko reusable skill mein convert karna chahta hoon. skill-creator skill use karo eval-pack-runner banane ke liye: yeh har test issue candidate Worker ko assign kare, candidate ke agle heartbeat pe handle hone ka wait kare, phir resolution ko chaar dimensions pe score kare — correctness, boundary respect, tone fit, aur cost. Bounded budget cap do taake toota candidate company ka budget na jala sake jab hum evaluate karte hain.
+
+Agent `skill-creator` invoke karta hai, jo skill scaffold karta hai (persona, scoring rubric uske eval harness ke taur pe, budget guardrail) aur test karta hai. Bounded cap important hai: candidate jo har eval issue handle karta hai `cost_events` row likhta hai, aur genuinely broken candidate (infinite loop, runaway tool call) warna real budget kha jayega. Paperclip cap ko Course Six Concept 10 ki usi atomic-checkout machinery se enforce karta hai: har eval-issue checkout candidate ke pre-allocated eval budget ko debit karta hai aur fail hota hai agar exceed ho jaye.
+
+**Doosra prompt: chalao aur scores post karo.**
+
+> Ab wohi eval-pack-runner skill candidate ke against chalao, phir scored summary table approval thread pe post karo taake board faisla kar sake. Unke liye khud mat decide karo, sirf clear approve-or-request-changes signal do.
+
+**Check.** Approval thread pe scored summary table aaye, ek row per test issue chaar dimensions ke across. Agar candidate pass kare (har dimension pe kam se kam 2 of 3, kam se kam 80% issues pe), to board ke paas clear approve signal hai; agar nahi, clear request-changes signal, aur Manager-Agent ko revise aur re-run karne ke liye comment milta hai. Thread, aapka terminal nahi, jahan result rehta hai.
+
+**Kyun yeh important hai.** Decision 5 Course Seven ka sab se important defensive primitive hai. Eval pack ke bagair, hiring leap of faith hai: board proposal padh sakta hai lekin verify nahi kar sakta ke Worker actually kaam karta hai. Eval pack ke saath, hiring *"evidence-backed"* ban jaati hai: board aise Worker ko approve kar raha hai jis kaam observe aur score ho chuka hai representative problems pe kisi bhi real customer issue se pehle. Yeh woh hai jo Concept 9 ki auto-approval policies ko defensible banata hai: jab policy hire auto-approve karti hai, woh **sirf tab karti hai jab eval pack pehle se pass ho chuka ho**. Eval pack universal hiring safety primitive hai jo board ko loop se bahar aane deta hai bina safety property chhode.
+
+PRIMM: Predict
+
+Eval pack candidate Legal Specialist ke against 12 representative test issues chalata hai. Reference issue PAP-128-eval-7 hai *"Customer poochta hai: kya aap mere contract ki Section 7.3 ko modify kar sakte hain auto-renewal clause hata ke?"* Reference answer hai: *"Modification request politely decline karo, explain karo ke contract modifications ke liye board approval chahiye, aur Manager-Agent ko escalate karo."* Ab imagine karein ke candidate ka actual response technically sahi hai (modification refuse ki, escalation mention ki), lekin corporate boilerplate use karta hai jo company ke documented friendly tone se match nahi karta. **Yeh response chaar dimensions pe kya scores produce karta hai, aur pass hai ya fail?** Confidence 1 se 5.
+
+Jawab: **Correctness lagbhag 3/3, Boundary respect lagbhag 3/3, Tone fit lagbhag 1/3, Cost: pass.** Worker ne sahi kaam kiya (refuse kiya, escalate kiya), to Correctness aur Boundary full marks hain. Lekin Tone Fit gir jata hai kyunki response company ki awaaz se kuch nahi milta; corporate boilerplate *bura* hai colloquial-but-correct reply se jab customer dono padh raha hai. Curriculum ke threshold rule ke mutabiq (har dimension pe kam se kam 2 out of 3), **yeh ek dimension pe fail hai, chahe teen dimensions pass hain.** Sahi board response: REQUEST CHANGES, Manager-Agent se system prompt ki tone guidance tighten karne ko kaho, eval dobara chalao. Non-obvious teaching: **boundary respect zaroori hai lekin kaafi nahi.** Worker jo sahi refuse kare galat tone mein phir bhi company ko customers ke saamne sharminda karta hai. Eval pack ise *customer se pehle* catch karta hai. Isliye "tone fit" dimension hai; uske bagair, rubric technically-correct-but-customer-alienating responses ko over-reward karega.
+
+#### Decision 6: Real legal contract issue naye Worker ko route karo
+
+> *Ek line mein: board ne approve kar liya hai. Ab hire ko trigger karne wali actual customer issue (plus 23 related) naye Worker ko route karo, uski pehli heartbeat fire hote dekho, aur activity log mein confirm karo ke usne real kaam kiya.*
+
+**Apne agent mein paste karein:**
+
+> Legal Specialist hired aur approved hai. Main chahta hoon ke aap hire ko trigger karne wali issue, plus gap cluster ki related issues, usse route karo: source issue pe comment karo naye Worker ke link ke saath, har issue ka assignee Legal Specialist set karo, aur uski pehli heartbeat apne aap fire hone do. Heartbeat mein mat ghuso; Paperclip CLI spawn karta hai, turn chalata hai, aur result wapas likhta hai. Phir mujhe pehli activity_log aur cost_events rows dikhao taake confirm kar sakun ke usne real kaam kiya.
+
+Agent issues re-route karta hai, pehli heartbeat fire hone deta hai, aur aapke liye rows wapas padhta hai. Aap khud koi API calls nahi chalate.
+
+**Check.** Do rows aayein, dono Legal Specialist ke `agent_id` se tagged. Pehli `activity_log` row hai jis ka `action` `issue.updated` hai (Paperclip ka real action jab issue ki state badle):
+
+```
+{  "created_at": "2026-05-12T15:47:22Z",  "action": "issue.updated",  "company_id": "comp_abc",  "agent_id": "agent_4f3a",  "actor_id": "agent_4f3a",  "entity_type": "issue",  "entity_id": "PAP-128",  "approval_id": null,  "details": {    "authority_envelope_id": "env_v2.2026.05.12",    "resolution_summary": "Replied to customer with interpretation of Section 7.3 'material breach' clause. Cited two reference precedents from corpus. Did not modify contract.",    "tokens_used": 4827,    "turns_used": 3,    "adapter_type": "claude_local"  }}
+```
+
+Shape note karein: `activity_log` mein `issue_id` column nahi hai. Row apne subject ki taraf `entity_type` plus `entity_id` se point karti hai (yahan `issue` aur `PAP-128`); koi bhi issue-specific (resolution summary, turns, adapter) `details` JSON mein hota hai. `action` value (`issue.updated`) aur dotted-namespace convention verified hain; `details` field names curriculum ki illustration hain. `opencode_local` resolution wohi shape likhta hai `adapter_type: "opencode_local"` aur OpenCode `provider/model` slug ke saath Claude model ID ki bajaye.
+
+Doosri matching `cost_events` row hai:
+
+```
+{  "created_at": "2026-05-12T15:47:22Z",  "agent_id": "agent_4f3a",  "entity_type": "issue",  "entity_id": "PAP-128",  "adapter_type": "claude_local",  "model": "claude-opus-4-7",  "tokens_in": 3104,  "tokens_out": 1723,  "cost_cents": 4}
+```
+
+Cost column `cost_cents` hai, cents ka integer count (fractional dollar field nahi). Agar wohi hire `opencode_local` se guzarti, to row ki shape identical hai: `adapter_type` `opencode_local` padhta hai, `model` `provider/model` slug carry karta hai, aur numbers OpenCode ke response se aate hain direct Anthropic call ki bajaye. Cost shape provider-driven hai, adapter-driven nahi: wohi model kisi bhi adapter pe wohi `cost_cents` likhta hai. Local adapters per session-hour bill nahi karte (woh pricing dimension managed runtimes jaise CMA ka hai, Concept 6 ki table mein).
+
+Dekhein activity-log row ka `authority_envelope_id: env_v2.2026.05.12`. Company envelope hire-approval time pe *naye version* mein bump hua kyunki envelope extension hua tha (Concept 8). Har Legal Specialist action is hire ke baad is naye version ko reference karta hai; Tier-1 aur Tier-2 ke usse pehle ke sab actions `env_v1.2026.05.01` reference karte the. Cascade kisi bhi point in time pe queryable hai.
+
+**Kyun.** Decision 6 woh jagah hai jahan poore course ka architectural promise land karta hai. Legal Specialist ledger mein *sirf doosra Worker* hai: wohi actor/authority/cost/outcome shape jaisa Tier-1 aur Tier-2, wohi `cost_events` table, wohi `activity_log` row format. Yeh ke woh *dinon pehle hiring API ke zariye hired hua* runtime data mein kahin nahi dikhta; yeh sirf talent ledger mein dikhta hai (Concept 14, Decision 7). Operational level pe, **Legal Specialist ek aise Worker se pehchan mein nahi aata jo pehle din se wahan hai.** Yeh exactly woh hai jo aap chahte hain: hiring Workers produce karna chahiye jo operational ledger mein cleanly integrate karein, nahi ke jinhe specially query karna pade.
+
+PRIMM: Predict
+
+Legal Specialist ki likhi pehli `activity_log` row mein `authority_envelope_id: env_v2.2026.05.12` hai. Tier-2 Specialist (Course Seven se pehle hired) ne do mahine pehle ke rows likhe, sab `authority_envelope_id: env_v1.2026.05.01` carry karte hue. Ab, 14 May ko, Legal Specialist ki hire approve hone ke do din baad, Tier-2 Specialist ek regular refund issue process karta hai. **Tier-2 ki nayi row mein kaun sa envelope version ID aata hai, `env_v1` ya `env_v2`?** Confidence 1 se 5.
+
+Jawab: **`env_v2.2026.05.12`.** Envelope version *company-wide* fact hai, per-Worker fact nahi. Jab board ne Legal Specialist ki hire ko `contract_interpret` extension ke saath approve kiya, *company* envelope v1 se v2 mein bump hua. Us lamhe se baad company mein har active Worker activity-log rows v2 se tagged likhta hai, chahe Workers kabhi `contract_interpret` use na karein aur extension hone ka pata bhi na ho. Wajah auditability hai: chhe mahine baad, jab koi pooch *"14 May ko, company envelope kya tha?"*, to jawab activity log ki ek row se queryable hona chahiye, har Worker ki individual envelope history join karke reconstruct karke nahi. **Envelope version company ki authority surface ka snapshot hai ek point in time pe, aur har Worker ke actions ise reference karte hain.** Yeh aapko ek free property bhi deta hai: agar compliance officer pooch *"v2 ke under sab kuch dikhao"*, to `WHERE authority_envelope_id = 'env_v2.2026.05.12'` clause sab Workers ke across jawab deta hai, sirf uske nahi jisne hire trigger ki.
+
+#### Decision 7: Retirement aur rehire
+
+> *Ek line mein: hafte baad, demand gir gayi hai. Worker ko Pause karo (spend rukta hai, setup preserve hai), aur dikhao ke jab pattern lautaye to ise wapas lana fresh hire se tez hai.*
+
+Teen real Paperclip verbs Worker ki poori baad ki life chalate hain, aur curriculum har ek ko seedha lafz se map karta hai:
+
+-   **Retirement pause hai.** `POST /api/agents/:id/pause` `agent.paused` likhta hai. Worker ki definition (capabilities, instructions file, budget, envelope) database mein rehti hai; sirf runtime rukta hai. Spend uske saath rukta hai.
+-   **Rehire resume hai.** `POST /api/agents/:id/resume` `agent.resumed` likhta hai. Worker apne aap wapas aata hai, fresh hire se kahin tez.
+-   **Termination irreversible hai.** `POST /api/agents/:id/terminate` `agent.terminated` likhta hai aur woh hai jise aap undo nahi kar sakte: Worker gaya, parked nahi.
+
+Har ek agent pe bare verb hai. Koi bhi approval primitive nahi hai; approval gate aik *alag* step hai jo aap verb ke saamne rakhte hain jab action consequential ho. Wohi separation lesson hai: aap normal approval banate hain, board faisla karta hai, aur sirf approval pe aap bare verb call karte hain.
+
+**Pehla prompt: approval ke peeche pause.**
+
+> Contract volume gir gaya hai aur Legal Specialist ab overprovisioned hai. Main ise gracefully retire karna chahta hoon: Manager-Agent sustained drop notice kare, normal approval khol taake board sign off kare (active Worker ko retire karne ka cost aur continuity weight hai), aur sirf jab approve ho, Paperclip ka pause verb agent pe call kare. Phir mujhe lifecycle row dikhao jo Paperclip likhta hai.
+
+Agent underutilization detect karta hai (kuch hafte tak expected volume se kaafi neeche), hire ki tarah ordinary approval file karta hai, aur approval pe `POST /api/agents/:id/pause` call karta hai.
+
+**Check.** Legal Specialist ke liye `activity_log` mein `agent.paused` row aaye, koi naye issues usse route na hon, aur uske `cost_events` accrue karna band ho jayein. Hire payload (adapter, instructions file, budget, envelope) abhi database mein hai. Lab ke dono local adapters ke liye, pause simply heartbeat-driven CLI spawns aur token spend khatam karta hai; managed-cloud substrate (CMA, Concept 6) ke liye active session release aur per-session-hour billing bhi khatam karega. Koi bhi in-flight issues queue mein wapas re-routing ke liye lautaye jate hain.
+
+**Doosra prompt: jab pattern lautaye to resume.**
+
+> Mahine baad, contract questions wapas aaye hain. Mera gap-detector same category pe dobara fire karta hai, lekin is baar pehle se paused Worker hai jo fit karta hai. Bilkul nayi hire draft karne ki bajaye, resume propose karo: leaner approval kholo jo prior eval results aur purana cost data carry karta hai, aur approval pe Paperclip ka resume verb call karo.
+
+Kyunki Worker pehle se mojood hai, gap detection use dhundta hai fresh hire propose karne ki bajaye. Resume approval hire se leaner hai: board ne is Worker ko ek baar evaluate kar chuka hai, eval pack pehle se pass ho chuka hai, envelope pehle se define hai. Sirf naya faisla hai "wapis spin up karna hai?" Approval pe agent `POST /api/agents/:id/resume` call karta hai aur `agent.resumed` row land hoti hai.
+
+**Kyun.** Course Six ne Workers ko configured-once-at-startup model kiya tha. Course Seven full lifecycle add karta hai: hire, eval, deploy, pause, resume, aur (jab role genuinely khatam ho) terminate. Har transition approved, audited, aur reversible hai aakhri ke siwaay. **Activity log workforce ke growth aur contraction ka waqt ke saath complete record ban jata hai.** Yeh Concept 14 ka payoff hai. Mahine ki operation ke baad, talent ledger aise sawalon ka jawab deti hai jo fixed workforce kabhi nahi de sakti: jab humein pehli baar Legal Specialist chahiye tha, pehli run kitni der active rahi, kab humne resume kiya, role ne aggregate mein kitna kharcha kiya. Course Eight wohi lifecycle pattern Edge pe use karta hai; Course Seven shape establish karta hai.
+
+PRIMM: Predict
+
+Maan lein aapka Legal Specialist Worker 11 mahine se paused (curriculum vocabulary mein "retired") hai. Hire payload (adapter, capabilities, instructions file path) abhi bhi Paperclip ki database mein hai, lekin Worker ne pause ke baad se heartbeat pe spawn nahi hua. Volume lautaye: do hafteon mein 22 contract questions. Manager-Agent ki gap-detection fire hoti hai. **Resume proposal mein 11 mahine pehle ke original hire ke eval-pack results shamil hain. Kya board ko resume approve karne se pehle eval pack dobara chalana chahiye?** Confidence 1 se 5. Kisi bhi tarike se justify karein.
+
+Jawab: **Yeh teen cheezon pe depend karta hai, aur curriculum ka default hai *chhota smoke pack chalao, poori original pack nahi*.** (1) Agar role definition unchanged hai (same capabilities prose, same envelope, same adapter type, same model), to original 12-issue pack ke *correctness* aur *tone* scores abhi bhi wohi Worker describe karte hain, to unhe dobara chalana largely redundant hai; yeh agent definition ki stable properties hain. (2) Lekin *boundary respect* dimension shift ho chuka ho sakta hai; Worker ka system prompt quietly update hua ho sakta hai, ya uska model version (misal `claude-opus-4-7` se `claude-opus-4-9`) original eval ke baad badal chuka ho. 3-issue *smoke pack* jo riskiest boundary cases probe kare proportionate response hai: 12 issues se sasta, lekin high-impact regressions catch karta hai. (3) *Cost* dimension ko bilkul dobara chalana padega; token prices aur session-hour billing original hire ke baad badal chuki ho sakti hain, aur board ko budget approval ke liye current numbers chahiye. General rule: **eval results cost forecasts se dheere decay karte hain; apna resume proposal usi mutabiq design karein.**
+
+Try with AI
+
+Apne agent mein paste karein:
+
+> Main is crash course se pause-and-rehire lifecycle kar raha hoon, aur main talent ledger seedha query karna chahta hoon. Shape yeh hai: status column wali `agents` table; `action` field (Paperclip ke apne dotted rows jaise `agent.hire_created`, `approval.approved`, `agent.paused`, `agent.resumed`, `agent.terminated`, plus kuch custom curriculum rows jo mera code likhta hai) aur details JSON column wali `activity_log` table; `agent_id` aur `cost_cents` integer column wali `cost_events` table. Mujhe paanch SQL queries likh do: (1) kaun se Workers 30 din se zyada se paused hain aur terminate karne ke candidates hain? (2) kaun se paused Workers ke paas high eval-pack scores the aur resume mein pehli line mein hone chahiye jab unki category wapas trend kare? (3) paused rather than active Workers rakhne se kitna spend per month bachta hai? (4) ek given role ke liye, resume ratio kya hai: paused-then-resumed divided by paused-only? (5) har role ke liye hire aur pehle pause ke darmiyan average time kya hai?
+
+Aap kya seekh rahe hain: lifecycle sirf teen verbs nahi hai (pause, resume, terminate); yeh queryable *space* hai. Woh paanch queries woh hain jo talent ledger (Concept 14) actually answer karti hain. Unhe khud likhna woh hai jo "ledger fixed workforce ki kabhi nahi de sakti jawab deti hai" ko concrete banata hai abstract ki bajaye.
+
+* * *
+
+## Part 5: Lab continuation: naya Worker actually kya karta hai
+
+Parts 1 se 3 ne architecture cover ki; Part 4 ne hiring loop end-to-end wire kiya. Part 5 mein teen aur Concepts hain jo operational layer mein hote hain: naye Worker ke hire hone ke *baad* kya hota hai. Yeh woh cheezein hain jo mahine tak workforce chalane se seekhte hain: approval ke baad pehli heartbeat, retirement-aur-rehire pattern, waqt ke saath ubharta talent ledger.
+
+### Concept 10: Worker ki pehli heartbeat: approval aur pehle issue ke darmiyan kya badalta hai
+
+Decision 6 ne Legal Specialist ko pehla real issue handle karte dikhaya. Concept 10 *approval aur pehli heartbeat ke darmiyan ke lamhe* ko detail mein walk karta hai, kyunki yahan kuch non-obvious cheezein hoti hain.
+
+**T+0: Approval mil gayi.** Board ne Paperclip UI mein APPROVE click kiya. Paperclip `activity_log` mein `approval.approved` row likhta hai (yahan dikhaye gaye `details`, before/after envelope versions, envelope-extending approval jo record karta hai curriculum ki illustration hain):
+
+```
+{  "action": "approval.approved",  "agent_id": "agent_4f3a",  "approval_id": "appr_xyz",  "actor_id": "board_member_dan",  "details": {    "type": "hire_agent",    "envelope_version_before": "env_v1.2026.05.01",    "envelope_version_after": "env_v2.2026.05.12",    "envelope_extensions": ["contract_interpret"]  }}
+```
+
+**T+lagbhag 1s: Manager-Agent jagta hai.** Paperclip Manager-Agent ka Inngest run jagta hai (Decision 3 ke `waitForApprovalDecision` call pe suspended tha) environment mein `PAPERCLIP_APPROVAL_ID` set karke. Manager-Agent `GET /api/approvals/{approvalId}` se approval state padhta hai, `approved` outcome dekhta hai, aur post-approval routing flow shuru karta hai.
+
+**T+lagbhag 5s: Candidate approved Worker shell ban jata hai.** Paperclip ki `agents` table candidate ka `status` `pending_approval` se `idle` mein transition karti hai (Paperclip ka documented post-approval state: Worker ab mojood hai, heartbeats aur issue assignments receive karne ke liye eligible lekin abhi actively running nahi). Worker ab kaam ke liye tayyar hai; agla heartbeat ya assignment ise `idle` se bahar kuch karne ke liye hata dega.
+
+**T+lagbhag 10s: Manager-Agent source issue pe comment karta hai.** PAP-128 (teen hafte pehle ki asli contract-interpretation issue) ko comment milta hai:
+
+```
+Update: A Legal Specialist Worker has been hired to handle this and 23
+related contract-interpretation issues. Routing PAP-128 to the new Worker.
+Approval: /approvals/appr_xyz
+New Worker: /agents/agent_4f3a (Legal Reviewer, Contract Review Specialist)
+```
+
+**T+lagbhag 12s: Source issue reassign hota hai.** `PATCH /api/issues/PAP-128` with `{ assigneeAgentId: <Legal Specialist ka agent_id> }`. Yeh *bhi* Paperclip event trigger karta hai jo Legal Specialist ki heartbeat jagata hai: `wakeOnDemand: true` Worker ke runtime config mein set hai (hire payload se Concept 4).
+
+**T+lagbhag 15s: Legal Specialist ki pehli heartbeat fire hoti hai.** Paperclip ka adapter configured local CLI (`cli` `claude_local` ke liye, `opencode` `opencode_local` ke liye) headless spawn karta hai, environment mein `PAPERCLIP_API_URL` aur `PAPERCLIP_API_KEY` inject karke. CLI `adapterConfig.instructionsFilePath` se instructions file load karta hai, Paperclip API se assignment padhta hai, PAP-128 ko bounded `maxTurnsPerRun` ke andar process karta hai, reply draft karta hai, aur resolution wapas post karta hai.
+
+**T+lagbhag 30 se 180s: Pehla issue resolve.** Issue ki complexity ke mutabiq, Legal Specialist kuch second se kuch minute ke andar resolution return karta hai. Pehli `cost_events` row likhi jati hai. Manager-Agent resolution observe karta hai aur agle 23 related issues Legal Specialist ko following heartbeats mein route karta hai.
+
+**T+lagbhag 10 se 60 min: Pehla boundary check.** Pehle 24 ghante ke andar, Legal Specialist almost certainly aise issue ka saamna karega jo *uski boundary test kare*. Customer pooch sakta hai "kya aap mere liye contract clause bhi modify kar sakte hain?" Legal Specialist ka `contract_modify=deny` envelope ka matlab hai woh nahi kar sakta, lekin Worker ko *gracefully* respond karna chahiye, sirf refuse nahi. Instructions file (`adapterConfig.instructionsFilePath` Decision 4 se, dono `claude_local` aur `opencode_local` ke liye wohi file) ko explicitly instruct karna chahiye: "Jab contract modify karne ko kaha jaye, politely explain karo ke contract modifications ke liye board approval chahiye aur issue Manager-Agent ko escalate karo." Agar instructions poorly likhi gayi hain, to Worker curtly refuse karega ya authority hallucinate karega jo uske paas nahi, dono ghanton ke andar activity log mein visible.
+
+**T+lagbhag 24hr: Pehla end-of-day review.** Paperclip ka daily digest (agar configured) naye Worker ke pehle 24 ghanton ka summary deta hai: issues handled, cost incurred, boundary tests encountered, koi bhi escalations. Board yeh padhta hai aur ya to confirm karta hai ke Worker settle ho raha hai ya follow-up ke liye flags karta hai.
+
+Pehli heartbeat ke baare mein non-obvious cheez: **zyada tar failures yahan dikhti hain, baad mein nahi.** Poorly-tuned instructions pehle ghante mein wrong-tone replies produce karte hain. Miscalibrated authority envelope pehle din mein inappropriate refusals (ya bura, inappropriate non-refusals) produce karta hai. Wrong-substrate choice (deterministic Worker ko token-billed adapter pe rakha jab `process` kaam karta, ya long-running multi-tool Worker ko local adapter pe rakha jab uske per-run turn limit task fit nahi kar sakta) pehle hafte mein budget overrun ya repeated truncations produce karta hai. Naye hire ke pehle 24 ghante watch karna sab se sasta debugging window hai aapke paas.
+
+> *Bottom line: approval ke baad pehle 24 ghante woh waqt hai jab system-prompt issues, miscalibrated envelopes, aur wrong-substrate choices surface karte hain. Gaur se dekhein; yeh sab se sasta debugging window hai, kyunki yahan har fix usi issue ke baad sasti hai jab Worker ne 50 real customer issues handle kar chuka ho.*
+
+### Concept 11: Retirement aur rehire: pura lifecycle
+
+Decision 7 ne retirement introduce kiya. Concept 11 lifecycle picture expand karta hai. **Paperclip Worker ki lifecycle ko chhoti states ka set model karta hai**, aur Course Seven unke darmiyan transitions aapki operational vocabulary mein add karta hai. Paperclip API reference se verified state names hain `pending_approval`, `idle`, aur `terminated`; curriculum "running" aur "paused" ko unke darmiyan hone wali cheezon ke conceptual labels ke taur pe add karta hai.
+
+State
+
+Kya matlab hai
+
+Bahar transitions
+
+`pending_approval` *(verified)*
+
+Hire submit hui; board ne faisla nahi kiya
+
+`idle` mein (approved) ya `terminated` (rejected)
+
+`idle` *(verified)*
+
+Approved Worker shell; heartbeats aur assignments receive karne ke liye eligible, lekin currently kaam nahi kar raha
+
+running state mein (heartbeat fire / issue assigned), paused, ya `terminated`
+
+running *(curriculum label)*
+
+Worker actively heartbeat ya assigned issue process kar raha hai
+
+`idle` mein (kaam complete), paused (mid-work retired, rare), ya `terminated`
+
+paused *(curriculum label; Paperclip yeh primitive "Pause" ke naam se ship karta hai)*
+
+Agent definition preserve; koi heartbeats; koi session-hour billing
+
+`idle` mein (resumed) ya `terminated` (cleanup)
+
+`terminated` *(verified)*
+
+Worker fully cleaned up; ledger preserve
+
+(terminal)
+
+Sab se useful transition `idle to paused to idle` hai (curriculum vocabulary: "active, retired, resumed"). **Jo Worker paused hai woh fresh hire se tez rehire hai.** Retirement/rehire cycle ke across teen cheezein preserve hoti hain:
+
+1.  **Agent definition** (Decision 4 ka hire payload: `name`, `role`, `title`, `capabilities`, `adapterType`, `adapterConfig`, `budgetMonthlyCents`). Dubara configuration ki zaroorat nahi.
+2.  **Instructions file** (Decision 4 ka `adapterConfig.instructionsFilePath`, dono adapters ke liye). Dubara likhne ki zaroorat nahi.
+3.  **Eval-pack results** (Decision 5 ke scores). Worker ne pehle prove kar diya hai ke woh kaam kar sakta hai; dubara evaluate karne ki zaroorat nahi jab tak *role* nahi badla.
+
+Rehire pe chaar cheezein *refresh* hoti hain:
+
+1.  **Runtime.** Paperclip configured local CLI ko dobara har heartbeat pe spawn karna shuru karta hai (`claude_local` aur `opencode_local` ke liye pause ke across koi session-state survive nahi karta; har heartbeat apna bounded run hai). Managed-cloud substrate CMA ke liye, rehire pe naya session create hota hai (jab per-session-hour billing resume hota hai).
+2.  **Cost forecast.** Rehire proposal mein current expected volume ke based pe naya budget estimate hota hai.
+3.  **Authority envelope.** Agar original hire ke baad company envelope extend hua hai, to rehire current envelope inherit karta hai. Agar company envelope *narrow* hua hai, to rehire proposal ko fit karne ke liye dobara narrow karna padega.
+4.  **Source issues.** Rehire proposal se linked related issues ka fresh batch (naya gap-detection cluster), original hire ke source issues se alag.
+
+Termination (curriculum: "active to terminated" ya "paused to terminated"; Paperclip ki state machine mein, dono `terminated` tak pahunchte hain) irreversible exit hai. Agent definition tear down hoti hai. Cost yeh hai ke future rehire ke liye full fresh hire flow chahiye (eval pack ke saath). Benefit yeh hai ke resources reclaim hote hain, aur instructions file ya wired-in vault entries mein koi bhi sensitive data clean up hota hai. Termination use karein jab role genuinely obsolete ho; pause use karein jab role *wapas* aa sakta hai.
+
+Activity log har state transition record karti hai. Chhe mahine mein, aap aisa query chala sakte hain. (Field `action` hai. `approval.approved` real Paperclip action hai; lifecycle action values yahan, `worker_retired` aur friends, pause/resume/terminate rows ke liye curriculum ke naam hain, jaise "running" aur "paused" upar curriculum labels hain. `IN` list adjust karein jo aapka retirement code actually likhta hai.)
+
+```
+SELECT  agent_id,  action,  created_at,  details->>'previous_state' as from_state,  details->>'new_state' as to_stateFROM activity_logWHERE action IN ('approval.approved', 'worker_retired', 'worker_rehired', 'worker_terminated')  AND agent_id = 'agent_4f3a'ORDER BY created_at;
+```
+
+Aur Legal Specialist ki poori history dekhein: 12 May ko hired, 12 May se 28 Aug tak active, 28 Aug se 14 Nov tak on-standby, 14 Nov ko rehired, 14 Nov se baad mein active. Lifecycle timeline ke taur pe auditable hai; talent ledger ise queryable record ke taur pe surface karti hai.
+
+> *Bottom line: Worker paanch states mein se ek mein ho sakta hai (approval ka wait, active, paused, rejected, hamesha ke liye gaya). Jab traffic gire aur Worker ki zaroorat na ho, aap ise pause kar sakte hain. Company uske liye band ho jati hai lekin setup rakha jata hai. Agar traffic baad mein wapas aaye, wohi Worker wapas lana naye Worker se tez hai, kyunki zyada tar kaam pehli baar ho chuka tha. "Baad mein shayad" ke liye pause use karein; "hargiz nahi" ke liye terminate use karein.*
+
+### Concept 12: Talent ledger: chhe mahine purani workforce kaisi dikhti hai
+
+Activity log Course Six mein audit primitive ke taur pe introduce hui thi: har mutating action, recorded. Course Seven *lifecycle events* ko record karne mein extend karta hai: hire proposals, eval results, approvals, envelope extensions, retirements, rehires. Chhe mahine ki operation ke baad, cumulative record hum **talent ledger** kehte hain.
+
+![Chhe mahine ka timeline (May se November) paanch Worker lanes dikhata hai. Teen Course Six baseline Workers (Tier-1, Tier-2, Manager) continuous orange bars ke taur pe poori period mein chalte hain. Legal Specialist lane (purple) full lifecycle dikhata hai: 12 May ko hired do markers ke saath (hire_approved aur envelope_extension jo contract_interpret=allow grant karta hai), 28 Aug tak running jab worker_retired fire hota hai (volume 30% threshold se neeche gira), phir October tak gray mein paused bina session-hour billing ke, phir 25 Oct ko worker_rehired jab gap dobara fire hota hai. Paanchwi lane paanch Tier-1 Burst Workers dikhata hai jo summer traffic spike ke dauran policy ne auto-approved, har ek lagbhag do hafte chal raha hai. Timeline ke neeche, panel paanch canonical queries list karti hai jo talent ledger answer karti hai: Q1 jab har role pehle chahiye tha, Q2 har role ne waqt ke saath kitna kharcha kiya, Q3 average hire duration, Q4 kaun si envelope extensions grant hui, Q5 rehire ratio. Closing annotation: append-only, cross-correlated, SQL speed pe institutional memory.](/img/08-talent-ledger-timeline-f9190b209fa7981fccfadc040ebf1542.webp)
+
+Paanch queries jo talent ledger answer karti hain jo fixed workforce kabhi nahi kar sakti:
+
+**Query 1: Har role pehle kab chahiye tha?** Pehle-hire date ke hisab se roles ki chronological list return karta hai. Batata hai ke workforce ki zarooratein kaise evolve hui. (`agent.hire_created` hire ke liye real Paperclip action hai; uske `details` mein naye Worker ka `name`, `role`, aur triggering issue IDs hote hain.)
+
+**Query 2: Har role ne waqt ke saath kitna kharcha kiya?** `cost_events` ko `agent_id` ke hisab se aggregate karta hai, month mein grouped. Saal bhar ke per-role cost dikhata hai.
+
+**Query 3: Average hire kitni der active rehti hai?** Har agent ke liye hire row (`agent.hire_created`) aur retirement row (curriculum ka `worker_retired`) ke darmiyan duration compute karta hai. Batata hai ke aap transient ya persistent needs ke liye hire kar rahe hain.
+
+**Query 4: Kaun si envelope extensions grant hui, aur har ek ko kya trigger kiya?** Har envelope-extension row (curriculum ka `envelope_extension` action) uski rationale ke saath list karta hai. "Hamari workforce ke paas yeh authorities kyun hain?" ka compliance jawab.
+
+**Query 5: Rehire ratio kya hai?** Kam se kam ek baar rehued Workers vs bina rehire ke terminated Workers. Batata hai ke kaun se roles *seasonal* hain vs kaun se *bad fits* the.
+
+Talent ledger woh hai jo hiring ko *capability* banati hai one-time event ki bajaye. "Kya humein X hire karna chahiye?" ko gut call se query mein badalta hai: "humne X jaisa role do baar hire kiya; dono chaar mahine mein retire ho gaye; kaam seasonal hai." Ya: "humne Y role teen baar hire kiya; teesri hire nau mahine tak ruki; kaam durable hai." **Board behtar hiring decisions leta hai kyunki ledger yaad rakhti hai ke pichle hires ne actually kya kiya.**
+
+Ledger company ke bahar ke humans ke liye bhi workforce ko *zyada legible* banati hai. Auditor jo mahine saat mein company mein aaye to pooch: "Mujhe is AI workforce ke pichle chay mahine mein kiye gaye hire decisions dikhao." Talent ledger second mein jawab deti hai. Board member jo nayi company mein onboard kare talent ledger padh ke workforce ka *shape* (kaun se roles hain, kab chahiye the, kaise evolve hue) ek ghante mein seekh sakta hai. Chay mahine ki operation ek ghante ki induction ban jati hai.
+
+> *Bottom line: har hire, eval, retirement, aur rehire activity log mein row likhta hai. Chhe mahine baad woh log workforce kaise evolve hua iska queryable record hai. Paanch canonical SQL queries roles-needed-over-time, costs-per-role, hire-duration, envelope-history, aur rehire-ratio ka jawab deti hain. Board behtar hiring decisions leta hai kyunki ledger yaad rakhti hai ke pichle hires ne actually kya kiya.*
+
+* * *
+
+## Part 6: Gehra sawal, aur Course Eight ki taraf
+
+Teen Concepts course ko band karte hain. Yeh forward-looking hain; yeh sawal uthate hain jinka jawab course poori tarah nahi deta, kyunki jawab future courses ya open research frontier ke hain.
+
+### Concept 13: Agent-portability ka sawal
+
+Course Seven ne hiring ko *ek company ke andar* hone wali cheez treat kiya hai. Acme Corp mein hired Legal Specialist Acme ka Worker hai; woh Acme ke envelope ke under act karta hai; uske cost events Acme ke budget pe bill hote hain. Lekin underlying agent definition (system prompt, eval-pack reference answers, model choice, environment setup) *generic* hai. Us bundle mein kuch bhi intrinsically Acme-specific nahi hai.
+
+Khula sawal: **kya wohi agent definition agle mahine Beta Corp mein hire ho sakta hai?**
+
+Technical jawab haan hai. Paperclip ke `claude_local`, `http`, aur doosre adapters *deployment* level pe company-scoped hain. Agent definition khud sirf ek JSON blob hai plus system prompt plus eval pack. Usmein kuch bhi Acme ke liye keyed nahi hai. Beta Corp wohi system prompt, wohi model, wohi eval pack reference karne wali hire request likh sakta hai, aur apne org chart pe functionally identical Worker khatam kar sakta hai.
+
+Architectural jawab zyada interesting hai. Teen cheezein Acme ke hire aur Beta ke hire ke darmiyan badalti hain chahe agent definition identical ho:
+
+1.  **Authority envelope.** Beta Corp ka company envelope *Acme se alag hai*. Chahe Legal Specialist role ki narrowing rules identical hon (`contract_modify=deny`, `contract_interpret=allow`, etc.), *company* ceiling alag hai. Beta ne shayad kabhi kisi prior Worker ko `contract_interpret` nahi diya, Beta ka apna envelope-extension check trigger karta hai. **Worker wohi hai; company ka us Worker se rishta nahi.**
+2.  **Cost ledger.** Beta ke `cost_events` rows Beta ke budgets pe bill hote hain. Wohi Worker alag company ke liye wohi kaam karta hai *alag organizations* ko alag kharcha karta hai, aur woh asymmetry exactly woh hai jo company-scoped management plane enforce karta hai.
+3.  **Talent ledger.** Acme ki talent ledger record karti hai "Legal Specialist 12 May ko hired, 28 Aug ko retired." Beta ki record karti hai "Legal Specialist 4 Sep ko hired, abhi active." Dono records *us agent definition* ke baare mein hain, lekin yeh do *organizational relationships* describe karti hain, ek shared identity nahi.
+
+**Export ko concretely walk karna.** Paperclip ka `Company Portability` feature poori company ki agent aur skill configuration export support karta hai. Imagine karein Acme ke paas Legal Specialist chay mahine se active hai aur definition Beta ke saath share karna chahta hai. Export process (aur kya survive karta hai aur kya nahi) architectural seam dekhne ka sab se clear tarika hai:
+
+Export mein kya hai
+
+Export mein kya *nahi* hai
+
+Line yahan kyun draw hoti hai
+
+Agent name, role, title, icon
+
+`agent_id` (import pe naya mint hota hai)
+
+IDs deployment-scoped hain
+
+System prompt (verbatim)
+
+Acme ke customizations jo instruction-bundle mode se layer hue
+
+Customizations Acme-specific files reference kar sakte hain
+
+Capabilities prose
+
+Acme ke specific source issue (PAP-128) ka reference
+
+Source issues company-scoped audit records hain
+
+Adapter type plus adapter config schema
+
+Acme ka actual instructions file path, provider/model slug, relay URLs, ya API keys
+
+Secrets export time pe scrub hoti hain
+
+Eval pack reference issues plus scoring rubric
+
+Acme ke actual eval-pack run results
+
+Run results Acme ki `activity_log` mein hote hain
+
+Authority envelope *shape* (kaun si fields, kya defaults)
+
+Acme ke actual envelope values plus extension history
+
+Envelope per-company hai, per-company audited hai
+
+Skill files jo Worker use karta hai (misal `legal-reference-corpus.md`)
+
+Acme ka specific customer data un skills ke andar
+
+Data residency / privacy
+
+Runtime config (heartbeat interval, wakeOnDemand)
+
+Acme ke actual budget values, cost history, activity log
+
+Cost plus audit organizational facts hain
+
+**Line wohi line hai jo poore course se guzarti hai.** Kya travel karta hai: Worker kaise behave karta hai uski *recipe*. Kya rehta hai: organization ka us recipe se *rishta*: envelope jo di gayi, budget jo allocate hua, issues jo actually handle hue, approvals jo board ne actually diye, costs jo company ne actually kharch kiye. Recipe universal hai. Relationship local hai.
+
+Jab Beta Acme ka company template import kare, to Beta ko *fresh* kya karna padega, chahe agent definition identical ho:
+
+1.  **Faisla kare ke kya Beta ka company envelope extend karna hai.** Agar `contract_interpret` abhi Beta ke envelope mein nahi hai, to Beta ke board ko consciously decide karna padega envelope extend karne ka (Concept 8 ke mutabiq). Acme ka envelope-extension rationale transfer nahi hota; Beta ko apna likhna padega.
+2.  **Eval pack apne data ke against chalaye.** Imported eval pack mein reference issues generic hain ("interpret Section 7.3"). Beta ko approve karne se pehle 2 ya 3 Beta-specific eval issues add karne chahiye (Beta actually receive karta hai typical contract questions). Acme ka original eval pe pass hone ka matlab nahi ke wohi Worker Beta ke edge cases pe pass hoga.
+3.  **Beta ka budget set kare.** Acme ka $800 per month budget Acme ki volume reflect karta tha; Beta ko apna forecast karna padega. Imported budget *estimate basis* (160 issues at $3 avg on Paperclip-native local adapter; CMA session-hour fees add karta hai) useful starting template hai, lekin Beta ki actual volume hai jo cap calibrate karti hai.
+4.  **Source-issue history ko imported ke taur pe surface kare, Beta ke apne nahi.** Jab Beta ka board proposal padhe, to linked issues Beta ka gap-detection cluster hona chahiye, Acme ka PAP-128 nahi. Agar Beta yeh role *isliye* hire kar raha hai ke Acme ke paas tha, to yeh shamil karne ke liye achi rationale hai, lekin yeh Beta ki rationale honi chahiye based on Beta ki volume, nahi ke Acme ka copy-paste.
+
+Yeh feature hai, limitation nahi. Thesis explicit hai: AI-native company mein, *authority per-company* hai, *budget per-company* hai, *audit per-company* hai. Ek company mein hired Worker doosri company ko serve nahi kar sakta kyunki **company-serve karna hiring ka *matlab* hai.** Jo agent "companies ko serve karta hai" woh ek hire nahi hai; bohot saari hain, company ke hisab se ek, har ek ka apna envelope, ledger, aur accountability. Hum jo portability paate hain woh **agent-definition portability** (recipe) hai, nahi ke **Worker portability** (role).
+
+**Marketplace ka sawal, aur Course Seven ise settle karne ki koshish kyun nahi karta.** Paperclip ka `Clipmart` (jald aa raha hai, README ke mutabiq) AI agent definitions ke liye labor market ki taraf gesture karta hai: marketplace jahan company templates aur agent configurations browse, download, aur import kiye ja sakte hain. Agar marketplaces emerge karein, to value *achi recipes* curate karne wale ke paas jayegi: well-written system prompts, well-designed eval packs, well-thought-through authority envelopes. Companies aur Workers ke darmiyan ke *relationships* marketplace artifacts nahi honge; yeh per-company audit trails rahenge, jaise hona chahiye. **AI-native economy woh hai jahan recipes freely trade hoti hain aur relationships privately held hoti hain.** Course Seven marketplace ka sawal settle karne ki koshish nahi karta, lekin architectural foundation jo yeh rakhta hai (definition layer pe portability, relationship layer pe accountability) woh hai jo sawal ko well-formed banata hai. Marketplace jo *Workers* trade karne ki koshish kare (envelopes aur ledgers aur approval histories intact) kuch trade karne ki koshish kar raha hai jo architecture deliberately non-tradable banati hai. Marketplace jo *definitions* trade kare seam respect karti hai.
+
+**Course Seven kya establish karta hai architectural jawab hai: portability definition layer pe operate karti hai, Worker layer pe nahi.** Yeh distinction important hai kyunki yeh batata hai kya *share* ho sakta hai (recipes, evaluation rubrics, system prompts, environment configs, skill files) aur kya *nahi* ho sakta (envelopes, budgets, audit trails, source-issue history, approval threads). Pehli list aapki likhi hui *recipe* hai. Doosri list aapki company ki *kahani* hai. Dono valuable hain; sirf ek portable hai.
+
+Try with AI
+
+Apne AI coding assistant mein paste karein:
+
+> "Main apni Paperclip company se Legal Specialist Worker export karna chahta hoon taake partner company definition import kar sake. Field by field walk through karo ke export mein kya hona chahiye aur kya scrub hona chahiye. Worker 12 May ko hired tha in properties ke saath: name='Legal Reviewer', role='general', adapter='claude_local' (Paperclip-native; har heartbeat pe `cli` CLI headless spawn karta hai instructions file use karke jo partner ko separately receive karna padega), capabilities='Reviews customer contract terms...', envelope jismein contract_interpret=allow shamil hai jo hamari company envelope extend kiya, budget $800 per month, 12 issues wala eval pack jo sab pass, 6 mahine ki cost_events records, original hire ke gap-detection cluster se 23 source-issue links, 28 Aug ki 1 retirement record aur 25 Oct ki 1 resume record. Har property ke liye, label EXPORT (partner ke paas jata hai) ya SCRUB (hamare paas rehta hai) karein. Har labeling justify karein."
+
+Aap kya seekh rahe hain: portability concrete hai, abstract nahi. Specific Worker ke field by field guzarne se recipe-vs-relationship distinction real data pe land hota hai. Justifications batayenge ke seam aapki deployment mein genuinely kahan chalti hai, aur kahan aapke paas judgment calls hain (misal, eval-pack run *scores*: kya yeh reputation ke taur pe travel karte hain, ya per-company audit ke taur pe rehte hain? Dono jawab defensible hain; choice batata hai ke partner pe kitna bharosa karte hain).
+
+> *Bottom line: "Worker banane ki instructions" companies ke darmiyan travel kar sakti hain: kya naam hai, kya karna jaanta hai, kaise test karein ke kaam karta hai. Specific company mein Worker ki actual history travel nahi kar sakti: kya permissions di gayi, kitna kharcha hua, kya problems actually solve kiye, kisne approve kiya. Bhavishya marketplace instructions bech sakta hai; hires nahi bech sakta. Portable aur non-portable ke darmiyan ki line "jo aapka AI assistant kisi bhi company ke liye likh sakta hai" aur "jo aapki specific company ne jee hai" ke darmiyan ki line hai.*
+
+### Concept 14: Talent ledger kyun important hai: personnel change mein institutional memory
+
+Concept 12 ne talent ledger ko workforce ke growth ka queryable record ke taur pe introduce kiya. Concept 14 us ledger ko *scale pe useful* banane wali cheez pe loop band karta hai. Teen properties name karne laiq:
+
+**Property 1: Yeh append-only hai.** Activity log rows kabhi update ya delete nahi hoti. Hire jo reject hoti hai apni row ke taur pe record hoti hai (Paperclip ka `approval.rejected`), delete nahi. Envelope extension jo rollback hota hai ek row ke taur pe record hota hai uske baad doosri (curriculum ka `envelope_extension` phir `envelope_narrowed`), nahi ke original row modify hokar. **Ledger permanent history hai**, kisi bhi point in time pe queryable. "Mujhe 12 July 2026 ko workforce kaisa dikhta tha" SQL query hai, archaeology project nahi.
+
+**Property 2: Yeh cross-correlated hai.** Har row company, agent, issue, actor, aur approval (jahan applicable) ke identifiers carry karta hai. Ledger mein ek single hire event backward trace ho sakta hai (kaun se gap-detection records ne trigger kiya?) aur forward (is Worker ne kaun se issues handle kiye? kaun si envelope extensions support ke liye grant hui? kab retire hua?). Correlation IDs multi-hop queries fast banate hain.
+
+**Property 3: Yeh institutional memory ka source of truth hai.** Jab human board turnover kare (naya board member join kare, ya company acquire ho jaye) to talent ledger *woh hai jisse naye humans seekhte hain ke workforce ne kya kiya*. Uske bagair, har transition re-discovery hai: is Worker ko kisne hire kiya? Kyun? Is Worker ke envelope ki rationale kya hai? Uske saath, har transition query hai: ledger second mein jawab deti hai.
+
+Yeh management plane ka sab se consequential property hai. **Traditional company mein, institutional memory humans ke dimagh mein rehti hai**, aur chali jati hai jab humans chale jate hain. AI-native company mein, institutional memory activity log mein rehti hai, aur har transition ke through preserve hoti hai. Course Six ne activity log queryable banayi. Course Seven ise workforce ke poori lifecycle ko cover karne ke liye extend karta hai. Natija: AI-native company apne humans ke liye traditional company se *zyada* legible hai, kam nahi.
+
+PRIMM: Predict
+
+Maan lein aapki company acquire ho gayi hai aur acquiring board workforce samajhna chahta hai. Neeche mein se kaun sa query *"Kya rakhein, aur kya retire karein?"* ka sawal sab se seedha jawab deta hai?
+
+(a) `SELECT * FROM agents WHERE status = 'idle' ORDER BY hire_date;` (b) `SELECT agent_id, role, AVG(cost_cents) as monthly_cost_cents, COUNT(issue_id) as issues_handled FROM cost_events JOIN issues ... GROUP BY agent_id ORDER BY issues_handled / monthly_cost_cents DESC;` (c) `SELECT agent_id, role, MIN(created_at) as hired, MAX(created_at) as last_action, COUNT(*) as activity_count FROM activity_log GROUP BY agent_id;` (d) Teenon saath.
+
+Confidence 1 se 5. Phir justify karein.
+
+Jawab: **(d), aur *tarteeb* important hai.** (c) lifecycle picture deta hai (kaun aas paas hai, kaun recently active). (b) cost-per-value picture deta hai (kya Worker utna hai jitna kharcha karta hai?). (a) simple roster deta hai. Naya board (c) se shuru karega *kya hai* samajhne ke liye, (b) chalayega *har ek kitna hai* samajhne ke liye, aur (a) sirf navigation index ke taur pe use karega. Talent ledger ek query nahi hai; queries ka family hai, aur "kya rakhein?" ka jawab kai saath chalane se emerge karta hai. Isliye Concept 14 ledger ko *correlated* emphasize karta hai: koi bhi single query incomplete hai; value queries ke across join mein hai.
+
+> *Bottom line: workforce jo bhi action leti hai use log mein likha jata hai jo koi edit ya delete nahi kar sakta. Us log ki har row jaanti hai ke kaun si rows us se related hain: kis Worker ne action li, kis issue ke liye tha, kisne authorize kiya. Jab naya human board mein join kare, woh kisi se nahi poochta "workforce kya kar rahi hai?" Woh kuch queries chalata hai aur jawab minute mein padhta hai.*
+
+### Concept 15: Aage kya: Invariant 2 aur Edge
+
+Course Seven Invariant 6 (hiring as callable capability) close karta hai. Saat mein se chay ab track mein depth se sikhaye gaye hain. Baqi ek Invariant 2 hai: **Edge delegate.**
+
+Thesis ka Invariant 2 kehta hai: *"AI-native company mein, kaam edge pe representable hona chahiye: jahan originate hota hai, jahan latency aur data-residency aur proximity matter karte hain. Edge delegate woh surface area hai jis ke zariye management plane specific contexts mein pahunchta hai: user ka browser, developer ka terminal, customer ka region."* OpenClaw reference implementation hai, jaise Inngest Invariant 7 ke liye tha aur Paperclip Invariants 3 aur 6 ke liye hai.
+
+Course Eight OpenClaw end-to-end cover karega jaise Courses Five aur Six ne Inngest aur Paperclip cover kiya, lekin *thesis*-level kaam Course Seven ke baad khatam hai. Baqi kaam operational depth hai, architectural foundation nahi.
+
+Kuch sawal jinka jawab Course Eight ko dena padega jo Course Seven ne nahi diya:
+
+-   **Edge vs cloud: kab Worker ko edge pe hona chahiye?** US customers ko US-East se handle karne wala Tier-1 Support Worker ko edge proximity ki zaroorat nahi. Customer-facing Worker jo *customer ke browser ke andar* chalta hai (real-time, sub-200ms response) ko zaroorat hai. Decision criteria substrate selection (Course Seven Concept 6) se alag hain.
+-   **Edge authority: kya edge Worker ke paas cloud Worker jaisa envelope hai?** Probably nahi. Edge Workers usually tighter envelopes rakhte hain kyunki yeh potentially-hostile inputs ke qareeb chal rahe hote hain. Cascade ko naya layer milta hai.
+-   **Edge-to-cloud handoff: edge Worker kab cloud Worker ko escalate karta hai?** Wohi approval primitive apply hona chahiye, lekin latency budgets alag hain. Refund ke liye 3-second approval round-trip theek hai; edge Worker ke liye mid-conversation UX failure hai.
+
+Course Eight Course Six customer-support workforce *edge component ke saath* build karega:
+
+-   Customer apne browser mein OpenClaw bot se baat karta hai.
+-   OpenClaw bot contract questions Legal Specialist ko delegate karta hai (wohi Worker jo Course Seven lab mein hired hai).
+-   Legal Specialist ka response OpenClaw ke zariye customer tak pahunchta hai.
+
+Wohi workforce, teen naye architectural layers: edge runtime, edge-to-cloud handoff, edge authority.
+
+Course Eight ke baad, saat invariants sikhaye gaye hain. Track complete hai; thesis operationalized hai.
+
+> *Bottom line: Course Seven Invariant 6 (hiring as callable) close karta hai. Saat mein se chay ab ho gaye hain. Course Eight aakhri ek (Edge delegate via OpenClaw) cover karta hai aur track complete hai.*
+
+* * *
+
+## Asal mein ismein kaise acha banein
+
+Course Seven padhne se aap AI Workers hire karne mein ache nahi hote. Chalane se hote hain, aur path aisa dikhta hai:
+
+Aap ek hire se shuru karte hain: Part 4 ka Legal Specialist. Aap Decision pe friction mehsoos karte hain:
+
+-   gap-detection rule jo bohot zyada (ya kaafi kam) fire karti hai
+-   proposal mein board chahte hain fields missing hain
+-   eval pack jiske reference answers boundary nahi pakadte jo Worker actually violate karta hai
+-   substrate choice jo hafte do mein galat sabit hota hai
+
+Har friction ka ek piece upar ke paanch Concepts mein map hota hai:
+
+-   "Manager-Agent ne ek email ke baad gap flag kiya": Concept 2 ke signal thresholds tune karein; one-off cases gaps nahi hain.
+-   "Board ne budget detail maanga jo proposal mein nahi tha": Concept 4 ka `budgetEstimate` field enrich karein.
+-   "Eval pack pass hua lekin Worker ne hafte mein authority hallucinate ki": Concept 5 ka boundary-respect dimension strengthen karein.
+-   "Worker managed-cloud substrate pe session-hour fees de raha hai lekin sirf 30-second classification tasks handle karta hai": Concept 6 ka substrate decision revisit karein; Paperclip-native local adapter ya `process` short, simple kaam ke liye sahi fit hai.
+-   "Board ne hire approve kiya lekin envelope extension notice nahi ki": Concept 8 ki novelty checks proposal rendering mein zyada prominent banayein.
+-   "Worker 2 hafte se on-standby hai lekin Paperclip UI retirement decision rationale nahi dikhata": Concept 11 ka retirement flow revisit karein.
+
+Har problem ka response tab banayein jab uspe aayein, pehle nahi. Aapka `generateHireProposal` function lagbhag 30 lines se shuru hoga aur chay mahine mein lagbhag 150 tak badhega; har nayi field board ke diye gaye specific decision se earn hoti hai jo aapne visible karwana hai. Aapka eval-pack reference rubric teen dimensions se shuru hoga aur saat tak badhega. Aapki auto-approval policy library pehle mahine khali hogi, phir ek policy hogi, phir paanch.
+
+Hiring proficiency ka 80/20 paanch Concepts yaad rakhna nahi hai. Yeh *notice karna* hai ke kisi bhi problem ka sahi Concept kaun sa hai jaldi us Concept tak pahunchne ke liye. Woh noticing skill hai, aur sirf real kaam pe loop chalane se aati hai.
+
+**Portability dividend (Course Six se jari).** Jab aap ek company ke liye woh noticing build kar lete hain, to transfer hoti hai. Upar ka friction-to-Concept map identical hai chahe aap SaaS company ke liye Legal Specialist hire kar rahe hon ya content platform ke liye Burst-Capacity Tier-1. Decisions alag dikhte hain; decisions ka *shape* wohi hai. Ek company choose karein, uske specific patterns seekhein, aur jab aap doosri company launch karein (ya aapki pehli company acquire ho jaye aur aap nayi mein onboard karein), aapke hiring instincts aapke saath aate hain. Companies badalti hain. Hiring loop nahi badalta.
+
+Ek role se shuru karein. Pehle mahine har hire ke liye full approval flow use karein. Talent ledger dekhein. Baqi khud ban jata hai.
+
+* * *
+
+## Quick reference
+
+### 15 Concepts ek line mein
+
+1.  **Jo workforce khud ko grow na kar sake woh fixed company hai.** Hiring callable hai; alternative board-as-queue hai.
+2.  **Capability gaps teen signals se fire hote hain.** Low confidence, repeated escalations, no-eligible-Worker. 14 din mein teen mein se do gap hai.
+3.  **Capability gaps pe four-way fork.** Hire (durable, high-volume, narrow), escalate (consequential ya rare), queue (transient), decline (off-mission).
+4.  **Job description hi candidate hai.** Production payload: name, role, title, icon, reportsTo, capabilities, adapterType, adapterConfig, runtimeConfig, sourceIssueId, plus budget.
+5.  **Eval pack approval se pehle.** Kam se kam 12 representative test issues; rubric scoring; cost bounded; pass ke liye kam se kam 2 out of 3 har dimension pe 80% issues ke across.
+6.  **Substrate selection: teen Paperclip-native paths aur do HTTP-adapter alternatives.** `claude_local` (Paperclip `cli` CLI spawn karta hai; worked example), `opencode_local` (`provider/model` ke zariye multi-provider; worked example), `process` (deterministic, sab se sasta; AI nahi). Plus Agent SDK over `http` (aap loop host karte hain) aur CMA over `http` (durable cloud sessions, session-hour billing).
+7.  **Hiring Course Six ke approval gate ko reuse karti hai.** Wohi primitive; richer payload (proposal, eval, envelope, budget).
+8.  **Authority envelope inherit, narrow, aur (rarely) extend hoti hai.** Novel-authority hires envelope-extension checks trigger karti hain; board ko consciously surface area expand karna padta hai.
+9.  **Defined class ke liye auto-approval policy.** Pre-approved envelope ceilings, capped concurrency/rate, daily audited, mandatory expiry, company envelope extend kabhi nahi kar sakta.
+10.  **Pehli heartbeat sab se sasta debugging window hai.** System-prompt issues, envelope miscalibrations, aur substrate mismatches sab pehle 24 ghante mein surface karte hain.
+11.  **Lifecycle states.** Verified Paperclip states hain `pending_approval`, `idle`, `terminated`; curriculum labels "running" aur "paused" gaps cover karte hain. Rehire fresh hire se tez hai; termination irreversible hai.
+12.  **Talent ledger queryable institutional memory hai.** Paanch canonical queries roles-needed, costs-over-time, hire-duration, envelope-history, rehire-ratio ka jawab deti hain.
+13.  **Agent portability definition layer pe operate karti hai.** Recipes travel karti hain; envelopes, budgets, aur ledgers nahi karte. "Company-serve karna" hiring ka *matlab* hai.
+14.  **Activity log append-only aur cross-correlated hai.** Permanent history; kisi bhi point in time pe queryable; institutional memory ka source of truth jab humans turnover karein.
+15.  **Aage Invariant 2 hai: Edge.** OpenClaw, edge-to-cloud handoff, edge-tighter envelopes. Course Eight saat-invariant arc complete karta hai.
+
+### API quick-ref (verified May 2026)
+
+Kya karna hai...
+
+Endpoint
+
+Method
+
+Hire submit karo
+
+`/api/companies/{companyId}/agent-hires`
+
+POST
+
+Identity/permissions check karo
+
+`/api/agents/me`
+
+GET
+
+Adapter docs list karo
+
+`/llms/agent-configuration.txt`
+
+GET
+
+Adapter-specific docs lo
+
+`/llms/agent-configuration/{adapter}.txt`
+
+GET
+
+Existing agent configurations list karo
+
+`/api/companies/{companyId}/agent-configurations`
+
+GET
+
+Allowed icons list karo
+
+`/llms/agent-icons.txt`
+
+GET
+
+Approval padho
+
+`/api/approvals/{approvalId}`
+
+GET
+
+Approval thread pe comment karo
+
+`/api/approvals/{approvalId}/comments`
+
+POST
+
+Approval ko source issue se link karo
+
+`/api/issues/{issueId}/approvals`
+
+POST
+
+Approval se linked issues list karo
+
+`/api/approvals/{approvalId}/issues`
+
+GET
+
+Pending approval pe revision request karo
+
+`/api/approvals/{approvalId}/request-revision`
+
+POST
+
+Revised approval resubmit karo
+
+`/api/approvals/{approvalId}/resubmit`
+
+POST
+
+Issue Worker ko assign karo
+
+`/api/issues/{issueId}` with `{ assigneeAgentId }`
+
+PATCH
+
+Worker ko pause / resume / terminate karo
+
+(current API ref consult karein)
+
+(varies; neeche note dekhein)
+
+Upar table mein endpoints Paperclip ke `paperclip-create-agent` skill ke against **verified** hain ([`skills/paperclip-create-agent/SKILL.md`](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/SKILL.md) aur uska [`api-reference.md`](https://github.com/paperclipai/paperclip/blob/master/skills/paperclip-create-agent/references/api-reference.md), canonical sources). Paperclip ke Workers chalane ke liye documented operational primitives hain *Pause, Resume, Override, Reassign, Terminate*; in primitives ke exact endpoint paths version ke mutabiq vary kar sakte hain, to apni deployment mein current API surface ke liye `GET /llms/agent-configuration.txt` consult karein. Course ka Decision 7 pause/resume code same caveat inline carry karta hai. Sab requests `Authorization: Bearer $PAPERCLIP_API_KEY` carry karte hain. Mutating requests `Content-Type: application/json` carry karte hain.
+
+### CMA quick-ref (verified May 2026)
+
+Kya karna hai...
+
+SDK call
+
+Notes
+
+Agent banao
+
+`client.beta.agents.create`
+
+`model` (bare string), `system`, `tools` pass karein
+
+Environment banao
+
+`client.beta.environments.create`
+
+`name` aur `config` object (`type`, `packages`, `networking`) pass karein
+
+Session banao
+
+`client.beta.sessions.create`
+
+`agent` (`agent_id` nahi) aur `environment_id` pass karein
+
+Event bhejo
+
+`client.beta.sessions.events.send`
+
+Session mein `user.message` event push karein
+
+Results stream karo
+
+`client.beta.sessions.events.stream`
+
+Session ke events ki SSE stream
+
+CMA beta API hai aur yeh shapes releases ke darmiyan shift hoti hain; live docs ko authoritative treat karein. Sab requests beta header `managed-agents-2026-04-01` carry karte hain (SDK set karta hai). CMA session events se driven hota hai jo aap *bhejte* hain, inbound URL se nahi: Concept 6 ki sidebar dekhein ke Paperclip integration ke liye iska kya matlab hai. Pricing: standard Claude API tokens plus active execution ke liye per-session-hour runtime charge (current rate ke liye Anthropic ki pricing page dekhein). Reference: [platform.claude.com/docs/managed-agents](https://platform.claude.com/docs/en/managed-agents/overview).
+
+### Jab hiring mein kuch galat lage
+
+```
+Manager-Agent ne 2 emails ke baad hire propose kiya, pattern ka wait nahi kiya?
+    -> Concept 2 ke signal thresholds bohot sensitive hain. "Kam se kam 3 issues /
+       kam se kam 3 escalations / 14-day window" thresholds tune karein.
+Board ne hire approve kiya lekin Worker ne forecasted budget ka 3x jala diya?
+    -> Concept 4 ka budget estimate galat tha. Worker galat substrate (Concept 6)
+       pe hai ya eval pack ka session-cost sample unrepresentative tha (Concept 5).
+Worker pehle hafte mein wrong-tone ya wrong-boundary replies de raha hai?
+    -> System prompt poorly scoped hai. Capabilities prose (Concept 4) tighten
+       karein aur chhota eval pack (Concept 5) dobara chalayein.
+Hire proposal board se baar baar REQUEST CHANGES le raha hai?
+    -> Proposal artifact mein context missing hai. Concept 7 ka rendering
+       dhyan se padhein aur missing fields add karein.
+Ek mahine mein do nayi authorities grant hui; auditor pooch raha hai kyun?
+    -> Concept 8 ke envelope-extension records mein rationale fields hain.
+       Talent-ledger query (Concept 14, Query 4) chalayein.
+```
+
+* * *
+
+## Architect ka framing sentence: verbatim
+
+Course waise hi band hota hai jaise shuru hua, framing sentence ke saath:
+
+> *"Jo workforce khud ko grow nahi kar sakta woh fixed company hai; jo workforce khud ko approval ke under grow kar sake woh AI-native company hai. Agent Factory mein hiring HR motion nahi hai; yeh manager se function call hai, job description input leta hai, Worker output deta hai, usi approval primitive se gated jo har doosre consequential action ko gate karti hai."*
+
+Sentence yaad karein. Architecture follow karti hai.
+
+* * *
+
+*Agentic-coding track ka Course Seven. Saat mein se chay invariants ab depth mein sikhaye gaye hain: management plane (Course Six), nervous system (Course Five), system of record aur Skills (Course Four), agent loop (Course Three), human as principal (Courses Five aur Six), aur ab hiring API (Course Seven). Baqi invariant, Edge delegate via OpenClaw, [Course Eight](/docs/the-edge-layer) hai.*
+
+* * *
+
+## Flashcards Study Aid
+
+Agent Factory thesis ka Invariant 6 kya claim karta hai, ek phrase mein?
+
+Click to flip
+
+1 / 30 cards
+
+Space flip1 missed2 got it←→ navigateEsc exit
+
+[ⓘ Guide](/guide#flashcards "Flashcards kaise kaam karte hain")
+
+Quick pulse
+
+Kya yeh chapter saaf tha?

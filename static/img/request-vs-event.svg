@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 620" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowg" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/>
+    </marker>
+    <linearGradient id="tg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#4f46e5"/><stop offset="1" stop-color="#9333ea"/>
+    </linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .lane { font-size: 15px; font-weight: 700; letter-spacing: .5px; }
+      .lanetag { font-size: 12px; font-weight: 700; }
+      .cardname { font-size: 14px; font-weight: 700; fill: #0f172a; }
+      .cardsub { font-size: 12px; fill: #64748b; }
+      .note { font-size: 12.5px; fill: #334155; }
+      .arrlab { font-size: 11px; font-weight: 700; }
+      .foot { font-size: 14px; font-weight: 700; fill: #334155; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="1240" height="620" fill="#ffffff"/>
+
+  <text x="620" y="44" text-anchor="middle" class="title" fill="url(#tg)">Request vs event: the shift that gives the worker senses</text>
+  <text x="620" y="72" text-anchor="middle" class="subtitle">A request blocks and is fragile. An event is fired, stored, and many workers react on their own time.</text>
+
+  <!-- REQUEST lane -->
+  <g filter="url(#sh)"><rect x="36" y="92" width="1168" height="186" rx="14" fill="#fff1f2" stroke="#fecdd3"/></g>
+  <text x="58" y="120" class="lane" fill="#be123c">REQUEST MODEL</text>
+  <text x="214" y="120" class="lanetag" fill="#fb7185">synchronous &#183; blocking &#183; fragile</text>
+
+  <g filter="url(#sh)"><rect x="64" y="142" width="200" height="96" rx="10" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="84" y="180" class="cardname">Producer</text>
+  <text x="84" y="202" class="cardsub">fires a request</text>
+  <text x="84" y="220" class="cardsub">then waits, blocked</text>
+
+  <line x1="272" y1="190" x2="424" y2="190" stroke="#be123c" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="348" y="180" text-anchor="middle" class="arrlab" fill="#be123c">connection stays open</text>
+
+  <g filter="url(#sh)"><rect x="432" y="142" width="200" height="96" rx="10" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="452" y="180" class="cardname">Consumer (agent)</text>
+  <text x="452" y="202" class="cardsub">runs ~8 seconds</text>
+  <text x="452" y="220" class="cardsub">caller is blocked</text>
+
+  <g filter="url(#sh)"><rect x="700" y="142" width="480" height="96" rx="10" fill="#ffe4e6" stroke="#fda4af"/></g>
+  <text x="722" y="174" class="note">Crash the consumer mid-run and the work is lost; the caller gets an error.</text>
+  <text x="722" y="198" class="note">To absorb 50 requests a minute you need about 7 parallel handlers,</text>
+  <text x="722" y="222" class="note">because each caller holds a slot for the whole 8 seconds.</text>
+
+  <!-- EVENT lane -->
+  <g filter="url(#sh)"><rect x="36" y="300" width="1168" height="240" rx="14" fill="#f0fdf4" stroke="#bbf7d0"/></g>
+  <text x="58" y="328" class="lane" fill="#15803d">EVENT MODEL</text>
+  <text x="190" y="328" class="lanetag" fill="#22c55e">asynchronous &#183; durable &#183; isolated</text>
+
+  <g filter="url(#sh)"><rect x="64" y="392" width="180" height="84" rx="10" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="84" y="428" class="cardname">Producer</text>
+  <text x="84" y="450" class="cardsub">fires an event,</text>
+  <text x="84" y="468" class="cardsub">returns in ~10ms</text>
+
+  <line x1="252" y1="434" x2="294" y2="434" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrowg)"/>
+
+  <g filter="url(#sh)"><rect x="302" y="392" width="170" height="84" rx="10" fill="#dcfce7" stroke="#16a34a"/></g>
+  <text x="387" y="424" text-anchor="middle" class="cardname" fill="#15803d">Durable event log</text>
+  <text x="387" y="446" text-anchor="middle" class="cardsub">stores the signal</text>
+  <text x="387" y="464" text-anchor="middle" class="cardsub">the world moves on</text>
+
+  <line x1="472" y1="420" x2="556" y2="372" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowg)"/>
+  <line x1="472" y1="434" x2="556" y2="434" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowg)"/>
+  <line x1="472" y1="448" x2="556" y2="496" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowg)"/>
+
+  <g filter="url(#sh)"><rect x="564" y="348" width="246" height="48" rx="9" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="582" y="378" class="cardname">Agent <tspan class="cardsub">drafts a reply</tspan></text>
+  <g filter="url(#sh)"><rect x="564" y="410" width="246" height="48" rx="9" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="582" y="440" class="cardname">Analytics <tspan class="cardsub">counts it</tspan></text>
+  <g filter="url(#sh)"><rect x="564" y="472" width="246" height="48" rx="9" fill="#ffffff" stroke="#e2e8f0"/></g>
+  <text x="582" y="502" class="cardname">VIP detector <tspan class="cardsub">flags high value</tspan></text>
+
+  <g filter="url(#sh)"><rect x="832" y="392" width="348" height="84" rx="10" fill="#ffffff" stroke="#bbf7d0"/></g>
+  <text x="852" y="420" class="note">Crash a consumer and the event waits in the log, then retries.</text>
+  <text x="852" y="442" class="note">Add a consumer without touching the producer. One producer;</text>
+  <text x="852" y="464" class="note">the log absorbs the spike.</text>
+
+  <text x="620" y="582" text-anchor="middle" class="foot">The event is the signal. Once it is stored, the worker reacts on its own time, not the caller's.</text>
+</svg>

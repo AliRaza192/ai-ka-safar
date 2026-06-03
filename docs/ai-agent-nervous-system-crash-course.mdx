@@ -1,0 +1,544 @@
+---
+title: "AI Agent Nervous System Crash Course"
+description: "15 concepts, ~80% of real use: senses (triggers), reflexes (durable execution), and balance (flow control)."
+---
+
+import TOCInline from '@theme/TOCInline';
+
+# Apne AI Agent ko Nervous System Do
+
+*15 concepts, ~80% real use: senses (triggers), reflexes (durable execution), aur balance (flow control).*
+
+Tum ek aisa agent bana chuke ho jo kaam karta hai. Lekin woh sirf tab kaam karta hai jab tum usay dekh rahe ho. Tum Claude Code ya OpenCode kholte ho, type karte ho, woh reply karta hai. Aur jaise hi tum hat jaate ho, woh ruk jaata hai. Yeh gap — ek agent jo tum operate karte ho aur ek worker jo khud operate karta hai — isi ka poora subject hai yeh course.
+
+Surprise yeh hai ke gap kya band karta hai, aur woh koi zyada smart agent nahi. Tumhare agent ke paas sab kuch hai kaam karne ke liye: ek LLM sochne ke liye, tools aur MCP servers act karne ke liye, skills workflows ke liye jo woh jaanta hai. Uske paas jo nahi hai woh hai ek **nervous system**. Apne jism ko socho: tumhara brain sochta hai aur muscles act karti hain, lekin ek doosra system tumhare bina chalta hai — tumhari heartbeat aur reflexes, jo signals tumhe zinda rakhte hain jab tum so rahe ho. Dhyaan hat jaaye aur dil dhadakta rehta hai; agent ke paas aisa kuch nahi, toh jaise hi tum usay chalana band karte ho, woh ruk jaata hai. Nervous system woh connective tissue hai jo khud loop band karta hai, bina kisi insaan ke har turn drive kiye: yeh duniya ko sense karta hai aur agent ko jagata hai jab kuch hota hai, yeh reflex se react karta hai jab koi step fail hota hai (aur ghanton tak apni jagah pakad ke rakhta hai jab kisi insaan ya slow API ka intezaar ho), aur agent ko balance mein rakhta hai jab 500 requests ek saath aa jaayein. Yeh woh line hai ek agent jo tum operate karte ho aur ek FTE jo khud operate karta hai ke beech mein. Tum apne agent ko yeh nervous system dete ho; agent ko rewrite nahi karte. Yeh ek idea hai jis par yeh course bana hai.
+
+Tool jo tumhare agent ko nervous system deta hai, uska technical naam hai **durable execution engine**, aur hum ek use karte hain jiska naam hai **Inngest**. Yeh patterns Temporal, Restate, aur Dapr Agents par bhi kaam karte hain. Yeh sirf teaching picture nahi hai. Day AI, ek CRM jo AI-native companies ke liye bana hai, Inngest ko apne product ka "nervous system" kehta hai, aur har cheez par chalta hai jo yeh course sikhata hai. Inngest ka free Hobby tier sabse aasan jagah hai shuru karne ke liye: koi credit card nahi, ek command se dev server, aur ek dashboard jo tum dekh sakte ho jab bana rahe ho.
+
+Example jaan-boojh kar patla hai: ek customer-support agent jo kuch sample customers ko dekhta hai, reply draft karta hai, aur refund sirf tab issue karta hai jab insaan approve kare. Yeh isliye patla hai ke mushkil agent mein nahi hai, toh hum usay chhota rakhte hain aur nervous system par zyada mehnat karte hain. Tum isko yahan scratch se banaate ho. Yeh ideas share karta hai pehle Digital FTE course se lekin kuch assume nahi karta. Environment ek baar set karo [Quick Win](#the-fifteen-minute-quick-win-set-up-the-base-and-see-durability) mein, aur [Part 4](#part-4-the-worked-example-customer-support-ai-agent-nervous-system) worker ko saat paste-and-watch prompts mein banata hai. Yeh Python-first hai [`inngest-py`](https://github.com/inngest/inngest-py) par: tum apne coding agent ko plain English mein direct karte ho aur woh code likhta hai. Agar karna seekhna hai, Parts 1-3 skim karo aur Part 4 par jump karo.
+
+![Agent aur uski nervous system. Baen taraf, THE WORLD chaar signals se pohunchti hai: cron, webhook, event, aur direct call. Beech mein, THE PRODUCTION WORKER nervous system (Inngest, autonomic layer) ko agent ke ird-gird rakhta hai. Nervous system mein teen numbered layers hain: 1 Senses (triggers), 2 Reflexes (durable execution: step.run, memoization, retries), 3 Balance (flow control: concurrency, throttle, replay). Daen taraf, agent (sochta hai aur act karta hai, unchanged) OpenAI Agents SDK, Skills, MCP server, Neon Postgres, aur sandbox rakhta hai. Invariant: agent kabhi Inngest import nahi karta, toh nervous system swap-ready hai Inngest, Temporal, Restate, aur Dapr ke beech.](/img/01-architecture-110b174cdfec133330d69606c4e5ec4b.svg)
+
+---
+
+## AI Agent ko Nervous System Kyun Chahiye (4 Properties)
+
+Ek single agent crash mid-task mein annoying hai. 50 agents ki workforce jo customer-facing kaam kar rahi ho bina nervous system ke, impossible hai: tum ya toh ek platform adopt karte ho jo tumhein yeh deta hai, ya 6 mahine lagate ho ek worse version khud banane mein. 4 properties is nervous system ko uniquely important banati hain agents ke liye:
+
+1.  **Har step real money cost karta hai.** Crash ke baad naive retry un steps ke liye dobara pay karta hai jo pehle se succeed ho chuke hain; step memoization (Concept 7) ek baar pay karta hai.
+2.  **Workflows failure compound karte hain.** 6-step agent at 95% per-step reliability ka 26% chance hai kahin fail hone ka. Step memoization plus targeted retries overall reliability ko ~99.7% tak le jaate hain.
+3.  **Side effects real-world hain.** Agents customers ko email karte hain, cards charge karte hain, Slack par post karte hain. Step memoization plus provider-level idempotency keys inko safe banate hain.
+4.  **Agents ko high-stakes moments par human approval chahiye.** Bina `step.wait_for_event` (Concept 15) ke, tumhe khud approval queue banana padta hai: database table, polling, timeout handling, audit trail. Woh ek project hai, feature nahi.
+
+---
+
+## Yeh Course Agent Factory Thesis Mein Kahan Hai
+
+[Agent Factory thesis](/docs/thesis) Seven Invariants describe karta hai jo koi bhi production agent system satisfy karna chahiye. Worker jo tum yahan banaate ho woh Invariant 4 (ek engine) aur Invariant 5 (ek system of record, yahan ek chhota audit trail) satisfy karta hai. Yeh course do aur add karta hai, plus Invariant 1 ka ek hissa:
+
+-   **Invariant 7: Duniya system ko call karti hai.** Triggers (schedules, webhooks, inbound API calls, doosre Workers se events) Worker ko jagate hain. Inngest ek realization hai.
+-   **Invariant 1, hissa mein: Insaan principal hai.** Approval gates woh jagah hain jahan authored intent runtime mein dobara enter karta hai. `step.wait_for_event` sabse clean expression hai kisi bhi platform par: agent suspend hota hai, insaan awaited event emit karta hai, agent resume hota hai.
+-   **Durable execution ek thesis-implicit invariant.** Audit jawab deta hai "kya hua?"; durability jawab deti hai "jahan toota tha wahan se dobara karo." Replayable, retriable, resumable after failure.
+
+**15 concepts, ek nazar mein.** Yeh teen kaamon par map hote hain jo nervous system karta hai: senses (triggers worker ko jagate hain), reflexes (durable execution sahi rakhta hai jab kuch toot'ta hai), aur balance (flow control healthy rakhta hai load ke neeche).
+
+---
+
+## Quick Win: Base Set Karo, aur Reflex Dekho (15 Minute)
+
+15 concepts padhne se pehle jo explain karte hain *yeh architecture kyun kaam karti hai*, environment set karo jis par poora course chalta hai aur ek durable function ko crash survive karte dekho. Yeh ek baar ka setup hai; Part 4 customer-support worker isi base par banata hai.
+
+<details>
+<summary>Quick Win ka poora walkthrough (expand karo)</summary>
+
+### Base lo aur kholo
+
+Base download karo aur folder apne coding agent mein kholo. Agent khud setup karega. Tum yeh **ek baar** karte ho.
+
+```
+cd ai-agent-nervous-system
+opencode
+```
+
+### Base taiyaar karo (~3 min)
+
+> Read AGENTS.md, then get this base ready: install the Skills it lists for whichever agent you are, copy `.env.example` to `.env` for me, and tell me exactly what you need from me to bring the Neon and Context7 MCP servers online.
+
+### Dev server shuru karo (~2 min)
+
+```
+npx inngest-cli@latest dev
+```
+
+Dashboard `http://127.0.0.1:8288` par aata hai. Ab coding agent restart karo.
+
+> List the Neon tools and the inngest-dev tools you can see.
+
+### Store banao aur connection string lo (~3 min)
+
+> On a fresh Neon project, create two tables: `customers` (id, email, tier) and `audit_log` (a record of every action the worker takes). Then call the Neon tool that returns the connection string and write that URL into my `.env` as `DATABASE_URL`.
+
+### Pehla durable function banao (~3 min)
+
+> Using the Inngest Skills, write one tiny Inngest durable function (call it `greet-customer`, triggered by a `demo/greet` event) that composes a greeting in one `step.run`, sleeps fifteen seconds with `step.sleep`, then composes a farewell in a second `step.run` and returns both. Serve it from a FastAPI host in local dev mode, and start the host on port 8000 with auto-reload on.
+
+### Trigger karo aur zero compute par sleep dekho
+
+Dashboard mein Events par click karo, Send event:
+
+```json
+{
+  "name": "demo/greet",
+  "data": { "name": "Sara" }
+}
+```
+
+### Step todo aur memoization dekho (payoff)
+
+> Make the farewell step raise an error on purpose, so I can watch a run fail.
+
+Greeting step **one completed attempt** dikhata hai, farewell step **several Attempts** dikhata hai. Matlab completed step ek baar pay hua, har retry par nahi. Yeh hai durable execution jo tum apni aankhon se dekh sakte ho.
+
+</details>
+
+---
+
+## Part 1: Senses — Duniya Worker Tak Kaise Pohunchti Hai
+
+Ek AI agent jo tum haath se call karte ho, tab chalta hai jab tum call karte ho. Ek real Production Worker ke senses hain: woh tab chalta hai jab *duniya* us tak pohunchti hai. Customer email karta hai, webhook aata hai, cron 09:00 par fire hota hai, doosra worker kaam handoff karta hai. Har ek signal hai jo aa raha hai, aur trigger hai kaise agent usay mehsoos karta hai.
+
+### Concept 1: Events vs Requests — Durable Mental Model Shift
+
+Is course mein sab kuch ek mental shift par tika hai: requests se events tak.
+
+**Request** ek synchronous conversation hai. Koi call karta hai; tum handle karte ho; tum return karte ho; woh continue karte hain. Connection khuli rehti hai; koi insaan ya service *wait* kar raha hai. Agar tum crash karo, caller ko error milta hai.
+
+**Event** ek asynchronous message hai. Duniya mein kuch hua (customer sign up hua, email aaya, payment clear hua), aur originator us fact ka ek named record emit karta hai. *Zero, ek, ya kayi* functions independently event par react karte hain. Koi connection nahi khuli rehti. Duniya aage badh chuki hai.
+
+```python
+# Request: main hoon yahan, wait kar raha hoon, blocking
+result = await agent.handle_customer_message(text=user_input)
+print(result)  # Jab agent khatam kare tab unblock
+
+# Event: fire-and-forget
+await inngest_client.send(events=[
+    inngest.Event(
+        name="customer/email.received",
+        data={"customer_id": "c-4429", "body": email_body, "subject": subject},
+    ),
+])
+# Main immediately return karta hoon. Kahin aur, ek ya zyada Inngest
+# functions is event par apne schedule par react karte hain.
+```
+
+![Request vs Event. Request model (upar, laal) synchronous, blocking, aur fragile hai: ek producer request fire karta hai aur open connection par wait karta hai jab consumer ~8 seconds chalta hai; crash se kaam kho jaata hai, aur 50 requests per minute absorb karne ke liye ~7 parallel handlers chahiye. Event model (neeche, hary) asynchronous, durable, aur isolated hai: ek producer event fire karta hai aur ~10ms mein durable event log mein return hota hai, jo independent consumers (agent, analytics counter, VIP detector) ko fan out karta hai; consumer crash kare toh event log mein wait karta hai aur retry hota hai. Event signal hai; ek baar store ho jaaye, worker apne waqt par react karta hai.](/img/request-vs-event.svg)
+
+Yeh shift chhoti lagti hai. Hai nahi. Jab tum events mein sochte ho, durability aur scale almost free mil jaati hai:
+
+-   Producer consumer se slow nahi ho sakta
+-   Consumer crash kar sakta hai aur kaam nahi kho'ta
+-   Naye consumers bina producer badle add ho sakte hain
+-   Backpressure ek flow-control policy ban jaati hai, code change nahi
+
+> **Predict.** Tumhara customer-support Worker 8 seconds leta hai email ka jawab dene mein. Peak load par 50 emails per minute aate hain. Request model mein kitne parallel connections chahiye? Event model mein kitne?
+
+Jawab: request model ko **~7 concurrent parsers** chahiye. Event model ko **ek parser** — woh event fire karta hai aur ~10ms mein return karta hai. **Events tareeqa hain timing ka ownership chhodne ka.**
+
+### Concept 2: Cron Triggers — Waqt Guzarne Par Kaam Chalta Hai
+
+Sabse simple trigger ghadi hai. Bohat saari cheezein jo Production Worker karta hai, wo bahar ke events ka reaction nahi; scheduled work hai: daily health reports, weekly cleanups, hourly recalculations.
+
+```python
+@inngest_client.create_function(
+    fn_id="daily-customer-health-check",
+    trigger=inngest.TriggerCron(cron="0 9 * * *"),  # Roz 09:00 UTC
+)
+async def daily_health_check(ctx: inngest.Context) -> dict[str, int]:
+    customers = await ctx.step.run("fetch-pro-customers", fetch_pro_customer_ids)
+    await ctx.step.run("fan-out", fan_out_per_customer_events, customers)
+    return {"customers_scheduled": len(customers)}
+```
+
+Teen cheezein note karo:
+-   Schedule standard cron syntax hai
+-   Function phir bhi `ctx.step.run` use karta hai — cron ho ya event, function ki shape same hai
+-   Cron output regular Inngest function run hai — dashboard mein dikhta hai, replay support karta hai
+
+**Agar service down ho jab cron fire ho?** Inngest ke cron runs durably recorded hote hain jab schedule fire hota hai; agar endpoint unreachable ho, Inngest retry karta hai.
+
+### Concept 3: Webhook Triggers — Jab Bahar Ki Duniya Call Kare
+
+Doosri trigger surface HTTP hai. Ek bahar ka system (Stripe, email provider, GitHub webhook) tumhare Worker ko call karna chahta hai. Inngest ke saath, endpoint diya jaata hai:
+
+```python
+@inngest_client.create_function(
+    fn_id="handle-stripe-refund-failed",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def on_refund_failed(ctx: inngest.Context) -> dict[str, str]:
+    charge_id = ctx.event.data["charge_id"]
+    ticket = await ctx.step.run("find-ticket-for-refund", lookup_ticket_by_charge, charge_id)
+    await ctx.step.run("notify-support-agent", notify_support_agent_of_refund_failure, ticket_id=ticket["id"])
+    return {"ticket": ticket["id"], "action": "notified"}
+```
+
+Flow: Stripe refund fail karta hai → Inngest webhook URL par POST karta hai → Inngest event banata hai → function fire hota hai. Koi HTTP plumbing tumhara nahi.
+
+### Concept 4: Idempotency aur Event Semantics — Ek Event Do Baar Fire Hona
+
+Webhooks exactly-once nahi hain. Woh *at-least-once* hain: sender retry karta hai agar acknowledgment na mile. Bina idempotency ke, har webhook system eventually kisi ko double-bill, double-email, ya double-refund karta hai.
+
+**Layer 1: Event ID seeds.** Jab tum khud event bhejte ho:
+
+```python
+await inngest_client.send(events=[
+    inngest.Event(
+        name="customer/refund.requested",
+        data={"order_id": "o-4429", "amount_cents": 5000},
+        id=f"refund-request-{order_id}-{request_timestamp}",  # idempotency key
+    ),
+])
+```
+
+**Layer 2: Step-level idempotency.** Function ke andar, har `step.run` apne naam se identify hota hai. Agar function step 3 aur 4 ke beech crash ho, retry function code top se re-run karta hai, lekin steps 1, 2, 3 ke liye Inngest *stored* outputs return karta hai bina step body re-execute kiye.
+
+```python
+@inngest_client.create_function(
+    fn_id="issue-customer-refund",
+    trigger=inngest.TriggerEvent(event="customer/refund.requested"),
+)
+async def issue_refund(ctx: inngest.Context) -> dict[str, str]:
+    order = await ctx.step.run("lookup-order", lookup_order_by_id, ctx.event.data["order_id"])
+    refund = await ctx.step.run("issue-stripe-refund", call_stripe_refund_api,
+        charge_id=order["stripe_charge_id"], amount=ctx.event.data["amount_cents"])
+    await ctx.step.run("audit-refund", write_audit_refund_issued, order_id=order["id"], refund=refund)
+    return {"refund_id": refund["id"]}
+```
+
+**Customer ka card ek baar charge hota hai, chahe function teen baar chali ho.** Yeh killer feature hai.
+
+### Concept 5: Fan-out aur Sub-agent Delegation — Ek Event, Kayi Workers
+
+Aksar ek single event ko *kayi* jagah kaam trigger karna hota hai. **Pattern: same event par kayi functions subscribe karo.** Koi fan-out code nahi; bas kayi decorators same `TriggerEvent` ke saath:
+
+```python
+@inngest_client.create_function(
+    fn_id="refund-failed-notify-support",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def notify_support(ctx): ...
+
+@inngest_client.create_function(
+    fn_id="refund-failed-update-risk-score",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def update_risk_score(ctx): ...
+```
+
+Ek Stripe webhook aata hai. Inngest ek event banata hai. Teen functions fire hote hain, apne-apne run mein. Agar `post_to_slack` fail ho, baaki do par koi asar nahi.
+
+---
+
+## Part 2: Reflexes — Jab Kuch Toot'ta Hai Kya Hota Hai
+
+Senses worker ko jagate hain. Reflexes usay survive karwate hain. **Durability woh property hai ke jab mid-execution kuch fail ho, jo kaam complete ho chuka woh complete rehta hai, aur execution jahan toota wahan se resume hota hai.**
+
+### Concept 6: `step.run` aur Durable Function Model
+
+Ek normal Python function ek baar chalti hai, top to bottom. Agar beech mein crash ho, top se shuru karo. Inngest function durable hai. Har operation jo tum checkpoint karna chahte ho, `step.run(name, fn, ...)` mein wrap hota hai:
+
+```python
+@inngest_client.create_function(
+    fn_id="customer-support-conversation",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    customer_id = ctx.event.data["customer_id"]
+    customer = await ctx.step.run("load-customer", load_customer_by_id, customer_id)
+    thread = await ctx.step.run("load-thread", load_thread_for_customer, customer_id)
+    response = await ctx.step.run("run-agent", run_customer_support_agent,
+        customer=customer, thread=thread, email_body=ctx.event.data["body"])
+    await ctx.step.run("save-draft-reply", save_reply, customer_id=customer_id, text=response.draft)
+    await ctx.step.run("notify-reviewer", post_slack_for_review, response=response)
+    return {"status": "drafted", "reviewer_notified": True}
+```
+
+Paanch steps. Har ek independently checkpointed.
+
+**`step.run` ka ek rule.** Function jo `step.run` ko diya jaata hai, **deterministic given its inputs** hona chahiye.
+
+### Concept 7: Memoization — Resumability Ka Mechanic
+
+Jab tum `await ctx.step.run("load-customer", load_customer_by_id, "c-4429")` call karte ho, **pehli** attempt par teen cheezein hoti hain:
+
+1.  Inngest apna memo store check karta hai — kya `load-customer` ka stored result hai? Nahi hai.
+2.  Function chalta hai. Result return karta hai.
+3.  Inngest result ko memo store mein likhta hai.
+
+Agar function step 3 ke baad crash ho aur Inngest retry kare, **doosri** attempt par:
+
+1.  Inngest memo store check karta hai — hai, attempt 1 mein store hua tha.
+2.  Function **nahi chalta**. DB call nahi hoti.
+3.  Inngest stored result milliseconds mein return karta hai.
+
+Isliye retries sasti hain: expensive kaam pehle se cached hai. Isliye durability sahi hai: expensive kaam do baar nahi hota.
+
+![Step memoization across two attempts. Attempt 1 runs five steps left to right: load-customer, load-thread, and run-agent each complete and store their output, then save-draft crashes and notify is never reached. Attempt 2, the retry, re-runs the function from the top, but load-customer, load-thread, and run-agent return from the memo store at zero cost (the expensive run-agent step is not paid again); save-draft now runs for real and notify completes. A memo store keyed by (run_id, step_name) holds the stored outputs. Three properties: retries are cheap, side effects happen once, and step names are the memo keys.](/img/step-memoization.svg)
+
+**Implication jo naye users ko surprise karti hai.** Code jo `step.run` ke *bahar* hai, har attempt par chalta hai. Expensive cheezein apne step mein wrap karo:
+
+```python
+# GALAT: yeh har retry par chalta hai
+expensive_thing = await fetch_expensive_data(ctx.event.data["id"])
+await ctx.step.run("do-something", do_something_with, expensive_thing)
+
+# SAHI: ab memoized hai
+expensive_thing = await ctx.step.run("fetch-expensive-data", fetch_expensive_data, ctx.event.data["id"])
+await ctx.step.run("do-something", do_something_with, expensive_thing)
+```
+
+**Step naam memo key hai.** Isliye step names ek function ke andar unique hone chahiye.
+
+### Concept 8: `step.sleep` aur `step.wait_for_event` — Time Ke Through Durability
+
+Kuch kaam ko intezaar karna padta hai. Normal Python function mein "teen din intezaar karo" ka matlab hai process teen din tak khuli rakhna. Inngest mein ek line hai:
+
+```python
+await ctx.step.sleep("wait-three-days", timedelta(days=3))
+```
+
+`step.sleep` durable hai — function suspend hota hai; koi compute consume nahi hota; sahi waqt par resume hota hai.
+
+Zyada powerful sibling hai `step.wait_for_event`. Time ke bajaye, *doosre event* ka intezaar karo:
+
+```python
+approval = await ctx.step.wait_for_event(
+    "wait-for-approval",
+    event="refund/approval.decided",
+    timeout=timedelta(hours=24),
+    if_exp=f"async.data.request_id == '{request_id}'",
+)
+```
+
+Function suspend hota hai jab tak matching event na aaye, ya timeout expire na ho. Zero compute consumed.
+
+### Concept 9: Retries, Error Handling, Dead-letter
+
+Default mein, Inngest failed steps ko retry karta hai. ~4 retries exponential backoff ke saath. **Pattern 1:** Transient vs permanent failures — kuch errors transient nahi hain. **Pattern 2:** Step-level vs function-level errors. **Pattern 3:** Dead-letter aur replay — jab function poora fail ho, dashboard mein "failed runs" mein jaata hai, **Replay** button ke saath.
+
+### Concept 10: `step.run` AI Calls ke liye Python Mein
+
+Python mein, OpenAI call ko `ctx.step.run("name", fn, ...)` ke andar rakho. Inngest inputs aur outputs trace karta hai, transient failures par retry karta hai, aur result memoize karta hai:
+
+```python
+summary: str = await ctx.step.run("openai-summary", call_openai_summary, format_thread(thread))
+```
+
+> **Important:** `step.ai.wrap()` sirf TypeScript hai. Python mein `step.run` recommended pattern hai.
+
+---
+
+## Part 3: Balance aur Recovery — Production Scale
+
+Balance teesra layer hai: yeh worker ko healthy rakhta hai load ke neeche.
+
+### Concept 11: Concurrency aur Throttling
+
+Concurrency ek function ke simultaneously kitne runs chal sakte hain. Throttling kitne runs ek unit time mein *start* ho sakte hain:
+
+```python
+concurrency=[inngest.Concurrency(limit=10)],
+throttle=inngest.Throttle(limit=100, period=timedelta(minutes=1)),
+```
+
+**Per-key concurrency** — ek customer ki burst baaki customers ko starve na kare:
+
+```python
+concurrency=[
+    inngest.Concurrency(limit=10),                              # global cap
+    inngest.Concurrency(limit=2, key="event.data.customer_id"), # per-customer cap
+],
+```
+
+### Concept 12: Priority aur Fairness
+
+**Priority** — Enterprise customers ko pehle slot milta hai:
+
+```python
+priority=inngest.Priority(run="100 - (event.data.customer_tier_priority * 100)"),
+```
+
+**Fair-share scheduling** — `key` parameter se har tenant ko guaranteed slice milta hai.
+
+### Concept 13: Batching — Cost-effective Bulk Processing
+
+Inngest ka batch trigger tumhe events accumulate karne deta hai aur ek single function call invoke karta hai batch ke saath:
+
+```python
+batch_events=inngest.Batch(max_size=50, timeout=timedelta(seconds=30)),
+```
+
+Function ek baar per batch chalti hai, har event ke liye nahi. OpenAI embedding API ko 50-text batch ke saath call karo, 50 single-text calls ke bajaye.
+
+### Concept 14: Replay aur Bulk Cancellation
+
+**Do tareeqay** ek failed step dobara chalne ke:
+
+-   **Automatic retry (same run ke andar):** Completed steps memo se return hote hain, sirf failing step dobara chalta hai. Yeh memo-preserving resume hai.
+-   **Replay / Rerun (dashboard button):** Yeh ek **brand-new run from the top** shuru karta hai current deployed code ke saath, har step scratch se re-execute hota hai. Incident recovery ke liye hai, completed work skip karne ke liye nahi.
+
+**Bulk cancellation** — kaam jo tum nahi chahte ki ho.
+
+### Concept 15: HITL Gates — `step.wait_for_event`
+
+Agent Factory ki [Invariant 1](/docs/thesis#invariant-1-the-human-is-the-principal) kehti hai insaan principal hai. Yeh woh jagah hai jahan insaan ka mind loop mein dobara enter karta hai:
+
+```python
+approval = await ctx.step.wait_for_event(
+    "wait-for-human-approval",
+    event="refund/approval.decided",
+    timeout=timedelta(hours=24),
+    if_exp=f"async.data.request_id == '{request_id}'",
+)
+if approval is None:
+    return {"status": "escalated_timeout"}
+if not approval.data["approved"]:
+    return {"status": "rejected_by_human"}
+```
+
+Agent decision point tak chalta hai, suspend hota hai, aur approval event ka intezaar karta hai. Insaan review karta hai (Slack mein, admin UI mein) aur approve ya reject click karta hai. Event fire hota hai. Function human ke verdict ke saath resume hota hai.
+
+![The human-approval gate at runtime, in three phases. Phase 1: the agent runs, investigates, drafts the action, and asks for approval, then pauses. Phase 2: the function suspends on step.wait_for_event at zero compute for as long as it takes, while a human reviewer reads it in Slack or an admin UI and clicks Approve or Reject. Phase 3: an approval event resumes the function, which branches: Approve issues the refund, Reject records a blocked refund, and Timeout records a blocked refund. Every branch writes a row to audit_log. The human is the principal: the agent proposes, a person decides.](/img/human-approval-gate.svg)
+
+---
+
+## Part 4: Worked Example — Customer-Support Production Worker
+
+Yahan tum banaate ho. Pehle worker (ek prompt), phir uske ird-gird nervous system, ek layer per prompt.
+
+-   **D0** worker khud banata hai, standalone
+-   **D1** agent run ko durable banata hai
+-   **D2** event usay jagata hai
+-   **D3** daily cron jo fan out karta hai
+-   **D4** flow control add karta hai
+-   **D5** keystone: durable human-approval gate on refunds
+-   **D6** prove karta hai ke worker broken step survive karta hai
+
+![Part 4 builds the nervous system one layer at a time. D0 (left) is the agent, built once: it thinks and acts, with the OpenAI Agents SDK, two tools, Neon Postgres, and an audit trail; it never changes after this. Six layers are then added from the outside: D1 Reflex (make it durable, wrap the run in step.run), D2 Sense (wake on a customer email event), D3 Sense (a daily cron that fans out per customer), D4 Balance (flow control: concurrency and throttle), D5 Gate (the keystone, a durable approval gate where the mind re-enters), and D6 Proof (break a step and recover). Senses wake it, reflexes keep it correct, balance keeps it healthy, and the gate lets a human decide.](/img/part4-layered-build.svg)
+
+### D0: Worker banao, standalone
+
+> Build me a minimal customer-support agent with the OpenAI Agents SDK, running in a local sandbox. It reads the sample customers from my Neon `customers` table (each row has an id, email, and tier), drafts a warm reply to an incoming customer email, and can issue a refund, but the refund tool needs human approval before it runs. Write an audit row into my Neon `audit_log` table for every action, using a small fixed set of action names and the `DATABASE_URL` in `.env`. Seed the `customers` table with five sample rows first if it is empty. Keep it small; it exists to be wrapped, not shipped. Then run it on a sample email and show me the reply.
+
+### D1: Agent Run ko Durable Banao
+
+> Wrap the agent run in an Inngest durable function so it survives crashes and retries transient failures. The whole agent call goes inside a single `step.run` so it is memoized. Run it in local dev mode against the Inngest dev server, with a FastAPI host.
+
+### D2: Event par Trigger Karo
+
+> Make the worker wake on a `customer/email.received` event instead of being run by hand. Add an ingress audit step before the agent and a reply audit step after it.
+
+### D3: Daily Cron jo Fan Out Kare
+
+> Add a daily cron that fans out one `customer/health_check.requested` event per Pro and Enterprise customer, each one idempotency-keyed so a re-delivered cron run never double-fires.
+
+### D4: Flow Control
+
+> Add flow control to the email handler: a global concurrency cap, a per-customer concurrency key so one noisy customer can't starve the rest, and a throttle to protect the OpenAI rate limit.
+
+```python
+concurrency=[
+    inngest.Concurrency(limit=10),
+    inngest.Concurrency(limit=2, key="event.data.customer_id"),
+],
+throttle=inngest.Throttle(limit=100, period=datetime.timedelta(minutes=1)),
+```
+
+### D5: Durable Human-Approval Gate (Keystone)
+
+> Make the refund approval durable: when the agent pauses on the refund, persist its serialized run state as the step's output, then suspend the whole function on `step.wait_for_event` waiting for a `refund/approval.decided` event.
+
+### D6: Durability Prove Karo — Broken Step Se Recover
+
+> Deliberately break the agent step so it fails, fire an event, and show me Inngest retrying it while the earlier audit step stays memoized. Then fix the step and recover the work.
+
+Failed run ki trace mein, `audit-received` **one attempt** par hai aur `run-agent` **several Attempts** par. Yeh memoization hai, proven.
+
+---
+
+## Part 5: Yeh Course Kahan Chhodta Hai
+
+### Production Worker Ki Cost Shape
+
+Do cost surfaces: **infrastructure cost** (Inngest) aur **inference cost** (model tokens). Infrastructure roughly flat rehta hai; inference linearly scale hota hai.
+
+**Inngest Pricing:**
+
+| Tier | Price | Executions/month | Concurrent Steps |
+|------|-------|-----------------|-----------------|
+| Hobby | $0 | 50,000 | 5 |
+| Pro | $75/month se | 1,000,000 | 100+ |
+| Enterprise | custom | custom | 500-50,000 |
+
+**Inference cost dominate karta hai.** Yeh optimize karo. Sab kuch rounding error hai.
+
+### Swap Guide — Nervous System Invariant Hai, Platform Nahi
+
+Yeh course har layer par Inngest naam leta hai. Lekin architecture kisi bhi compliant alternative ke saath kaam karti hai:
+
+| Concept | Inngest | Dapr Analogue |
+|---------|---------|---------------|
+| Scheduled work | `TriggerCron` | Cron input binding |
+| Event ingress | webhook endpoint | HTTP endpoint, pub/sub |
+| Durable steps | `step.run()` + memoization | Dapr Workflows + activities |
+| HITL gate | `step.wait_for_event()` | Workflow external events |
+| Flow control | concurrency, throttle | K8s scaling, resiliency policies |
+
+### Yeh Course Kya Cover Nahi Karta (Abhi)
+
+Worker jo tumne banaya hai, [Seven Invariants](/docs/thesis#the-seven-invariants-of-the-agent-factory) mein se chaar satisfy karta hai. Baaki teen Invariants aur workforce architecture baad ke courses hain:
+
+-   **Invariant 2:** Har insaan ko ek delegate chahiye — [OpenClaw](https://github.com/openclaw/openclaw)
+-   **Invariant 3:** Workforce ko ek manager chahiye — [Paperclip](https://github.com/paperclipai/paperclip)
+-   **Invariant 6:** Workforce policy ke under expandable honi chahiye
+
+---
+
+## Quick Reference
+
+### Decision Tree: Trigger Surface Chuno
+
+-   **External system ne HTTP request bheja** → Webhook trigger
+-   **Schedule kehta hai waqt ho gaya** → Cron trigger
+-   **Doosri Inngest function ne event emit kiya** → Event trigger
+-   **Interactive user immediate response ka intezaar kar raha hai** → Inngest trigger nahi
+
+### Decision Tree: Step Primitive Chuno
+
+-   **Side-effecting call (API, DB, file write, agent)** → `ctx.step.run("name", fn, ...)`
+-   **Serverless platform par lambi OpenAI call** → `ctx.step.ai.infer(...)`
+-   **Fixed duration ka intezaar** → `ctx.step.sleep("name", timedelta(...))`
+-   **External event ka intezaar** → `ctx.step.wait_for_event("name", event="...", timeout=...)`
+-   **Pure deterministic computation** → Bas code likho, `step.run` ki zaroorat nahi
+
+### Diagnostic Table — Symptom → Root Cause → Concept
+
+| Symptom | Pehla Shaks | Concept |
+|---------|------------|---------|
+| Function expected event par fire nahi hoti | Event name typo | C3 |
+| Same logical event par do baar fire hoti hai | Missing idempotency key | C4 |
+| Deploy ke baad "kaam kho gaya" | `step.run` ke bahar code | C7 |
+| Customer ko do baar charge hua | Stripe call `step.run` ke bahar | C6, C7 |
+| 9am peak par OpenAI 429 errors | Missing throttle | C11 |
+| Ek customer ki bursts baaki ko starve karti hai | Missing per-key concurrency | C12 |
+| HITL gate weekend par silently fire hua | Missing timeout handler | C15 |
+
+---
+
+## Appendix: Agar Digital FTE Course Kiya Hai
+
+[Digital FTE course](/docs/digital-fte-crash-course) ek richer customer-support worker banata hai. Agar tumne kiya hai, tumhare paas ek `SandboxAgent` worker hai disk par, aur tum D0 skip kar sakte ho: nervous system (D1 se aage) apne worker par point karo. Wrapping identical hai. Bonus: D5 ka durable refund gate us course ke optional Decision 10 ke hand-rolled run-state table ko replace karta hai.
+
+---
+
+**Source:** [Agent Factory — AI Agent Nervous System Crash Course](https://agentfactory.panaversity.org/docs/ai-agent-nervous-system-crash-course)

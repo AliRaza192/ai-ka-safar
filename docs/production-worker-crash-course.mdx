@@ -1,0 +1,1918 @@
+---
+sidebar_position: 13
+title: "Digital FTE se Production Worker: 90-Minute ka Crash Course"
+description: "Durable Execution, Triggers, aur Flow Control ke saath Production Workers banana"
+---
+
+# Digital FTE se Production Worker: 90-Minute ka Crash Course
+
+*15 Concepts, ~80% Real Use — Durable Execution, Triggers, Flow Control*
+
+Yeh ek continuation crash course hai. Yeh agentic-coding track mein course #5 hai. Pichla course, [From Agent to Digital FTE](/docs/digital-fte-crash-course), ek customer-support Worker par khatam hua tha: wohi OpenAI Agents SDK foundation, teen portable Skills, ek Neon Postgres system of record, aur ek custom MCP server. Woh Worker sirf tab chalta tha jab aap usse call karte. Aap Claude Code ya OpenCode kholte, type karte, agent jawab deta. Ek asli Production Worker ke paas prompt par koi insaan type nahi kar raha.
+
+Woh single insight jo baaki sab cheezein click karata hai: **ek Digital FTE ko Production Worker banana ek architectural addition hai: ek durable execution engine jo duniya ko Worker ko call karne de (aapki bajaye), beech mein crash hone par survive kare, aur khud ko scale par rate-limit kare.** Inngest woh durable-execution platform hai jo hum use karte hain, aur patterns ek-to-ek Temporal, Restate, ya Dapr Agents par transfer hote hain. Inngest ka hosted Hobby tier sabse friendly on-ramp deta hai: free, credit card nahi, ek-command dev server, ek dashboard jise aap code karte waqt dekh sakte ho.
+
+Seedhi baat mein: Course #4 ka Digital FTE ek function hai jo aap call karte ho. Yeh course jo Production Worker banata hai, woh ek function hai jo _duniya_ call karti hai, scheduled cron jobs ke zariye, aapke inbox aur billing system ke webhooks ke zariye, doosre Workers ki taraf se fire kiye gaye events ke zariye. Jab yeh chalta hai, yeh _durably_ chalta hai: ek six-step refund flow ke beech mein crash hone par pehle teen steps ka kaam nahi khota; Worker wahan se resume karta hai jahan toota tha. Aur jab 500 customers ek saath email karein, toh Worker ek controlled rate par handle karta hai jo aapki OpenAI rate limit ya Postgres connection pool ko nahi udhata. Yeh machinery aapko khud banani nahi padti; aapka code sirf `@inngest.create_function` se decorated functions rehta hai.
+
+[Day AI](https://www.inngest.com/customers/day-ai), AI-native companies ke liye CRM, Inngest ko apne product ka "nervous system" kehta hai. Do founding engineers ne ise independently isi tarah describe kiya. Unki stack is course ke har primitive ko use karti hai: durable LLM workflows, wait-for-event coordination, replay on failure, debounce + throttle + concurrency, aur multi-tenant fairness taake ek organization ka spike baaki sab ko slow na kare. Yeh curriculum branding nahi hai; yeh market mein ek AI-native company ki production language hai.
+
+Ek single agent ka workflow ke beech mein crash hona annoying hai. Pachas agents ki workforce bina nervous-system substrate ke customer-facing kaam handle karna impossible hai: aap ek platform adopt karte ho jo yeh deta hai, ya chay mahine khud ek bekar version banate ho. Chaar properties durable execution ko agents ke liye uniquely important banati hain:
+
+1.  **Har step asli paisa cost karta hai.** Crash ke baad naive retry un steps ke liye dobara paisa deta hai jo pehle se succeed ho chuke hain; step memoization (Concept 7) ek baar pay karta hai.
+2.  **Workflows failure compound karte hain.** 95% per-step reliability wala ek six-step agent kahin na kahin fail hone ka 26% chance rakhta hai. Step memoization plus targeted retries overall reliability ko ~99.7% tak uthate hain.
+3.  **Side effects real-world hain.** Agents customers ko email karte hain, cards charge karte hain, Slack par post karte hain. Step memoization plus provider-level idempotency keys inhein safe banate hain.
+4.  **Agents ko high-stakes moments par human approval chahiye.** `step.wait_for_event` (Concept 15) ke bina, aap khud ek approval queue banate ho: database table, polling, timeout handling, audit trail. Woh ek project hai, feature nahi.
+
+![Digital FTE se Production Worker: Course Four ne Worker banaya tha (engine + Skills + system of record + MCP). Course Five uske upar teen layers add karta hai: triggers (events, crons, webhooks), durable execution (step.run, memoization, retries), aur flow control (concurrency, throttling, replay). Worker khud nahi badalta; uske ird gird ka operational envelope badalta hai.](/img/01-production-worker-architecture-27ac191ebcc0c895b1edcbd9d6bb7d02.webp)
+
+### Yahan se shuru karein: architectural placement aur 15-concept cheat sheet
+
+**Yeh course architecture mein kahan baithta hai.** [Agent Factory thesis](https://agentfactory.panaversity.org/docs/thesis) saat Invariants batata hai jo har production agent system satisfy karna chahiye. Courses #3 aur #4 ne Invariants 4 (engine) aur 5 (system of record) cover kiye the. Yeh course do aur cover karta hai, plus Invariant 1 ka ek hissa:
+
+*   **Invariant 7: Duniya system ko call karti hai.** Triggers (schedules, webhooks, inbound API calls, doosre Workers se events) Worker ko jagate hain. Inngest ek realization hai.
+*   **Invariant 1, hisse mein: Insaan principal hai.** Approval gates woh jagah hain jahan authored intent runtime mein wapas aati hai. `step.wait_for_event` kisi bhi platform par sabse clean expression hai: agent suspend hota hai, insaan awaited event emit karta hai, agent resume hota hai.
+*   **Durable execution ek thesis-implicit invariant ke tor par.** Audit jawab deta hai "kya hua?"; durability jawab deti hai "jahan toota tha wahan se dobara karo." Replayable, retriable, failure ke baad resumable.
+
+**15 concepts, ek nazar mein.** Production mein failure lagbhag hamesha teen root causes mein se kisi ek par trace hoti hai: ek trigger jo fire nahi hua (ya do baar fire hua), ek execution jo toot gayi aur state kho di, ya ek flow-control gap jo ek customer ka traffic baaki sab ko starve karne diya. 15 concepts in teen layers par map hote hain. Yeh first-pass version hai: concept plus ek one-line gist. Poora diagnostic table (har concept ka jawab dene wala sawaal ke saath) end mein [Quick Reference](#quick-reference) mein hai, jahan aap build karte waqt use karoge.
+
+| # | Concept | One-line gist |
+|---|---------|---------------|
+| **Triggers** | _duniya Worker ko kaise call karti hai_ | |
+| 1 | Events vs Requests | Request sync hai aur koi wait karta hai; event async hai aur duniya aage badh chuki hai. |
+| 2 | Cron Triggers | Ek schedule function ko jagata hai. Ek line: `TriggerCron(cron="0 9 * * *")`. |
+| 3 | Webhook Triggers | Ek inbound HTTP payload ek named event ban jata hai; aapka function naam par react karta hai. |
+| 4 | Idempotency aur Event Semantics | Event IDs aur step names duplicate event (ya retry) ko no-op banate hain. |
+| 5 | Fan-out aur Sub-agent Delegation | Ek event, N subscribing functions; ya ek parent N child events fire karta hai. |
+| **Durable execution** | _Worker ko sahi rakhna jab kuch toot jaye_ | |
+| 6 | `step.run` aur Durable Function Model | Har `step.run` ek checkpoint hai; function steps ke beech crash ho sakta hai aur resume ho sakta hai. |
+| 7 | Memoization, Neeche Ka Mechanic | Completed steps stored output return karte hain na ke dobara execute hote hain. |
+| 8 | `step.sleep` aur `step.wait_for_event` | Dono function ko durably suspend karte hain, ek duration ke liye ya ek event ke liye. |
+| 9 | Retries, Error Handling, Dead-letter | Automatic backoff retries; N tries ke baad failed run replay ke liye persist hota hai. |
+| 10 | `step.run` for AI Calls in Python | OpenAI calls ko `step.run` mein wrap karein; `step.ai.infer` inference offload karta hai (`step.ai.wrap` sirf TypeScript hai). |
+| **Flow control** | _Worker ko load ke neeche healthy rakhna_ | |
+| 11 | Concurrency aur Throttling | `concurrency` active runs cap karta hai; `throttle` starts-per-second cap karta hai. |
+| 12 | Priority aur Fairness | Priority queue ko order deta hai; per-key concurrency har tenant ko fair share deta hai. |
+| 13 | Batching | Events ko ek batched function call mein accumulate karein saste bulk work ke liye. |
+| 14 | Replay aur Bulk Cancellation | Failed runs ko new code se replay karein; runs ko bulk-cancel karein jo aap nahi chahte. |
+| 15 | HITL Gates with `step.wait_for_event` | Function suspend hota hai jab tak insaan approve na kare, phir decision ke saath resume hota hai. |
+
+Jab aapke paas yeh mapping ho, baaki document mostly mechanics hai. Production mein failure in mein se kisi ek par trace hoti hai:
+
+*   ek trigger jo match nahi hua (event name typo, schedule fire nahi hua),
+*   ek step jo bina memoization ke toot gayi (toh retry poora flow restart karta hai),
+*   ek flow-control gap jo concurrency cap nahi ki (toh ek customer ne baaki ko duboya),
+*   ya ek HITL gate jo wait karte waqt timeout ho gaya (toh escalation kabhi nahi hua).
+
+Quick Reference mein diagnostic table batati hai kaunsa.
+
+> **Audience.** Yeh agentic-coding track mein teesra intermediate-to-advanced crash course hai. Aapko Courses #3 aur #4 complete karne chahiye (ya unhone jo sikhaya sab comfortable hona chahiye), kyunki yeh course Course #4 ke Part 4 worked example se customer-support Worker extend karta hai. OpenAI Agents SDK, sessions, streaming, function tools, sandboxing, Skills, Neon Postgres with pgvector, MCP servers, audit logging: sab assume kiya gaya hai.
+
+> **Prerequisites.** Yeh page paanch cheezein assume karta hai.
+>
+> 1.  **Aapne [From Agent to Digital FTE](/docs/digital-fte-crash-course) complete kiya hai.** Non-negotiable. Hum wahan se pick up karte hain jahan Course #4 chhoda tha: wohi `chat-agent/` project, wohi Skills, wohi `customer-data` MCP server.
+> 2.  **Aapke paas [Agentic Coding Crash Course](/docs/agentic-coding-crash-course) ki discipline hai.** Plan mode, rules files, slash commands, read-first-then-write workflow.
+> 3.  **Aapne kam se kam ek PRIMM-AI+ cycle kiya hai.** Is course ke Predict prompts woh rhythm assume karte hain.
+> 4.  **Aapke paas Node.js 20+ available hai**, chahe aapka agent Python ho. Inngest dev server ek Node CLI ke zariye distribute hota hai (`npx inngest-cli@latest dev`).
+> 5.  **Aapke paas "event-driven" vs "request/response" ka ek working mental model hai.** Agar "duniya ek event fire karti hai aur zero, ek, ya bohot saare functions uspar react karte hain" parh ke familiar lagta hai, toh aap calibrated ho. Agar nahi, toh Concept 1 aapko shape deta hai.
+
+<details>
+<summary>**Pehle pass mein yeh page kaise parhein (expand karein)**</summary>
+
+*   **Pehle pass mein expand karein:** jo bhi labeled hai _"Kya dekhoge," "Sample run," "Expected output," "Verify."_ Runnable behavior jo predictions check karne ke liye.
+*   **Pehle pass mein skip karein:** Part 4 ke worked example ke lambi file listings. Har block ke upar ka narrative batata hai kya badla; aapko file contents tab chahiye jab aap actually build karein.
+*   **Poori page mein optional:** **"Try with AI"** blocks. Extension prompts Claude Code ya OpenCode ke liye jo Inngest dev-server MCP se connected hain.
+
+Pehle pass ka goal teen-layer model ko internalize karna hai: triggers Worker ko jagate hain, durable execution use sahi rakhta hai, flow control use healthy rakhta hai. Doosra pass aapke haathon keyboard par woh hai jahan aap build karte ho.
+
+</details>
+
+<details>
+<summary>**Glossary: terms jo aapko milenge (expand karein)**</summary>
+
+Har term pehli baar appear hone par context mein explain kiya gaya hai; yeh list un terms ke liye ek quick reference hai jo pehle-pass reader ko trip kar sakti hain.
+
+*   **Production Worker**: Ek Digital FTE ek operational envelope ke saath: triggers jo use jagate hain, durable execution jo failures survive karta hai, flow control jo use load ke neeche scale karta hai.
+*   **Event**: Ek named, immutable message jo batata hai ke kuch hua. Example: `{"name": "customer/email.received", "data": {"customer_id": "..."}}`. Trigger surface.
+*   **Inngest function**: Ek Python function `@inngest_client.create_function` se decorated, triggers aur steps declare karta hai. Durable work ka unit.
+*   **Step**: Ek Inngest function ke andar kaam ka ek unit jo `ctx.step.run()`, `ctx.step.sleep()`, `ctx.step.wait_for_event()`, ya `ctx.step.ai.infer()` mein wrap hota hai. Har step independently retry aur memoize hota hai.
+*   **Memoization**: Jab function crash hota hai aur restart hota hai, Inngest function code top se dobara chalata hai lekin kisi bhi `step.run` ke liye stored outputs return karta hai jiska result pehle se cached hai. Function jahan toota tha wahan tak catch up karta hai bina kaam dobara kiye.
+*   **Flow control**: Per-function policies: `concurrency` (max active runs), `throttle` (max starts per second), `priority` (queue order), `batch_events` (invoke se pehle accumulate).
+*   **HITL (Human In The Loop)**: Function aage badhne se pehle human approval ya input ka intezaar karte hue pause hota hai. `step.wait_for_event` primitive hai.
+*   **Replay**: Ek failed function ko jahan toota tha wahan se dobara chalana, bug fix ke baad new code ke saath.
+*   **Dev server**: Inngest ka local dev environment `npx inngest-cli@latest dev` ke zariye. Dashboard `http://127.0.0.1:8288` par; MCP endpoint `/mcp` par.
+
+</details>
+
+**Currency**
+
+**May 14, 2026 tak current.** `inngest-py` 0.5.18 (March 11, 2026 ko release hua), Inngest CLI v1+, aur Inngest [Python quick start](https://www.inngest.com/docs/getting-started/python-quick-start) ke against verified. Yeh course jo durable-execution architecture sikhata hai woh nahi badalta jab SDK badalta hai; SDK is saal us architecture ka interface hai.
+
+Course #3 aur #4 ki stack is course ki **foundation** hai, na ke ek stepping stone jise hum aage badh jayein. Aapka Part 4 Worker abhi bhi `Agent`, `Runner`, `function_tool`, Skills `.claude/skills/` se, `customer-data` MCP server, aur six-table audit-aware schema use karta hai. Kya badalta hai: woh primitives ab _Inngest functions ke andar_ chalte hain jo har agent invocation ko `step.run()` mein wrap karte hain durability ke liye, event/cron triggers declare karte hain, aur concurrency aur throttling policies apply karte hain. **Worker ke internals nahi badalte. Worker ka operational envelope badalta hai.**
+
+Yeh apne predecessors ki tarah ek **Python-first** course hai, [`inngest-py`](https://github.com/inngest/inngest-py) use karta hai, Inngest ka Python SDK. Inngest dev server khud language-agnostic hai; yeh official Python SDK ke saath bilkul isi tarah kaam karta hai jaise TypeScript ya Go ke saath.
+
+**Apna tool chunein, page uske mutabiq adjust hota hai**
+
+Dual-tool pattern jaari hai. Jo sections Claude Code aur OpenCode ke beech diverge karte hain un mein ek switcher hai; ek chunein aur page visits ke across sync ho jata hai.
+
+[Part 4](#part-4-worked-example-customer-support-production-worker) mein ek complete worked example hai: Course #4 ka customer-support Worker ek Inngest layer mein wrap kiya hua, event triggers, cron health checks, HITL escalation gates, concurrency limits, aur full replay support ke saath. Aath build decisions, Courses #3 aur #4 jaisa shape. Agar aap definitions parhne se zyada karke seekhte ho, toh Parts 1-3 skim karein aur Part 4 par jump karein.
+
+> **Ek line mein architecture.** Engine = OpenAI Agents SDK + Cloudflare Sandbox (Course #3). Capability + Truth + Connector = Skills + Neon Postgres + MCP (Course #4). Operational Envelope = Inngest ke triggers + durable execution + flow control (Course #5, yeh wala). Worker ke internals Course #4 se nahi badle; jo naya hai woh uske upar ki layer hai jo duniya ko usse jagane deti hai, failures ko state na khoone deti hai, aur ek Worker ko workforce jitna traffic serve karne deti hai. Agar poore document mein ek jumla yaad rakhna hai, toh woh yeh hai.
+
+---
+
+## Tees-minute ka Quick Win: durability apni aankhon se dekhein
+
+15 concepts parhne se pehle jo batate hain _yeh architecture kyun kaam karti hai_, sabse chota working version banayein. Do files, chaar `uv` aur `npx` commands, ek shell session. Is section ke end tak aapke paas hoga:
+
+*   ek Inngest function ek `step.run` aur ek `step.sleep` ke saath
+*   Inngest dev server locally chal raha hoga dashboard ke saath `http://127.0.0.1:8288` par
+*   ek successful run jo aapne dashboard se trigger kiya
+*   ek failed run jo aapne bug fix ke baad replay kiya, dekhte hue ke completed steps memo se return hue bina dobara execute hue
+
+Yeh Part 4 worked example nahi hai; woh poora Production Worker hai, aath Decisions, sauon lines. **Yeh ek screen hai.** Agar aapke paas sirf ek sitting hai, yeh karein, phir concepts ke liye wapas aayein jab aap jaanna chahein ke har piece is shape mein kyun hai.
+
+**Step 1.** Ek naya project directory banayein aur SDK plus ek chota web framework install karein. (Aap `fastapi` ko kisi bhi ASGI framework se swap kar sakte ho jo Inngest support karta hai; FastAPI sabse simple hai.)
+
+```bash
+mkdir hello-inngest && cd hello-inngest
+uv init
+uv add inngest "fastapi[standard]"
+```
+
+**Step 2.** Ek file mein ek durable function likhein. `hello.py` ke naam se save karein:
+
+```python
+# hello.py
+import logging
+from datetime import timedelta
+
+import inngest
+import inngest.fast_api
+from fastapi import FastAPI
+
+inngest_client = inngest.Inngest(
+    app_id="hello-inngest",
+    logger=logging.getLogger("uvicorn"),
+    is_production=False,
+)
+
+@inngest_client.create_function(
+    fn_id="greet-customer",
+    trigger=inngest.TriggerEvent(event="demo/greet"),
+)
+async def greet_customer(ctx: inngest.Context) -> dict[str, str]:
+    name = ctx.event.data.get("name", "friend")
+    greeting = await ctx.step.run("compose-greeting", lambda: f"Hello, {name}!")
+    await ctx.step.sleep("wait-fifteen-seconds", timedelta(seconds=15))
+    farewell = await ctx.step.run("compose-farewell", lambda: f"Goodbye, {name}.")
+    return {"greeting": greeting, "farewell": farewell}
+
+app = FastAPI()
+inngest.fast_api.serve(app, inngest_client, [greet_customer])
+```
+
+Teen cheezein dekhein. Function ka shape plain Python hai: ek `async def` jo `create_function` se decorated hai. Dono `ctx.step.run` calls un operations ko wrap karte hain jo memoize hone chahiye. In ke beech ka `ctx.step.sleep` function ko durably suspend karta hai (process crash ho sakta hai, restart ho sakta hai, ya sleep ke dauran redeploy ho sakta hai; run next line par resume hota hai jab timer fire hota hai).
+
+**Step 3.** Ek terminal mein function host shuru karein.
+
+```bash
+uv run uvicorn hello:app --reload --port 8000
+```
+
+Aapko uvicorn ko `Started server process` aur `Application startup complete` report karte dekhna chahiye. Function host ab `http://127.0.0.1:8000/api/inngest` par sun raha hai.
+
+**Step 4.** Doosre terminal mein Inngest dev server shuru karein.
+
+```bash
+npx inngest-cli@latest dev
+```
+
+Dev server ek banner print karta hai aur `http://127.0.0.1:8288` par dashboard khulta hai. Yeh Step 3 mein shuru kiye gaye function host ko auto-discover karta hai.
+
+**Step 5.** Browser mein `http://127.0.0.1:8288` kholein. Sidebar mein **Functions** par click karein; aapko `greet-customer` listed dikhna chahiye. Sidebar mein **Events** par click karein, phir **Send event**. Yeh paste karein aur Send par click karein:
+
+```json
+{
+  "name": "demo/greet",
+  "data": { "name": "Sara" }
+}
+```
+
+**Step 6.** Sidebar mein **Runs** par click karein. Aapko `greet-customer` ke liye ek run dikhega jiska status **Running** hai aur ek step labeled **compose-greeting** complete marked hai. Run mein click karke step trace dekhein.
+
+**Step 7.** **wait-fifteen-seconds** step ko dekhein. Dashboard use ek **Sleeping** state mein dikhata hai resume time ke saath. Aapke code mein kuch nahi chal raha. Uvicorn terminal idle hai. Pandrah second baad run resume hota hai, **compose-farewell** complete hota hai, aur run status **Completed** par flip hota hai. **Output** panel kholein aur returned dict dekhein.
+
+**Step 8.** Ab jaanbhoojkar tod dein. `hello.py` mein, `greet_customer` ke upar ek chota helper add karein aur step ko use call karwayein:
+
+```python
+def fail_on_purpose() -> str:
+    raise RuntimeError("forced failure")
+
+# ...greet_customer ke andar, compose-farewell step ko replace karein:
+farewell = await ctx.step.run("compose-farewell", fail_on_purpose)
+```
+
+File save karein; uvicorn auto-reload hota hai. Dashboard se wohi `demo/greet` event dobara bhejein. Run ko dekhein: **compose-greeting** complete hota hai, **wait-fifteen-seconds** sleep karta hai aur resume hota hai, **compose-farewell** backoff ke saath retry karta hai (Inngest default chaar attempts), phir run **Failed** state mein aata hai aur `RuntimeError` step trace mein dikhta hai.
+
+Ab bug fix karein: `compose-farewell` ko original `lambda: f"Goodbye, {name}."` par revert karein. Save karein. Dashboard mein, failed run par click karein, phir **Replay** par click karein. Replay dekhein: **compose-greeting** milliseconds mein complete hota hai (memo hit, dobara execution nahi), **wait-fifteen-seconds** milliseconds mein complete hota hai (memo hit), **compose-farewell** asli tareeqe se new code ke saath execute hota hai aur succeed hota hai. Run complete hota hai.
+
+**Aapne abhi ek durable function chalaya, ek step ko bina compute consume kiye sleep karte dekha, tod diya, fix kiya, aur replay kiya.** Agle 90 minute ise scale up karte hain:
+
+*   asli triggers (cron, webhook, fan-out),
+*   asli durability (agent invocation `step.run` mein wrap kiya hua),
+*   asli flow control (concurrency, throttle, priority),
+*   aur HITL gate jo "agent ghalat kar sakta hai" ko "agent draft karta hai, insaan approve karta hai, action issue hota hai" mein badalta hai.
+
+Agar kuch kaam nahi kiya, toh sabse common Quick Win failures hain:
+
+1.  Dev server function host tak nahi pahunch sakta (check karein ke uvicorn port 8000 par chal raha hai).
+2.  `is_production=False` client constructor mein missing hai (iske bina, SDK signing key maangta hai).
+3.  Function dashboard mein appear nahi hota (uvicorn auto-reload nahi hua; manually restart karein).
+4.  Ek run bina error aur bina progress ke hang hota hai (ek de-synced host silent stalls produce karta hai; dono function host aur dev server saath mein restart karein, aur ek function host ko ek dev server ke against chalayein).
+
+Chaaron problems, chaar fixes, phir aage badhein.
+
+---
+
+## Part 1: Triggers, duniya Worker ko kaise call karti hai
+
+Course #4 ka Worker tab chalta tha jab aap call karte. Ek asli Production Worker tab chalta hai jab _duniya_ events fire karti hai: customer email karta hai, webhook aata hai, cron 09:00 daily fire hota hai, doosra Worker kaam handoff karta hai. Part 1 ke paanch concepts event-driven mental model establish karte hain, teen trigger surfaces (cron, webhook, event), woh semantics jo double-processing rokte hain, aur fan-out patterns jo ek event ko bohot saare Workers jagane dete hain.
+
+### Concept 1: Events vs Requests, durable mental model shift
+
+Request ek synchronous conversation hai. Koi call karta hai; aap handle karte ho; aap return karte ho; woh continue karte hain. Ek connection khula rehta hai; ek insaan ya service _wait_ kar raha hai. Agar aap crash ho jao, toh caller ko error milta hai. Course #4 ka chat agent ek request tha: aapne type kiya, usne stream back kiya, conversation aapki terminal session ki thi.
+
+Ek event ek asynchronous message hai. Duniya mein kuch hua (customer ne sign up kiya, email aaya, payment clear hua), aur originator us fact ka ek named record emit karta hai. _Zero, ek, ya bohot saare_ functions event par independently react karte hain. Koi connection khula nahi rehta. Originator nahi jaanta kaun sun raha hai, results ka wait nahi karta, aur block nahi hota. Duniya aage badh chuki hai.
+
+```python
+# Ek request: mein yahan hoon, wait kar raha hoon, blocking
+result = await agent.handle_customer_message(text=user_input)
+print(result)  # Mein tab unblock hota hoon jab agent khatam kare
+
+# Ek event: mein fire-and-forget karta hoon
+await inngest_client.send(events=[
+    inngest.Event(
+        name="customer/email.received",
+        data={"customer_id": "c-4429", "body": email_body, "subject": subject},
+    ),
+])
+# Mein immediately return karta hoon. Kahin aur, ek ya zyada Inngest
+# functions is event par apne schedule par react karte hain.
+```
+
+![Request vs Event: request model mein (upar), producer consumer par block hota hai; connection poori duration ke liye khula rehta hai, aur kahin bhi crash hone ka matlab hai kaam kho gaya aur caller ko error dikhta hai. Event model mein (neeche), producer fire karta hai aur milliseconds mein return karta hai; event durably store hota hai; ek ya zyada consumers ise apne schedule par independently process karte hain. Consumer ko crash karein aur event retry ke liye wahan rehta hai.](/img/02-event-vs-request-699475a000518319a00e621171a0d01d.webp)
+
+Shift chota lagta hai. Aisa nahi hai. Jab aap events mein sochne lagte ho, durability aur scale lagbhag free mil jaate hain, kyunki:
+
+*   Producer consumer se slow nahi ho sakta (email-receiver agent ke reply draft karne ka wait nahi karta).
+*   Consumer crash aur restart ho sakta hai bina kaam khoye (event durably stored hai; Inngest ise dobara deliver karta hai).
+*   Naye consumers bina producers badle add ho sakte hain (doosri function, maan lo ek analytics counter, `customer/email.received` subscribe kar sakti hai bina email-receiver ko jaane).
+*   Backpressure ek flow-control policy ban jaati hai, na ke code change (Inngest concurrency cap karta hai; producer fire karta rehta hai; events queue hote hain).
+
+Is course ki baaki poori isi ek mental shift ke implications hain.
+
+> **PRIMM, Predict.** Aapka customer-support Worker email ka jawab dene mein 8 second leta hai: teen second agent ki reasoning ke liye, chaar second do MCP tool calls ke liye, ek second database write ke liye. Peak load par aapko 50 emails per minute milte hain. Agar aap request model use karein (email parser block hota hai jab tak agent khatam na kare), toh aapke email parser kitne parallel HTTP connections imply karte hain? Agar aap event model use karein (email parser event fire karta hai aur immediately return hota hai), toh kitne? Confidence 1-5.
+
+Jawab: request model ko **lagbhag 7 concurrent parsers** chahiye (50/min × 8 seconds = ~6.7 parallel handlers, plus headroom). Event model ko **ek parser** chahiye (yeh event fire karta hai aur ~10ms mein return hota hai; event queue 50/min spike absorb karti hai; Inngest functions queue ko aapki allowed concurrency par consume karte hain). Event model production rate ko consumption rate se decouple karta hai. Yeh sirf scaling fact nahi hai; yeh architectural hai. Event "duniya mein kya hua" aur "Worker iske baare mein kya karta hai" ke beech ek durable boundary ban jaata hai. Consumer ko mid-process crash karein aur event abhi bhi retry ke liye wahan hai. Teen aur consumer types add karein aur producer ko pata bhi nahi chalta. **Events woh tarika hain jis se aap kaam ki timing ka ownership chhodte ho.**
+
+**Try with AI**
+
+```
+Mujhe teen scenarios walk through karo. Har ek ko, REQUEST-MODEL
+ya EVENT-MODEL classify karo, aur explain karo kaunsa behtar fit karta hai:
+
+A) Ek user support portal mein "Submit refund request" click karta hai aur
+   2 second ke andar "Refund issued: $30" dekhne ki umeed rakhta hai.
+
+B) Ek raat 02:00 ka cron job 5,000 customers ke across customer-health-check
+   chalata hai aur Slack par report likhta hai.
+
+C) Ek customer support@ par email karta hai; hum chahte hain ke draft response
+   60 second ke andar tayar ho on-call agent ke review aur send karne ke liye.
+
+Har ek ke liye, (a) batayein ke insaan ki timing ki expectation kya hai aur
+(b) batayein ke failure kaisa dikhega agar model mid-execution crash ho jaye.
+```
+
+---
+
+### Concept 2: Cron Triggers, kaam jo waqt guzarne se chalta hai
+
+Sabse simple trigger ghadi hai. Production Worker jo bohot saari cheezein karta hai woh bahar ke events ka reaction nahi hota; woh scheduled kaam hota hai: daily health reports, weekly cleanups, hourly recalculations. Inngest ka cron trigger ek line ka code hai.
+
+```python
+import inngest
+
+@inngest_client.create_function(
+    fn_id="daily-customer-health-check",
+    trigger=inngest.TriggerCron(cron="0 9 * * *"),  # 09:00 har din, UTC
+)
+async def daily_health_check(ctx: inngest.Context) -> dict[str, int]:
+    """Har Pro/Enterprise customer ke liye customer-health pass chalayein."""
+    customers = await ctx.step.run("fetch-pro-customers", fetch_pro_customer_ids)
+    # fan out: ek event per customer, ek Worker run per event
+    await ctx.step.run("fan-out", fan_out_per_customer_events, customers)
+    return {"customers_scheduled": len(customers)}
+```
+
+Teen cheezein dekhein:
+
+*   **Schedule sirf standard cron syntax hai.** `0 9 * * *` har din 09:00 UTC hai; `*/15 * * * *` har 15 minute hai; `0 9 * * 1` Somwar ko 09:00 hai. Inngest cron ko UTC mein evaluate karta hai; agar aapko alag timezone chahiye, toh woh ek function parameter hai, alag concept nahi.
+
+*   **Function abhi bhi `ctx.step.run` use karta hai.** Cron-triggered ho ya event-triggered, _function_ ka shape bilkul waisa hai. Steps waisa kaam karte hain. Durability waisa kaam karti hai. Flow control waisa kaam karta hai. Trigger sirf _kaise_ function start hota hai.
+
+*   **Cron output ek regular Inngest function run hai.** Yeh dashboard mein appear hota hai, run ID hota hai, trace hota hai, replay support karta hai. Agar aapka Somwar-subah ka cron run step 3 par fail hota hai, toh Mangalwar ka cron normally chalega aur Somwar ka failure aapke bug fix ke baad replay ke liye available rehta hai.
+
+**Agar cron fire hone par aapki service down ho toh kya hota hai?** Yeh sawaal hai jo asli schedulers ko kitchen-timer schedulers se alag karta hai. Inngest ke cron runs durably record hote hain jis moment schedule fire hota hai; agar aapka function endpoint unreachable hai, toh Inngest backoff ke saath retry karta hai jab tak succeed na ho ya retry ceiling na hit ho. 09:00 par fire hua cron "miss" nahi hota kyunki aapki deploy 09:00 par rolling thi; run wait karta hai, aap deploy khatam karte ho, run complete hota hai. Development mein cron triggers ki ek quirk hai jo jaanne laayak hai: local dev server sirf crons fire karta hai jab woh chal raha hota hai. Production mein Inngest ki infrastructure par chalte hain, jo hamesha chal rahi hoti hai.
+
+> **Quick check.** Teen claims. Har ek ko True ya False mark karein. (a) Agar ek cron function chalane mein 45 minute leta hai aur har 15 minute par scheduled hai, toh kisi bhi waqt teen concurrent instances chal rahi hongi. (b) Aap cron-triggered function ke andar `step.sleep` use kar sakte ho kaam ko din bhar mein spread karne ke liye. (c) Ek cron-triggered function ko dashboard se manually invoke kiya ja sakta hai testing ke liye.
+
+Jawab: **(a) Concurrency policy par depend karta hai**: default mein Inngest overlapping runs ko queue karega; agar aap `concurrency=1` set karein toh woh serialize hoti hain; agar aap `concurrency=10` set karein toh woh parallelize hoti hain. Default sane hai. **(b) True**, aur yeh ek common pattern hai "daily work ko ghanton mein spread karke load smooth karne" ke liye. **(c) True**: Inngest dashboard aapko kisi bhi function ko demand par invoke karne deta hai testing ke liye, uski trigger se ghair-mutaleq.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath jo Inngest dev server MCP se connected hai,
+Python mein ek cron-triggered Inngest function likhein jo:
+
+1. Har Somwar ko 09:00 UTC par chale.
+2. Pichle hafte mein resolve hue tamam conversations ke liye audit_log
+   table query kare (us window mein status='resolved').
+3. Per-agent metrics compute kare: total conversations resolved, average
+   resolution time, escalations ki count, refunds ki count.
+4. Metrics ko JSON object ke tor par return kare.
+
+Function likhne ke baad, MCP ke `invoke_function` tool se ise manually test
+karein (Somwar ka wait karne ki bajaye). Audit SQL sahi hai yeh confirm
+karne ke liye `grep_docs` se Inngest docs mein "step.step.run" examples
+dhundhein.
+```
+
+---
+
+### Concept 3: Webhook Triggers, jab bahar ki duniya call karti hai
+
+Doosra trigger surface HTTP hai. Ek bahar ka system (Stripe, aapka email provider, customer-portal form, GitHub webhook) aapke Worker ko call karna chahta hai. Inngest ke bina, aapko karna padta: ek HTTPS endpoint khara karna, payload parse karna, source validate karna, queue mein likhna, queue se consume karne wala worker likhna, retries handle karna, idempotency handle karna, telemetry ship karna. Har ek ek hafte ka infrastructure kaam hai.
+
+Inngest ke saath, endpoint provide kiya jaata hai. Aap Inngest dashboard mein ek webhook configure karte ho `https://inn.gs/e/<your-key>` jaisi URL ke saath, Stripe (ya jo bhi ho) ko us URL par point karte ho, aur _webhook payload aapke event stream mein ek event ban jaata hai_. Matching event-name trigger wali koi bhi function ab fire hoti hai.
+
+```python
+@inngest_client.create_function(
+    fn_id="handle-stripe-refund-failed",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def on_refund_failed(ctx: inngest.Context) -> dict[str, str]:
+    """Stripe webhook se triggered → Inngest event → yeh function."""
+    charge_id = ctx.event.data["charge_id"]
+    customer_id = ctx.event.data["customer_id"]
+    # Dekhein ke kaunse support ticket se yeh refund aaya tha
+    ticket = await ctx.step.run(
+        "find-ticket-for-refund", lookup_ticket_by_charge, charge_id,
+    )
+    # Customer-support Worker ko poora context ke saath jagayein
+    await ctx.step.run(
+        "notify-support-agent",
+        notify_support_agent_of_refund_failure,
+        ticket_id=ticket["id"], charge_id=charge_id,
+    )
+    return {"ticket": ticket["id"], "action": "notified"}
+```
+
+Flow: Stripe charge refund karne mein fail hota hai → Stripe Inngest webhook URL par POST karta hai → Inngest `stripe/charge.refund.failed` naam ka event banata hai → upar wali function (us event name se match hoti hai) fire hoti hai → function steps use karta hai ticket dhundhne aur support agent ko notify karne ke liye. HTTP plumbing mein se kuch aapko likhna nahi padta. Koi endpoint, koi parser, koi queue, koi consumer.
+
+Do adjacent patterns naam laayak:
+
+*   **Generic JSON webhooks.** Agar source koi known vendor nahi hai, toh aap kisi bhi JSON-emitting service ko isi tarah ke endpoint par point karte ho aur event name chunte ho. Slash-namespaced names (`vendor/event.subtype`) convention hain; kuch enforce nahi karta, lekin dashboard saaf sort hota hai jab aap follow karein.
+*   **Webhook transforms.** Agar incoming payload aapke chahe hue shape se match nahi karta, toh Inngest aapko ek "transform" function define karne deta hai jo receipt time par server-side chalta hai aur event ko reshape karta hai jab tak woh aapke event stream mein na aaye. Yeh aapke function code ko provider-specific fields se saaf rakhta hai.
+
+> **PRIMM, Predict.** Ek Stripe webhook `stripe/charge.refund.failed` ko bilkul usi millisecond par fire karta hai jab aapka customer-support Worker bhi `inngest_client.send` call kar raha hai ek _alag_ event emit karne ke liye jiska naam `customer/refund.investigation_needed` hai. Dono events ek saath system mein aate hain; upar wali function sirf Stripe event par trigger hoti hai. Kya function ek baar chalegi ya do baar? Confidence 1-5.
+
+Jawab: **ek baar**. Function sirf `stripe/charge.refund.failed` par trigger hone ke liye registered hai; `customer/refund.investigation_needed` event ka alag naam hai aur alag function se match hota hai (ya koi function nahi, agar aapne likhi nahi hai). Ek event ka naam uski routing key hai. Do events jinke alag naam hain kabhi galti se ek hi function ko trigger nahi karte, chahe woh ek hi instant mein aayein. Yeh ek wajah hai ke naming discipline kyun zaroori hai: event name mein ek typo (`customer/email_received` vs `customer/email.received`) ka matlab hai function kabhi fire nahi hoti, aur symptom silent hai. Inngest ka dashboard isko pakadne mein madad karta hai: unmatched events ek alag stream mein appear hote hain jise aap audit kar sakte ho.
+
+**Try with AI**
+
+```
+Mujhe apne customer-support Worker ke liye teen webhook sources handle
+karne hain:
+
+A) Stripe: refund failed, charge disputed
+B) Postmark (email service): bounced email, complaint
+C) Mera internal admin UI: manual "investigate this ticket" button
+
+Har ek ke liye, decide karein:
+1. Kaunse event names use karoge (vendor/event.subtype format).
+2. Kya function jo ispar react karta hai synchronously chalna chahiye
+   (caller wait kar raha hai) ya asynchronously (fire aur continue).
+3. Kya aap payload ko reshape karne ke liye webhook transform likhoge,
+   ya ise raw consume karoge.
+
+Phir Stripe refund-failed case ke liye Inngest function Python mein
+likhein, MCP ke grep_docs se TriggerEvent ki current syntax dhundhein
+aur dev-server MCP ke send_event tool se test karein.
+```
+
+---
+
+### Concept 4: Idempotency aur Event Semantics, wohi event do baar fire hona
+
+Webhooks exactly-once nahi hain. Woh _at-least-once_ hain: sender retry karta hai agar use acknowledgment na mile. Networks packets drop karte hain, services restart hoti hain, aapka endpoint timeout hota hai aur sender retry karta hai chahe aap actually succeed ho gaye hon. Idempotency ke bina, har webhook system eventually kisi ko double-bill, double-email, ya double-refund karta hai. Yeh theoretical concern nahi hai; yeh event systems mein sabse common production bug hai.
+
+Do layers of defense, dono Inngest mein built-in.
+
+**Layer 1: Source par Event ID seeds.** Jab aap khud event bhejte ho (webhook se receive karne ki bajaye), toh aap ek idempotency key attach kar sakte ho:
+
+```python
+await inngest_client.send(events=[
+    inngest.Event(
+        name="customer/refund.requested",
+        data={"order_id": "o-4429", "amount_cents": 5000},
+        id=f"refund-request-{order_id}-{request_timestamp}",  # idempotency key
+    ),
+])
+```
+
+Agar dedup window (default 24 ghante) ke andar ek aur event usi `id` ke saath bheja jaata hai, toh Inngest duplicate drop karta hai. Same logical event, same id, sirf ek function run.
+
+**Layer 2: Step-level idempotency.** Function ke andar, har `step.run` apne naam se identify hota hai. Agar function step 3 aur step 4 ke beech crash hota hai, toh retry function code top se dobara chalata hai, lekin steps 1, 2, aur 3 ke liye, Inngest _stored_ outputs return karta hai bina step body dobara execute kiye. Step 4 pehli baar normally chalta hai. Yeh hai jo function ko "durable" banata hai: completed steps ke side effects retry par dobara nahi hote.
+
+```python
+@inngest_client.create_function(
+    fn_id="issue-customer-refund",
+    trigger=inngest.TriggerEvent(event="customer/refund.requested"),
+)
+async def issue_refund(ctx: inngest.Context) -> dict[str, str]:
+    # Step 1: order dhundhein. Agar function retry kare, toh yeh WAHI
+    # order data return karta hai jo pehli baar compute kiya tha, Inngest ke memo se.
+    order = await ctx.step.run(
+        "lookup-order", lookup_order_by_id, ctx.event.data["order_id"],
+    )
+    # Step 2: Stripe call karein. Agar function retry kare IS STEP KE
+    # SUCCEED KARNE KE BAAD, toh Stripe call DOBARA NAHI hota. Refund
+    # exactly once issue hota hai chahe function teen baar chali ho.
+    refund = await ctx.step.run(
+        "issue-stripe-refund", call_stripe_refund_api,
+        charge_id=order["stripe_charge_id"],
+        amount=ctx.event.data["amount_cents"],
+    )
+    # Step 3: audit row likhein. Same property: at most once chalta hai.
+    await ctx.step.run(
+        "audit-refund", write_audit_refund_issued,
+        order_id=order["id"], refund=refund,
+    )
+    return {"refund_id": refund["id"]}
+```
+
+Agar yeh function step 3 ke dauran crash hoti hai, toh retry step 1 mein re-enter karta hai (cached order data milta hai, koi DB call nahi), step 2 mein re-enter karta hai (cached refund data milta hai, koi Stripe call nahi), step 3 asli tareeqe se chalta hai, return karta hai. **Customer ka card ek baar charge hota hai, chahe function teen baar chali ho.** Yeh killer feature hai. Yeh hai jo Inngest ko ek queue with retry loop se qualitatively alag banata hai.
+
+:::warning
+External boundary par exactly-once ke liye dono layers chahiye
+:::
+
+Inngest ki memoization aapko function ke nazdeek exactly-once _step completion_ deti hai: jab `step.run` ek step ko successful record karta hai, toh woh dobara execute nahi hoga. Lekin ek narrow window hai. Agar aapke step ka body Stripe call karta hai (side effect Stripe ke servers par hota hai), phir Inngest result record karne se _pehle_ crash hota hai, toh retry Stripe ko dobara call karega. Inngest ke nazdeek step "complete nahi hua." Stripe ke nazdeek charge pehle se ho chuka hai. Production-grade pattern hai Inngest step memoization _plus_ provider-level idempotency keys: Stripe ka `Idempotency-Key` header, Postmark ka `MessageID` reuse, aapke apne MCP server ki idempotency contract. `step.run` aur provider idempotency keys ko complementary samjhein, na ke substitutes: `step.run` aapke function ki _internal logic_ ko exactly-once rakhta hai; provider ki idempotency key _external side effect_ ko exactly-once rakhti hai.
+
+> **Quick check.** True ya false. (a) `step.run` step ko tab tak idempotent banata hai jab tak function ke andar wala bhi idempotent ho. (b) Dedup window ke bahar ek duplicate ID wala event naye event ke tor par treat hoga. (c) Agar `step.run` mid-execution fail hota hai (step ka code exception throw karta hai), toh Inngest failure store karta hai aur next attempt par sirf step ko retry karta hai bina prior steps dobara chalaye.
+
+Jawab: **(a) False**: `step.run` step ke _invocation_ ko idempotent banata hai (success par at most once chalega), lekin agar function ke andar wala non-idempotent hai (jaise Stripe call karna), toh at-most-once guarantee bilkul wohi hai jo aapko chahiye. Poori baat yeh hai ke aapko khud Stripe-calling ko idempotent nahi banana padta. **(b) True**: Inngest ki dedup window default 24 ghante hai; us window ke baad usi ID wale events naye ke tor par treat hote hain. **(c) True**: failure replay khud memoized hai; Inngest jaanta hai step 3 attempt 1 par fail hua tha aur attempt 2 par sirf step 3 retry karta hai. Prior successful steps dobara execute nahi hote.
+
+**Try with AI**
+
+```
+Teen scenarios hain. Har ek ke liye, decide karein: idempotency PROBLEM
+ya NO PROBLEM, aur agar problem hai toh fix kya hai:
+
+A) Stripe wohi charge.refund.failed webhook 90 second mein teen baar
+   bhejta hai (kyunki unke pehle do attempts aapke endpoint par timeout
+   ho gaye). Aapka function customer ko email karta hai.
+
+B) Ek customer "Issue refund" teen baar click karta hai kyunki page
+   slow tha. Aapka function Stripe call karta hai aur audit_log likhta hai.
+
+C) Aapka raat 09:00 ka cron har Pro customer ko ek customer-health-check
+   event bhejta hai. Agar do crons ek saath fire hon (ek deploy bug),
+   toh kya hota hai?
+
+Har problem case ke liye, EK specific fix propose karein: function ke
+andar event ID seed, inngest_client.send mein idempotency key, ya
+trigger par function-level deduplication.
+```
+
+---
+
+### Concept 5: Fan-out aur Sub-agent Delegation, ek event bohot saare Workers
+
+Aksar ek single event ko _bohot saari_ jagahoon par kaam trigger karna hota hai. Stripe ka `charge.refund.failed` event shayad karna chahe: support agent ko notify kare, audit mein likhe, customer ka risk score update kare, finance ops ko alert kare, Slack par post kare. Paanch reactions, sab independent, sab ek event se.
+
+**Inngest pattern: ek hi event par bohot saare functions subscribe karein.** Koi fan-out code nahi; bas multiple `@inngest_client.create_function` decorators usi `TriggerEvent` ke saath. Har function independently chalta hai, apni retries hoti hain, apna step trace hota hai, baqion se independently fail hota hai.
+
+```python
+@inngest_client.create_function(
+    fn_id="refund-failed-notify-support",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def notify_support(ctx: inngest.Context) -> dict[str, str]:
+    # ... customer-support Worker chalata hai response draft karne ke liye ...
+    return {"status": "drafted"}
+
+@inngest_client.create_function(
+    fn_id="refund-failed-update-risk-score",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def update_risk_score(ctx: inngest.Context) -> dict[str, float]:
+    # ... risk-scoring Worker chalata hai ...
+    return {"new_risk_score": 0.42}
+
+@inngest_client.create_function(
+    fn_id="refund-failed-post-slack",
+    trigger=inngest.TriggerEvent(event="stripe/charge.refund.failed"),
+)
+async def post_to_slack(ctx: inngest.Context) -> None:
+    # ... Slack notification post karta hai ...
+    return None
+```
+
+Ek Stripe webhook aata hai. Inngest ek event banata hai. Teen functions fire hoti hain, har ek apne run mein. Agar `post_to_slack` fail ho jaaye kyunki Slack down hai, toh baqi doonon par asar nahi hota aur normally complete hoti hain. Failed run dashboard mein Slack recover hone ke baad replay ke liye baitha rehta hai. Yeh multi-Worker coordination ka core hai, aur yeh woh architectural pattern hai jo aapka future manager layer (ek baad ka course) scale par compose karega.
+
+**Doosra fan-out pattern: parent-fires-N-children.** Kabhi fan-out dynamic hota hai. Aapka daily cron har Pro customer ke liye ek customer-health event fire karna chahta hai, jo hafte par 500 ya 5,000 ho sakta hai. Parent function N events bhejta hai:
+
+```python
+from datetime import date
+
+async def fan_out_per_customer_events(
+    customers: list[str],
+) -> int:
+    events = [
+        inngest.Event(
+            name="customer/health_check.requested",
+            data={"customer_id": cid},
+            id=f"daily-health-{cid}-{date.today().isoformat()}",  # idempotency
+        )
+        for cid in customers
+    ]
+    await inngest_client.send(events=events)
+    return len(events)
+```
+
+Ek `send` call mein 5,000 events bhejte hain. 5,000 function runs fire hoti hain, har ek apne customer\_id ke saath, har ek isolated, har ek independently retryable. Flow control (Concept 11) cap karta hai kitne concurrently chalte hain taake aap apni downstream APIs na pighla dein. Cron function seconds mein return hota hai; fan-out Inngest ki flow-control policies ki allow ki rate par chalta hai.
+
+**Sub-agent delegation** fan-out ka ek special case hai. Ek Worker run ke andar, aap `await inngest_client.send(...)` call karke doosre Worker types ko sub-tasks delegate kar sakte ho. Parent children ka wait nahi karta jab tak woh explicitly `step.invoke` use na kare unhe synchronously chalane aur unke results collect karne ke liye.
+
+> **PRIMM, Predict.** Aapke paas teen functions hain sab `customer/email.received` se triggered: customer-support agent jo reply draft karta hai (15 second), ek analytics counter (50ms), aur ek "VIP detector" jo check karta hai ke customer high-value hai (200ms). Jab ek email aata hai, toh har ek ke liye user-visible latency kaisa dikhta hai? Teen options: (a) teenon mil ke ~15 second; (b) teenon parallel mein chalte hain, total latency ~15 second (sabse slow); (c) har ek independently chalta hai bina shared latency ke. Confidence 1-5.
+
+Jawab: **(c)**. Har function apna run hai, apne process slot mein. Customer-support agent analytics counter ko block nahi karta; VIP detector agent ko block nahi karta. Bahar se, kisi bhi particular function ki latency sirf us function ka apna time hai. Koi function kabhi sibling function ka wait nahi karta. Yeh fan-out kyun scale karta hai: consumers isolated hain. Agar agent crash ho, toh analytics counter par asar nahi hota.
+
+**Try with AI**
+
+```
+In teen scenarios ke liye fan-out architecture design karein. Har ek ke
+liye, event names aur subscribe karne wali functions sketch karein:
+
+A) Naya customer sign up karta hai. Karna hai: welcome email bhejein,
+   Stripe customer banayein, Slack #new-customers par post karein,
+   audit_log mein likhein, 7-day follow-up schedule karein.
+
+B) Customer support email aata hai. Karna hai: reply draft karein (agent),
+   sentiment detect karein, check karein ke VIP hai, customer ka "last
+   contact" timestamp update karein, sahi ticket thread se attach karein.
+
+C) Daily cron 09:00 par ~5,000 Pro customers par customer-health-check
+   chalana hai. Har check ~30 second leta hai. Hum chahte hain ke poora
+   batch 11:00 tak complete ho (2-hour window).
+
+Har ek ke liye, decide karein: kitne event types, kitni subscriber
+functions, idempotency story kya hai, aur ek specific failure mode
+jo yeh design se protected hai.
+```
+
+---
+
+## Part 2: Durable Execution, jab kuch toot jaye toh kya hota hai
+
+Triggers Worker ko jagate hain. Durable execution Worker ko aage hone wali cheezein survive karne deta hai. Course #4 ka Worker ek agent call karta hai, agent teen tools call karte hain, tools Postgres aur Stripe aur OpenAI call karte hain: ek conversation mein chay external calls, jo mein se koi bhi fail ho sakta hai. Durability ke bina, ek single transient failure conversation ke beech mein poora flow top se restart karta hai. **Durability woh property hai jo kehti hai: jab kuch mid-execution fail ho, toh pehle se complete hua kaam complete rehta hai, aur execution jahan toota tha wahan se resume hota hai.** Inngest yeh ek primitive (`step.run`) aur neeche ek memoization mechanic ke saath deliver karta hai. Part 2 dono explain karta hai, plus time-based variants (`step.sleep`, `step.wait_for_event`), retry semantics, aur `step.ai` primitives.
+
+> **First-pass compression note.** Agar aap scan kar rahe ho, toh load-bearing concepts 6 (`step.run`) aur 7 (memoization) hain. Concepts 8-10 un par build karte hain. 6 aur 7 dhyan se parhein; baaki tezi se parhenge jab yeh do aapke dimaag mein ho.
+
+### Concept 6: `step.run` aur Durable Function Model
+
+Ek normal Python function ek baar chalta hai, top to bottom. Agar yeh beech mein crash ho, toh aap top se shuru karte ho. Agar crash hone se pehle teen API calls kiye, toh next attempt woh teen calls dobara karta hai, aur unke liye pay karta hai, aur shayad kisi ko dobara charge karta hai.
+
+Ek Inngest function durable hai. Har operation jise aap checkpointed chahte ho usse `step.run(name, fn, ...)` mein wrap kiya jaata hai. Function abhi bhi har attempt par top to bottom chalta hai, lekin **jo steps pehle se complete ho chuke hain woh apne stored outputs return karte hain na ke dobara execute hote hain**. Function jahan toota tha wahan tak "catch up" karta hai, phir aage badhta hai.
+
+```python
+@inngest_client.create_function(
+    fn_id="customer-support-conversation",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    customer_id = ctx.event.data["customer_id"]
+    # Step 1: customer record load karein (ek DB call)
+    customer = await ctx.step.run(
+        "load-customer", load_customer_by_id, customer_id,
+    )
+    # Step 2: conversation thread load karein (ek DB call)
+    thread = await ctx.step.run(
+        "load-thread", load_thread_for_customer, customer_id,
+    )
+    # Step 3: OpenAI Agents SDK agent chalayein (Course Four ka Worker)
+    response = await ctx.step.run(
+        "run-agent",
+        run_customer_support_agent,
+        customer=customer,
+        thread=thread,
+        email_body=ctx.event.data["body"],
+    )
+    # Step 4: draft reply database mein likhein
+    await ctx.step.run(
+        "save-draft-reply", save_reply,
+        customer_id=customer_id, text=response.draft,
+    )
+    # Step 5: Slack ke zariye on-call human reviewer ko notify karein
+    await ctx.step.run(
+        "notify-reviewer", post_slack_for_review, response=response,
+    )
+    return {"status": "drafted", "reviewer_notified": True}
+```
+
+Paanch steps. Har ek independently checkpointed.
+
+Durability yahan aapko kya deti hai, teen failure scenarios mein:
+
+*   **Scenario A: agent step timeout throw karta hai.** Agent call ko `step.run` se wrap kiye bina, is function ka next attempt customer dobara load karta hai, thread dobara load karta hai, _aur agent ko scratch se dobara chalata hai_, OpenAI tokens ke liye dobara pay karta hai us kaam ke liye jo agent ne pehle se partially kiya tha. `step.run` ke saath, customer aur thread loads memoized hain (steps 1-2 dobara execute nahi hote); sirf step 3 retry hota hai. Inngest ki automatic retries transient OpenAI errors handle karti hain bina aapke code ko jaane.
+
+*   **Scenario B: function process step 3 aur step 4 ke beech mein kill ho jaati hai** (deploy roll hua, node restart hua, container OOM hua). Durability ke bina, agent ka response kho jaata hai aur customer ka email jawab ke bina rehta hai jab tak kisi ko pata na chale. Durability ke saath, function restart ke baad resume hota hai: steps 1, 2, 3 milliseconds mein apne stored outputs return karte hain, step 4 asli tareeqe se chalta hai, step 5 asli tareeqe se chalta hai, customer ko drafted reply milta hai.
+
+*   **Scenario C: Slack step 5 par 503 return karta hai.** `step.run` ke bina, aap ya toh kaam kho dete ya Slack call ke liye specifically hand-written retry-and-backoff logic likhte. `step.run` ke saath, Inngest step 5 ko exponential backoff ke saath retry karta hai jab tak Slack recover na kare; is dauran steps 1-4 complete rehte hain aur dobara execute nahi honge. Draft reply pehle se database mein hai; notification sirf pending hai.
+
+Aap koi retry loops nahi likhte, koi "kya maine pehle yeh kar liya" checks nahi, koi state machines. State machine _wahi_ `step.run` calls ki sequence hai. Har step ek node hai; har transition durable hai.
+
+**`step.run` ka ek rule.** `step.run` ko diya gaya function **apne inputs ke saath deterministic hona chahiye**: usi arguments ke saath do baar call karne par wohi result produce karna chahiye.
+
+*   Yeh pure functions ke liye automatic hai.
+*   Yeh idempotent API calls ke liye automatic hai (Stripe ka `idempotency_key`, aapke apne MCP server tools).
+*   Yeh un cheezon ke liye care maangta hai jaise "random ID generate karna" ya "default temperature ke saath LLM call karna" (retry original attempt se alag output produce kar sakta hai, jo kabhi matter karta hai).
+
+Jab operation deterministic nahi hai, aap use deterministic banate ho: seed pass karein, random value ko step ke bahar pre-generate karein, ya accept karein ke retry original se alag ho sakta hai (agent response ke liye aksar theek hai).
+
+> **Quick check.** True ya false. (a) Function body har retry par top se dobara execute hota hai, `step.run` calls ke bahar ke tamam imports aur variable assignments sahit. (b) Agar ek step complete hone mein 30 second leta hai, aur function 25 second par crash hoti hai, toh retry us step ko second 25 se continue karta hai. (c) `step.run` outputs Inngest ki infrastructure mein store hote hain, aapki application mein nahi.
+
+Jawab: **(a) True**, aur isliye aap kaam ko `step.run` ke _andar_ rakhte ho. `step.run` ke bahar ka code har retry par dobara chalta hai; ke andar ka code har attempt par ek baar chalta hai aur success par memoized hota hai. **(b) False**: `step.run` atomic unit hai; agar step interrupt hota hai, toh retry poora step dobara chalata hai. Agar aapka step itna lamba hai ke usse restart nahi kiya ja sakta, toh use chhote steps mein todein. **(c) True**: step output store Inngest ka hissa hai, aapka DB nahi. Isliye aap runs ko replay kar sakte ho chahe aapki database schema badal chuki ho.
+
+:::warning
+Agar DeepSeek tool-using Worker wrap kar rahe ho
+:::
+
+`build-agents` crash course Decision 4 ek `openai-agents==0.17.2` streamed-path SDK bug document karta hai DeepSeek ke reasoning models par tool-calling turns ke saath: `tool_calls` message aur `tool` result ke beech ek spurious empty assistant message, jise DeepSeek ka strict parser reject karta hai. Agar aapka Course Four Worker DeepSeek ko `@function_tool` ke saath stream karta hai, toh neeche `Runner.run_streamed` ko `step.run` mein wrap karne se pehle us course ka OpenAI-fallback resolution apply karein.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath jo Inngest dev server MCP se connected hai,
+mere Course Four customer-support Worker ko ek Inngest durable function mein
+re-shape karein. Maujooda Runner.run_streamed invocation jo customer email
+process karta hai use lein aur har ek ko apne step.run ke andar wrap karein:
+
+1. Customer-data MCP server se customer load karein
+2. Related conversation thread load karein
+3. Agent chalayein (OpenAI Agents SDK Runner)
+4. Draft reply persist karein
+5. On-call reviewer ko Slack mein notify karein
+
+Current Python SDK syntax dhundhne ke liye grep_docs use karein. Synthetic
+email payload se test karne ke liye invoke_function use karein. Phir step 4
+mein jaanbhoojkar exception raise karein aur confirm karne ke liye ke steps
+1-3 retry par dobara execute nahi hote, get_run_status use karein.
+```
+
+---
+
+### Concept 7: Memoization, resumability ka neeche ka mechanic
+
+Concept 6 ne kaha "jo steps pehle se complete ho chuke hain woh apne stored outputs return karte hain na ke dobara execute hote hain." Woh mechanism **memoization** hai aur yeh mechanic samajhna laayak hai, kyunki Inngest ka har doosra primitive ise use karta hai.
+
+Jab aap `await ctx.step.run("load-customer", load_customer_by_id, "c-4429")` call karte ho, toh **pehli** attempt par teen cheezein hoti hain:
+
+1.  Inngest apna memo store check karta hai: "kya is run mein `load-customer` step ke liye stored result hai?" Nahi hai.
+2.  Function `load_customer_by_id("c-4429")` chalta hai. Yeh `{"id": "c-4429", "tier": "pro", ...}` return karta hai.
+3.  Inngest us result ko memo store mein likhta hai, `(run_id, step_name="load-customer")` se keyed. Phir yeh aapke code ko result return karta hai.
+
+Agar function step 3 ke baad crash hoti hai aur Inngest retry karta hai, toh **doosri** attempt par function body top se dobara chalti hai. Jab execution usi line par pahunchti hai, teen alag cheezein hoti hain:
+
+1.  Inngest apna memo store check karta hai: "kya is run mein `load-customer` step ke liye stored result hai?" Haan, yeh attempt 1 mein store hua tha.
+2.  Function `load_customer_by_id("c-4429")` **nahi chalta**. DB call nahi hota.
+3.  Inngest aapke code ko milliseconds mein stored result return karta hai.
+
+Isliye retries sasti hain: expensive kaam pehle se cached hai. Isliye durability sahi hai: expensive kaam do baar nahi hota. Aur isliye "function body top to bottom dobara chalti hai" theek hai chahe waste lagta ho: _steps ke andar ka kaam actually dobara nahi chalta; sirf steps ke beech ka orchestration code chalta hai._
+
+![Steps ke across memoization: attempt 1 par, function top to bottom chalti hai; har step ka output Inngest ke memo store mein (run_id, step_name) se keyed hokar store hota hai. Step 4 par crash ke baad attempt 2 mein, function code top se dobara chalti hai, lekin steps 1, 2, aur 3 apne stored outputs milliseconds mein return karte hain. DB call, OpenAI call, aur Stripe call dobara execute nahi hote. Sirf step 4 pehli baar asli tareeqe se chalta hai. Customer exactly once charge hota hai chahe function do baar chali ho.](/img/03-step-memoization-c096ffd543992d1becb19d60bb9d91ba.webp)
+
+**Woh implication jo naye users ko hairaan karti hai.** `step.run` ke _bahar_ ka code har attempt par chalta hai. Agar aap yeh karein:
+
+```python
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    # ANTI-PATTERN: yeh har retry par chalta hai. Aisa mat karo.
+    expensive_thing: dict = await fetch_expensive_data(ctx.event.data["id"])
+    await ctx.step.run("do-something", do_something_with, expensive_thing)
+    return {"status": "done"}
+```
+
+`fetch_expensive_data` har retry par chalta hai. Agar yeh $0.10 per call cost karta hai aur function 5 baar retry hoti hai, toh aapne $0.50 kharch kiye wohi data paanch baar fetch karne mein. Fix hai expensive cheez ko apne step mein wrap karna:
+
+```python
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    expensive_thing: dict = await ctx.step.run(
+        "fetch-expensive-data", fetch_expensive_data, ctx.event.data["id"],
+    )
+    await ctx.step.run("do-something", do_something_with, expensive_thing)
+    return {"status": "done"}
+```
+
+Ab `fetch_expensive_data` memoized hai; retries iske liye dobara pay nahi karte.
+
+**Step name memo key hai.** Isliye step names ek function ke andar unique hone chahiye. Agar aapke paas ek hi function mein do `step.run("load-customer", ...)` calls hain, toh Inngest dono calls ke liye pehle wale ka stored output return karega. Yeh almost kabhi woh nahi hai jo aap chahte. Agar aapke paas ek loop hai jo ek step N baar call karta hai, toh unhein uniquely name karein (`step.run(f"load-customer-{i}", ...)`) taake har iteration ka apna memo slot ho.
+
+> **PRIMM, Predict.** Aapke function ke teen steps hain. Step 1 (`load-customer`) DB calls mein $0.01 cost karta hai aur 100ms leta hai. Step 2 (`run-agent`) OpenAI tokens mein $0.20 cost karta hai aur 12 second leta hai. Step 3 (`save-draft`) DB calls mein $0.005 cost karta hai aur 50ms leta hai. Step 2 OpenAI rate limits ki wajah se 30% time fail hota hai; Inngest backoff ke saath retry karta hai. (a) teenon ko `step.run` mein wrap karne aur (b) sirf step 2 ko `step.run` mein wrap karne ke beech cost difference kya hai? Confidence 1-5.
+
+Jawab: (a) ke saath, ek single retry aapko sirf step 2 ki cost deta hai ($0.20). Customer aur save-draft memoized hain; dobara execute nahi hote. (b) ke saath, har retry aapko steps 1 aur 3 _plus_ step 2 deta hai: $0.215 per retry. Hazaar emails par 30% retry rate ke saath, yeh lagbhag $4.50 ka difference hai pure waste mein, plus step 3 ke do baar chalane par kya partially write hua yeh figure out karne ki operational complexity. **Har cheez ko jise aap dobara execute nahi chahte `step.run` mein wrap karein.** Yeh optional nahi hai jab aap mechanic samajh lete ho.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: Concept 6 ke Try-with-AI mein banaye
+gaye Inngest function ko review karein aur pehchaan lein ke kaunsa code
+step.run calls KE BEECH mein hai jo apne step mein wrap hona chahiye
+lekin nahi hai. Common candidates:
+
+- Computed values (timestamps, IDs, formatting) jo hum chahte hain ke
+  retries ke across stable hon
+- Logging ya metrics services ke calls
+- Redis, environment variables, secret managers se reads
+
+Phir ek refactor propose karein jo in mein se har ek ko apne meaningful
+name wale step mein move kare. Har ek ke liye, explain karein ke side
+effect woh hai jo aap ek baar chahte ho (step.run use karein) ya har
+retry par (bahar chhod dein).
+```
+
+---
+
+### Concept 8: `step.sleep` aur `step.wait_for_event`, waqt ke zariye durability
+
+Kuch kaam ka wait karna padta hai. Ek welcome-email pipeline email turant bhejti hai, phir teen din wait karti hai, phir follow-up bhejti hai. Ek refund-investigation ko insaan ki approval ka wait karna padta hai. Ek trial-conversion flow 7 din ke andar "user upgraded to paid" ka intezaar karta hai aur jo dikhta hai uske mutabiq alag email bhejta hai.
+
+Normal Python function mein, "teen din wait karo" ka matlab hai teen din tak process khula rakhna. Yeh untenable hai: aapka process restart hota hai, aapki hosting 72 ghante idle compute ka bill deti hai, aapka timer kho jaata hai. Inngest mein, "teen din wait karo" ek line hai:
+
+```python
+from datetime import timedelta
+
+@inngest_client.create_function(
+    fn_id="trial-welcome-series",
+    trigger=inngest.TriggerEvent(event="user/trial.started"),
+)
+async def welcome_series(ctx: inngest.Context) -> dict[str, str]:
+    user_id = ctx.event.data["user_id"]
+    await ctx.step.run("send-welcome-email", send_welcome_email, user_id)
+    # Teen din wait karein. Function memory se page out ho jaata hai.
+    # Kuch compute consume nahi kar raha. Teen din baad, Inngest ise
+    # wapas page in karta hai aur next line par execution resume karta hai.
+    await ctx.step.sleep("wait-three-days", timedelta(days=3))
+    await ctx.step.run("send-followup", send_followup_email, user_id)
+    return {"status": "completed"}
+```
+
+`step.sleep` durable hai. Function suspend hota hai; Inngest resume time store karta hai; wait karte waqt kuch compute consume nahi karta; function sahi waqt par resume hota hai, tamam prior step outputs abhi bhi memoized. `step.sleep` (aur `step.sleep_until`) paid plans par ek saal tak wait kar sakta hai, free Hobby plan par saat din tak ([Inngest usage limits](https://www.inngest.com/docs/usage-limits/inngest)). Saat din ka Hobby ceiling is course ke har sleep ke liye kaafi hai.
+
+Zyada powerful sibling `step.wait_for_event` hai. Waqt ka wait karne ki bajaye, _doosre event_ ka wait karein. Function suspend hota hai jab tak matching event na aaye, ya aapki set ki hui timeout expire na ho jaaye. Yeh hai jo Inngest ko HITL (Concept 15) aur inter-agent coordination patterns ki sabse clean expression banata hai:
+
+```python
+@inngest_client.create_function(
+    fn_id="refund-with-approval",
+    trigger=inngest.TriggerEvent(event="customer/refund.requested"),
+)
+async def refund_with_approval(ctx: inngest.Context) -> dict[str, str]:
+    request = ctx.event.data
+    request_id = request["request_id"]
+    # Agar amount $500 se zyada hai, toh issue karne se pehle approval chahiye
+    if request["amount_cents"] >= 50_000:
+        # Slack/email/kisi ke zariye insaan ko notify karein
+        await ctx.step.run("notify-approver", notify_human_approver, request)
+        # Approval event ka wait karein. 24 ghante tak; warna expire.
+        approval = await ctx.step.wait_for_event(
+            "wait-for-approval",
+            event="refund/approval.decided",
+            timeout=timedelta(hours=24),
+            if_exp=f"async.data.request_id == '{request_id}'",
+        )
+        if approval is None or not approval.data.get("approved"):
+            return {"status": "rejected_or_timeout"}
+    # Ya toh $500 se kam tha, ya approve hua
+    refund = await ctx.step.run(
+        "issue-stripe-refund", call_stripe_refund_api, request,
+    )
+    return {"status": "issued", "refund_id": refund["id"]}
+```
+
+Kya ho raha hai:
+
+*   Function `wait_for_event` tak pahunchti hai. Suspend hoti hai. Zero compute consumed.
+*   Ek insaan Slack notification dekhta hai, aapke admin UI mein "Approve" click karta hai, aapka UI `inngest_client.send(events=[Event(name="refund/approval.decided", data={"request_id": "...", "approved": True})])` call karta hai.
+*   Inngest event ko waiting function se match karta hai (`if_exp` ensure karta hai ke sirf _is_ request\_id wale events match karein) aur function ko event ke saath `approval` return value ke tor par resume karta hai.
+*   Function refund step par continue karti hai. Stripe refund insaan ke approve karne ke baad hota hai.
+
+`step.sleep` aur `step.wait_for_event` woh timeouts hain jinke liye aap pay nahi karte. Function aapke code mein synchronous lagti hai ("teen din wait karo, phir email bhejo"), lekin runtime semantics async aur durable hain. Yeh Inngest ki do cheezon mein se ek hai jise woh mashoor hai (durable retries doosri hai). Iske bina, alternative ek queue plus ek state machine plus ek database plus ek poller hai, aur aap teen ki bajaye hazaar lines likhte.
+
+> **Quick check.** Teen claims. Har ek ko True ya False mark karein. (a) Agar `step.sleep` 30 din ke liye set hai aur aapki service in 30 dino mein paanch baar redeploy hoti hai, toh sleep paid plan par uninterrupted continue hoti hai. (b) Agar `step.wait_for_event` timeout hoti hai, toh function exception raise karta hai. (c) Ek hi function ke andar do `step.wait_for_event` calls ek saath usi event ka wait kar sakti hain.
+
+Jawab: **(a) Paid plan par True**: sleeps Inngest ki infrastructure mein store hoti hain, na ke aapki service ki memory mein, toh redeploys unhe kho nahi dete. Tier ceiling yaad rakhein: 30-din ki sleep paid plan par theek hai lekin free Hobby plan ke saat-din ke sleep cap se zyada hai. **(b) False**: timeout par, `wait_for_event` `None` return karta hai. Aapka code check karta hai aur decide karta hai kya karna hai (rejection, escalation, default-approval, jo bhi policy ho). **(c) True, lekin suspicious**: dono fire hongi jab matching event aata hai. Agar do `wait_for_event` calls ke alag `if_exp` filters hain, toh yeh theek hai. Agar woh identical hain, toh aap shayad ek refactor opportunity dekh rahe ho.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath ek delayed-investigation flow banayein.
+
+Specification:
+1. Event 'customer/refund.failed' se triggered.
+2. Turant on-call insaan ko Slack par refund details aur ek "Investigate"
+   button ke saath notify karein.
+3. Insan ke button click karne ka wait karein (jo
+   'customer/refund.investigation_started' fire karta hai) 4 ghante tak.
+4. Agar click waqt par aaye: agent ko investigation summary draft karne
+   ke liye chalayein.
+5. Agar 4 ghante bina click ke guzar jaayein: senior reviewer ko escalate
+   karein 'customer/refund.escalated' fire karke.
+
+Testing ke dauran human-click event simulate karne ke liye dev-server MCP
+ka send_event tool use karein. Suspended function dashboard mein kaise
+dikhta hai inspect karne ke liye get_run_status use karein. Likhne se
+pehle, wait_for_event semantics par sahi page scan karne ke liye
+list_docs use karein, phir us page par read_doc karein if_exp filter
+expression ki exact syntax ke liye.
+```
+
+---
+
+### Concept 9: Retries, Error Handling, Dead-letter
+
+Default mein, Inngest failed steps ko retry karta hai. Defaults sensible hain: ~4 retries exponential backoff ke saath, attempts ke beech kuch second se kuch minute tak. Final retry fail hone ke baad, run ek **failed** state mein aata hai aur inspection aur (optional) replay ke liye wahan rehta hai. Aap ise per function tune kar sakte ho: `retries=10`, `retries=0` (bilkul retry mat karo), specific exception types jo retry nahi hone chahiye.
+
+```python
+@inngest_client.create_function(
+    fn_id="charge-customer",
+    trigger=inngest.TriggerEvent(event="order/checkout.completed"),
+    retries=2,  # sirf do baar retry; yeh Stripe involve karta hai; mat ghusate raho
+)
+async def charge_customer(ctx: inngest.Context) -> dict[str, str]:
+    try:
+        charge = await ctx.step.run(
+            "call-stripe", call_stripe_charge, ctx.event.data,
+        )
+        return {"status": "charged", "charge_id": charge["id"]}
+    except StripeCardDeclinedError as e:
+        # Declined card transient failure nahi hai. Retry mat karo.
+        # Database mein order ko failed mark karein aur dunning flow ke
+        # liye event emit karein.
+        await ctx.step.run(
+            "mark-failed", mark_order_failed,
+            ctx.event.data["order_id"], reason=str(e),
+        )
+        await ctx.step.run(
+            "emit-dunning-event", emit_dunning, ctx.event.data["order_id"],
+        )
+        return {"status": "card_declined"}
+```
+
+Teen patterns matter karte hain.
+
+**Pattern 1: Transient vs Permanent Failures.** Inngest default mein sab kuch retry karta hai, lekin kuch errors transient nahi hain. Stripe se card-declined error retry par dobara decline hoga. Aapke downstream API se 401-unauthorized sirf isliye 200 nahi banega ke aap wait karein. Aapke function ko inhe specifically catch karna chahiye aur handle karna chahiye: apne DB mein likhein, downstream event emit karein, saaf tareeqe se return karein, taake woh hopeless attempts par retry budget waste na karein. Inngest ka `NonRetriableError` explicitly Inngest ko batata hai ke thrown exception ke liye retries skip karein.
+
+**Pattern 2: Step-level vs Function-level Errors.** Jo step throw karta hai woh retry hota hai. Step-level retries exhaust hone ke baad, function fail hoti hai. Kabhi aap chahte hain ke function ek failing step ko _survive_ kare: failure log kare, kaam ko "partial" mark kare, continue karein. `step.run` ko `try/except` mein wrap karein. Step abhi bhi apni retries milta hai; agar saari retries fail ho jaayein, toh exception aapke catch block mein propagate hota hai, jahan aap decide kar sakte ho kya karna hai.
+
+**Pattern 3: Dead-letter aur Replay.** Jab function poori tarah fail hoti hai, toh woh gayab nahi hoti. Yeh Inngest dashboard ke "failed runs" view mein aati hai, poore trace ke saath, tamam step outputs, exception, aur ek **Replay** button. Aap bug fix ship karne ke baad, failed runs ko replay kar sakte ho: woh jahan toote the wahan se resume hote hain, fix ke saath. Yeh traditional queues ka "dead-letter queue" pattern hai, sirf aap dead-letter handler nahi likhte. Aap sirf bug fix karte ho aur replay karte ho.
+
+> **PRIMM, Predict.** Aapka function step 2 mein Stripe call karta hai aur step 4 mein aapka customer-data MCP server. Stripe step 2 ki pehli attempt par 503 (service unavailable, transient) return karta hai. Step 2 chaar baar exponential backoff ke saath retry karta hai (~1s, ~2s, ~5s, ~12s); 4th retry par, Stripe wapas aa jaata hai, charge succeed hota hai. Ab step 4 chalta hai, aur customer-data MCP server 500 ke saath down hai. Kya Inngest poora function retry karta hai, ya sirf step 4? Kitni baar? Confidence 1-5.
+
+Jawab: **sirf step 4, aur use apna retry budget milta hai.** Steps retries share nahi karte. Step 2 ki chaar retries step 4 se independent hain. Inngest step 4 ko retry karega (default ~4 baar) aur agar MCP server wapas aaye, toh step 4 complete hota hai, aur function succeed hoti hai. Step 2 ka Stripe charge _dobara issue nahi hota_, kyunki step 2 ka output uski successful retry ke baad memoize ho gaya tha. Customer exactly once charge hota hai chahe function ne retries ke across 20 second guzare hon.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: Concept 6 ki customer-support Worker
+function ko explicit retry aur failure handling ke saath extend karein.
+
+Specification:
+1. OpenAI Agents SDK call transient failures (rate limit, timeout) par
+   3 baar retry kare, lekin model se content-policy refusal par retry
+   NA kare.
+2. Slack notification 10 baar tak retry kare (Slack aksar flaky hai;
+   notification mat kho dein).
+3. Postgres write ek baar retry kare; agar dobara fail ho, toh failure
+   log karein aur continue karein (poora function transient DB blip par
+   fail mat karein).
+
+Har step ke liye, decide karein ke kya transient hai aur kya permanent
+hai aur try/except accordingly structure karein. Python SDK ka
+NonRetriableError equivalent dhundhne ke liye grep_docs use karein.
+```
+
+---
+
+### Concept 10: `step.run` for AI Calls in Python (`step.ai.wrap` sirf TypeScript hai)
+
+Concepts 6-9 kisi bhi side-effecting code ke liye kaam karte hain: DB writes, API calls, file writes, agent invocations. Inngest AI-specific step primitives bhi ship karta hai jo LLM calls ke prone patterns ko handle karte hain: rate-limit retries, prompts aur responses mein observability, aur (optionally) inference proxying jo serverless compute costs reduce karti hai.
+
+> **Important Python-vs-TypeScript note pehle.** Inngest ka `step.ai` module do methods hai, aur unki alag language support hai. `step.ai.infer()` dono TypeScript aur Python mein available hai (Python SDK v0.5+): yeh inference ko Inngest ki infrastructure par offload karta hai aur call trace karta hai. `step.ai.wrap()` **sirf TypeScript hai**: aaj Python mein koi equivalent nahi hai. Python projects (jaise is course ka Worker) ke liye, OpenAI Agents SDK call wrap karne ka sahi pattern `ctx.step.run(...)` hai, jo aapko pehle se full durability, retries, aur wrapped step ke inputs aur outputs ki observability deta hai. Aapko sirf LLM-specific prompt/response telemetry nahi milta jo TypeScript ka `step.ai.wrap` add karta hai. _(May 2026 tak [AI Inference docs](https://www.inngest.com/docs/features/inngest-functions/steps-workflows/step-ai-orchestration) ke against verified.)_
+
+**Python mein OpenAI calls ke liye `step.run` (recommended pattern).** Aapka function OpenAI call `ctx.step.run("name", fn, ...)` ke andar karta hai. Inngest step ke inputs aur outputs trace karta hai (jo arguments aapne pass kiye aur kya return hua), transient failures par retry karta hai, aur result memoize karta hai taake baad ke steps ki retries OpenAI cost dobara na pay karein. Prompt aur response dashboard mein step ke input/output ke tor par record hote hain:
+
+```python
+from openai import AsyncOpenAI
+
+oai = AsyncOpenAI()
+
+async def call_openai_summary(thread_text: str) -> str:
+    """Ek normal async function. Inngest ko parwaah nahi ke yeh LLM call hai."""
+    response = await oai.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": "Is support thread ko 3 jumlon mein summarize karo."},
+            {"role": "user", "content": thread_text},
+        ],
+    )
+    return response.choices[0].message.content
+
+@inngest_client.create_function(
+    fn_id="summarize-customer-thread",
+    trigger=inngest.TriggerEvent(event="customer/thread.summary_requested"),
+)
+async def summarize_thread(ctx: inngest.Context) -> dict[str, str]:
+    thread: list = await ctx.step.run(
+        "load-thread", load_thread, ctx.event.data["thread_id"],
+    )
+    # OpenAI call step.run mein wrap hai. Inngest ise ek step ke tor par
+    # dekhta hai: inputs (formatted thread text) record hota hai, output
+    # (summary string) record hota hai, call success par memoize hota hai,
+    # aur transient failures par automatic retries hain.
+    summary: str = await ctx.step.run(
+        "openai-summary", call_openai_summary, format_thread(thread),
+    )
+    return {"summary": summary}
+```
+
+Dashboard mein, yeh run function ka step trace dikhata hai (`load-thread` ke baad `openai-summary`) har step ke inputs aur outputs ke saath. Agar OpenAI ne 429 (rate limited) return kiya, toh Inngest `openai-summary` ko backoff ke saath automatically retry karta hai: Concept 7 jaisi memoization semantics, toh retries prior `load-thread` step ko dobara bill nahi karte. Jo aapko nahi milta (TypeScript ke `step.ai.wrap` ke muqabale mein): automatic LLM-specific telemetry jaise token counts, model name, aur provider-specific traces jo dashboard ki AI view mein broken out hote hain. Zyada tar Python production workloads ke liye, standard step trace plus aapka apna OpenAI client telemetry (misal ke tor par, OpenAI Agents SDK ka tracing) yeh gap cover karta hai.
+
+:::note
+Step traces aur customer data
+:::
+
+Kyunki `step.run` har step ke inputs aur outputs ko Inngest ki observability store mein record karta hai, jo _content_ aap step ke zariye pass karte ho woh store hota hai aur dashboard mein visible hai. Agar aapke prompt mein PII (naam, emails, addresses), secrets (API keys, internal tokens), contractual ya financial data, ya regulated content (HIPAA, GDPR-scoped data, PCI) hai, toh raw content ko step body mein pass mat karein. Redact, hash, summarize, ya ek reference pass karein (ek `customer_id` aur `ticket_id`, na ke poora ticket text) aur sensitive content ko step body ke _andar_ apne authoritative store se reload karein, jahan retention aur access controls aapke configure karne ke hain. Wohi discipline OpenAI Agents SDK ke apne tracing par bhi lagu hota hai agar aap use enable karein. Step traces ko waise treat karein jaise aap kisi production log ko treat karte: default mein useful, policy se regulated.
+
+**`step.ai.infer`: serverless cost reduction ke liye ek niche tool (Python-supported).** Aap isko rarely use karoge; is course mein har AI call ke liye `step.run` default hai. `step.ai.infer` ek specific situation ke liye hai: aapke function process se OpenAI call karne ki bajaye, aap Inngest ki infrastructure ko call karne ke liye kehte ho, toh jab request in-flight ho aapka function process deallocate ho sakta hai. Serverless platforms (Vercel, Cloudflare Workers, AWS Lambda) jo in-flight time ke liye bill karte hain, par yeh wait ke dauran compute cost bachata hai. Lambi inferences (Deep Research, bade embedding batches) ke liye savings asli hain. Sub-second calls ke liye, yeh bina zyada fayde ke latency add karta hai. Ek shape, taake [Quick Reference](#quick-reference) decision-tree ka ek concrete referent ho:
+
+```python
+import os
+from inngest.experimental.ai.openai import Adapter as OpenAIAdapter
+
+@inngest_client.create_function(
+    fn_id="long-research-call",
+    trigger=inngest.TriggerEvent(event="customer/research.requested"),
+)
+async def long_research(ctx: inngest.Context) -> dict[str, str]:
+    response = await ctx.step.ai.infer(
+        "call-openai",
+        adapter=OpenAIAdapter(
+            auth_key=os.environ["OPENAI_API_KEY"],
+            model="gpt-4o",
+        ),
+        body={
+            "messages": [
+                {"role": "user", "content": ctx.event.data["prompt"]},
+            ],
+        },
+    )
+    return {"response": response["choices"][0]["message"]["content"]}
+```
+
+Do details jo logon ko trip karti hain. Keyword `adapter=` hai, na ke `model=`: aap ek `Adapter` instance pass karte ho jo `inngest.experimental.ai.<provider>` se import hota hai (adapters openai, anthropic, gemini, grok, aur deepseek ke liye ship hote hain). Aur `inngest.experimental.ai` namespace `inngest-py` 0.5.18 mein experimental flag hai, toh agar aap depend karein toh apna SDK version pin karein. Return value ek plain `dict` hai, toh upar ka `response["choices"][0]["message"]["content"]` subscript sahi hai. Function ka compute time roughly _request fire karne aur response process karne ke beech ka_ time hai, na ke OpenAI call khud; serverless par, yeh har invocation par aapke billable time mein seconds bacha sakta hai.
+
+> **Quick check.** True ya false. (a) Python mein, `ctx.step.run("name", call_openai, ...)` OpenAI call ko durable banata hai, transient failures par retry hota hai, aur success par memoize hota hai. (b) `step.ai.infer` Python mein Inngest ko OpenAI Agents SDK ke saath use karne ke liye ek hard requirement hai. (c) Upar ke example mein `step.run` ko `step.ai.infer` se replace karna hamesha function ko chalane mein sasta banata.
+
+Jawab: **(a) True**: yeh recommended Python pattern hai. OpenAI call step body ke andar jaata hai; Inngest poori step ko kaam ka unit treat karta hai. **(b) False**: zyada tar cases ke liye `step.run` kaafi hai. `step.ai.infer` serverless compute cost ke liye ek optimization hai, requirement nahi. Worked Example mein OpenAI Agents SDK integration plain `step.run` use karta hai. **(c) False**: `step.ai.infer` paisa tabhi bachata hai jab (i) aap serverless platform par ho jo in-flight time ke liye bill karta hai AUR (ii) call itni lambi hai ke request-offload savings added orchestration overhead par dominate karti hain. Always-on servers par sub-second calls ke liye, plain `step.run` jeetta hai.
+
+:::warning
+Agar DeepSeek tool-using Worker wrap kar rahe ho
+:::
+
+Is course mein pehle wahi caveat dekhein: agar aapka Course Four Worker DeepSeek ko `@function_tool` ke saath stream karta hai, toh `build-agents` Decision 4 mein document kiya gaya `openai-agents==0.17.2` streamed-path SDK bug Version A par lagu hota hai. Neeche `Runner.run_streamed` ko `step.run` mein wrap karne se pehle us course ka OpenAI-fallback resolution apply karein.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: Course Four customer-support agent
+invocation lein aur Inngest function ki DO versions banayein jo ise
+call kare:
+
+Version A: Runner.run_streamed call ko step.run mein wrap karein
+(recommended Python pattern: durable, transient failures par retry
+hoti hai, memoize hoti hai; aapko standard step trace milta hai).
+
+Version B: Muqabile ke liye, ek ALAG choti Inngest function likhein
+jo step.ai.infer ke zariye ek single OpenAI completion call karti hai
+(Python-supported step.ai primitive jo inference ko Inngest ki
+infrastructure par offload karta hai serverless compute cost bachane
+ke liye).
+
+Har version ke liye, explain karein: (a) successful run ke liye
+dashboard trace kya dikhata hai, (b) kya hota hai jab OpenAI call
+429 rate limit hit karta hai, (c) kya Course Four ka SQLiteSession
+state mid-run crash se corrupt hota hai, aur (d) kis tarah ki
+deployment par (always-on server vs serverless) Version B ka offload
+asli paisa bachata hai.
+```
+
+---
+
+## Part 3: Flow Control aur Recovery, Production Scale
+
+Flow control teesri layer hai: yeh Worker ko load ke neeche healthy rakhti hai. Concurrency Worker ko downstream systems ko melt karne se rokti hai. Throttling aapko rate-limit walls se bachata hai. Priority aur fairness ek chatty customer ko baaki sab ko starve karne se rokti hain. Batching "midnight par 10,000 events" ko "100 manageable function runs" mein badalta hai. Replay "kal ka bug 200 failed interactions cost kiya" ko "humne fix kiya; 200 conversations resume hue" mein badalta hai. HITL gates agent ko tab tak suspend rakhte hain jab tak insaan approve na kare. Part 3 ke paanch concepts aapko woh production policies dete hain jo ek working Worker ko ek aisa bana deti hain jise paying customers ke saamne rakh sakte ho.
+
+### Concept 11: Concurrency aur Throttling
+
+Concurrency ek function ke runs ki maximum tadaad hai jo ek saath execute ho sakti hain. Throttling runs ki maximum tadaad hai jo ek unit of time mein _shuru_ ho sakti hain. Dono per function ek line se configure hote hain. Dono sabse common production gap hain jab teams prototype se scale par jaate hain.
+
+```python
+from datetime import timedelta
+
+@inngest_client.create_function(
+    fn_id="customer-support-conversation",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+    concurrency=[inngest.Concurrency(limit=10)],
+    throttle=inngest.Throttle(limit=100, period=timedelta(minutes=1)),
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    ...
+```
+
+`concurrency=10` kehta hai: ek waqt mein zyada se zyada 10 functions chal rahi hain. 11th event queue mein wait karta hai jab tak 10 mein se ek khatam na ho jaaye. `throttle=100/minute` kehta hai: ek minute mein zyada se zyada 100 _naye_ runs shuru hote hain. 101st event wait karta hai chahe concurrency headroom ho.
+
+**Practice mein dono kyun matter karte hain.** Concurrency downstream systems ko protect karti hai: agar aapka customer-support Worker OpenAI aur Postgres se baat karta hai, toh 1,000 concurrent runs ka matlab hai 1,000 simultaneous OpenAI calls aur 1,000 simultaneous Postgres connections. Aap apni OpenAI rate limit exhaust karoge, apna connection pool exhaust karoge, ya dono. Throttling bursts ke khilaf protect karta hai: agar 500 customer emails 9:00am sharp par aayein, toh aap nahi chahte ke 500 functions ek hi second mein shuru hon; throttling start rate ko smooth karta hai.
+
+**Per-key concurrency.** Ek single `concurrency` limit globally function par lagu hota hai. Ek zyada interesting pattern per-key concurrency hai: event ki kisi property se limit.
+
+```python
+@inngest_client.create_function(
+    fn_id="customer-support-conversation",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+    concurrency=[
+        inngest.Concurrency(limit=10),  # global cap
+        inngest.Concurrency(limit=2, key="event.data.customer_id"),  # per-customer cap
+    ],
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    ...
+```
+
+Yeh kehta hai: globally zyada se zyada 10 functions chal rahi hain, AUR ek waqt mein har customer ke liye zyada se zyada 2. Agar ek single customer ek minute mein 100 emails bheje, toh un mein se sirf 2 ek saath process hoti hain; baqi 98 queue mein peeche rehti hain. Is dauran, doosre customers ke emails normally flow hoti hain; woh chatty customer se block nahi hoti. Yeh do lines of code mein multi-tenant fairness hai. Concept 12 pattern ko aage develop karta hai.
+
+> **Quick check.** Teen claims, True ya False. (a) Agar aap `concurrency=10` set karein aur 1,000 events ek saath aayein, toh un mein se 990 drop ho jaate hain. (b) Throttling aur concurrency limits dono _total_ throughput reduce karte hain. (c) Per-key concurrency ko ek key chahiye jo event data se deterministic ho.
+
+Jawab: **(a) False**: events drop nahi hoti; woh queue hoti hain. Inngest ki queue durable hai; 990 events wait karti hain jab tak concurrency slots khul na jaayein. **(b) False.** Throttling start-rate cap karta hai; concurrency in-flight runs cap karta hai. Koi kaam drop nahi karta; dono _kab_ kaam execute hota hai shape karte hain. Lambi window par throughput unchanged hai agar aapki average load limits se neeche hai. Peak par throughput shape hoti hai: bursts queue ke zariye absorb hoti hain. **(c) True**: key expression event data par evaluate hota hai; usse same logical scope ke liye stable string produce karni chahiye (`customer_id` theek hai; `current_timestamp` nahi).
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: customer-support Worker ke liye
+concurrency aur throttling policy design karein.
+
+Constraints:
+- OpenAI rate limit: 30 requests per minute, hard cap.
+- Postgres connection pool: 20 max connections (Worker har run par 1 leta hai).
+- Kuch customers ek minute mein 30+ emails ki burst bhejte hain (gussa
+  customer); inhe baaki customers ko starve nahi karna chahiye.
+- Hum ~1,000 emails per day expect karte hain, 9am aur 2pm ke aas paas peaks.
+
+Propose karein:
+1. Ek global concurrency value
+2. Ek per-customer concurrency value
+3. Ek throttle (limit aur period)
+
+Har ek ke liye, explain karein ke kaunsi production failure se protect
+karta hai aur cost kya hai (peak par queue latency mein).
+```
+
+---
+
+### Concept 12: Priority aur Fairness, Multi-tenant Scaling
+
+Concurrency limits kaam karti hain. Per-key concurrency basic fairness add karta hai. Production-grade multi-tenant systems ko zyada chahiye: **priorities** (Enterprise customers ko hobbyists ke peeche same compute ke liye wait nahi karna chahiye) aur **fair-share scheduling** (koi single tenant system ko monopolize nahi kar sakta chahe apni concurrency cap ke andar ho).
+
+**Priority.** Inngest har event par ek priority expression evaluate karta hai; zyada priority wale runs queue mein kam priority wale runs se aage nikal jaate hain.
+
+```python
+@inngest_client.create_function(
+    fn_id="customer-support-conversation",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+    concurrency=[inngest.Concurrency(limit=10)],
+    priority=inngest.Priority(
+        # Enterprise tier = high priority; Pro = 0; Free = low priority
+        run="100 - (event.data.customer_tier_priority * 100)",
+    ),
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    ...
+```
+
+Jab concurrency queue mein 50 runs wait kar rahe hon, toh Enterprise customers ke runs pehle jaate hain, phir Pro, phir Free. Same tier ke andar, FIFO order lagu hota hai. Priority concurrency ya throttle limits ko override nahi karta; yeh sirf decide karta hai ke wait kar rahe runs mein se _kaunsa_ next free slot leta hai. Enterprise customer abhi bhi slot khulne ka wait karta hai; use sirf next milta hai.
+
+**Fair-share scheduling.** Jab aapke paas sauon tenants hain jo usi global concurrency pool ke liye compete kar rahe hon, toh FIFO plus priority kaafi nahi hai. Ek single tenant jo burst bhejhe woh abhi bhi minutes tak zyada tar slots occupy kar sakta hai. Fair-share scheduling, concurrency par `key` parameter ke zariye implemented ek thoughtful sizing ke saath, har tenant ko ek guaranteed slice deta hai:
+
+```python
+concurrency=[
+    inngest.Concurrency(limit=50),   # global pool
+    inngest.Concurrency(limit=3, key="event.data.tenant_id"),  # max 3 per tenant
+],
+```
+
+Iske saath: 50 total slots, koi tenant 3 se zyada nahi leta. Agar 20 tenants active hain, toh zyada se zyada 60 slots requested lekin sirf 50 available. Fair-share unhe rotate karta hai, har tenant ko kuch share milta hai, koi shut out nahi hota.
+
+> **PRIMM, Predict.** Aapke paas ek customer-support function hai jismein `concurrency=10` hai aur per-customer `concurrency=2` hai. Aapke paas priority bhi configured hai: Enterprise = high, Free = Low. 9:00am par, queue mein hain: Customer A ke 5 events (Free), Customer B ke 5 events (Enterprise), aur ek naye Customer C ke 10 events (Free, pehla plan khareeda). Kis order mein execute hote hain? Confidence 1-5.
+
+Jawab: yeh ek multi-level decision hai. Pehle, per-customer cap of 2 ka matlab hai har customer ke zyada se zyada 2 events ek saath run ke liye eligible hain. Toh _candidates ka pool_ hai: A se 2, B se 2, C se 2: chay runs turant eligible. Doosra, priority decide karti hai ke in chay mein se pehle slots kaun bharta hai: B ke do pehle chalte hain (Enterprise), phir A ke do aur C ke do (Free, FIFO). Toh t=0 par: B ke 2 chalte hain, phir A ke 2 shuru hote hain, phir C ke 2 shuru hote hain. Total: 6 active. Jab koi khatam hota hai, us customer ka next queued event eligible hota hai aur next slot priority se bharta hai. **Yeh woh tarah ki policy hai jo Inngest mein feature hai aur aapke apne code mein thousand-line scheduler hai.**
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: customer-support Worker configuration
+ko priority aur fair-share scheme ke saath extend karein.
+
+Requirements:
+1. Teen customer tiers: Enterprise, Pro, Free.
+2. Enterprise customers ko peak load par 5 second se zyada wait nahi
+   karna chahiye.
+3. Free tier customers ko fair access milna chahiye: koi Free customer
+   60 second se zyada starve nahi hona chahiye, chahe global queue
+   bharip ho.
+4. Ek single noisy customer (tier se ghair-mutaleq) 3 slots se zyada
+   occupy nahi karna chahiye.
+
+Concurrency + priority configuration likhein. Config ki har line ke
+liye, explain karein ke kaunsi requirement satisfy karti hai.
+```
+
+---
+
+### Concept 13: Batching, Cost-effective Bulk Processing
+
+Kuch kaam naturally batched hai. Aap 10,000 customer conversations ko independently summarize nahi karte; aap LLM ko ek batch of 50 ke saath call karte ho. Aap 10,000 audit rows ek ek karke nahi likhte; aap `COPY` karte ho. Inngest ka batch trigger aapko events accumulate karne deta hai aur ek single function ko batch ke saath input ke tor par invoke karta hai.
+
+```python
+@inngest_client.create_function(
+    fn_id="batch-embed-tickets",
+    trigger=inngest.TriggerEvent(event="ticket/resolved"),
+    batch_events=inngest.Batch(
+        max_size=50,
+        # 50 events accumulate hone par invoke karein, YA
+        timeout=timedelta(seconds=30),  # 30 second guzarne par invoke karein, jo pehle ho
+    ),
+)
+async def batch_embed_resolved_tickets(ctx: inngest.Context) -> dict[str, int]:
+    # ctx.events (plural) na ke ctx.event
+    ticket_ids = [e.data["ticket_id"] for e in ctx.events]
+    tickets = await ctx.step.run(
+        "load-tickets", load_tickets_by_ids, ticket_ids,
+    )
+    # 50 tickets ke liye ek embedding call, 1 ticket ke liye 50 calls nahi
+    embeddings = await ctx.step.run(
+        "embed-batch", embed_texts_batch,
+        [t["text"] for t in tickets],
+    )
+    await ctx.step.run(
+        "store-embeddings", store_embeddings_batch,
+        ticket_ids, embeddings,
+    )
+    return {"batched": len(ctx.events)}
+```
+
+Kya badalta hai: `ctx.events` ek list hai, na ke ek single event. Function har event ke liye ek baar ki bajaye har batch ke liye ek baar chalti hai. OpenAI embedding API 50-text batch ke saath call hoti hai 50 single-text calls ki bajaye, jo dramatically sasta hai (aap per token pay karte hain, lekin per-request overhead khatam ho jaata hai) aur tez hai (ek API round-trip 50 ki bajaye).
+
+**Batching sahi tool hai jab** kaam naturally bulkable hai (embeddings, bulk DB writes, bulk emails) aur aap apni timeout jitni latency tolerate kar sakte ho kaam hone se pehle. Yeh galat tool hai jab har event ko interactive response chahiye ya jab ordering across events unpredictable tareeqe se matter karti hai.
+
+> **Quick check.** True ya false. (a) Batched functions abhi bhi retries aur memoization milta hai; batch poori tarah durably memoized hai. (b) Agar batch timeout sirf 3 events accumulate hoke expire ho jaaye, toh function tab tak nahi chalegi jab tak agle 47 na aa jaayein. (c) Aap `batch_events` ko `concurrency` ke saath combine kar sakte ho kitne batches parallel mein chalte hain cap karne ke liye.
+
+Jawab: **(a) True**: batch kaam ka unit hai; replay poori batch ko uske tamam events ke saath scope mein dobara chalata hai. **(b) False**: timeout ka poora yehi maqsad hai. 30 second ke baad function jo bhi accumulated ho uske saath chalti hai, chahe 1 event ho. **(c) True**: yeh production pattern hai. Batch plus concurrency saath mein aapki downstream load ko saaf tareeqe se cap karte hain.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: Course Four embedding pipeline
+(jo resolved tickets embed karti hai) ko per-ticket event handler se
+batched Inngest function mein convert karein.
+
+Triggers: 'ticket/resolved' event, 50 events ya 30 seconds par batched.
+
+Function karna chahiye:
+1. Ek query mein ticket bodies load karein
+2. 50-text batch ke saath OpenAI embeddings API call karein (tez + sasta)
+3. Customer-data MCP server ke zariye embeddings store karein
+4. Downstream consumers ke liye har ticket ke liye ek 'ticket/embedded'
+   event emit karein
+
+OpenAI batch-embedding pattern dhundhne ke liye grep_docs use karein.
+```
+
+---
+
+### Concept 14: Replay aur Bulk Cancellation, Production Recovery
+
+Kabhi sab kuch ek saath galat ho jaata hai. Aapne ek bug ship kiya; pichle chay ghanton mein hazaar runs fail ho gaye. Ya aapka downstream API 30 minute ke liye down tha; us window mein usse call karne ki koshish mein sab kuch mar gaya. Ya aapne ek logic error discover kiya aur fix ke baad ek din ka kaam dobara karna chahte ho.
+
+**Do ulte recovery primitives.** Replay kehta hai _"yeh kaam fail hua, main chahta hoon ke yeh succeed kare."_ Bulk cancellation kehta hai _"yeh kaam queue mein tha lekin ab main nahi chahta ke yeh ho."_ Wahi dashboard surface, ulta irada. Zyada tar teams ko pehle teen mahino mein asli traffic chalane ke andar dono chahiye.
+
+**Replay** recovery primitive hai. Failed runs apni poori step history ke saath persist hoti hain, input event, successful steps ke partial outputs, aur failed step ke exception ke saath. Dashboard se aap Functions view kholte ho, failed runs wali function filter karte ho, ek time window aur failure pattern (koi specific error message ya sirf "all failures") select karte ho, Replay click karte ho. Inngest un runs ko fresh aane wale ki tarah re-schedule karta hai, lekin ek ahem farq ke saath: pehle memoized step outputs cache hits ke tor par wapas aate hain.
+
+Replay ke baare mein teen cheezein samjhein.
+
+*   **Replay original run ke baad aapki deploy ke baad wahi function code use karta hai.** Agar aapne runs fail hone aur aapke replay karne ke beech ek fix deploy kiya hai, toh replayed runs naye code use karte hain. Yeh poora maqsad hai.
+*   **Replay memoization respect karta hai.** Original run mein succeed hue steps replay par dobara execute nahi hote. Agar aapke customer-support Worker ne step 3 par $0.20 OpenAI tokens kharch kiye the step 4 par fail hone se pehle, toh aap woh $0.20 dobara nahi kharchate: sirf step 4 aage chalta hai. 47-run recovery scenario ke liye, iska matlab hai aap 47 agent invocations ki bajaye sirf 47 failed steps ke liye pay karte ho.
+*   **Replay dashboard se ya API se hota hai.** Dashboard ek visual hai; API programmatic hai. Dono wahi kaam karte hain: failed runs ko new code ke saath re-schedule karte hain, memoized steps skip karte hue.
+
+![Replay aur recovery: ek bug 200 failed interactions cause karta hai. Aap fix deploy karte ho. Dashboard se 200 runs select karte ho aur Replay click karte ho. Har run jahan toota tha wahan se resume hota hai: pehle se complete steps memo se return hote hain (milliseconds mein), sirf failed step onwards asli tareeqe se chalta hai naye code ke saath. 200 conversations resume hoti hain bina 200 agent invocations dobara chalaye.](/img/05-replay-and-recovery-ac21851d2d0ef4538e6bf359f2e3956b.webp)
+
+**Bulk cancellation** ulta hai. Kabhi kaam queue mein hai lekin aap nahi chahte ke yeh ho. Misal: aapne ek campaign event galti se 10,000 baar fire kiya. Ya ek downstream API abhi bhi down hai aur aap nahi chahte ke retries us par hammering karein jab tak woh recover na kare. Dashboard se aap us function ke tamam pending runs select karte ho aur Cancel karte ho. Runs disappear hoti hain; koi compute consume hota hai; aapki downstream API saans le sakti hai.
+
+Replay aur cancellation dono _batches_ mein hote hain: aap ek time window select karte ho, ek status filter (failed, running, queued), aur bulk action lete ho. Yeh woh tool hai jo "production incident response" ko "dashboard mein paanch clicks" mein badalta hai, na ke "custom script likhna jo Inngest API ke saath baat kare."
+
+> **Quick check.** Teen claims, True ya False. (a) Replay hamesha purane code ke saath run karta hai, na ke naye code ke saath. (b) Bulk cancellation pending aur dono running runs ko cancel kar sakta hai. (c) Agar aap 100 failed runs replay karein aur un mein se 20 dobara fail ho jaayein, toh woh 20 abhi bhi dashboard mein failed ke tor par dikhti hain aur dobara replay ke liye available hain.
+
+Jawab: **(a) False**: replay deploy ke baad naye code ke saath run karta hai. Yeh poora maqsad hai. **(b) True**: cancellation pending aur dono running runs par lagu hoti hai. Running runs ko cancel karne ka matlab hai current step khatam hone do aur baaki mat karo. **(c) True**: har replay ek naya attempt hai; agar woh fail ho, toh naya failure dashboard mein appear hota hai aur replay ke liye available hai.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: ek recovery scenario design karein
+jo dono replay aur cancellation use kare.
+
+Scenario: Aapka customer-support Worker raat ko 2:00 baje ek Stripe
+outage ke dauran 47 emails process karne ki koshish karta hai. Sab 47
+runs Stripe call step par fail hoti hain. Aap subah 9:00 baje uth-tay
+ho.
+
+Design karein:
+1. Kaise pata lagayein ke 47 runs fail hui hain (dashboard vs API).
+2. Kaise decide karein ke replay karein ya cancel karein (kya Stripe
+   wapas aa gaya?).
+3. Replay karne ka exact sequence: kaunsa filter, kaunsa time window,
+   kya memoized steps dobara execute honge.
+4. Ek cancellation scenario bhi: maan lo 10 mein se 5 emails spam the
+   aur aap nahi chahte ke unke replies bheje jaayein.
+
+Har step ke liye, dashboard clicks ya API calls specify karein.
+```
+
+---
+
+### Concept 15: HITL Gates with `step.wait_for_event`, Human-in-the-Loop
+
+Agents powerful hain lekin kabhi ghalat karte hain. Ek customer-support agent jo khud refund issue kare bina insaan ke review ke, kabhi kabhi galat amount refund kar dega, ya fraud victim ko refund kar dega, ya VIP customer ko "sorry, we can't help" bhej dega production down hone ke bich mein. HITL gates woh pattern hain jo "agent khud kare" ko "agent draft kare, insaan approve kare, action issue ho" mein badalte hain.
+
+`step.wait_for_event` is pattern ka primitive hai. Pehle Concept 8 mein dekha tha refund approval ke liye. Yahan yeh poora HITL flow hai:
+
+```python
+@inngest_client.create_function(
+    fn_id="customer-support-with-hitl",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+)
+async def handle_email_with_hitl(ctx: inngest.Context) -> dict[str, str]:
+    customer_id = ctx.event.data["customer_id"]
+    email_body = ctx.event.data["body"]
+
+    # Agent draft tayar kare
+    draft = await ctx.step.run(
+        "run-agent", run_customer_support_agent,
+        customer_id=customer_id, email_body=email_body,
+    )
+
+    # Agar agent confident hai aur low-risk action hai, toh turant bhejo
+    if draft["confidence"] >= 0.9 and draft["action_type"] == "informational":
+        await ctx.step.run("send-reply", send_email_reply, draft)
+        return {"status": "sent_directly", "reviewer": "none"}
+
+    # Warna, insaan se approval maango
+    await ctx.step.run(
+        "notify-reviewer", notify_human_reviewer,
+        draft=draft, customer_id=customer_id,
+    )
+
+    # Insan ke decision ka wait karein (2 ghante tak)
+    decision = await ctx.step.wait_for_event(
+        "wait-for-human-review",
+        event="review/decision.made",
+        timeout=timedelta(hours=2),
+        if_exp=f"async.data.customer_id == '{customer_id}'",
+    )
+
+    if decision is None:
+        # Timeout: escalate karein
+        await ctx.step.run("escalate", escalate_to_senior, draft=draft)
+        return {"status": "escalated_timeout"}
+
+    if decision.data.get("approved"):
+        await ctx.step.run("send-reply", send_email_reply, decision.data.get("edited_draft", draft))
+        return {"status": "sent_after_review", "reviewer": decision.data["reviewer"]}
+    else:
+        return {"status": "rejected_by_reviewer"}
+```
+
+Yahan kya ho raha hai:
+
+1.  Agent draft tayar karta hai (step.run ke andar, durable, memoized).
+2.  Ek confidence gate decide karta hai: high-confidence informational replies turant jaati hain (koi HITL nahi).
+3.  Low-confidence ya high-risk actions ke liye, insaan ko Slack/email/admin UI ke zariye notify kiya jaata hai.
+4.  Function `step.wait_for_event` par suspend hoti hai. Zero compute consumed. Agent ka draft Inngest ke memo store mein hai.
+5.  Insaan admin UI mein draft dekhta hai, edit karta hai (agar chahiye), Approve ya Reject click karta hai. UI `inngest_client.send` call karta hai `review/decision.made` event ke saath.
+6.  Function resume hoti hai decision ke saath. Approved? Reply bhejo. Rejected? Kuch mat karo. Timeout? Senior ko escalate karo.
+
+![HITL flow: agent draft tayar karta hai → confidence gate → high confidence? Turant bhejo. Low confidence? Insan ko notify karo → step.wait_for_event par suspend → insaan approve/reject karta hai → function resume → approved? Bhejo. Rejected? Roko. Timeout? Escalate karo.](/img/04-hitl-flow-59510e01d53d43909922078c41683fb9.webp)
+
+**HITL gates kyun itne important hain production mein.** Teen wajah:
+
+1.  **Agents ghalat karte hain, aur kuch ghalatiyaan bahut mehengi hain.** Ek galat refund $500 ka hai. Ek galat email ek VIP customer ko lose kar sakta hai. HITL agent ko draft karne deta hai (fast, sasta) aur insaan ko approve karne deta hai (slow, lekin accurate).
+2.  **Regulation maangti hai.** Kuch industries mein (finance, healthcare, legal), automated actions ko insaan ki approval chahiye. HITL gate woh audit trail hai jo compliance officer chahta hai.
+3.  **Trust gradually banta hai.** Pehle hafte, insaan har draft review karta hai. Teesre hafte, agent ke confidence scores dekh ke sirf low-confidence drafts review karta hai. Doosre mahine, sirf high-value transactions review karta hai. HITL gate aapko trust ko policy se control karne deta hai, na ke code rewrite se.
+
+> **PRIMM, Predict.** Aapke paas ek refund function hai jismein HITL gate hai 24-hour timeout ke saath. Ek customer 5:00 PM par refund request submit karta hai. On-call reviewer ghar jaata hai aur subah 9:00 baje wapas aata hai. Kya hota hai? Teen options: (a) function 24 ghante tak suspend rehti hai reviewer ke aane ka wait karte hue; (b) function timeout hoti hai aur escalation fire hoti hai; (c) function reviewer ke approve karne par resume hoti hai jab woh subah 9:00 baje click karta hai. Confidence 1-5.
+
+Jawab: **(c)**. `step.wait_for_event` timeout 24 ghante ki hai, na ke office hours ki. Function 5:00 PM par suspend hoti hai. Reviewer subah 9:00 baje aata hai, Approve click karta hai, function resume hoti hai. Timeout tabhi hoti hai agar 24 ghante guzar jaayein bina kisi event ke. Agar aap office-hours-aware behavior chahte ho (maan lo, raat ko koi request auto-escalate ho), toh aapko function ke andar logic add karni padti hai: pehle check karein ke kya office hours hain, agar nahi toh turant escalate karein, warna wait_for_event par jaayein. Ya do functions banayein: ek jo office hours mein HITL gate lagati hai, ek jo office hours ke bahar turant escalate karti hai.
+
+**Try with AI**
+
+```
+Mere AI coding assistant ke saath: ek multi-tier HITL gate banayein
+jo risk level ke mutabiq alag approval paths use kare.
+
+Specification:
+1. Customer email aata hai → agent draft tayar karta hai.
+2. Agent ek risk score assign karta hai (0.0 se 1.0).
+3. Risk < 0.3: turant bhejo (koi HITL nahi).
+4. Risk 0.3-0.7: on-call agent ko Slack par notify karo, 1 ghante
+   ka wait_for_event.
+5. Risk > 0.7: senior reviewer ko notify karo, 4 ghante ka
+   wait_for_event, aur agar timeout ho toh automatically reject
+   karo (mat bhejo).
+6. Har path ke liye audit_log mein record karein ke kisne kab
+   approve/reject kiya.
+
+Configuration likhein, flow diagram sketch karein, aur dev-server
+MCP ke send_event tool se teen alag risk levels test karein.
+```
+
+---
+
+## Part 4: Worked Example — Customer Support Production Worker
+
+Yeh woh section hai jahan sab kuch ek saath aata hai. Course #4 ka customer-support Worker lein, uske upar Inngest layer lagayein, aur aath build decisions mein Production Worker banayein. Har decision ek specific question ka jawab deta hai jo aapko real production mein aayega.
+
+Agar aap Parts 1-3 parh chuke ho, toh yeh section fast jaayega: har decision wahi concepts use karta hai jo pehle explain ho chuke hain. Agar aapne Parts 1-3 skip kiya hai aur seedha yahan aaye ho, toh har decision ke saath ek brief explanation hai ke kyun yeh shape hai.
+
+![Part 4 overview: Course #4 ka customer-support Worker (OpenAI Agents SDK + Skills + Neon Postgres + MCP) Inngest functions mein wrap hota hai. Triggers (event + cron) upar aate hain. Durable execution (step.run, memoization, retries) beech mein hai. Flow control (concurrency, throttle, priority) neeche hai. HITL gates insaan ke approval ke liye raste mein hain.](/img/06-part4-overview-7f10145816feb02ef6709f8c9c2d01d1.webp)
+
+### Decision 1: Inngest Client Setup
+
+**Sawaal:** Inngest client kahan banayein aur kaise configure karein?
+
+**Jawab:** Ek `inngest_client.py` file banayein project root mein. Client ko `app_id` ke saath initialize karein (aapki app ka naam, dashboard mein dikhta hai), `is_production=False` development ke liye (signing key skip karta hai), aur logger attach karein.
+
+```python
+# inngest_client.py
+import logging
+import inngest
+
+inngest_client = inngest.Inngest(
+    app_id="customer-support-worker",
+    logger=logging.getLogger("uvicorn"),
+    is_production=False,
+)
+```
+
+**Kyun:** Client alag file mein hona chahiye kyunki har function file ise import karega. Ek jagah definition ka matlab hai badalte waqt ek jagah change. `is_production=False` development ke liye zaroori hai; production mein aap signing key set karoge environment variable se.
+
+### Decision 2: Email Received Event Trigger
+
+**Sawaal:** Customer email aane par agent ko kaise jagayein?
+
+**Jawab:** Course #4 mein aap manually agent ko call karte the. Ab Inngest function banayein jo `customer/email.received` event par trigger hoti hai. Email parser (jo bhi aap use karte ho) ab `inngest_client.send` call karta hai uski bajaye directly agent ko call karne ke.
+
+```python
+# functions/handle_email.py
+import inngest
+from inngest_client import inngest_client
+
+@inngest_client.create_function(
+    fn_id="customer-support-email",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    customer_id = ctx.event.data["customer_id"]
+    email_body = ctx.event.data["body"]
+    subject = ctx.event.data.get("subject", "")
+
+    # Step 1: MCP server se customer data load karein
+    customer = await ctx.step.run(
+        "load-customer", load_customer_from_mcp, customer_id,
+    )
+
+    # Step 2: Related conversation thread load karein
+    thread = await ctx.step.run(
+        "load-thread", load_thread_from_mcp, customer_id,
+    )
+
+    # Step 3: Agent chalayein (Course #4 ka wohi Worker)
+    response = await ctx.step.run(
+        "run-agent",
+        run_customer_support_agent,
+        customer=customer,
+        thread=thread,
+        email_body=email_body,
+        subject=subject,
+    )
+
+    # Step 4: Draft reply database mein save karein
+    await ctx.step.run(
+        "save-draft", save_draft_reply,
+        customer_id=customer_id, draft=response.draft,
+    )
+
+    # Step 5: On-call reviewer ko Slack par notify karein
+    await ctx.step.run(
+        "notify-reviewer", notify_on_call_reviewer,
+        customer_id=customer_id, draft=response.draft,
+        confidence=response.confidence,
+    )
+
+    return {"status": "drafted", "confidence": response.confidence}
+```
+
+**Kyun:** Har step `ctx.step.run` mein wrap hai. Agar agent step 3 par fail ho (OpenAI timeout), toh steps 1 aur 2 dobara execute nahi hoti — memoized hain. Agar function process crash ho step 3 aur step 4 ke beech, toh restart par steps 1-3 milliseconds mein return hoti hain aur step 4 se aage badhta hai.
+
+### Decision 3: HITL Escalation Gate
+
+**Sawaal:** Kab agent khud reply bheje aur kab insaan se approval maange?
+
+**Jawab:** Confidence threshold use karein. Agar agent ka confidence 0.9+ hai aur action informational hai (refund nahi, account change nahi), toh turant bhejo. Warna, `step.wait_for_event` se insaan ka approval maango.
+
+```python
+    # handle_email function ke andar, step 5 ke baad:
+
+    # Decision gate
+    if response.confidence >= 0.9 and response.action_type == "informational":
+        # High confidence, low risk: turant bhejo
+        await ctx.step.run("send-reply", send_email, customer_id, response.draft)
+        return {"status": "sent_directly"}
+    else:
+        # Low confidence ya high risk: insaan ka approval chahiye
+        await ctx.step.run(
+            "notify-approver", notify_human_approver,
+            customer_id=customer_id, draft=response.draft,
+            risk_level=response.action_type,
+        )
+
+        approval = await ctx.step.wait_for_event(
+            "wait-for-approval",
+            event="review/email.decided",
+            timeout=timedelta(hours=4),
+            if_exp=f"async.data.customer_id == '{customer_id}'",
+        )
+
+        if approval is None:
+            # Timeout: escalate karein
+            await ctx.step.run("escalate", escalate_to_senior, draft=response.draft)
+            return {"status": "escalated_timeout"}
+
+        if approval.data.get("approved"):
+            final_draft = approval.data.get("edited_draft", response.draft)
+            await ctx.step.run("send-reply", send_email, customer_id, final_draft)
+            return {"status": "sent_after_approval"}
+        else:
+            return {"status": "rejected"}
+```
+
+**Kyun:** `step.wait_for_event` function ko durably suspend karta hai. Zero compute consumed. Insaan jab chahe approve kar sakta hai — 5 minute mein ya 3 ghante mein. Function memoized state ke saath resume hoti hai. Agar insaan ne draft edit kiya, toh edited version bhejo.
+
+### Decision 4: Cron Health Check
+
+**Sawaal:** Har din subah customer health check kaise chalayein?
+
+**Jawab:** Cron-triggered function banayein jo 09:00 UTC par chalti hai. Yeh tamam Pro/Enterprise customers ke liye health metrics compute karti hai aur Slack par report post karti hai.
+
+```python
+# functions/daily_health_check.py
+
+@inngest_client.create_function(
+    fn_id="daily-customer-health",
+    trigger=inngest.TriggerCron(cron="0 9 * * *"),
+)
+async def daily_health_check(ctx: inngest.Context) -> dict[str, int]:
+    # Step 1: Pro/Enterprise customer IDs fetch karein
+    customers = await ctx.step.run(
+        "fetch-customers", fetch_pro_customer_ids,
+    )
+
+    # Step 2: Har customer ke liye health event fan-out karein
+    events = [
+        inngest.Event(
+            name="customer/health_check.requested",
+            data={"customer_id": cid},
+            id=f"health-{cid}-{ctx.event.ts}",
+        )
+        for cid in customers
+    ]
+    await ctx.step.run("fan-out", lambda: inngest_client.send(events=events))
+
+    # Step 3: Slack par summary post karein
+    await ctx.step.run(
+        "post-summary", post_slack_health_summary,
+        customer_count=len(customers),
+    )
+
+    return {"customers_scheduled": len(customers)}
+```
+
+**Kyun:** Cron trigger ek line ka hai. Fan-out ek `send` call mein hazaar events bhej sakta hai. Har customer ka health check apne aap mein alag Inngest function run hai — independent, independently retryable, flow control se capped.
+
+### Decision 5: Concurrency aur Throttle Policy
+
+**Sawaal:** Kitne emails ek saath process hon?
+
+**Jawab:** OpenAI rate limit (30 req/min) aur Postgres connection pool (20 max) ke basis par:
+
+```python
+from datetime import timedelta
+
+@inngest_client.create_function(
+    fn_id="customer-support-email",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+    concurrency=[
+        inngest.Concurrency(limit=10),  # global: max 10 agent runs ek saath
+        inngest.Concurrency(limit=2, key="event.data.customer_id"),  # per-customer: max 2
+    ],
+    throttle=inngest.Throttle(limit=30, period=timedelta(minutes=1)),  # 30/min max starts
+    priority=inngest.Priority(
+        run="100 - (event.data.customer_tier_priority * 100)",
+    ),
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    ...
+```
+
+**Kyun:** `concurrency=10` OpenAI ki 30 req/min limit ke andar rakhta hai (10 concurrent × ~12 sec avg = ~50 req/min, lekin kuch parallel nahi hoti). `per-customer=2` ek gussa customer ko baaki sab ko starve karne se rokta hai. `throttle=30/min` burst ko smooth karta hai. `priority` Enterprise customers ko queue mein aage rakhta hai.
+
+### Decision 6: Idempotency Setup
+
+**Sawaal:** Duplicate emails ya duplicate events se kaise bacha jaaye?
+
+**Jawab:** Event ID seeds aur step-level memoization:
+
+```python
+# Email parser side: jab event bhejte ho
+await inngest_client.send(events=[
+    inngest.Event(
+        name="customer/email.received",
+        data={"customer_id": cid, "body": body, "subject": subject},
+        id=f"email-{message_id}",  # email provider ka message ID as idempotency key
+    ),
+])
+
+# Function side: step.run automatic memoization deta hai
+# Agar function crash hoti hai aur retry hoti hai, completed steps
+# dobara execute nahi hoti (Concept 7)
+```
+
+**Kyun:** Email providers (Postmark, SendGrid) at-least-once delivery use karte hain. Agar aapka endpoint timeout kare, toh provider retry karega. Event ID seed duplicate ko 24 ghante ke andar drop kar deta hai. Step-level memoization function ke andar ki side effects ko exactly-once banati hai.
+
+### Decision 7: Error Handling aur Retries
+
+**Sawaal:** Alag-alag failures ko kaise handle karein?
+
+**Jawab:** Per-step retry policies aur specific exception handling:
+
+```python
+@inngest_client.create_function(
+    fn_id="customer-support-email",
+    trigger=inngest.TriggerEvent(event="customer/email.received"),
+    retries=4,  # default: 4 retries exponential backoff ke saath
+)
+async def handle_email(ctx: inngest.Context) -> dict[str, str]:
+    try:
+        response = await ctx.step.run(
+            "run-agent", run_customer_support_agent, ...
+        )
+    except ContentPolicyRefusedError:
+        # Model ne content policy refuse kiya — retry se kuch nahi badlega
+        await ctx.step.run(
+            "log-refusal", log_content_policy_refusal, customer_id,
+        )
+        return {"status": "content_policy_refused"}
+
+    # Slack notification: zyada retries (Slack flaky hai)
+    # Note: step-level retries function-level se independent hain
+    await ctx.step.run(
+        "notify-reviewer", notify_on_call_reviewer, ...
+    )
+
+    return {"status": "drafted"}
+```
+
+**Kyun:** Transient failures (OpenAI 429, Slack 503) retry se theek ho jaati hain. Permanent failures (content policy, card declined) retry se theek nahi hoti. Inngest dono ko handle karta hai: default retries transient ke liye, aapka code permanent ke liye.
+
+### Decision 8: Full File Assembly
+
+**Sawaal:** Tamam pieces ek saath kaise aate hain?
+
+**Jawab:** Ek `main.py` file jo FastAPI app banati hai aur tamam functions register karti hai:
+
+```python
+# main.py
+import logging
+from fastapi import FastAPI
+import inngest.fast_api
+from inngest_client import inngest_client
+
+# Tamam function files import karein
+from functions.handle_email import handle_email
+from functions.daily_health_check import daily_health_check
+from functions.health_check_worker import health_check_worker
+
+app = FastAPI()
+inngest.fast_api.serve(
+    app,
+    inngest_client,
+    [handle_email, daily_health_check, health_check_worker],
+)
+```
+
+Start karne ke liye:
+
+```bash
+# Terminal 1: Function host
+uv run uvicorn main:app --reload --port 8000
+
+# Terminal 2: Inngest dev server
+npx inngest-cli@latest dev
+```
+
+Dashboard `http://127.0.0.1:8288` par khulega. Events bhejein, runs dekhein, steps trace karein, failures replay karein.
+
+**Kyun:** Yeh wahi structure hai jo Quick Win mein use kiya tha, sirf zyada functions ke saath. FastAPI + Inngest + dev server: teen cheezein, ek workflow. Dashboard mein sab kuch dikhta hai — kaunsi function kab trigger hui, kaunse steps kitne time liye, kahan failure aaya, kya memoized tha.
+
+---
+
+## Part 5: Yeh Course Kahan Chhodta Hai
+
+Yeh course aapko ek working Production Worker deta hai: triggers, durable execution, flow control, HITL gates. Lekin yeh sab kuch nahi hai. Yeh section batata hai kya baqi hai aur kahan jaana hai.
+
+### Cost Shape Table
+
+Production mein, cost ke teen drivers hain jo is course ne introduce kiye:
+
+| Cost Driver | Kahan Se Aata Hai | Kaise Control Karein |
+|---|---|---|
+| **OpenAI Tokens** | Har `step.run("run-agent", ...)` call | Concurrency limit, batching, step memoization (retry par dobara pay nahi karte) |
+| **Inngest Runs** | Har event ek run start karta hai | Throttle, batching (50 events = 1 run), fan-out control |
+| **Postgres** | Har step jo DB call karta hai | Connection pooling, per-key concurrency, memoization (DB calls dobara nahi hoti) |
+| **Compute (Serverless)** | Function host jab chal raha hota hai | `step.sleep` ke dauran compute zero hai; `step.ai.infer` serverless cost reduce karta hai |
+
+**Rule of thumb:** Memoization sabse bada cost saver hai. Ek agent invocation jo $0.20 cost karta hai agar 5 baar retry ho, toh bina memoization ke $1.00 cost hai. Memoization ke saath: $0.20. Yeh ek feature nahi hai; yeh production economics hai.
+
+### Swap Guide: Architecture Invariant Hai, Products Nahi
+
+Inngest is course ka chosen platform hai, lekin architecture Inngest-specific nahi hai. Yeh teen-layer model (triggers + durable execution + flow control) kisi bhi durable execution platform par translate hota hai. Yeh comparison table aapko swap karne mein madad karegi:
+
+| Feature | Inngest | Temporal | Restate | Dapr Agents |
+|---|---|---|---|---|
+| **Language** | Python, TypeScript, Go | Python, TypeScript, Go, Java, PHP | Python, TypeScript, Go, Java | Python, TypeScript, Go, Java, .NET |
+| **Trigger Surfaces** | Event, Cron, Webhook | Signal, Query, Cron | Event, Webhook | Pub/Sub, Cron, Binding |
+| **Durable Primitives** | `step.run`, `step.sleep`, `step.wait_for_event` | Activity, Sleep, Signal | `sleep`, `call`, `awakeable` | `step.run`, `step.sleep` |
+| **Memoization** | Automatic per step | Automatic per activity | Automatic per call | Manual (SDK-dependent) |
+| **Flow Control** | `concurrency`, `throttle`, `priority`, `batch_events` | Worker tuning, rate limiting | Configurable concurrency | Configurable concurrency |
+| **HITL** | `step.wait_for_event` + event filter | Signal + Workflow | `awakeable` + signal | `step.wait_for_event` |
+| **Dashboard** | Hosted (free Hobby tier) | Self-hosted (Temporal UI) | Self-hosted (Restate UI) | Self-hosted (Dapr Dashboard) |
+| **Dev Server** | `npx inngest-cli@latest dev` | `temporal server start-dev` | `restate server` | `dapr run` |
+| **Hosting** | Inngest Cloud (hosted) | Temporal Cloud ya self-hosted | Restate Cloud ya self-hosted | Self-hosted (Kubernetes) |
+| **Free Tier** | Hobby: free, no credit card | Self-hosted free | Self-hosted free | Open source |
+
+**Swap kaise karein:** Inngest ke `step.run` → Temporal mein Activity, Restate mein `call`, Dapr mein step. Inngest ke `step.wait_for_event` → Temporal mein Signal, Restate mein `awakeable`. Triggers platform-specific hain lekin conceptually same: event, cron, webhook. Flow control policies ka syntax alag hai lekin semantics same: concurrency, throttle, priority.
+
+**Kya nahi badalta:** Aapka agent code. OpenAI Agents SDK, Skills, MCP servers, Postgres schema — sab waisa hai. Sirf operational envelope badalta hai: konse platform par triggers, durability, aur flow control chalte hain.
+
+### Jo Is Course Mein Cover Nahi Hua
+
+*   **Multi-Worker orchestration.** Yeh course ek Worker ke ird gird hai. Real workforce mein aapke paas 5-50 Worker types hongi jo events ke zariye coordinate karti hain. Yeh [Workforce with Paperclip](/docs/workforce-with-paperclip-crash-course) course mein aata hai.
+*   **Self-expanding workforce.** Agents jo khud naye agents banate hain workload ke basis par. [Self-Expanding Workforce](/docs/dynamic-workforce-crash-course) course.
+*   **Deploy to cloud.** Yeh course local dev server par chalta hai. Production deployment (Inngest Cloud, Docker, Kubernetes) apna topic hai. [Deploy the Agent Harness](/docs/deploying-agents-crash-course) course.
+*   **Eval-driven development.** Agents ki quality measure karna aur improve karna. [Eval-Driven Development](/docs/eval-driven-development-crash-course) course.
+*   **Payment-enabled agents.** Agents jo khud payments process karte hain. [Payment-Enabled Agents](/docs/payment-enabled-agents-crash-course) course.
+
+---
+
+## Asli Mein Kaise Acche Bano Isme
+
+Documentation parhna aur code chalana alag cheezein hain. Production Worker banana seekhne ka ek hi tareeqa hai: todo list ke against ek asli Worker banao, usse real events par chalao, failures dekho, fix karo, replay karo.
+
+**Week 1: Foundations.** Quick Win karo (upar wala). Teen concepts chuno (suggest: 1, 6, 11) aur unke Try-with-AI blocks karo. Ek chota sa Inngest function banao jo ek real email provider se webhook receive kare aur ek draft reply tayar kare.
+
+**Week 2: Durability.** Concepts 7, 8, 9 karo. Apne function mein `step.sleep` add karo (24-hour follow-up email). `step.wait_for_event` se ek HITL gate add karo. Jaanbhoojkar ek step mein exception raise karo aur dashboard se replay karo.
+
+**Week 3: Flow Control.** Concepts 11, 12, 13 karo. Concurrency limits add karo. Per-key concurrency add karo. Ek batch function banao. 50 events ek saath bhejo aur dekho kya hota hai.
+
+**Week 4: Production Polish.** Concepts 14, 15 karo. Ek cron health check banao. Replay aur cancellation practice karo. HITL gate ko multi-tier banayein (risk-based routing). Apne Worker ko kisi dost ko demo karo — dashboard ke saath.
+
+---
+
+## Quick Reference
+
+### 15 Concepts, Ek Liner Mein
+
+| # | Concept | Ek Liner |
+|---|---------|----------|
+| 1 | Events vs Requests | Request sync hai (koi wait karta hai); event async hai (duniya aage badh chuki hai). |
+| 2 | Cron Triggers | Schedule function ko jagata hai. `TriggerCron(cron="0 9 * * *")`. |
+| 3 | Webhook Triggers | HTTP payload named event ban jaata hai. Endpoint Inngest provide karta hai. |
+| 4 | Idempotency | Event ID seeds + step-level memoization = exactly-once semantics. |
+| 5 | Fan-out | Ek event, N functions. Ya parent N child events fire karta hai. |
+| 6 | `step.run` | Har checkpoint. Function crash ho sakta hai, steps safe hain. |
+| 7 | Memoization | Completed steps stored output return karte hain. Retries sasti hain. |
+| 8 | `step.sleep` / `step.wait_for_event` | Durably suspend: time ke liye ya event ke liye. Zero compute. |
+| 9 | Retries | Automatic backoff. Failed runs dashboard mein. Replay available. |
+| 10 | `step.run` for AI | OpenAI calls ko `step.run` mein wrap karein. `step.ai.infer` optional hai. |
+| 11 | Concurrency / Throttle | Max concurrent runs + max starts per second. Downstream ko protect karta hai. |
+| 12 | Priority / Fairness | Enterprise pehle, per-key concurrency se fair share. |
+| 13 | Batching | Events accumulate karein, ek saath process karein. Sasta aur tez. |
+| 14 | Replay / Cancellation | Failed runs replay karein new code se. Pending runs cancel karein. |
+| 15 | HITL Gates | Agent draft kare, insaan approve kare, action issue ho. |
+
+### Diagnostic Table: Kaunsa Sawaal Kaunsa Concept Solve Karta Hai
+
+| Sawaal | Concept |
+|--------|---------|
+| Mera function trigger nahi hua | 1, 2, 3 (event name, cron syntax, webhook config check karein) |
+| Mera function do baar chala | 4 (idempotency: event ID, step dedup) |
+| Mera function crash hua aur kaam kho gaya | 6, 7 (`step.run` wrap karein, memoization check karein) |
+| Mera function bahut mehnga hai | 7, 13 (memoization, batching) |
+| Mera function bahut slow hai | 11, 12 (concurrency, throttle check karein) |
+| Ek customer ne baaki sab ko block kar diya | 11, 12 (per-key concurrency, priority) |
+| Agent ne ghalat action liya | 15 (HITL gate add karein) |
+| Mera function timeout ke baad resume nahi hua | 8 (`step.wait_for_event` use karein, timeout check karein) |
+| Downstream API down tha, ab recovery kaise karoon | 14 (replay) |
+| 10,000 events ek saath aayein | 13 (batching) + 11 (concurrency) |
+
+### Decision Tree 1: Kya `step.run` Mein Wrap Karein?
+
+```
+Kya yeh operation ek side effect hai (DB write, API call, agent invocation)?
+├── Haan → step.run mein wrap karein
+│   ├── Kya yeh deterministic hai (same input → same output)?
+│   │   ├── Haan → Sahi hai, memoization kaam karegi
+│   │   └── Nahi → Care: retry alag output de sakta hai. Idempotency key use karein.
+│   └── Kya yeh expensive hai ($$$ ya time)?
+│       ├── Haan → Aur bhi zaroori: memoization retry cost bachati hai
+│       └── Nahi → Phir bhi wrap karein: durability milta hai
+└── Nahi (pure computation, variable assignment) → Bahar rakhein
+    └── Lekin yaad rakhein: yeh har retry par dobara chalega
+```
+
+### Decision Tree 2: Trigger Surface Chunein
+
+```
+Worker ko kaise jagana hai?
+├── Schedule par (daily, hourly, weekly)
+│   └── Cron trigger: TriggerCron(cron="...")
+├── Bahar ka system call karta hai (Stripe, email, GitHub)
+│   └── Webhook trigger: Inngest dashboard mein webhook URL, event name choose karein
+├── Doosra Worker ya internal code fire karta hai
+│   └── Event trigger: inngest_client.send(events=[Event(name="...", data={...})])
+└── Insaan kuch karta hai (admin UI, approval button)
+    └── Event trigger: UI se inngest_client.send, function step.wait_for_event se wait kare
+```
+
+### File Location Reference
+
+Production Worker project structure:
+
+```
+my-production-worker/
+├── main.py                    # FastAPI app, functions register karta hai
+├── inngest_client.py          # Inngest client initialization
+├── functions/
+│   ├── handle_email.py        # Main email handler (Concept 6 pattern)
+│   ├── daily_health_check.py  # Cron health check (Concept 2 pattern)
+│   ├── health_check_worker.py # Per-customer health check (fan-out target)
+│   └── batch_embed.py         # Batched embedding (Concept 13 pattern)
+├── agents/
+│   └── customer_support.py    # Course #4 ka agent (unchanged)
+├── skills/                    # .claude/skills/ ya project-level skills
+├── pyproject.toml             # uv project config
+└── .env                       # OPENAI_API_KEY, INNGEST_SIGNING_KEY (prod)
+```
+
+---
+
+## Appendix
+
+### A.1: Inngest Dev Server Troubleshooting
+
+Dev server common issues aur solutions:
+
+| Problem | Symptom | Fix |
+|---------|---------|-----|
+| Function dashboard mein appear nahi hota | Sidebar mein Functions khali hai | Uvicorn restart karein; check karein ke port 8000 par chal raha hai |
+| Runs silently stall hoti hain | Status "Running" rehta hai bina progress ke | Function host aur dev server dono restart karein; ek host + ek dev server ratio rakhein |
+| `is_production=False` missing | SDK signing key maangta hai | Client constructor mein `is_production=False` add karein |
+| Cron fire nahi hota | Scheduled time par kuch nahi hota | Dev server sirf tab crons fire karta hai jab chal raha hota hai; production mein Inngest infrastructure par chalte hain |
+| Step memoize nahi hota | Retry par step dobara execute hota hai | Step name check karein: kya woh unique hai? Kya function `step.run` ke andar hai? |
+| `wait_for_event` timeout immediately | Function turant resume hoti hai | `if_exp` filter check karein; event name exact match hona chahiye |
+
+### A.2: Inngest Python SDK Quick Reference
+
+```python
+# Client setup
+import inngest
+client = inngest.Inngest(app_id="my-app", is_production=False)
+
+# Event trigger function
+@client.create_function(
+    fn_id="my-function",
+    trigger=inngest.TriggerEvent(event="my/event"),
+)
+async def my_fn(ctx: inngest.Context):
+    data = ctx.event.data          # event payload
+    result = await ctx.step.run("step-name", my_callable, arg1, arg2)
+    await ctx.step.sleep("wait", timedelta(hours=1))
+    event = await ctx.step.wait_for_event(
+        "wait-approval",
+        event="approval/granted",
+        timeout=timedelta(hours=24),
+        if_exp=f"async.data.id == '{data['id']}'",
+    )
+    return {"done": True}
+
+# Cron trigger function
+@client.create_function(
+    fn_id="my-cron",
+    trigger=inngest.TriggerCron(cron="0 9 * * *"),
+)
+async def my_cron(ctx: inngest.Context):
+    ...
+
+# Send event
+await client.send(events=[
+    inngest.Event(name="my/event", data={"key": "value"}),
+])
+
+# Flow control
+@client.create_function(
+    fn_id="controlled",
+    trigger=inngest.TriggerEvent(event="x"),
+    concurrency=[
+        inngest.Concurrency(limit=10),
+        inngest.Concurrency(limit=2, key="event.data.tenant_id"),
+    ],
+    throttle=inngest.Throttle(limit=100, period=timedelta(minutes=1)),
+    priority=inngest.Priority(run="100 - (event.data.tier * 100)"),
+    retries=4,
+)
+async def controlled_fn(ctx: inngest.Context):
+    ...
+
+# Batching
+@client.create_function(
+    fn_id="batched",
+    trigger=inngest.TriggerEvent(event="item/created"),
+    batch_events=inngest.Batch(max_size=50, timeout=timedelta(seconds=30)),
+)
+async def batched_fn(ctx: inngest.Context):
+    items = ctx.events  # list of events
+    ...
+
+# FastAPI serve
+import inngest.fast_api
+app = FastAPI()
+inngest.fast_api.serve(app, client, [my_fn, my_cron, controlled_fn, batched_fn])
+```
+
+### A.3: Glossary (Roman Urdu)
+
+| Term | Matlab |
+|------|--------|
+| **Production Worker** | Digital FTE + operational envelope (triggers, durability, flow control) |
+| **Event** | Named, immutable message jo batata hai ke kuch hua |
+| **Inngest Function** | Decorated Python function jo triggers aur steps declare karta hai |
+| **Step** | Function ke andar kaam ka unit (`step.run`, `step.sleep`, etc.) |
+| **Memoization** | Completed steps ka output cache se return hona, dobara execute na hona |
+| **Flow Control** | Per-function policies: concurrency, throttle, priority, batching |
+| **HITL** | Human In The Loop: function insaan ke input ka wait karta hai |
+| **Replay** | Failed function ko naye code se jahan toota tha wahan se dobara chalana |
+| **Dev Server** | Local Inngest environment: `npx inngest-cli@latest dev` |
+| **Fan-out** | Ek event se bohot saare functions trigger hona |
+| **Idempotency** | Ek operation ko kitni baar bhi karo, result wahi rahe |
+| **Dead-letter** | Failed runs jo replay ke liye dashboard mein saved hain |
+| **Concurrency** | Ek saath chalne wale runs ki max tadaad |
+| **Throttle** | Ek time window mein shuru hone wale runs ki max tadaad |
+| **Priority** | Queue mein runs ka order (Enterprise > Pro > Free) |

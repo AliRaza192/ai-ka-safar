@@ -1,0 +1,950 @@
+---
+id: how-to-think-ai-era
+title: AI Era Mein Sochna Kaise Hai — 90 Minute ka Crash Course
+sidebar_label: AI Era Mein Sochna
+---
+
+# AI Era Mein Sochna Kaise Hai: 90 Minute ka Crash Course
+
+*6 Disciplines · 6 AI Failure Modes · Ek Rule*
+
+---
+
+Do log Monday subah ek hi AI tool kholte hain. Same task: yeh figure out karna ke company ko ek senior strategy lead hire karni chahiye ya wohi paisa licenses, infrastructure, aur design time mein lagaye taake ek AI workforce banaye jo har existing consultant ko augment kare. Dono ke paas Claude, ChatGPT, aur Gemini hain. Dono ke paas same hafte hai.
+
+Pehli banda Friday ko ek defensible recommendation ke saath khatam karti hai, har claim ka documented record jise usne accept ya reject kiya, aur teen reversal triggers jo board use hold kar sake. Doosra banda Friday ko ek polished memo ke saath khatam karta hai jo mostly wohi analysis restate karta hai jo AI ne Monday ko wapas kiya, aur CFO ke is sawaal ka koi jawab nahi ke *paragraph four wahan kyun aayi*.
+
+Same tools. Same problem. Alag outcomes. Farq yeh nahi ke unhone kaunsa model prompt kiya. Yeh nahi ke unhone kaunse features use kiye. Yeh nahi ke unhone kaunse prompt-engineering tricks apply kiye. Farq **cognitive** hai: Pehli banda ne koi bhi AI kholne se pehle apni position banayi; Doosra banda ne pehle reasonable-sounding paragraph se position inherit ki.
+
+Yahi gap yeh crash course band karta hai. Chhe disciplines, teen chote parts, koi code nahi. Har discipline ek alag tarike se AI ki failure address karta hai jab use unsupervised chalne diya jaaye. Milke yeh AI ko ek oracle se (tum poochho, woh jawab de, tum qabool karo) ek aisa partner banate hain jo pushback kare (tum predict karo, woh jawab de, tum compare karo, tum decide karo).
+
+**Prerequisites.** Yeh page assume karta hai ke tum ne [AI Prompting in 2026](/docs/ai-prompting-2026) finish kar li hai. Woh course mechanics sikhata tha: context, reasoning modes, deep research, multimodal, AI desktop apps. Yeh course woh discipline sikhata hai jo mechanics ko payoff deti hai. Doosre tab mein Claude, ChatGPT, ya Gemini ka free account kholo abhi. Tum ise practice callouts mein use karoge.
+
+---
+
+## Thesis Ek Line Mein
+
+**Deliverable kabhi answer nahi hota. Deliverable thinking ka documented evidence hota hai.**
+
+## Zaruri Baatein (Paanch Points)
+
+Yeh paanch points page ki shape hain. Yeh page nahi hain. Inhe map ki tarah padho; neeche disciplines ko territory ki tarah. Points batate hain kya karna hai; disciplines neeche batati hain actually kaise karna hai bina un patterns mein wapas gire jo tum 2023 se prompting shuru karne ke baad se use karte aa rahe ho.
+
+1. **Prompt karne se pehle predict karo.** Jab ek baar AI ka jawab padh lo, tum use un-read nahi kar sakte. Pehla reasonable-sounding paragraph us jagah occupy kar leta hai jahan tumhara apna position hota. Koi bhi tool kholne se pehle diagnosis, ranked questions, predicted answers, aur confidence seal karo.
+2. **Receipt deliverable hai.** Har AI claim ke liye jo galat hone par tumhari recommendation badal deti, tum ACCEPT, REJECT, MODIFY, SURFACED, ya MISSED record karte ho ek sentence ke saath kyun. Khaali receipt ya all-ACCEPT receipt ka matlab koi real thinking nahi hua.
+3. **Fluent prose accurate prose se alag hai.** AI confident lagta hai chahe sahi ho ya galat. Polished output ke andar chhe error types chupi hoti hain. Forward, ship, ya act karne se pehle naam se scan karo.
+4. **First-order kabhi poora jawab nahi hota.** AI visible variable optimize karta hai aur teen ko ignore karta hai jo usne abhi disturb kiye. Kisi bhi meeting-worthy decision ke liye cascade-map karo. Kam az kam ek feedback loop dhundho. Mechanisms insist karo, labels nahi.
+5. **Collaboration teesra raasta hai.** Solo speed mein haarta hai. AI-only originality mein haarta hai. Collaboration dono jeetta hai, magar sirf jab tum woh reasoning karo jo decide karta hai aur AI tedium kare. Woh split ulti karo aur tum ek sawaal aur jawab ke darmiyan middleman ban jaate ho. Middlemen automate ho jaate hain.
+
+Chhatwain discipline (First Principles) aur upar ke paanchon points ke peeche practice scaffolding woh hai jo tum is list ko real kaam mein operationalize karte ho.
+
+![Chhe disciplines chhe AI failure modes ke saath paired, teen arcs mein arranged. Part 1 Foundations posture set karta hai: Prediction Lock, Reasoning Receipt. Part 2 Detection woh pakadta hai jo AI miss karta hai: Error Taxonomy, Thinking in Systems. Part 3 Origination woh karta hai jo AI nahi kar sakta: First Principles, Working WITH AI.](/img/six-disciplines-273e7ccc1ee39588e425030a20906aad.png)
+*Figure 1: Chhe disciplines chhe AI failure modes se map hoti hain, teen arcs mein arranged. Detection ke liye Foundations chahiye; Origination ke liye dono.*
+
+---
+
+## Yeh Disciplines Hindsight Mein Obvious Kyun Lagte Hain
+
+Upar paanch points padho aur reaction usually half-shrug hoti hai: *haan, bilkul*. Prompt karne se pehle predict karo. Apne decisions document karo. Errors check karo. Second-order effects trace karo. Collaboration. Yeh naye ideas nahi hain. **Lindy Effect** (heuristic ke jo zyada arsa survive kiya woh survive karta rahega) exactly yahi kehta hai: cognition category mein jo ideas purane lagte hain woh isliye lagte hain kyunki pehle ki har generation of thinker ne inhe test kar liya. Predict-before-you-prompt 400 saal purana courtroom rule hai. Reasoning receipts aise hain jaise editors hamesha drafts padhte hain.
+
+2026 mein kya badla woh disciplines nahi hain. Woh **unhe skip karne ki cost** hai. Jab polished output mehenga tha, bottleneck production mein tha: kya tum actually cheez bana sakte the? AI ne polished output free kar diya. Koi bhi 12-saal-ka bachcha free account se ek memo produce kar sakta hai jo finished lagti hai. Bottleneck **evaluation** mein shift ho gaya: kya tum bata sakte ho cheez sahi hai ya nahi? Confidently galat AI analysis koi analysis se zyada dangerous hai, kyunki woh finished lagti hai.
+
+Doosra Lindy point: tools har chhe mahine mein badlte hain; sochna nahi badlta. Jo teams ne apna poora 2023 workflow ek AI product ke around banaya woh zyada tar 2024 mein aur phir 2025 mein rebuild kiya jab model releases ne surface reshuffle kiya. Products ke neeche skills apni value rakhti hain jab products nahi rakhte. Jo lasta hai us par bet karo.
+
+---
+
+## Reading Paths
+
+Teen tarike is page ko padhne ke, aaj kitna waqt hai us par depend karte hain:
+
+- **30-minute taste:** Disciplines 1, 2, 3, aur 6 padho. Alag sitting mein Disciplines 4 aur 5 ke liye wapas aao.
+- **90-minute essential read (recommended standard path):** Sab chhe disciplines order mein padho. Har worked example padho. Is hafte har discipline ke liye kam az kam ek practice callout run karo.
+- **Full read with practices (do ghante plus ek hafte ka real-kaam application):** Is page par sab kuch, plus har practice exercise agle saat din mein tumhare face hone wale actual decisions par run kiya. Yeh raasta hai jo instincts build karta hai.
+
+Jo path tumhare hafte se match kare woh chunno. Disciplines tab stick karti hain jab tum inhe real problems par chalate ho, sirf ek baar inhe padhne se nahi.
+
+---
+
+## Part 1: Foundations — Posture
+
+Do habits baaki sab ke neeche hain. Pehla AI failure mode 2026 mein: woh khushi se tumhara sochna tumhare liye kar deta hai. Woh ek finished-sounding answer deta hai pehle ke tumne apni position banayi ho. Doosra failure mode: pehla draft bahut jaldi finished lagta hai. Discipline 1 (Prediction Lock) woh posture hai jo tum AI kholne se pehle lete ho. Discipline 2 (Reasoning Receipt) woh artifact hai jo tum iske saath kaam karte hue produce karte ho.
+
+### Discipline 1: Prediction Lock
+
+Tum jaal jaante ho. Tum ek real problem Claude ya ChatGPT mein paste karte ho, jawab tezi se aur fluent aata hai, tum ise skim karte ho aur nod karte ho, aur teen minute baad yeh tumhare slides mein hai. Do din baad meeting mein tumhara boss poochhe ke tum us direction kyun gaye aur tumhein pata chale ke tum actually reasoning defend nahi kar sakte. Tumne ise inherit kiya. Tumne earn nahi kiya.
+
+Yeh hai fix. Pehli baar das minute, baad mein teen minute. AI kholne se pehle, chaar lines likho.
+
+1. **Kya ho raha hai.** Do sentences. Mechanism naam karo, topic nahi. *"Sales isliye giri kyunki returning customers online shift ho gaye aur hamare marketing ne acquisition chase kiya conversion ki jagah"* ek mechanism hai. *"Competition barh gayi hai"* ek topic hai.
+2. **Woh ek sawaal jo room split kar dega.** Agar tumhein honest jawab mila, kaunsa tumhare kuch options ko obviously ghalat dikhaayega?
+3. **Tumhara khayal jawab kya hai.** Specific raho. Number, naam, threshold ke saath yes/no. "Depend karta hai" nahi.
+4. **Tum kitne sure ho, aur kya tumhein flip karega.** *"60% confident; agar X 50% se upar ho, mera theory collapse ho jaata hai."*
+
+Yeh chaar lines milake **Prediction Lock** kehlati hain. Locked isliye kyunki yeh AI ke jawab se pehle timestamp carry karti hain.
+
+![Do flows compare hoti hain. Lock ke baghair: Problem se AI ke jawab se "Makes sense" agreement se inherited position (red, koi comparison possible nahi). Lock ke saath: Problem se sealed prediction se AI ke jawab se compare, phir receipt.](/img/prediction-lock-workflow-82731e397e10d76e773b42c8421ac51b.png)
+*Jab AI ka jawab padh lo, tum use un-read nahi kar sakte. Pehle prediction likho, ya bilkul mat likho.*
+
+**Real life mein yeh aisa lagta hai:**
+
+Ek regional bank head ke paas das din mein board deadline thi. Bank teen naye branches growing suburbs mein khol sakta tha, ya do underperforming band kar sakta tha. Dono defensible the. CFO closure ki taraf lean karta tha. COO expansion ki taraf. Uske paas Claude, ChatGPT, aur ek licensed internal tool sab open the. Easy move tha inhe brief karna aur board memo draft karwana.
+
+Usne nahi kiya. Kuch bhi kholne se pehle usne chaar lines likhin:
+
+| Line | Uski entry |
+|------|-----------|
+| **Diagnosis** | Yeh do losing branches paisa isliye kha rahe hain kyunki surrounding ZIP codes mobile-only customers pe shift ho gaye jo kabhi branch nahi aate. Teen growth-suburb sites us waqt hain jab naye homeowners abhi bhi mortgage in-person sign karte hain. |
+| **Sharpest question** | Do losing branches ke deposit balances ka kitna fraction un customers ka hai jinka primary contact 12+ months se sirf mobile-only raha hai? |
+| **Predicted answer** | 70% ya usse zyada. |
+| **Confidence + reversal** | 60%. Agar naye ZIPs mein in-person signing requirement 60% se upar hai, sirf-closure ka case collapse ho jaata hai. |
+
+Phir usne Claude khola aur sawaal kiya. Jawab 45% tha, 70% nahi. Uski prediction galat thi. Uska sawaal sahi tha. Usne lock throw nahi kiya; usne gap AI ke jawab ke saath likha aur note kiya "high-mobility customers transaction base hain, deposit base nahi." Woh note board memo ki pehli line ban gayi.
+
+**Weak Prediction Lock kaisa lagta hai:**
+
+| Line | Weak entry | Kyun fail hoti hai |
+|------|-----------|---------------------|
+| **Diagnosis** | Branches competition ki wajah se paisa kha rahi hain. | Topic naam karta hai, mechanism nahi. Das alag cheezein mean kar sakta hai. |
+| **Sharpest question** | Kya inhe band karein ya naye kholen? | Wohi yes/no jis par board argue kar raha hai. Kuch narrow nahi karta. |
+| **Predicted answer** | Probably kuch band, kuch naye. | Diagnosis ko prediction ki tarah restate karta hai. Galat hone ke liye kuch nahi. |
+| **Confidence + reversal** | Medium. Zyada data chahiye. | Unfalsifiable. "Zyada data" reversal trigger nahi hai. |
+
+Same person, same ghanta, same situation. Farq intelligence nahi. Yeh hai ke lock real test ki tarah likha ya nahi.
+
+#### Khud Try Karo
+
+Tum ek mid-size apparel chain mein retail head ho (40 stores 8 states mein, $180M annual revenue). Pichle quarter:
+
+- Same-store sales 12% giri, jabke marketing spend 18% barha.
+- Do regional competitors ne flat-to-up numbers report kiye.
+- Online channel 4% up tha; in-store foot traffic 22% down tha.
+- Drop 25-to-40 demographic mein sabse zyada tha aur do regions mein concentrated tha.
+- Marketing mostly digital acquisition ke liye gaya, retention nahi.
+- Tumhara CEO Friday tak diagnosis aur recommendation chahta hai.
+
+Kya ho raha hai, aur tum pehle kya poochhoge?
+
+*(Agar retail tumhara kaam nahi, apne hafte ka ek real decision lo — ek unexplained drop competing theories aur deadline ke saath. Discipline transfer hoti hai; sirf surface badlti hai.)*
+
+#### AI-Graded Practice Form
+
+Tumhara kaam abhi shuru hota hai. Upar jo chaar lines likhi hain woh submit karo, phir AI se grade karwao.
+
+**AI kya check karega:**
+
+1. **Kya tumhara "kya ho raha hai" ek mechanism naam karta hai, ya sirf label?** 1-10 rate karo. Tumhare kaam ka woh part quote karo jo decide karta hai.
+2. **Kya tumhara sawaal, jawab milne par, tumhare asli options narrow karta hai?** 1-10 rate karo. Ek aur wajah naam batao jo same situation fit karti hai magar tumhara sawaal usse distinguish nahi karta.
+
+Mera kaam mat likho. Agar koi field khaali ya vague hai, seedha bolo. Pehli messy attempt ke saath honest raho; na ise chamkao, na ise todo.
+
+**Tumhara "kya ho raha hai" (wajah, label nahi):**
+
+Decision ka label nahi. Woh cheez jo label chhupa raha hai.
+
+**Tumhara ek sawaal (jis ka jawab sabse bara piece settle kare):**
+
+Specific cheez point karna chahiye: number, naam, measurement, fact.
+
+**Tumhara andaza (specific, hedge nahi):**
+
+Number, naam, haan/naa. "Depend karta hai" nahi.
+
+**Kitne sure ho, aur kya tumhein flip karega:**
+
+Maslan, '70%. Agar X sach nikla, main apni position badal doon.'
+
+<details>
+<summary>**Apna Score Lao**</summary>
+
+AI se baat karo. Apne scores par sawaal karo.
+Jab tumhara BEHTAREEN evaluation aa jaye, wapas aao.
+
+[ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+Pehli baar 8 minute lagao. AI ke feedback ke saath sabse useful move: ek jagah dhundho jahan tum disagree karo. Wahan tumhara judgment rehta hai.
+
+</details>
+
+Discipline ka pehla half. Doosra half (AI ke claims ka log jo tum accept, reject, ya modify karte ho jab conversation chal rahi ho) Discipline 2 hai.
+
+<details>
+<summary>**Yeh kaam kyun karta hai (chhota version)**</summary>
+
+Kisi baahir ke source se consult karne se pehle apna andaza likhna AI se das saal purana hai. Gary Klein ne workplace version ko "project premortem" kaha (Harvard Business Review, 2007): tasawwur karo ke project fail ho gaya hai, aur shuru hone se pehle wajahen likho. Wohi idea. Phil Tetlock ki forecasting research (Good Judgment Project, *Superforecasting*, 2015) ne dikhaya ke calibration tab behtar hota hai jab tum jawab aane se pehle apna prediction record karo, baad mein nahi. Aur Tversky aur Kahneman ka anchoring kaam (1974) ne dikhaya ke jab ek confident answer us jagah occupy kar leta hai jahan tumhara apna jawab hota, tum bata nahi sakte ke tumhare bina uske kya sochte.
+
+Prediction Lock in teeno ka AI version hai.
+
+Is exercise ka poora version (10 ranked questions plus Reasoning Receipt template; 45-60 minute) [Part 0 Chapter 1, Lesson 1](/docs/Thinking-is-the-Curriculum/asking-better-questions/prediction-lock) mein hai. Yeh page move sikhata hai. Woh page ise system banata hai.
+
+</details>
+
+---
+
+### Discipline 2: Reasoning Receipt
+
+Tum ne subah Claude ke saath ek real document pe iterate kiya. Output clean hai. Tum ne ise slides mein daala, meeting run ki, aage badhe. Do hafte baad post-mortem mein tumhara boss poochhe "tumne actually kaunse parts par pushback kiya?" aur tum realize karo ke yaad nahi. Tumne skim kiya, accept kiya, ship kiya. Deliverable pass hua. Thinking nahi hui.
+
+Yeh fix hai. AI ke saath kaam karte hue, har *decisive* claim log karo paanch verdicts mein se ek ke saath. Claim decisive hai agar galat hone par tumhari recommendation badal jaati.
+
+| Verdict | Matlab | Ek-sentence kyun |
+|---------|--------|-----------------|
+| **ACCEPT** | Claim as-is li. | Kyun trust kiya (source, prior experience). |
+| **REJECT** | Claim discard ki. | Kya evidence ise beat kiya. |
+| **MODIFY** | Changed version use ki. | Kya badla aur kyun. |
+| **SURFACED** | AI ne koi point raise kiya jo tumne consider nahi kiya tha. Rakha. | Kyun matter karta hai. |
+| **MISSED** | Tumne koi point raise kiya jo AI ne nahi pakda. Tumne add kiya. | AI ne kya miss kiya aur kyun matter karta hai. |
+
+Log **Reasoning Receipt** kehlata hai.
+
+![Reasoning receipt ki anatomy: paanch columns har decisive call annotate karte hain. Decision, AI ka claim, Verdict (ACCEPT, REJECT, MODIFY, SURFACED, MISSED mein se ek), Kyun, Confidence change. Har row ek decision document karta hai jo human ne AI output ke baare mein kiya.](/img/reasoning-receipt-anatomy-0859672fc823ea90cab3589c282f3288.png)
+*Receipt mein ek decision per row. Verdict batata hai kya kiya. Kyun batata hai future reader ko (including future tum) kyun trust karna chahiye.*
+
+**Real life mein yeh aisa lagta hai:**
+
+Ek product lead ne Claude se ek naye feature ka launch plan draft karwaya. Claude ek clean teen-page plan wapas laya. Slides mein daalne ki bajaye, product lead ne side-by-side khola aur receipt build ki jaise har claim padhi:
+
+| AI ka claim | Verdict | Kyun |
+|-------------|---------|------|
+| "Single primary CTA ke saath launch karo." | ACCEPT | Hamare last teen launches se match karta; one-CTA tests ne two-CTA beats kiye hamesha. |
+| "Paid users wale 10% rollout cohort se shuru karo." | REJECT | Paid users hamare sabse kam churn-tolerant cohort hain; rollout mein bugs hon toh trust jalte hain. |
+| "Launch announcement Tuesday subah bhejo." | MODIFY | Tuesday haan; subah nahi. Is segment ka engagement window Tuesday 6-8pm hai. |
+| "Competitor ke March release se differentiation ke saath lead karo." | SURFACED | Competitor ki release timing se compare nahi kiya tha. Differentiation framing jeetti hai. |
+| *(AI ne naye feature ke paid-tier pricing implications mention nahi kiye.)* | MISSED | Maine note add kiya: launch se pehle pricing review hona chahiye warna legacy customers ko discounts milenge. |
+
+Usne receipt launch plan ke saath bheji. Do hafte baad CEO ne poochha ke paid cohort kyun skip kiya rollout mein. Usne row 2 point ki. Conversation nawwe second mein khatam hua.
+
+**All-ACCEPT receipt ka matlab:**
+
+Paanch ACCEPTs ek row mein matlab do cheezein mein se ek: AI har cheez mein sahi hai (rare) ya receipt real kaam nahi kar rahi. Har "kyun" likhne ki friction discipline hai. Agar real "kyun" nahi likh sakte, tumne actually claim accept nahi ki. Tumne inherit ki.
+
+#### Khud Try Karo
+
+Tum ek 60-person B2B SaaS company mein product head ho (CRM tooling, ~$12M ARR, 30% year-over-year). AI se poochha: *"Kya yeh feature abhi ship karein, ya do hafte aur testing ke liye wait karein?"* AI ne paanch-claim recommendation di. Har ek receipt karo:
+
+> 1. **"Abhi ship karo. Speed-to-market early adoption mein dominant variable hai."**
+> 2. **"Do-hafte delay news cycle kho dene ka risk rakhta hai, kyunki competitor ne pichle hafte apna version launch kiya."**
+> 3. **"Tumhare last teen launches se production telemetry dikhata hai ke defects week 1-3 mein surface hoti hain, toh do extra hafte testing pakdegi nahi."**
+> 4. **"Customer support load typically launch ke baad pehle hafte 40% barhta hai."**
+> 5. **"Engineering velocity defended ship ke dauran 15% girta hai."**
+
+Har claim ke liye: Verdict (ACCEPT/REJECT/MODIFY/SURFACED/MISSED) + ek-sentence kyun.
+
+**Strong sample (apna submit karne ke baad kholo):**
+
+| Claim | Verdict | Kyun |
+|-------|---------|------|
+| 1 | REJECT | Speed-to-market commodity markets mein dominate karta hai, hamare nahi: hum compliance-bound buyers ko bechte hain jo bugs ko slowness se zyada punish karte hain. |
+| 2 | MODIFY | Competitor ne related feature launch kiya, hamaara nahi: differentiation news cycle se zyada matter karta hai, aur cycle already over hai. |
+| 3 | ACCEPT | Hamare last teen launches se match karta: hotfixes weeks 1-3 mein hoti hain, weeks 4-6 mein almost kabhi nahi. |
+| 4 | SURFACED | Maine 20% support lift budget rakha tha, 40% nahi: support team ke paas 1.5 hafte ka headroom hai, jo real risk close karta hai. |
+| 5 | MISSED | AI ne nahi raise kiya ke do aur hafte push karne se hamare biggest customer ka annual planning lock-in window aa jaata hai; yahi real limit hai. |
+
+Yeh kaam karta hai: sirf ek ACCEPT (real evidence ke saath). Do Whys internal data quote karte hain, vibes nahi. MISSED row ek constraint pakadta hai jo AI nahi jaan sakti thi.
+
+#### AI-Graded Practice Form
+
+Tumhara kaam abhi shuru hota hai. Upar jo paanch claims hain unhe receipt karo, paanch verdicts mein se ek ke saath aur ek-sentence kyun.
+
+**AI kya check karega:**
+
+1. **Kya har verdict ke liye real "kyun" likha, ya "sounds right" / "makes sense" pattern likhe?** 1-10 rate karo. Meri receipt ka sabse kamzor "kyun" quote karo.
+2. **Kya kam az kam ek REJECT ya MODIFY hai, plus kam az kam ek SURFACED ya MISSED?** Agar har verdict ACCEPT hai, receipt kaam nahi kar rahi. 1-10 rate karo. Agar meri receipt all-ACCEPT hai, ek line mein seedha bolo.
+
+Mera kaam mat likho. Personality par grade mat karo. Agar koi field khaali ya vague hai, seedha bolo.
+
+Claim 1 ke liye ("Abhi ship karo. Speed-to-market early adoption mein dominant variable hai."):
+
+Verdict (ACCEPT/REJECT/MODIFY/SURFACED/MISSED) + 1-sentence kyun
+
+Claim 2 ke liye ("Do-hafte delay news cycle kho dene ka risk rakhta hai"):
+
+Verdict + 1-sentence kyun
+
+Claim 3 ke liye ("Data dikhata hai defects week 1-3 mein surface hoti hain"):
+
+Verdict + 1-sentence kyun
+
+Claim 4 ke liye ("Customer support load typically launch ke baad pehle hafte 40% barhta hai"):
+
+Verdict + 1-sentence kyun
+
+Claim 5 ke liye ("Engineering velocity ship ke dauran 15% girta hai") YA tumhari apni MISSED row (jo AI ne nahi raise kiya):
+
+Verdict + 1-sentence kyun, YA MISSED row jo AI ne miss kiya
+
+<details>
+<summary>**Apna Score Lao**</summary>
+
+AI se baat karo. Apne scores par sawaal karo.
+Jab tumhara BEHTAREEN evaluation aa jaye, wapas aao.
+
+[ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+Pehli baar 10-15 minute lagao. Baad mein tez. AI ke feedback ke saath sabse useful cheez: ek row dhundho jahan tumne "sounds right" likha bina usse earn kiye. Woh row hai jahan tum ne almost kisi aur ka reasoning apne naam se ship kar diya. Us row ko real "kyun" ke saath phir se receipt karo aur tumne exercise ki cost wapas aa gayi.
+
+</details>
+
+Jo tumne abhi kiya woh decisive claims ek ek karke pakadta hai. Jo nahi pakadta woh technical errors hain jo har claim ke andar chuppe hain (fabricated citations, stale facts, false confidence). Woh scan Discipline 3 hai.
+
+<details>
+<summary>**Strong sample dekhna hai? (Apna submit karne ke baad kholo)**</summary>
+
+Ek reader ne same ship-now-or-wait scenario chalaya. Yeh ek acha jawab hai; sirf shape dikhata hai.
+
+| Claim | Verdict | Kyun |
+|-------|---------|------|
+| 1 | REJECT | Speed-to-market commodity markets mein dominate karta hai, hamare nahi: hum compliance-bound buyers ko bechte hain jo bugs ko slowness se zyada punish karte hain. |
+| 2 | MODIFY | Competitor ne related feature launch kiya, hamaara nahi: differentiation news cycle se zyada matter karta hai, aur cycle already over hai. |
+| 3 | ACCEPT | Hamare last teen launches se match karta: hotfixes weeks 1-3 mein hoti hain, weeks 4-6 mein almost kabhi nahi. |
+| 4 | SURFACED | Maine 20% support lift budget rakha tha, 40% nahi: support team ke paas 1.5 hafte ka headroom hai, jo real risk close karta hai. |
+| 5 | MISSED | AI ne nahi raise kiya ke do aur hafte push karne se hamare biggest customer ka annual planning lock-in window aa jaata hai; yahi real limit hai. |
+
+Jo cheez ise kaam karti hai: sirf ek ACCEPT (real evidence ke saath). Paanch Whys mein se do internal data quote karte hain, vibes nahi. MISSED row ek constraint pakadta hai jo AI nahi jaan sakti thi (customer ki planning calendar). Reader ke paas jo decision aata hai woh "wait, because of the customer lock-in" hai — jo "wait, because more testing" se alag jawab hai. Same verdict, alag reasoning, room mein defendable.
+
+Jo cheez yeh nahi karna chahta: brilliant hona. Zyada tar rows ek sentence hain. Discipline real Whys likhne mein hai, literary nahi.
+
+</details>
+
+<details>
+<summary>**Agar tumhe cognitive science neeche chahiye (click to expand)**</summary>
+
+Receipt AI se bahut purana hai.
+
+*   **Schön, D. (1983). _The Reflective Practitioner._** Seedha ancestor. Schön ka "reflection-in-action" woh move hai jab kaam hota hue decisions ka written track banao, taake practitioner baad mein har ek defend kar sake. Reasoning receipt reflection-in-action hai jo model ke saath kaam par laagu hai.
+*   **Argyris, C. (1977). "Double Loop Learning in Organizations." _Harvard Business Review._** Single-loop learning existing model ke khilaf errors correct karta hai; double-loop learning model ko surface karta hai. All-ACCEPT receipt best case mein single-loop hai. Har "kyun" likhne ka friction doosra loop force karta hai.
+*   **Brown, P. C., Roediger, H. L. & McDaniel, M. A. (2014). _Make It Stick: The Science of Successful Learning._ Belknap Press / Harvard University Press.** Retrieval-practice aur elaboration research ka popular synthesis, **Roediger, H. L. & Karpicke, J. D. (2006). "Test-enhanced learning: Taking memory tests improves long-term retention." _Psychological Science_ 17(3), 249-255** mein formalized. Apne lafzon mein ek sentence likhna ke koi cheez kyun matter karti hai, chhe mahine baad yaad rakhne ko dramatically behtar banata hai. Receipt tumhare apne decisions par retrieval practice hai; boss-jo-chhe-mahine-baad-poochhe woh moment exactly woh scenario hai jis par research hai.
+
+Kisi bhi single trial ne Reasoning Receipt ko AI ke liye specifically test nahi kiya. Mechanism (decisions likho jab banao, baad mein defend karo) well-studied hai; AI interactions par laagu karna obvious extension hai, alag se validated finding nahi.
+
+*Gehra jao:* [Part 0 Chapter 1: Behtar Sawaal Poochna](/docs/Thinking-is-the-Curriculum/asking-better-questions). Poora version (10-row receipt ek real AI conversation ke khilaf, plus Contradiction Challenge jahan tum ek alag AI se apni reasoning attack karwao, 45-60 min) wahan foundational sequence ka hissa hai. Yeh page move sikhata hai. Woh chapter ise ek habit banata hai jo tum har high-stakes AI conversation par chala sako.
+
+</details>
+
+---
+
+*Baaki content agli chat mein paste karo — Part 2: Detection (Disciplines 3 aur 4) aur Part 3: Origination (Disciplines 5 aur 6) wahan se continue hoga.*
+
+
+## Part 2: Detection — Jo AI Miss Karta Hai Use Pakadna
+
+Foundations ne tumhe posture diya. Detection woh pattern recognition train karta hai jo pakadta hai jo AI consistently miss karta hai. Yahan do failure modes dominate karte hain. AI confident lagta hai chahe sahi ho ya galat, aur iski zyada tar errors un paragraphs mein chupi hain jo sabse professional lagte hain. AI visible variable optimize karta hai aur teen variables ignore karta hai jo usne disturb kiye. Discipline 3 (Error Taxonomy) woh named-category scan hai jo tum fluent prose ke khilaf chalate ho chhe specific error types dhundhne ke liye. Discipline 4 (Thinking in Systems) woh cascade map hai jo tum kisi bhi meeting-worthy decision ke khilaf draw karte ho.
+
+### Discipline 3: Error Taxonomy
+
+Tum jaal jaante ho. Tum ek real document Claude ya ChatGPT mein paste karte ho, jawab polished aur fluent aata hai, aur tum ise waise padhte ho jaise apni writing padhte ho: general sense ke liye. Yeh flow karta hai. Tum nod karte ho. Error draft ke sabse professional paragraph mein baitha hai, woh jo tumhari aankh ne skip kiya kyunki kuch ghalat nahi laga. Teen din baad ship hota hai, aur woh ek fabricated number, ya woh ek citation jo exist nahi karta, pehli cheez ban jaata hai jo tumhara reader pakadta hai.
+
+Yeh fix hai. AI output ko naam se scan karo, ek error type ek baar mein, "feel" ke liye padhne ki jagah. Chhe types, har ek ke saath ek where-to-look-first prompt.
+
+| Error Type | Kaisa lagta hai | Pehle kahan dhundho |
+|------------|-----------------|---------------------|
+| **Factual error** | Ek demonstrably false specific claim: number, date, naam, citation, API method. | Koi bhi sentence specific number ke saath, khaaskar decimals. Precision research ka appearance create karta hai. |
+| **Logical gap** | Conclusion premises se actually follow nahi karta. | "Evidence" aur "therefore" ke beech bridge. "Therefore" bracket karo aur poochho: kya yeh follow karta hai? |
+| **False confidence** | Uncertain information certain tone mein stated. | Sabse fluent paragraphs. Hedging language ("may", "could") signal hai ke AI thin ice par hai; contested topic par iska absence red flag hai. |
+| **Missing context** | Ek crucial factor omit kiya gaya jo analysis badal deta. | Jo tumhara subject-matter expert pehle poochhe. Agar tum poochho "wait, kya tumne X consider kiya?", AI ne probably nahi kiya. |
+| **Fabricated source** | Citation, library function, ya API jo exist nahi karta, ya exist karta hai magar woh nahi kehta jo AI ne claim kiya. | Har citation, har quoted statistic, har external function call. Forward ya run karne se pehle verify karo. |
+| **Stale fact** | Kabhi sach tha, ab nahi. | Koi bhi time-sensitive: prices, leadership, laws, API versions. |
+
+![Ek confident-sounding AI paragraph chhe error types ke saath annotations ke taur par overlaid. Factual (ghalat fact), Logical Gap (skipped step), False Confidence (overstated certainty), Missing Context (relevant constraint dropped), Fabricated Source (invented citation), Stale Fact (kabhi sach tha, ab nahi).](/img/error-taxonomy-anatomy-fd259fd7ce9add025afb20ac3c4130f5.png)
+*Chhe error types apne aap announce nahi hote. Woh un paragraphs ke andar chuppe hain jo sabse professional lagte hain — isliye naam se scanning feel se scanning se behtar hai.*
+
+**Real life mein yeh aisa lagta hai:**
+
+Ek buy-side equity analyst ek $25M position ke liye recommendation memo build kar rahi thi. Investment Committee nawwe minute mein milne wali thi. Usne Claude se chaar-paragraph thesis section draft karwaya. Claude ne clean draft wapas diya: revenue growth, multiple expansion, ek cited bank-analyst quote, Q3 cash-flow figure. Usne ise memo mein directly paste nahi kiya. Usne chhe-row scan chalaya.
+
+| Error type | Usne draft mein kya paya | Verdict |
+|------------|--------------------------|---------|
+| Factual error | Draft ne kaha: *"Q3 operating cash flow $182M, 14% year-over-year up."* Uski 10-Q tab ne kaha $164M, 9% up. 11% off. | Pakda. Primary source se correct kiya. |
+| Logical gap | Draft ne kaha: *"Comparable peers 14x forward EBITDA par trade karte hain; therefore yeh naam 11x par undervalued hai."* "Therefore" ne assume kiya ke peer set actually comparable hai. Do mein se teen peers ke higher margins the. | Pakda. Margin-adjusted multiple ke saath rewrite kiya. |
+| False confidence | Draft ne kaha: *"Management ki $2.3B revenue guidance next year ke liye conservative hai."* Koi hedge nahi. Koi basis nahi. | Pakda. "Above consensus by 4%" ke taur par rewrite kiya. |
+| Missing context | Draft ne company ke largest customer ka mention nahi kiya (22% of revenue) jo ek active RFP mein tha. | Pakda. Pehle risk bullet ke taur par add kiya. |
+| Fabricated source | Draft ne cite kiya: *"As Morgan Stanley's industrials desk noted in their November initiation..."* FactSet search ki. Aisa koi note exist nahi karta. Claude ne do real reports ko ek confident fiction mein blend kiya tha. | Pakda. Quote remove kiya. |
+| Stale fact | Is draft mein kuch time-sensitive nahi slip hua. | Actively scanned. Clean. |
+
+Paanch categories ek single chaar-paragraph draft par trigger hui, aur fabricated bank quote woh tha jo usne almost miss kiya kyunki exactly waise lagta tha jaise Morgan Stanley desk likhti.
+
+#### Khud Try Karo
+
+Tum ek investment analyst ho. AI se NorthBridge Industrial Holdings ka recommendation memo draft karwaya. Investment Committee 90 minute mein milti hai. Yeh AI ka chaar-paragraph draft hai. Chhe error types ke zariye naam se scan karo, Factual aur Fabricated Source se shuru karo:
+
+> **Investment Memo: NorthBridge Industrial Holdings (NBIH), DRAFT**
+>
+> NorthBridge Industrial Holdings ek mid-cap industrial supplier hai FY2024 revenue approximately $1.8B ke saath. Q2 2026 operating cash flow $214M aayi, 17% year-over-year up, consecutive quarters of double-digit cash-flow growth mein chautha. Gross margin 38.4% NBIH ko uske sector ke top quartile mein rakhti hai. Management ki $2.1B revenue guidance FY2026 ke liye conservative posture reflect karta hai reported backlog ki strength ko dekh kar.
+>
+> Industrial-supplier set mein comparable peers approximately 13.5x forward EBITDA par trade karte hain; NBIH currently 10.2x par trade karta hai. Therefore naam roughly 25% undervalued hai, kisi bhi earnings beat par meaningful re-rating potential suggest karta hai. Mean-reversion thesis company ki recent capital-return announcement aur past chhe hafte mein industrials mein broader sector rotation se support hoti hai.
+>
+> Goldman Sachs ne apne April 2026 industrial-supplier sector primer mein note kiya, *"industrial suppliers with backlog visibility above 9 months are the most reliable beneficiaries of capex normalization."* NBIH ka reported backlog 11.2 months par stand karta hai. Past 90 din mein insider buying teen executives mein $4.2M total hai, NBIH mein teen saal mein highest insider-buying activity. Technical setup constructive hai: 50-day moving average mid-March mein 200-day ke upar cross kiya.
+>
+> Recommendation: BUY, 12-month price target $84 (current price $68), 23.5% upside imply karta hai.
+
+Chhe-row scan grid bharo (har row ke liye exact AI sentence quote karo; row SIRF tab blank chhodo agar actively scanned aur kuch nahi mila, aur us row mein "actively scanned, none found" likho):
+
+**Strong sample (apna submit karne ke baad kholo):**
+
+| Error type | AI draft se quoted sentence | Kyun yeh category trigger karta hai |
+|------------|----------------------------|--------------------------------------|
+| Factual error | *"Q2 2026 operating cash flow $214M aayi, 17% year-over-year up."* | Specific number, 10-Q se verifiable. Actual Q2 figure verify karo. |
+| Logical gap | *"Therefore naam roughly 25% undervalued hai."* | "Therefore" assume karta hai ke peer set actually comparable hai — yeh argue nahi kiya gaya. |
+| False confidence | *"Management ki $2.1B revenue guidance conservative posture reflect karta hai."* | Koi hedge word nahi. "Conservative" ek directional claim hai fact ki tarah presented. |
+| Missing context | *(Draft mein nahi.)* Kisi bhi customer concentration ya event-driven risk ka mention nahi. | Taxonomy kaam karta hai kyunki tum woh scan karte ho jo wahan nahi hai. |
+| Fabricated source | *"Goldman Sachs ne apne April 2026 industrial-supplier sector primer mein note kiya..."* | Real bank, plausible quote — verify karo ke yeh document exist karta hai aur yeh quote actually contain karta hai. |
+| Stale fact | Actively scanned, none found. | Blank row note ke baghair skip hota, finding nahi. |
+
+#### AI-Graded Practice Form
+
+Tumhara kaam abhi shuru hota hai. Upar jo AI ka chaar-paragraph draft hai use chhe error types ke zariye scan karo, Factual aur Fabricated Source se shuru karo.
+
+**AI kya check karega:**
+
+1. **Kya tumne naam se scan kiya, ya feel ke liye padha aur baad mein label kiya?** 1-10 rate karo. Meri grid ka woh row quote karo jo decide karta hai. Real named scan har row ke liye verdict produce karta hai, chahe "actively scanned, found nothing" ho. Khaali row bina us note ke yeh signal hai.
+2. **Kya tumhari quoted sentences woh hain jo galat hone par tumhari car badal deti, ya asaan lines flag ki?** 1-10 rate karo. Kisi bhi row ke liye jahan maine sentence quote kiya, ek mazboot candidate naam batao jo mujhe pehle pakadna chahiye tha (agar meri mein hai).
+
+Mera kaam mat likho. Writing style par grade mat karo. Agar koi row "actively scanned, none found" note ke baghair khaali hai, ek line mein seedha bolo.
+
+**Tumhara 6-row scan grid (har row ke liye exact AI sentence quote karo; row SIRF tab blank chhodo agar actively scanned aur kuch nahi mila, aur us row mein "actively scanned, none found" likho):**
+
+Row per error type: Factual / Logical gap / False confidence / Missing context / Fabricated source / Stale fact. AI write-up se exact sentence quote karo, phir ek line ke kyun yeh category trigger karta hai.
+
+**Har row par confidence (1-10 per error type; ek sentence kyun):**
+
+Maslan, 'Factual: 9, maine mpg rating khud check ki. Fabricated source: 6, woh index nahi mila magar negative prove nahi kar sakta.'
+
+<details>
+<summary>**Apna Score Lao**</summary>
+
+AI se baat karo. Apne scores par sawaal karo.
+Jab tumhara BEHTAREEN evaluation aa jaye, wapas aao.
+
+[ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+Pehli baar 8-15 minute lagao. Baad mein tez. AI ke feedback ke saath sabse useful cheez: ek jagah dhundho jahan AI tumhare scan se disagree kare. Woh disagreement tumhare judgment ki agi round ki jagah hai.
+
+</details>
+
+Jo tumne abhi kiya woh tumhare paas jo output hai us mein local errors pakadta hai. Jo nahi pakadta woh tumhari recommendation ke downstream second-order effects hain: morale hit jab recommendation land kare, customer behavior change jab policy ship ho, loop jahan cost savings service quality gira deti hain aur customers chale jaate hain. Woh cascade map hai, Discipline 4.
+
+<details>
+<summary>**Strong sample dekhna hai? (Apna submit karne ke baad kholo)**</summary>
+
+Ek reader ne same car-buying scenario chalaya. Yeh ek acha jawab hai; sirf shape dikhata hai.
+
+| Error type | AI write-up se quoted sentence | Kyun yeh category trigger karta hai |
+|------------|-------------------------------|--------------------------------------|
+| Factual error | *"Corolla ko 47 mpg combined milte hain."* | Specific number jo tum check kar sakte ho. Us Corolla ka real combined rating lagbhag 33 mpg hai. Figure seedha galat hai, aur cost math badal deta hai. |
+| Logical gap | *"Civic ki mileage kam hai, isliye woh zyada reliable choice hai."* | "Therefore" low miles ko reliability ka proof maanta hai. Kam mileage madad karti hai, magar akele car ko zyada reliable nahi banati. Link assert kiya gaya hai, dikhaya nahi. |
+| False confidence | *"Dono car agle decade bina major repair ke chalegi."* | Koi "should" nahi, koi "likely" nahi, koi condition nahi. Used car ki future ke baare mein flat promise ek guess hai jo fact ka roop dhaara hua hai. Missing hedge red flag hai. |
+| Missing context | *(Write-up mein nahi.)* 2019 Civic model-year ka ek open airbag recall hai. | Page par nahi hona is row ka poora point hai. Tum woh scan karte ho jo wahan nahi hai. Safety recall exactly woh cheez hai jo tum khareedne se pehle naam chahte ho, aur model ne kabhi nahi bataya. |
+| Fabricated source | *"CarReliability Index 2026 rankings ke mutabiq, Corolla ko 10 mein se 9.4 milte hain."* | Confident, specific, aur banaya hua. "CarReliability Index" jaisi koi cheez nahi hai. Named source jo tumhein nahi milta woh exactly woh failure hai jise pakadne ke liye yeh row bani hai. |
+| Stale fact | *"Dono abhi bhi $2,000 state clean-vehicle rebate ke liye qualify karti hain."* | Kabhi sach tha, ab nahi. Woh rebate 2025 mein expire ho gaya. Koi bhi cheez jo price, law, ya deadline se bandhi ho stale ho jaati hai, isliye named check milta hai. |
+
+Jo cheez ise kaam karti hai: har row mein verdict hai, aur har quoted line sach mein badal deti ke tum kaunsi car khareedte. Yeh throwaway picks nahi hain. Missing Context row par act karna specific enough hai (named model-year, named recall). Fabricated Source row exact sentence quote karti hai aur naam batati hai ke kyun fail hoti hai (aisa koi index exist nahi karta).
+
+Jo cheez yeh nahi karna chahta: exhaustive hona. Taxonomy ek scan hai, audit nahi. Pandrah minute mein chhe rows target hai. Teen real catches tees performative se behtar hain.
+
+</details>
+
+<details>
+<summary>**Agar tumhe cognitive science neeche chahiye (click to expand)**</summary>
+
+Taxonomy 2026 hai, magar confident prose jo scrutiny disarm karta hai us par purana kaam hai.
+
+*   **Alter, A. L. & Oppenheimer, D. M. (2009). "Uniting the tribes of fluency to form a metacognitive nation." _Personality and Social Psychology Review_ 13(3), 219-235.** Processing fluency ka canonical review: fluent, easy-to-process information ko zyada credible samjha jaata hai, actual accuracy se independent. (Popular treatment ke liye dekho **Kahneman, D. (2011). _Thinking, Fast and Slow_, Chapter 5: "Cognitive Ease."** Farrar, Straus and Giroux.) Polished AI prose us effect ka modern industrial-scale version hai. Named category se scanning ease-equals-truth shortcut ko interrupt karta hai kyunki reader ko specific failure shapes dhundhne padte hain, overall credibility vibe ki jagah.
+*   **Silver, N. (2012). _The Signal and the Noise: Why So Many Predictions Fail, but Some Don't._ Penguin Press.** Silver ka central argument hai ke confidence aur calibration independent traits hain. Jo forecasters sabse certain lagte hain woh routinely sabse kam calibrated hote hain, aur pattern pundits, models, aur (ab) generative AI mein repeat hota hai. Taxonomy ka False Confidence row us thesis ka AI output ke liye operationalization hai.
+*   **Gigerenzer, G. (2002). _Calculated Risks: How to Know When Numbers Deceive You._ Simon & Schuster.** (UK mein _Reckoning with Risk_ naam se publish hua.) Gigerenzer ka calibration kaam subjective confidence aur observed accuracy ke beech gap formalize karta hai, aur dikhaya ke calibration tab behtar hota hai jab forecasters ko predictions likh kar commit karne padte hain aur outcomes se check karne padte hain. Error-taxonomy scan AI ke liye equivalent hai: yeh tumhein har category par verdict commit karne par majboor karta hai poora draft accept karne ki jagah. Academic foundation ke liye dekho **Gigerenzer, G., Hoffrage, U. & Kleinbölting, H. (1991). "Probabilistic mental models: A Brunswikian theory of confidence." _Psychological Review_ 98(4), 506-528.**
+
+Kisi bhi single trial ne named taxonomy ko AI-error detection ke liye specifically measure nahi kiya. Cognitive pattern well-studied hai; AI output par laagu karna obvious extension hai.
+
+*Gehra jao:* [Part 0 Chapter 2: Tooti Reasoning Detect Karna](/docs/Thinking-is-the-Curriculum/detecting-broken-reasoning). Poora version (8-category taxonomy, dual-AI cross-check, prediction-vs-actual calibration; 60-75 min) ise system banata hai.
+
+</details>
+
+---
+
+### Discipline 4: Systems Mein Sochna
+
+**Ek paragraph mein:** zyada tar AI tools tumhe effects ki list dete hain jab tum kisi decision ke baare mein poochho. Jo woh miss karte hain woh feedback loops hain, jahan effects circle back kar ke original decision ko amplify ya undo karte hain. Cascade Map consequences trace karta hai multiple stakeholder groups mein aur tumhein kam az kam ek loop naam karne par majboor karta hai clean answer ship karne se pehle.
+
+Tum jaal jaante ho. AI se staffing change analyze karwaya, jawab clean aaya, teen bullets aur crisp recommendation. Same dopahar ship kar diya.
+
+Teen mahine baad morale collapse hua us team mein, do clients routing around karne lage, woh manager jo quietly displaced kaam lete tha burn out hua, aur jab leadership ne poochha kya hua tum explain nahi kar sake. Pehla-order jawab sahi tha. Second-order effects ne ise kha liya. Third-order effects abhi bhi kamre mein hain.
+
+Yeh fix hai. Pehli baar bees minute, baad mein das. Kisi bhi meeting-worthy decision ke liye AI kholne se pehle, paanch lines draw karo.
+
+1. **Decision center mein.** Ek sentence, koi hedging nahi. "Consider raising prices" nahi balke "list prices 18% raise karo new contracts par next quarter se."
+2. **Paanch domains bahar spoke karte hue.** Employees, customers, competitors, regulators, internal knowledge. Ek branch per domain.
+3. **Tin "aur phir kya?" layers per domain.** First-order effect. Phir us effect ka consequence. Phir *us* consequence ka consequence.
+4. **Kam az kam ek feedback loop naam karo.** Ek jagah dhundho jahan downstream effect circle back kare aur original decision ko badle. *Mechanism* state karo, label nahi.
+5. **Sirf tab finish karo jab map messy lage.** Agar neat hai, tum bahut jaldi ruk gaye. Zyada tar strategic disasters woh loops hain jinhein kisine map nahi kiya.
+
+Woh drawing **Cascade Map** kehlati hai.
+
+AI us variable ko optimize karta hai jo tumne poochha; woh teen variables ke baare mein reason nahi karta jo woh disturb karta hai. Humans breadth miss karne lagte hain (second domain, woh stakeholder jo tumne naam nahi kiya). AI loops miss karne lagta hai (feedback jo chhe mahine baad circle back karta hai). Blind spots complementary hain. Isliye pehle map draw karo, phir AI ko branches stress-test karne ke liye laao.
+
+![Cascade map. Center mein ek decision. Paanch domains bahar spoke karte hain (employees, customers, competitors, regulators, internal knowledge). Teen concentric layers of "and then what" second-order effects. Ek feedback loop circled jahan do domains ek doosre ko reinforce karte hain.](/img/cascade-map-example-17e824d9b172779d870ff3b6ad625666.png)
+*Paanch domains, teen consequence layers, ek named feedback loop. Mess feature hai, bug nahi.*
+
+#### Discipline 4 — Khud Try Karo
+
+Tum ek 200-person B2B SaaS company mein revenue head ho (~$32M ARR; HR-tech vertical; 280 customers, top 20 ke paas 55% revenue; 18-month average contract length). Leadership chahti hai ke next quarter sab new contracts par list prices 18% raise karo aur standard discount ladder 0-to-30% range se 0-to-15% neeche karo. Tum decision-recommender ho. Thursday ke exec read-out se pehle is pricing change ko cascade karo.
+
+Paanch domains seedha apply hote hain: account executives (currently quota-attainment 74% hai), existing customers jo next 6 months mein renewal ke liye hain, do named competitors, top accounts ke procurement teams, aur tumhara apna sales-enablement collateral.
+
+**Strong sample (apna submit karne ke baad kholo):**
+
+**Central decision:** New contracts par list prices 18% raise karo Q3 se; discount ladder 7 tiers se 4 par shorten karo.
+
+| Domain | 1st-order | 2nd-order | 3rd-order |
+|--------|-----------|-----------|-----------|
+| Account execs | Quota math mid-quarter mushkil hoti hai | AEs chhote deals par concentrate karte hain jahan discount approval tez hai | Top-of-funnel enterprise par slow; sales mix down-market shift karta hai bina kisi ne decide kiye |
+| Renewal customers | Renewal price new list se benchmark hoti hai | Procurement top 3 accounts mein "most favored nation" clauses re-open karta hai | Do largest accounts multi-year freezes negotiate karte hain new list se neeche lock karte hue |
+| Competitors | Competitor A holds, Competitor B undercuts | Competitor B top 50 prospects ke liye targeted outbound shuru karta hai | Competitive deals mein win rate 8-12 pts girta hai |
+| Procurement teams | Approval workflow mein finance gate add hoti hai | Deal cycle average 11-18 din extend hoti hai | Q3 forecast sirf deal-cycle slippage se miss hota hai |
+| Sales collateral | Purane pricing sheets CRM mein cached hain | AEs transition ke dauran 2-3 hafte purane prices quote karte hain | Kuch contracts purani price par sign hoti hain; legal flag karta hai |
+
+**Named loop:** AE quota pressure under new list deeper one-off discounts push karta hai flagship deals par, jo renewal benchmarks mein leak karte hain procurement reference checks ke zariye, jo realized net price list se compress karta hai, jo matlab hai headline 18% increase 4-6% realized dikhta hai, jo agle saal ek aur pricing review trigger karta hai.
+
+#### AI-Graded Practice Form
+
+Tumhara kaam abhi shuru hota hai. Upar jo pricing change hai use paanch domains mein cascade karo.
+
+**AI kya check karega:**
+
+1. **Kya tumhara map paanch domains wide aur teen layers deep gaya, har link par mechanism (label nahi)?** 1-10 rate karo. Sabse patla domain naam batao aur ek specific effect jo tumne us mein miss ki.
+2. **Kya tumhara feedback loop ek real loop hai, ek causal sentence mein mechanism stated?** 1-10 rate karo. Agar loop sirf label hai ("regulators react"), toh flag karo aur ek aur loop propose karo jo maine naam nahi kiya, mechanism likha hua (label nahi magar "regulators react kyunki X trigger karta hai Y jo force karta hai Z").
+
+Mera map mat redraw karo. Style par rate mat karo. Agar koi field khaali ya vague hai, ek line mein seedha bolo.
+
+**Tumhara cascade map (central decision, phir 5 domains x 3 layers; rough text theek hai, sirf structure visible rakho):**
+
+Central decision: ... | Salespeople: 1st > 2nd > 3rd | Customers: 1st > 2nd > 3rd | Competitors: 1st > 2nd > 3rd | Buying teams: 1st > 2nd > 3rd | Sales materials: 1st > 2nd > 3rd
+
+**Tumhara feedback loop, ek causal sentence mein (label nahi):**
+
+Maslan, 'Sales-target pressure salespeople ko deeper one-off discounts dene par push karta hai flagship deals par, jo renewal par customers ki expected prices mein leak karte hain, jo real price ko new sticker price se neeche push karta hai, jo matlab hai 18% increase customers ke actually pay karte hue 4% increase ki tarah nazar aata hai.'
+
+<details>
+<summary>**Apna Score Lao**</summary>
+
+AI se baat karo. Apne scores par sawaal karo.
+Jab tumhara BEHTAREEN evaluation aa jaye, wapas aao.
+
+[ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+Pehli baar 15-20 minute lagao. Cascade maps Prediction Lock se zyada waqt lete hain kyunki value messy middle layers mein hai, aur pehle teen ya chaar "aur phir kya?" sawaal forced lagte hain jab tak real ones surface na hon. Chautha ya paanchwa usually woh hai jahan third-order effect jo actually matter karta hai nazar aata hai. Muscle ban jaaye tez; experienced cascaders poora map aath ya baarah minute mein chalaate hain.
+
+AI ke feedback ke saath sabse useful cheez: ek jagah dhundho jahan AI ne ek domain add kiya jo tumne miss kiya. Wahan tumhara blind spot hai, aur yeh is hafte ki sabse sasti lesson hai. Agar AI ne ek loop add kiya jo tumne miss kiya, use alag find ke taur par mark karo. Loops move-the-needle wale hain kyunki woh batate hain ke announced decision (18% sticker-price increase) duniya mein kab aur kaise kuch aur ban kar nazar aane wala hai (customers ke actually pay karte hue 4-6% increase).
+
+</details>
+
+Jo tumne abhi kiya woh ek existing plan ke second- aur third-order effects stress-test karta hai. Jo nahi karta woh yeh sawaal ke plan sahi premises par khara hai ya nahi.
+
+Ek perfectly cascaded plan jo galat premise par bana ho phir bhi wall se takrata hai, sirf baad mein aur behtar documentation ke saath. Woh Discipline 5 hai.
+
+<details>
+<summary>**Strong sample dekhna hai? (Apna submit karne ke baad kholo)**</summary>
+
+Ek reader ne same pricing scenario chalaya. Yeh ek acha jawab hai; sirf shape dikhata hai.
+
+**Central decision:** New contracts par list prices 18% raise karo Q3 se; discount ladder 7 tiers se 4 par shorten karo.
+
+| Domain | 1st-order | 2nd-order | 3rd-order |
+|--------|-----------|-----------|-----------|
+| Account execs | Quota math mid-quarter mushkil hoti hai | AEs chhote deals par concentrate karte hain jahan discount approval tez hai | Top-of-funnel enterprise par slow; sales mix down-market shift karta hai bina kisi ne decide kiye |
+| Renewal customers | Renewal price new list se benchmark hoti hai | Procurement top 3 accounts mein "most favored nation" clauses re-open karta hai | Do largest accounts multi-year freezes negotiate karte hain new list se neeche lock karte hue |
+| Competitors | Competitor A holds, Competitor B undercuts | Competitor B top 50 prospects ke liye targeted outbound shuru karta hai | Competitive deals mein win rate 8-12 pts girta hai |
+| Procurement teams | Approval workflow mein finance gate add hoti hai | Deal cycle average 11-18 din extend hoti hai | Q3 forecast sirf deal-cycle slippage se miss hota hai |
+| Sales collateral | Purane pricing sheets CRM mein cached hain | AEs transition ke dauran 2-3 hafte purane prices quote karte hain | Kuch contracts purani price par sign hoti hain; legal flag karta hai |
+
+**Named loop:** AE quota pressure under new list deeper one-off discounts push karta hai flagship deals par, jo renewal benchmarks mein leak karte hain procurement reference checks ke zariye, jo realized net price list se compress karta hai, jo matlab hai headline 18% increase 4-6% realized dikhta hai, jo agle saal ek aur pricing review trigger karta hai.
+
+Jo cheez ise kaam karti hai: paanch real domains, teen metrics tacked on nahi. Har chain ek mechanism naam karti hai, sirf outcome nahi ("procurement best-price-guarantee clauses re-open karta hai" nahi ke "procurement react karta hai"). Loop ek loop hai: effect circle back karta hai aur original decision badal deta hai (announced 18% customers ke actually pay karte hue 4-6% increase ban jaata hai).
+
+Map itna messy hai ke reader clearly loading-zone-equivalent dekh sakta hai: announced increase aur customers ke actually pay karte hue increase ka gap, jo leadership read-out mein kisine naam nahi kiya tha.
+
+Jo cheez yeh nahi karna chahta: exhaustive hona. Is scenario mein kam az kam teen aur loops hain (margin partners jo resale ke liye earn karte hain, customers jo competitor ki price par migrate karte hain, aur renewal-cycle timing). Discipline ek real loop ko real mechanism ke saath naam dene mein hai, pehli map par sabko naam dene mein nahi.
+
+Agar tumhara map is se zyada saaf lagta hai, woh signal hai: apne do sabse kamzor domains mein ek aur "aur phir kya?" deeper jao aur phir se loop dhundho.
+
+</details>
+
+<details>
+<summary>**Agar tumhe cognitive science neeche chahiye (click to expand)**</summary>
+
+Kisi bhi analyst (insaan ya AI) se consult karne se pehle decision ka map banana ek well-studied move hai. Yeh AI se das saal purana hai.
+
+Cascade Map do lineages ke intersection par hai: stakeholder breadth (Meadows, Sterman) aur feedback-loop depth (Forrester). Paanch-domain spoke pehla enforce karta hai; named-loop doosra.
+
+*   **Meadows, D. (2008). _Thinking in Systems: A Primer._ Chelsea Green.** Canonical short text. Meadows ka argument: kisi bhi system mein sabse high-leverage interventions almost kabhi woh variables nahi hain jin par managers obsess karte hain. Woh feedback loops aur unhe govern karne wale rules hain, jinhe zyada tar analyses kabhi naam nahi dete. Cascade Map us argument ke doosre half ko enforce karta hai: tum ek loop par intervene nahi kar sakte jise tumne naam nahi diya.
+*   **Forrester, J. W. (1958). "Industrial Dynamics: A Major Breakthrough for Decision Makers." _Harvard Business Review_ 36(4), 37-66.** System dynamics ka foundational paper. Forrester ki industrial-supply studies ne dikhaya ke linear cause-and-effect reasoning systematically operators ko un loops se blind kar deta hai jo actually long-run behavior drive karte hain. Bullwhip effect (baad mein formalized **Lee, H. L., Padmanabhan, V. & Whang, S. (1997). "The bullwhip effect in supply chains." _MIT Sloan Management Review_ 38(3), 93-102** mein) sabse mashhoor example hai; underlying point kisi bhi multi-stakeholder decision par generalize karta hai.
+*   **Sterman, J. (2000). _Business Dynamics: Systems Thinking and Modeling for a Complex World._ Irwin McGraw-Hill.** Meadows/Forrester lineage ka textbook treatment jo management decisions par laagu hai. Sterman ka empirical kaam (khaas tor par Beer Game) dikhata hai ke smart, motivated decision-makers reliably loops miss karte hain jab unhe draw karne par force nahi kiya jaata. Cascade Map paanch-minute forced-draw version hai.
+
+Kisi bhi single trial ne Cascade Map ko AI ke liye specifically test nahi kiya. Mechanism (humans breadth miss karte hain, AI loops miss karta hai, map draw karna dono gaps close karta hai) extension hai; underlying body of work established hai.
+
+*Gehra jao:* [Part 0 Chapter 3: Systems Mein Sochna](/docs/Thinking-is-the-Curriculum/thinking-in-systems/cascade-mapping). Poora version (peer review plus AI counter-analysis plus assessment rubric; 60 minute) ise system banata hai.
+
+</details>
+
+---
+
+## Part 3: Origination — Jo AI Nahi Kar Sakta
+
+Foundations ne posture diya. Detection ne sikhaaya jo AI miss karta hai pakadna. Origination teesra arc hai, aur ek alag sawaal ka jawab deta hai: kaunsa kaam tumhara hai karne ke liye kyunki AI structurally nahi kar sakta?
+
+Do failure modes yahan hain. Pehla consensus drift hai: AI apne training data ka average jawab wapas deta hai, aur tum woh average ship karte ho bina yeh test kiye ke woh tumhari specific situation mein fit hoti hai ya nahi. Doosra oracle reflex hai: tum judgment us tool ko outsource karna shuru karte ho jis ke paas apna koi judgment nahi.
+
+Ek phrase Discipline 5 carry karta hai: **named threshold**. Named threshold ek number, count, specific state, ya named condition hai jo batata hai ke kab ek advice sach rehna band kart deti hai. "Jab team size 20 engineers se kam ho" ek named threshold hai. "Kabhi kabhi" nahi hai.
+
+### Discipline 5: First Principles
+
+Tum ek vertical SaaS company chalate ho. Teen competitors ne ek quarter ke andar prices 12% raise kiye. Tumhara board, do investors, aur finance head sab ek hi line push karte hain: move match karo, margin capture karo, wave ride karo. Tum Claude kholte ho aur poochho. Summary agree karti hai.
+
+Woh convergence failure mode hai. Consensus apna kaam kar raha hai (woh obvious jawab ki taraf pull kar raha hai) aur obvious jawab kisi aur ki company ke liye sahi hai. AI chorus mein aakhri aur sab se bulla awaz hai kyunki woh un sab ke aur average karta hai jinhone kabhi pricing strategy ke baare mein likha. Woh nahi bata sakta jahan chorus tumhari situation pe apply karna band kare.
+
+Yeh fix hai. Woh consensus chuno jo tumhein follow karne kaha ja raha hai. Teen rows likho. Har row ek specific condition naam kari jo woh consensus kaam karna band karta hai, ek mechanism ke saath traced aur ek named threshold ke saath.
+
+| Consensus jo tum examine kar rahe ho | Kahan kaam karna band karta hai, named threshold ke saath |
+|--------------------------------------|----------------------------------------------------------|
+| Row 1 | Jab [specific condition with named number/count/state], [practice fail hoti hai] kyunki [mechanism]. |
+| Row 2 | Jab [specific condition with named number/count/state], [practice fail hoti hai] kyunki [mechanism]. |
+| Row 3 | Jab [specific condition with named number/count/state], [practice fail hoti hai] kyunki [mechanism]. |
+
+**Row with threshold** ("jab team size ~20 engineers se kam ho, microservices coordination cost deploy-isolation benefit se zyada ho jaati hai") ek boundary hai. **Row without one** ("microservices kabhi kabhi ghalat hain") ek gripe hai. Gripes decisions nahi badalte; thresholds badalte hain.
+
+![Ek widely-accepted best practice center mein, teen labeled boundary cases se ghira hua jahan practice silently kaam karna band kar deti hai. Har boundary specific condition ke saath annotated jo failure trigger karti hai.](/img/boundary-conditions-3b9be2c288d1180f81c7f1b5e896b951.png)
+*Har consensus ki boundaries hain. Exercise deliberately un boundaries par chalti hai, kisi buri decision ke aane se pehle.*
+
+**Real life mein poora output kaisa lagta hai:**
+
+SaaS founder ne roughly 90 minute revision ke baad yeh likha:
+
+Consensus: *"Hamesha competitor price hikes match karo."*
+
+**Boundary 1.** Jab existing customers rakhna (naye jeetnaa nahi) growth ki real limit hai, price hike se har percentage churn point lifetime value mein us se zyada cost karta hai jo increase recover karta hai, khaas tor par jab switching costs gir rahi hain (named threshold: naye data-portability rules jo switching cost pichle decade ke norm se neeche gira dete hain).
+
+**Boundary 2.** Jab competitor moves ek cost shock ke reactive hain jisse tum ne khud ko pehle se protect kiya hua hai (tumne pichle saal multi-year infrastructure contract lock kiya, isliye tumhare costs nahi hiley), unki hike match karna weakness ka signal bhejta hai jo tumhare paas actually nahi hai. Named threshold locked contract ka existence hai.
+
+**Boundary 3.** Jab competitive set consolidate ho raha hai, price hold karna positioning move hai jo accounts ko competitors' renewal lists se kheeench ta hai, aur un accounts par acquisition cost near zero hai. Named threshold competitor-renewal window hai (~90 days out).
+
+Usne teen boundaries board ke paas laaya. Unhone price hold kiya. Chhe mahine baad net revenue retention chaar points up tha.
+
+#### Khud Try Karo
+
+Tum ek 35-person professional services firm ke COO ho (boutique strategy consulting; 12 senior consultants $350-$450/hr billing karte hain, 3 partners, $14M annual revenue). Ek key role paanch mahine se open hai. Do strong-on-paper candidates is hafte doosri offers lene wale hain. Poori leadership team "hire slow, fire fast" ko obviously correct maanti hai. Tumhara kaam: Friday ki leadership meeting se pehle "hire slow, fire fast" ki boundary walk karo. Teen rows likho.
+
+**Strong sample (apna submit karne ke baad kholo):**
+
+Consensus: *"Hire slow, fire fast."*
+
+**Boundary 1.** Chhote founder-led teams mein (named threshold: ~40 se kam log), "slow" hiring quietly "no" hiring ban jaati hai kyunki founder har loop ka bottleneck hai. Mechanism: har additional interview round founder time khata hai jo shipping mein jaana chahiye.
+
+**Boundary 2.** Jab role do replacement cycles se zyada open hai (named threshold: 4+ months), zyada "slow" careful hona band ho jaata hai aur careful hone ka appearance shuru ho jaata hai. Mechanism: missing person ka kaam hafte dar hafte pile hota hai, aur team debt leta hai jo fast-firing baad mein recover nahi kar sakti.
+
+**Boundary 3.** High-trust services markets mein (named threshold: jab client tenure average 24+ months ho), "fast firing" woh trust relationships tod deta hai jise client ne buy kiya tha. Mechanism: clients firm mein partly usme maujood logon ke saath kaam karne ke liye aaye; senior staff fast rotate karna implicit asset destroy karta hai.
+
+#### AI-Graded Practice Form
+
+Tumhara kaam abhi shuru hota hai. Upar jo "hire slow, fire fast" consensus hai uski boundary walk karo. Teen rows likho.
+
+**Shuru karne se pehle threshold checklist.** Threshold ek number, count, specific state, ya named condition hai. "Kabhi kabhi," "aksar," aur "depend karta hai" thresholds nahi hain.
+
+**Is exercise ka bold rule: agar tumhari teesri row nahi aa rahi, tumne jo consensus chuna hai woh tum bina samjhe follow kar rahe ho. Teesri row padding karne ki bajaye alag consensus par switch karo.** Woh apne aap ek finding hai.
+
+**AI kya check karega:**
+
+1. **Kya har row ek threshold naam karti hai (number, count, state, ya specific condition)?** 1-10 rate karo. Sabse kamzor row ka threshold quote karo (ya jo row threshold nahi rakhti).
+2. **Kya har row principle-based hai (same situation mein kisi bhi company ke liye mechanism) ya example-based (ek company ki kahani rule ka roop dhaare hue)?** 1-10 rate karo. Koi bhi row flag karo jo boundary ki jagah gripe hai.
+
+Mera rows mat likho. Personality par grade mat karo. Agar koi row khaali ya vague hai, ek line mein seedha bolo.
+
+**Main jo consensus practice examine kar raha hoon (ek sentence):**
+
+Maslan, 'hire slow, fire fast': woh practice jo tumhari team tum par quote karti rahi hai
+
+**Boundary row 1 (specific condition + named threshold + mechanism):**
+
+Jab [specific condition with named number/count/state], [practice fail hoti hai] kyunki [mechanism].
+
+**Boundary row 2:**
+
+Jab [specific condition with named number/count/state], [practice fail hoti hai] kyunki [mechanism].
+
+**Boundary row 3:**
+
+Jab [specific condition with named number/count/state], [practice fail hoti hai] kyunki [mechanism].
+
+<details>
+<summary>**Apna Score Lao**</summary>
+
+AI se baat karo. Apne scores par sawaal karo.
+Jab tumhara BEHTAREEN evaluation aa jaye, wapas aao.
+
+[ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+Pehli baar 15-25 minute lagao. D1 ke lock se zyada kyunki thresholds mushkil hain. AI ke feedback ke saath sabse useful cheez: ek row dhundho jahan tumne "kabhi kabhi" ya "depend karta hai" likha aur us row ko specific threshold ke saath rewrite karo. Woh rewrite hai jahan discipline rehti hai. Agar rewrite nahi kar sakte, toh row shayad boundary hai hi nahi aur tumhe use drop ya replace karna chahiye.
+
+</details>
+
+Jo tumne abhi kiya woh ek single practice ki boundary dhundhta hai. Jo nahi karta woh yeh ke AI ke saath kaise collaborate karo jab koi obvious consensus challenge karne ko nahi. Woh Discipline 6 hai.
+
+<details>
+<summary>**Strong sample dekhna hai? (Apna submit karne ke baad kholo)**</summary>
+
+Ek reader ne same "hire slow, fire fast" scenario chalaya. Yeh ek acha jawab hai; alag domain mein thresholds kaise lagte hain woh dikhata hai.
+
+Consensus: *"Hire slow, fire fast."*
+
+**Boundary 1.** Chhote founder-led teams mein (named threshold: ~40 se kam log), "slow" hiring quietly "no" hiring ban jaati hai kyunki founder har loop ka bottleneck hai. Mechanism: har additional interview round founder time khata hai jo shipping mein jaana chahiye. Company kabhi us scale tak nahi pahunchti jahan "fast firing" woh corrective lever ban jaata hai jo practice promise karti hai.
+
+**Boundary 2.** Jab role do replacement cycles se zyada open hai (named threshold: 4+ months), zyada "slow" careful hona band ho jaata hai aur careful hone ka appearance shuru ho jaata hai. Mechanism: missing person ka kaam hafte dar hafte pile hota hai, aur team debt leta hai jo fast-firing baad mein recover nahi kar sakti. 4 mahine baad slowness hiring inaction hai jo hiring discipline ka roop dhaare hue hai.
+
+**Boundary 3.** High-trust services markets mein (named threshold: jab client tenure average 24+ months ho), "fast firing" woh trust relationships tod deta hai jise client ne buy kiya tha. Mechanism: clients firm mein partly usme maujood logon ke saath kaam karne ke liye aaye; senior staff fast rotate karna implicit asset destroy karta hai. Galat hire ki cost real hai, magar fast fire ki cost kabhi kabhi zyada hoti hai.
+
+Jo cheez ise kaam karti hai: har row ek threshold naam karti hai (40 log, 4 months, 24-month client tenure). Har boundary ek mechanism par point karti hai jo same shape ki kisi bhi company ke liye hold karta hai, sirf is ke liye nahi. Teesri boundary sabse mazboot hai kyunki woh practice ko qualify karne ki bajaye invert karti hai.
+
+Jo cheez yeh nahi karna chahta: brilliant hona. Mechanisms sirf plausible hain. Discipline thresholds mein hai, prose mein nahi.
+
+</details>
+
+<details>
+<summary>**Agar tumhe cognitive science neeche chahiye (click to expand)**</summary>
+
+Consensus ki boundary walk karna AI version se bahut purana hai.
+
+*   **Gigerenzer, G., Todd, P. M. & the ABC Research Group (1999). _Simple Heuristics That Make Us Smart._ Oxford University Press.** Sabse qareebi direct ancestor. Team ka _ecological rationality_ framework har heuristic (including "best practice") ko ek tool ke taur par frame karta hai jis ki accuracy us environment par depend karti hai jahan laagu kiya jaata hai. Practitioner ka kaam environment ko itna acche se jaanna hai ke woh jaane ke heuristic kahan ecologically valid hona band karta hai. Is exercise mein named-threshold requirement operational ecological rationality hai.
+*   **Klein, G. (1998). _Sources of Power._** Klein ka Recognition-Primed Decision model dikhata hai ke experts pehle plausible script se pattern-match karte hain aur uske saath chalte hain. Defend the Opposite move us pattern-match ka deliberate interruption hai: khud ko woh conditions likhne par force karke jahan script fail hota hai, tum boundary ko visible karte ho jab tak pattern-match chale.
+*   **Popper, K. (1959 English / 1934 German). _The Logic of Scientific Discovery._** Popper ki falsifiability originally science ke liye demarcation criterion thi (science ko non-science se alag karti thi), meaning theory nahi. Yahan relevant move narrow hai: ek claim operationally useful tab hai jab tum woh conditions state kar sako jahan tum ise chhod doge. Named-threshold column boundary ko stateable banata hai.
+
+Kisi bhi single trial ne Defend the Opposite move ko AI ke liye specifically test nahi kiya. Mechanism (practice accept karne se pehle boundary require karna) well-studied hai; AI ke averaged-over-training-data answers par laagu karna obvious extension hai, alag se validated finding nahi.
+
+*Gehra jao:* [Part 0 Chapter 4: First Principles Se Reasoning](/docs/Thinking-is-the-Curriculum/reasoning-from-first-principles). Poora version (Blank Page Sprint: ek practice ke khilaf 500 words likho jise tum follow karte aa rahe ho, phir structured AI counter-analysis aur peer review chalaao, 60 min) Part 0 mein hai. Yeh page row shape sikhata hai. Woh page longform argument sikhata hai.
+
+</details>
+
+---
+
+### Discipline 6: AI KE SAATH Kaam Karna
+
+Tum ne subah Claude ke saath strategy memo par iterate kiya. Output polished hai. Phir tumhara CEO uske upar se padhta hai aur poochha, "Tum yahan kyun aaye aur doosre option par nahi?" Tum mooh kholo aur realize karo ke actually apna judgment model ke judgment se alag nahi kar sakte.
+
+Yeh fix hai. Ek real memo par jo board meeting worth ho, same task teen tarikon se chalaao timed constraints ke under. Phir teeno side by side padho.
+
+1. **Solo.** 45 minute, koi AI nahi. Sirf tum aur problem.
+2. **AI-only.** 20 minute. Tum prompt karo, AI jawab de, pehla response bina edits ke accept karo.
+3. **Collaborative.** 30 minute. Tum prompt karo, evaluate karo, push back karo, override karo, iterate karo.
+
+Chaar axes par har draft rate karo: depth, breadth, originality, time-to-value. Collaborative version usually jeetta hai, magar win sirf tab useful hai jab tum specific overrides point kar sako jinhon ne ise jetatay hain.
+
+![Teen parallel paths same task ke liye. Path A Solo human, 45 minute, gehra magar narrow. Path B AI-only, 20 minute, broad magar shallow. Path C Human-AI collaborative, 30 minute, dono strengths combine karta hai.](/img/three-path-comparison-e22dff3888fa348d6f74c4c901d260ab.png)
+*Comparison woh jagah hai jahan tum dekhte ho tumhara judgment irreplaceable hai. Side-by-side ke baghair, tum nahi bata sakte ke tumne collaborate kiya ya surrender kiya.*
+
+**Real life mein yeh aisa lagta hai:**
+
+Ek medical-practice owner ne value-based-care contract propose karte hue partners ko do-page memo likhni thi. Usne same task teen tarikon se chalaya.
+
+**Solo, 45 minute.** Careful memo, operational risks mein grounded. Specific, defensive, honest. Magar sabse strong financial point page two par buried, aur woh partner never address kiya jo openly oppose karta tha.
+
+**AI-only, 20 minute.** Polished, clean. Generic "value-based care benefits" framing same jo teen competing practices use kar chuki thi. Koi partner naam nahi liya. Koi risk specific nahi market ke liye. Industry brochure ki tarah padha.
+
+**Collaborative, 30 minute.** Usne structural argument khud likha, teen financial assumptions naam kiye, aur model se maanga ke opposing partner ke perspective se strongest counter-argument surface kare. Model ne ek objection propose kiya jo usne anticipate nahi kiya tha, aur usne memo rewrite kiya. Collaborative draft jeeta. Jeetne ki wajah: financial assumption aur partner-specific counter-argument par uske overrides, model ki prose nahi.
+
+#### Khud Try Karo
+
+Tum ek 400-person SaaS company mein VP of Strategy ho (~$72M ARR). Tumhara CEO ek one-page memo chahta hai executive team ke liye: kya ek chhote competitor (Forsight, 90 log, ~$11M ARR) ko acquire karein jo apna largest customer kho chuka hai ($40-$55M range mein open to acquisition). Memo board pre-read mein jaata hai.
+
+On-ramp version ke liye: woh agla email ya short memo lo (200 words se kam) jo tum AI ke saath draft karte. Solo it (3 min), AI-only it (2 min), phir collaborate (5 min). Teeno side by side rakho.
+
+**AI-only draft mat skip karo.** Yeh sabse tempting hai drop karne ke liye ("main jaanta hoon AI kya kahega") aur sabse diagnostic rakhne wala hai. Agar tumhara Collaborative AI-only ke uncomfortably close ho, tum ne over-accept kiya.
+
+**Strong sample (apna submit karne ke baad kholo):**
+
+| Path | Unka summary |
+|------|-------------|
+| **Solo (45 min)** | Acquisition ke against recommend kiya. Customer-concentration risk par strong. Integration thesis par weak: kabhi naam nahi kiya ke acquirer ki product team engineering hires ke saath actually kya karegi. |
+| **AI-only (20 min)** | "Structured acquisition with earn-out triggers" recommend kiya. Polished. Do phrases contain karta tha ("strategic optionality," "tuck-in upside") jo CEO ne last all-hands mein publicly criticize ki thi. Target ke remaining customers ki geographic concentration address nahi ki. |
+| **Collaborative (30 min)** | Acquisition ke against recommend kiya magar ek 60-day standstill offer propose kiya (talent hire + IP license) jo 15% cost par 70% strategic value capture karta tha. Standstill framing model se aayi. 60-day window aur IP-license carve-out user ke overrides the. |
+
+Teen key overrides:
+1. **Model ki "strategic optionality" framing reject ki.** Model ne phrase teen baar use kiya. User ne har instance replace kiya kyunki woh CEO ki known objection trigger karta paragraph one mein.
+2. **Geographic-concentration point add ki.** Model ne kabhi raise nahi kiya. User ko last QBR se pata tha ke target ka remaining customer base 80% ek aisi region mein tha jahan acquirer ka koi GTM nahi tha.
+3. **Model ki earn-out structure override ki.** Model ne teen-saal earn-out propose kiya revenue se tied. User ne 60-day standstill se replace kiya kyunki firm ki apni M&A history dikhati hai ke 18 months se upar earn-outs mein 80%+ founder-departure rates the.
+
+Har override ek specific piece of context trace karta hai jo model ke paas nahi thi. Yeh test hai: agar tum teen jagahon par nahi keh sakte "yeh woh tha jo main jaanta tha jo model nahi jaanta, aur yeh main ne us ke saath kiya," to tumne collaborate nahi kiya; tumne edit kiya.
+
+#### AI-Graded Practice Form
+
+Tumhara kaam abhi shuru hota hai. Upar jo acquisition scenario hai us par teen paths chalaao.
+
+**AI kya check karega:**
+
+1. **Kya tumhare teen path summaries teen alag drafts describe karte hain, ya ek draft ki teen rephrasings?** 1-10 rate karo. Har summary se ek sentence quote karo jo decide karta hai. Agar Solo aur Collaborative summaries near-identical hain, seedha bolo.
+2. **Kya tumhare teen overrides specific enough hain ke koi bhi hatao toh Collaborative draft visibly kamzor ho jaye?** 1-10 rate karo. Har teen overrides ke liye batao ke draft uske baghair kaisa dikhta. Agar koi override generic hai ("maine zyada detail add ki"), seedha bolo.
+
+Mera kaam mat likho. Human-edited version ko chamkao mat. Agar koi field khaali ya vague hai, ek line mein seedha bolo.
+
+**Tumhare teen path summaries (har path ke liye ek paragraph jo tumne likha, kya tumhein surprise kiya, aur kahan short raha):**
+
+Solo (45 min, koi AI): ... | AI-only (20 min, pehla response): ... | Collaborative (30 min, override + iterate): ...
+
+**Tumhare teen key overrides (Collaborative draft mein 3 specific jagahen naam batao jahan tumhare judgment ne kaam kiya, matlab woh draft us override ke baghair fail ho jaata):**
+
+Override 1: ... (kyun matter karta tha: ...) | Override 2: ... (kyun matter karta tha: ...) | Override 3: ... (kyun matter karta tha: ...)
+
+**Teen drafts mein se kaunsa tum actually recipient ko bhejte, aur kyun:**
+
+Draft naam batao (Solo / AI-only / Collaborative) aur sabse important wajah. Agar jawab Collaborative hai, woh override naam batao jo ise jitaaya.
+
+<details>
+<summary>**Apna Score Lao**</summary>
+
+AI se baat karo. Apne scores par sawaal karo.
+Jab tumhara BEHTAREEN evaluation aa jaye, wapas aao.
+
+[ChatGPT](https://chat.openai.com) · [Claude](https://claude.ai)
+
+10-minute on-ramp version ke liye reflection mila kar 15-20 minute lagao. 95-minute poora version woh hai jo tum real high-stakes kaam par is hafte chalaate ho. AI ke feedback ke saath sabse useful cheez: ek jagah dhundho jahan woh kahe ke Solo draft ek axis par mazboot tha. Woh signal hai ke tumhare overrides load nahi uthaye. Agar AI ek nahi dhundh sakta, use zyada push karo; agar dhundh sakta hai, tumne abhi seekha ke tumhari collaboration posture abhi bhi kahan soft hai.
+
+</details>
+
+Jo tumne abhi kiya woh poora crash course miniature mein hai. Tumne AI se pehle position banayi (D1), har claim par verdicts document kiye (D2), outputs mein fabrications ke liye scan kiya (D3), recommendation ke second-order effects trace kiye (D4), consensus framing ki boundary test ki (D5), aur jab model oracle mode mein drift karna chahta tha toh judgment insaan ke paas rakha (D6). Deliverable kabhi jawab nahi hota. Deliverable thinking ka documented evidence hota hai, aur tumhare paas ab chhe disciplines hain jo woh evidence on demand produce karti hain.
+
+<details>
+<summary>**Strong sample dekhna hai? (Apna submit karne ke baad kholo)**</summary>
+
+Ek reader ne same VP-of-Strategy acquisition scenario chalaya. Yeh ek acha jawab hai; sirf shape dikhata hai.
+
+| Path | Unka summary |
+|------|-------------|
+| **Solo (45 min)** | Acquisition ke against recommend kiya. Customer-concentration risk par strong. Integration thesis par weak: kabhi naam nahi kiya ke acquirer ki product team engineering hires ke saath actually kya karegi. |
+| **AI-only (20 min)** | "Structured acquisition with earn-out triggers" recommend kiya. Polished. Do phrases contain karta tha ("strategic optionality," "tuck-in upside") jo CEO ne last all-hands mein publicly criticize ki thi. Target ke remaining customers ki geographic concentration address nahi ki. |
+| **Collaborative (30 min)** | Acquisition ke against recommend kiya magar ek 60-day standstill offer propose kiya (talent hire + IP license) jo 15% cost par 70% strategic value capture karta tha. Standstill framing model se aayi. 60-day window aur IP-license carve-out user ke overrides the. |
+
+Collaborative draft mein teen key overrides:
+
+1. **Model ki "strategic optionality" framing reject ki.** Model ne phrase teen baar use kiya. User ne har instance replace kiya kyunki woh CEO ki known objection trigger karta paragraph one mein. Iske baghair memo arrival par dead hota.
+2. **Geographic-concentration point add ki.** Model ne kabhi raise nahi kiya. User ko last QBR se pata tha ke target ka remaining customer base 80% ek aisi region mein tha jahan acquirer ka koi GTM nahi tha. Yahi acquisition ke revenue model ko collapse karta central wajah thi. Iske baghair recommendation "no" hoti kamzor grounds par.
+3. **Model ki earn-out structure override ki.** Model ne teen-saal earn-out propose kiya revenue se tied. User ne 60-day standstill se replace kiya kyunki firm ki apni M&A history dikhati hai ke 18 months se upar earn-outs mein 80%+ founder-departure rates the. Iske baghair alternative proposal usi risk ko inherit karta jo woh avoid karna chahti thi.
+
+Jo cheez ise kaam karti hai: har override ek specific piece of context trace karta hai jo model ke paas nahi tha (CEO ki zubaan, last QBR ki geographic data, firm ka apna deals ka track record). User har override par point kar sakta hai aur keh sakta hai, "Yeh woh tha jo main jaanta tha jo model nahi jaanta, aur yeh main ne us ke saath kiya." Woh sentence test hai. Agar tum yeh apne Collaborative draft ki kam az kam teen jagahon par nahi keh sakte, to tumne collaborate nahi kiya; tumne edit kiya.
+
+Jo cheez yeh nahi karna chahta: apne aap brilliant hona. Pause-and-license structure model se aayi. Kab use karna hai aur kaise bound karna hai woh judgment user ka tha. Woh poora posture hai.
+
+</details>
+
+<details>
+<summary>**Agar tumhe cognitive science neeche chahiye (click to expand)**</summary>
+
+Collaboration posture naya theory nahi hai. Yeh LLM era se do das saal se zyada purana hai.
+
+*   **Kasparov, G. (2017). _Deep Thinking: Where Machine Intelligence Ends and Human Creativity Begins._** 1997 mein Deep Blue se haarne ke baad, Kasparov ne 1998 mein "advanced chess" banaya: human-plus-engine teams systematically dono ko harate the — stronger humans akele aur stronger engines akele — jab human ne positional calls kiye jo game decide kiye. Pattern ab textbook hai: productivity lift human ke selective override se aata hai, engine ki raw speed se nahi.
+*   **Brynjolfsson, E., Li, D. & Raymond, L. R. (2025). "Generative AI at Work." _The Quarterly Journal of Economics_ 140(2), 889-942.** (Originally NBER Working Paper 31161, 2023.) Fortune 500 customer-support firm mein 5,179-agent study ne paya ke LLM assistance ne productivity 14% average par barhayi, lift heavily less-experienced workers mein concentrated; experienced workers ko kam fayda hua, kyunki model ke suggestions unke likhne wale ke qareeb the. Knowledge work ke liye implication: collaboration ki value is par depend karti hai ke human woh context laata hai jo model ke paas nahi hai. Jab model ke paas pehle se context hai, collaboration sirf typing hai.
+*   **Daugherty, P. & Wilson, H. J. (2018). _Human + Machine: Reimagining Work in the Age of AI._** Human-AI kaam ka "missing middle" catalog kiya: woh tasks jahan na pure automation jeetta hai na pure human judgment, aur value loop mein hai. Kitab ka central claim, ke sabse high-leverage roles woh hain jo AI ke judgment ko train, explain, aur sustain karte hain, override discipline ko paanch saal pehle anticipate karta hai.
+*   **Noy, S. & Zhang, W. (2023). "Experimental evidence on the productivity effects of generative artificial intelligence." _Science 381(6654)._** Professional writing tasks par controlled study: ChatGPT ne average output quality barhayi, magar quality dispersion sharply narrow hua: low-skill writers ne sabse zyada improve kiya, high-skill writers ne sabse kam, aur writers ke beech variance collapse ho gaya. Bina selective override, AI-assisted output ek competent mean ki taraf regress karta hai, jo exactly woh hai jo Three-Path Comparison ka AI-only draft dikhata hai.
+
+Kisi bhi single trial ne Three-Path Comparison ko named protocol ke taur par test nahi kiya. Underlying finding (human-AI complementarity selective human override par depend karti hai) LLM-productivity literature mein sabse zyada replicated results mein se ek hai. Comparison sabse simple forcing function hai jo override ko kaam karne wale insaan ke liye visible banata hai.
+
+Is exercise ka poora version (95-minute three-path comparison, peer review, XP tracking, aur full collaboration-style diagnosis) [Part 0 Chapter 6: AI KE SAATH Kaam Karna, AI Ke LIYE Nahi](/docs/Thinking-is-the-Curriculum/working-with-ai-not-for-ai/three-path-comparison) mein hai. Yeh page move sikhata hai. Woh page poora kaam-hafte ko iske around build karta hai.
+
+</details>
+
+---
+
+## Capstone: Ek Decision, Chhe Disciplines
+
+Ek 12-person consulting firm ke paas fiscal year khatam hone se pehle $180,000 spend karne hain. CEO do options dekhti hai. Option A: ek senior strategy lead hire karo jo ek do large accounts carry kare. Option B: wohi $180,000 licenses, infrastructure, aur design time mein lagao AI workforce ke liye jo har existing consultant ko augment kare. Dono defensible hain. Do board members hire favor karte hain. Do AI workforce favor karte hain. Paanchwa undecided hai.
+
+**Discipline 1, Prediction Lock.** Koi bhi AI tool kholne se pehle, CEO apna four-line lock likhti hai. Diagnosis: firm ki growth ki real limit leverage per consultant hai, headcount nahi. Teen diagnostic questions, har ek ke saath predicted answer aur confidence number. Woh page time-stamp karti hai. Claude nahi kholti. Pehle prediction lock karti hai.
+
+**Discipline 2, Reasoning Receipt.** Do din mein woh decision ko Claude aur ChatGPT ke zariye chalati hai, vendor comparison maangti hai, peer-firm benchmark pull karti hai. Har decisive claim ek paanch-column receipt mein jaata hai. AI claim karta hai AI-workforce option consultant utilization 22% raise karti hai: woh MODIFY mark karti hai kyunki cited study us size ki firms par tha jo uski tiin guni hain. AI claim karta hai senior-hire ramp time 9 months hai: woh SURFACED mark karti hai kyunki woh 6 months assume kar rahi thi. Wednesday subah tak receipt mein 14 rows hain.
+
+**Discipline 3, Error Taxonomy.** Woh har vendor pitch aur AI summary ko six-row error scan se chalati hai. AI-workforce vendor ke ROI deck mein do False Confidence flags hain, ek Stale Fact hai (ek license-pricing change teen mahine purana), aur ek Fabricated Source hai ("McKinsey 2025" citation jo kisi McKinsey publication tak nahi pahunchta).
+
+**Discipline 4, Thinking in Systems.** Woh dono options ko paanch domains mein cascade karti hai. Ek feedback loop circle karti hai: Option B ke under, junior consultants jo tooling sabse tezi se adopt karte hain strongest retention risk ban jaate hain kyunki unka leverage ab unke saath safar karta hai. Woh loop option ka risk profile badal deti hai.
+
+**Discipline 5, First Principles.** Woh "zyada senior headcount equals zyada capacity" consensus ke against 500 words likhti hai. Teen boundaries. Consensus kisi aur ki company ke liye sahi hai jis ka alag bottleneck hai.
+
+**Discipline 6, Working WITH AI.** Woh final recommendation teen tarikon se chalati hai. Model do guardrails propose karta hai jo usne consider nahi kiye the. Collaborative draft woh hai jo woh board ke paas le jaati hai. Recommendation Option B hai teen named guardrails aur 6-month checkpoint ke saath.
+
+Board Option B adopt karta hai do guardrails ke saath. CEO meeting se bahar ek aisi decision ke saath jaati hai jise woh har line par defend kar sakti hai.
+
+Chhe disciplines ne kya kiya: unhone answer produce nahi kiya. Unhone trail produce kiya.
+
+**Ek aakhri note in moves ke baare mein woh kya NAHI hain:** Sabse common tarika yeh disciplines fail hone ka over-application hai: kya lunch khaana hai is par Cascade Map, har internal Slack message par Reasoning Receipt. Inhe meeting-worth kaam ke liye reserve karo. Baaki sab par woh experience trust karo jo tumne saalon mein build kiya.
+
+---
+
+## Aage Kahan Jaana Hai
+
+**Chhe disciplines mein se kisi mein bhi gehri practice ke liye**, is book ka Part 0 long-form treatment hai:
+
+- [Part 0 Ch 1: Behtar Sawaal Poochna](/docs/Thinking-is-the-Curriculum/asking-better-questions)
+- [Part 0 Ch 2: Tooti Reasoning Detect Karna](/docs/Thinking-is-the-Curriculum/detecting-broken-reasoning)
+- [Part 0 Ch 3: Systems Mein Sochna](/docs/Thinking-is-the-Curriculum/thinking-in-systems)
+- [Part 0 Ch 4: First Principles Se Reasoning](/docs/Thinking-is-the-Curriculum/reasoning-from-first-principles)
+- [Part 0 Ch 6: AI KE SAATH Kaam Karna, AI Ke LIYE Nahi](/docs/Thinking-is-the-Curriculum/working-with-ai-not-for-ai)
+
+**Tumhara agla move is book mein:**
+
+- Agar tum code likhte ho: [Course 3: Claude Code & OpenCode](/docs/agentic-coding-crash-course)
+- Agar tum knowledge work karte ho (legal, finance, marketing, operations): [Course 4: Cowork](/docs/cowork-crash-course)
+- Agar AI Workers build karne ke liye ready ho: [Course 7: Build AI Agents](/docs/build-agents-crash-course)
+
+Disciplines har tool mein, har mode mein, har domain mein transfer hoti hain. Yeh woh cheez hai jo tum yahan se kahin bhi le jaate ho.
+
+---
+
+**Deliverable kabhi answer nahi hota. Deliverable thinking ka documented evidence hota hai.**
+
+> *Kya yeh AI ko tumhare haath mein ek zyada powerful tool banata hai, ya yeh tumhein tool ka ek slower version banata hai?*
+
+---
+
+## Flashcards — Yaad Karo
+
+Yeh section ke key concepts yaad karne mein madad karta hai. Har card pe pehle khud jawab socho, phir reveal karo.
+
+<details>
+<summary>**Card 1 / 6** — Is crash course ki thesis ek line mein kya hai?</summary>
+
+**Jawab:**
+**Deliverable kabhi answer nahi hota. Deliverable thinking ka documented evidence hota hai.** AI se jawab lene se pehle apni position banao, phir compare karo.
+
+</details>
+
+<details>
+<summary>**Card 2 / 6** — Prediction Lock kya hai?</summary>
+
+**Jawab:**
+AI kholne se pehle chaar lines likho: (1) Kya ho raha hai — mechanism naam karo, (2) Woh ek sawaal jo room split kar dega, (3) Tumhara predicted jawab, (4) Confidence level + kya flip karega. Locked isliye kyunki AI ke jawab se pehle timestamp carry karti hain.
+
+</details>
+
+<details>
+<summary>**Card 3 / 6** — Reasoning Receipt kya hai?</summary>
+
+**Jawab:**
+Har AI claim ke liye record karo: ACCEPT, REJECT, MODIFY, SURFACED, ya MISSED — ek sentence ke saath kyun. Khaali receipt ya all-ACCEPT receipt ka matlab koi real thinking nahi hua. Receipt thinking ka documented evidence hai.
+
+</details>
+
+<details>
+<summary>**Card 4 / 6** — Error Taxonomy mein chhe error types kaunsi hain?</summary>
+
+**Jawab:**
+    AI ki polished output mein chhe error types chupi hoti hain. Fluent prose accurate prose se alag hai — AI confident lagta hai chahe sahi ho ya galat. Forward, ship, ya act karne se pehle naam se scan karo.
+
+</details>
+
+<details>
+<summary>**Card 5 / 6** — First-Order Thinking kyun insufficient hai?</summary>
+
+**Jawab:**
+    AI visible variable optimize karta hai aur teen ko ignore karta hai jo usne disturb kiye. Meeting-worthy decision ke liye cascade-map karo, kam az kam ek feedback loop dhundho, mechanisms insist karo labels nahi.
+
+</details>
+
+<details>
+<summary>**Card 6 / 6** — Collaboration teesra raasta kyun hai?</summary>
+
+**Jawab:**
+    Solo speed mein haarta hai. AI-only originality mein haarta hai. Collaboration dono jeetta hai — jab tum reasoning karo (jo decide karta hai) aur AI tedium kare (jo tedious hai). Woh split ulti karo aur tum middleman ban jaate ho — middlemen automate ho jaate hain.
+
+</details>

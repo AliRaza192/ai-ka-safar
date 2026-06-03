@@ -1,0 +1,814 @@
+---
+id: problem-solving-crash-course
+title: General Agents se Problem Solving — 90 Minute ka Crash Course
+sidebar_label: Problem Solving Principles
+---
+
+# General Agents se Problem Solving: 90 Minute ka Crash Course
+
+*7 Principles · 4 Tools · 80% Real Use*
+
+---
+
+Do log Monday subah ek hi agent kholte hain. Same task: vendor contracts ka folder review karo, non-standard clauses flag karo, comparison memo banao.
+
+Pehla banda 22 minute mein clean, verified output ke saath khatam karta hai. Doosra 90 minute correction loops mein guzarta hai, context polluted ho jaata hai, aur naye sir se shuru karta hai.
+
+Same agent. Same capability. Kya alag hai?
+
+Pehle ko saat cheezein pata thin jo doosre ko nahi pata thi. Yeh course woh saat cheezein sikhata hai.
+
+**Yeh kiske liye hai.** Koi bhi jo ek real problem solve karne ke liye general agent use karne wala hai. Engineers jo Claude Code ya OpenCode ke liye haath badha rahe hain. Domain experts (lawyers, accountants, marketers, HR leaders, consultants, founders) jo Claude Cowork ya OpenWork ke liye.
+
+> **General agent** ek AI co-worker hai jo tumhari taraf se actions leta hai: commands chalaata hai, files padhta hai, files likhta hai, services call karta hai. Ek chatbot nahi jo sawaalon ke jawaab de — ek haath wala tool.
+
+**Chaar tools:**
+- *Engineering:* **Claude Code** (Anthropic ka terminal-native tool) aur **OpenCode** (open-source, model-agnostic terminal tool)
+- *Knowledge-work:* **Claude Cowork** (Anthropic ka desktop agent domain experts ke liye) aur **OpenWork** (open-source desktop agent Different AI ki taraf se)
+
+**Ek thesis is poore crash course ke neeche.** Yeh general agent use ka **Mode 1** hai — *problem-solving engagement*. Tum tool kholte ho, koi cheez solve karte ho, session khatam hoti hai, outcome ship hota hai. Mode 1 hi hai jahan zyada tar professionals foreseeable future ke liye rehte hain, aur neeche ke saat principles woh rules hain jo ise kaam karte hain.
+
+> **Prerequisites.** Yeh crash course assume karta hai ke tumne *AI Prompting in 2026* complete ki hai aur kam az kam ek tool-pair crash course: [Claude Code & OpenCode](/docs/agentic-coding-crash-course) ya [Cowork & OpenWork](/docs/cowork-crash-course).
+
+**Apna path chuno:**
+
+- **30-minute taste** *(pehli baar padhne waale, khaas taur par non-engineering):* Sirf Principles 1, 3, aur 5 padho. Har ek ke neeche **Hands-on: Hello world** karo. Bas itna kaafi hai ke teen sabse badi shifts mehsoos ho: chatbot se sawaal poochne ki bajaye haathon ko brief karo, "sahi lagta hai" pe kabhi bharosa mat karo, aur decisions ek file mein likho. Baaki chaar alag baithak mein padho jab real kaam mein farq mehsoos ho.
+- **90-minute essential path** *(standard read):* Intro, Part 1, Parts 2-4 padho, aur har principle ke liye: table, examples, aur **Hands-on: Hello world**.
+- **Full read (~2 ghante):* Sab kuch, jin mein **Now apply to your own work** subsections bhi shamil hain. Sabse best 90-minute path ke kuch din baad jab real kaam kar chuke ho. Ek baithak mein sab padhne ki koshish mat karo; principles do reads mein zyada achhe se land karte hain ek heroic read se.
+
+> Non-engineering readers: examples mein code blocks skim karo (principle different surface pe same hai) aur Principle 5 mein system-of-record note skip karo. Baaki sab tumhare liye hai.
+
+> **Safety.** Agents tumhari taraf se act karte hain — files padhte hain, files likhte hain, commands chalaate hain, services call karte hain. Jab tak tool ka *permission model* na samjho — woh configuration jo decide karti hai ke agent kaunsi files chhu sakta hai aur kaunsi services call kar sakta hai — broad access mat do. Ek baar set karo aur sessions ke across rehti hai; galat set karo aur ek bhi bura prompt tumhari intention se zyada pahunch sakta hai. Read-only ya approve-each-step mode mein shuru karo. Principle 6 ise concrete banata hai.
+
+> **Deep version chahiye?** Yeh crash course hai, saat principles ek read mein. Full treatment ke liye, [**Chapter 18: The Seven Principles of General Agent Problem Solving**](/docs/Agent-Workflow-Primitives/seven-principles/bash-is-the-key) dekho. Tool-specific depth ke liye, downstream pages hain [**Claude Code and OpenCode: A 90-Minute Crash Course**](/docs/agentic-coding-crash-course) aur [**Cowork and OpenWork: A 90-Minute Crash Course**](/docs/cowork-crash-course). Yeh page principles hai; woh pages surfaces hain.
+
+---
+
+## Zaruri Baatein Paanch Points Mein
+
+Agar sirf yeh paanch points internalize karo, 60% value mil jaati hai:
+
+1. **Action over talk.** General agent ki value *cheezein karne* se aati hai: commands chalaana, files padhna, services call karna. Har prompt ko aisa treat karo jisse action ya artifact nikle, explanation ka paragraph nahi.
+2. **Code (aur structured artifacts) over prose.** Jab precision matter kare, schema, table, code block, checklist maango — paragraph nahi. Agent ka output quality sharply upar jaati hai jab *format* constrained ho.
+3. **Verify, trust mat karo.** Har meaningful output ko verification step chahiye: code ke liye tests, memo ke liye rubric, high-stakes deliverable ke liye cross-model review. "Sahi lagta hai" failure mode hai.
+4. **Chhote steps, atomic checkpoints.** Kaam ko reversible units mein decompose karo. Har unit land hone ke baad commit, snapshot, ya save-version karo.
+5. **Files memory hain.** Conversation volatile hai; filesystem durable hai. Jo kuch bhi sessions ke across carry karne wala ho (decisions, plans, conventions) ek file mein jaata hai, chat history mein nahi.
+
+Baaki do principles (constraints aur observability) woh hain jo pehle paanch ko *operationalize* karte hain.
+
+![Chapter paanch disciplines mein: action over talk; code over prose; verify don't trust; small atomic steps; files are memory.](/img/figure-1-five-disciplines-06444751cc3aa72aee83c96e07bb6e8c.png)
+*Figure 1: Paanch core disciplines, do operational principles se wrapped. Yeh print karo aur monitor pe tape karo.*
+
+---
+
+## Flashcards — Yaad Karo
+
+Yeh section ke key concepts yaad karne mein madad karta hai. Har card pe pehle khud jawab socho, phir reveal karo.
+
+<details>
+<summary>**Card 1 / 7** — Paanch core disciplines kaunsi hain?</summary>
+
+**Jawab:**
+1. **Action over talk** — agent se action/artifact maango, explanation nahi
+2. **Code over prose** — precision ke liye schema, table, code block maango
+3. **Verify, trust mat karo** — har output ko verification step chahiye
+4. **Chhote steps, atomic checkpoints** — reversible units mein kaam karo
+5. **Files memory hain** — decisions files mein likho, chat history mein nahi
+
+</details>
+
+<details>
+<summary>**Card 2 / 7** — "Bash hi Key hai" ka kya matlab hai?</summary>
+
+**Jawab:**
+General agent ki defining capability actions lena hai — command chalaana, file padhna, service call karna. Chatbot sawaalon ke jawab deta hai, agent cheezein karta hai. Novice trap: agent se "kaise karoon?" poochho → essay milta hai. Fix: action specify karo ("har transcript padho, themes nikalo, file mein save karo").
+
+</details>
+
+<details>
+<summary>**Card 3 / 7** — Code as Universal Interface kyun better hai?</summary>
+
+**Jawab:**
+Jab precision matter kare, prose ambiguous hota hai. Schema, table, code block, checklist — format constrained hone se agent ka output quality sharply upar jaata hai. "Memo banao" vs "memo banao: 5 columns, sorted by risk, color-coded" — doosra consistently better hai.
+
+</details>
+
+<details>
+<summary>**Card 4 / 7** — Verification kyun core step hai?</summary>
+
+**Jawab:**
+"Sahi lagta hai" failure mode hai. Har meaningful output ko verification step chahiye: code ke liye tests, memo ke liye rubric, high-stakes deliverable ke liye cross-model review. Agent confidently galat output de sakta hai jo finished lagta hai.
+
+</details>
+
+<details>
+<summary>**Card 5 / 7** — Chhoti, Reversible Decomposition kya hai?</summary>
+
+**Jawab:**
+Kaam ko reversible units mein todna. Har unit land hone ke baad commit, snapshot, ya save-version karo. Ek badi change dopahar barbaad kar sakti hai. Agent bhi smart zone mein better kaam karta hai chhote steps mein.
+
+</details>
+
+<details>
+<summary>**Card 6 / 7** — "State Files Mein Persist Karo" ka kya matlab hai?</summary>
+
+**Jawab:**
+Conversation volatile hai; filesystem durable hai. Jo kuch sessions ke across carry karna ho — decisions, plans, conventions — ek file mein jaata hai, chat history mein nahi. Agent bhool jaata hai kal kya decide kiya — files nahi bhoolteen.
+
+</details>
+
+<details>
+<summary>**Card 7 / 7** — Lindy Effect kya hai aur agents se kya taluq hai?</summary>
+
+**Jawab:**
+Jo technologies decades se survive kar rahi hain woh flash trends se zyada chalti hain. Terminal, files, Git, SQL — sab proven hain. Agents natural language mein reason karte hain lekin proven interfaces ke zariye act karte hain. Agentic era purani stack replace nahi karta — activate karta hai.
+
+</details>
+
+---
+
+## Yeh Principles Purane Kyun Lagte Hain: Lindy Effect
+
+Jo technologies decades se survive kar rahi hain woh flash trends se zyada chalti hain. Terminal, files, Git, SQL — yeh sab doosre era se hain aur abhi bhi real kaam karte hain. Iska naam hai **Lindy Effect**.
+
+General agents existing infrastructure se alag duniya mein operate nahi karte. Woh same surfaces ke zariye act karte hain jo engineers ne decades se use ki hain: **terminal, files, Bash, Git, SQL, logs, schemas, tests, version control.** Agent natural language mein reason karta hai; woh proven interfaces ke zariye *act* karta hai.
+
+Teen implications:
+
+1. **Purani technologies zyada important ho jaati hain.** Bash agents ko execute karne deta hai. Git agents ko track aur reverse karne deta hai. SQL agents ko structured truth query karne deta hai. Files agents ko persistent working memory deti hain.
+
+2. **Coding gayab nahi hoti; human ka role shift hota hai.** Jahan humans zyada tar code likhte the, ab woh do cheezein karte hain: *problem precisely define karna* (spec, schema, ya typed signature ke taur par) aur *output itni achhi tarah padhna ke verify kar sakein*.
+
+3. **Agents ko apni action surfaces se paanch properties chahiye:** Stable (P5), Typed (P2), Reversible (P4), Inspectable (P7), Governable (P6).
+
+Agentic era purani stack replace nahi karta; woh ise *activate* karta hai.
+
+---
+
+## Part 1: Saat Principles
+
+| # | Principle | Failure mode jise rokta hai |
+|---|-----------|----------------------------|
+| 1 | **Bash hi Key hai** | "Agent sirf baat karta hai, karta nahi" |
+| 2 | **Code as Universal Interface** | "Prose request bar bar ghalat samjhi jaati hai" |
+| 3 | **Verification Core Step hai** | "Output sahi lagta hai magar production mein toot jaata hai" |
+| 4 | **Chhoti, Reversible Decomposition** | "Ek badi change ne dopahar barbaad kar di" |
+| 5 | **State Files Mein Persist Karo** | "Agent bhool jaata hai kal kya decide kiya" |
+| 6 | **Constraints aur Safety** | "Agent ne woh files chhu li jo main ne authorize nahi ki" |
+| 7 | **Observability** | "Nahi pata agent ne actually kya kiya" |
+
+Yeh importance ke order mein nahi; *building dependency* ke order mein hain. Har ek apne upar walon par rests karta hai. Kam az kam ek baar sequence mein padho.
+
+---
+
+## Principle 1 — Bash hi Key Hai
+
+**"Bash" ka matlab.** Terminal woh black-screen text interface hai jo har laptop ke saath aata hai. Bash woh language hai jo usme use hoti hai. Jab agent Bash chalaata hai, woh same commands type kar raha hota hai jo tum Terminal app mein type karte. Agent tumhare machine par full keyboard access rakhta hai, clicks ki jagah commands ke zariye.
+
+> **Failure mode:** "Agent cheezein karne ki bajaye sirf unke baare mein baat kyun karta hai?"
+
+General agent ki defining capability — woh cheez jo ise chat AI se alag karti hai — woh hai ke woh *actions* le sakta hai: command chalaana, file padhna, file likhna, service call karna. Yeh ek chatbot nahi jo code jaanta ho; yeh haath wala co-worker hai. Pehla principle ise is tarah treat karna hai.
+
+**Novice trap.** Zyada tar naye users agent se sawaal poochte hain ("Customer interviews kaise summarize karoon?") aur ek wandering essay milta hai. Agent ke haath the aur tumne advice maangi. Fix: action specify karo.
+
+*"Kaise summarize karoon..."* chatbot prompt hai. *"Har transcript ko `/interviews/week-12` mein padho. Har ek ke liye customer naam, top teen pain points, aur pricing objections nikalo. `week-12-themes.md` mein save karo, pain-point frequency ke hisaab se sorted."* — yeh agentic prompt hai. Pehla text produce karta hai. Doosra usable artifact.
+
+### Har Tool Mein "Bash" Ka Matlab
+
+| | **Claude Code** | **OpenCode** | **Cowork** | **OpenWork** |
+|---|---|---|---|---|
+| Action surface | Terminal: machine par shell commands | Same | Local Linux VM; sirf granted folders mein | Same |
+| Visible as | Commands terminal mein inline stream hote hain | Same | Side panel mein step cards | Step chevrons ki timeline |
+| Approval default | Har Bash action se pehle poochha; allow-listed commands silent | Same | Files likhne, messages bhejna, scheduling se pehle poochha | Same |
+
+**Mental model:** agent ke haath hain. Haathon ko brief karo, brain ko nahi.
+
+### Examples
+
+*Litigation, 47 deposition PDFs:*
+- Chatbot: *"Deposition transcripts mein indemnification ka kya matlab hai?"* → essay, koi files nahi
+- Agent:
+```
+/depositions mein har PDF mein "indemnification" aur close synonyms search karo.
+Har hit ke liye: file naam, page number, aur surrounding paragraph return karo.
+indemnification-hits.md mein save karo.
+```
+→ 47 files searched, hits indexed, minutes mein done
+
+*Accounting, bank reconciliation:*
+- Chatbot: *"Bank statement GL ke against kaise reconcile karoon?"* → tutorial
+- Agent:
+```
+bank-statement-march.csv aur gl-export-march.xlsx kholo. Har bank transaction
+ko GL entry se match karo (same date ±2 days, same amount, same vendor).
+Unmatched items march-reconciliation-gaps.md mein list karo.
+```
+→ gap list, bees minute mein
+
+**Prompt pattern:** jab bhi sawaal type karte ho, poochho: *kya main ise action aur artifact ke saath rephrase kar sakta hoon?* Aakhir hamesha haan.
+
+### Hands-on: Hello World
+
+**Setup (30 second):**
+1. **[Pack 1 — Cluttered folder](https://github.com/panaversity/problem-solving-practice-packs/releases/latest/download/pack-1-cluttered-folder.zip)** download karo aur unzip karo.
+2. Apne tool mein unzipped folder kholo, `downloads/` subfolder ko read access do.
+
+**Yeh prompt verbatim paste karo:**
+```
+./downloads/ mein kya hai?
+```
+
+Woh bas. Paanch words. Agent khud commands ka cascade chalaayega — `ls`, `find`, `cat SIZES.txt` — bina tumhare ek bhi command type kiye. Chatbot se *"Downloads folder kaise organize karoon?"* poochho toh generic blog post milta hai. Yeh one-liner us specific 53 files ka jawab deta hai.
+
+### Ab apne kaam par apply karo
+
+Curated Downloads folder aasan tha. Asli test woh folder hai jise tum avoid kar rahe ho: ek Dropbox do saal se badh raha hai, Inbox nau hazaar deep, ek shared drive jahan har client ki alag filing convention. Tumhare liye bahut bada, agent ke liye perfectly sized.
+
+**Brief likho, method nahi.** Ek sentence. Input naam do (kaunsa folder, thread, drive) aur output naam do (summary file, list, report). Commands ya clicks specify karne ki urge pe qabu paao. Tumhein nahi pata kaunse commands chahiye; agent ko pata hai. Working shape:
+
+```
+<path> pe woh folder jo <cheez> <kitne time> se collect kar raha hai.
+Inspect karo aur mujhe ek <named output file> likh ke do jo <decision
+jo output support kare>. Read-only, kuch change mat karo.
+```
+
+**Agent ko chalao dekho.** Claude Code / OpenCode mein *dekho ke tumne commands type nahi kiye*. Jab pehli baar agent khud ek bahut broad `find` se narrower one pe self-correct kare bina tumhari madad ke, principle land hota hai. Cowork / OpenWork mein execution view step cards se bharti hai, har ek ek task jo tum pre-agent workflow mein haath se karte.
+
+**Ek failure.** Agar tum prompt mein "is part ke liye `find` use karo" ya "spreadsheet kholo aur..." add kar rahe ho, toh tum wapas *method* specify kar rahe ho *outcome* ki bajaye. Har kaat do jo *kaise* describe kare, aur sirf woh verbs rakho jo end mein *kya chahiye* describe karein. Dobara chalao. Doosra version almost hamesha cleaner land hota hai.
+
+**Yeh kyun matter karta hai.** Yeh crash course mein sabse highest-leverage habit hai, aur skilled log ise install karne mein fail karte hain, kyun ke method dictate karna intezaar karne se tez lagta hai. Nahi hai. Har minute jo tum method specify karte ho guzarta hai woh minute hai jo agent usse chala raha hota. Haathon ko brief karo. Peeche hato. Artifact padho.
+
+---
+
+## Principle 2 — Code as Universal Interface
+
+> **Failure mode:** "Meri prose request bar bar ghalat kyun samjhi jaati hai?"
+
+Sarah ke paas Southeast Asia trip ki 3,000 photos thi, `IMG_4521.jpg` jaise filenames ke saath. Usne teen photo apps try kiye. Har ek ne thoda kiya; kisi ne combination nahi kiya. Usne agent ko ek paragraph likha. 15 minute baad, kaam ho gaya — agent ne ek chhota program likha jo har photo ka embedded location padha, date se rename kiya, image bytes hash karke duplicates dhundhe.
+
+Doosra principle do halves mein hai: **code woh hai jisse agent tab act karta hai jab actions ek single command se richer hon.** Aur — jo zyada tar professionals miss karte hain — *jo tum maangte ho uski shape khud ek interface hai*. Natural language ambiguous hai; schema, typed signature, structured template nahi.
+
+### Paanch Powers Code Unlock Karta Hai
+
+1. **Precise thinking.** Code compute karta hai; approximate nahi karta.
+2. **Workflow orchestration.** Ek tree likhta hai (*agar PDF hai aur "Invoice" contain kare → Finances*) aur kaam end-to-end interrupt ke baghair chalta hai.
+3. **Organized memory.** Chhoti files, cached lookups, per-source extracts, final report — sab rakh sakta hai.
+4. **Universal compatibility.** Aisha ka guest list example: spreadsheet mein, email threads mein dietary notes, web form RSVPs, PDF attachments. Koi ek app yeh chaar nahi padhta. Code padhta hai.
+5. **Instant tool creation.** Jab koi app woh nahi karta jo chahiye, agent ek banata hai.
+
+### Do Cheezein Jo Tum Abhi Bhi Karte Ho
+
+*Engineers ke liye:* (1) Problem logically define karo: spec, interface, schema, typed signature. (2) Code itna padho ke verify kar sako.
+
+*Domain experts ke liye:* (1) Deliverable ki shape define karo: template, sections, max lengths, column structure. (2) Output ko *factual grounding* ke liye padho.
+
+### Examples
+
+- **Lawyer, deposition summary:** ek row per witness, columns admissions/denials/follow-ups ke liye, `page:line` citations ke saath
+- **HR, candidate screening:** per-résumé template, required quals (Y/N), preferred quals, ek-word recommendation (`ADVANCE`/`HOLD`/`DECLINE`)
+- **SQL schema as contract:** `NOT NULL`, `CHECK (amount > 0)`, `REFERENCES users(id)` define karo — database bad data at write time refuse karta hai
+
+**Escape hatch.** Prose brainstorms, creative drafts, aur explainers ke liye sahi hai. Structure ke liye reach karne ka signal: do baar iterate kiya aur output abhi bhi ghalat hai.
+
+### Ab apne kaam par apply karo
+
+Receipt folder ek clean, single-domain test tha. Asli woh tumhare kaam mein ek mess hai jise koi single tool poora handle nahi karta — *wahan* agent apni value sabit karta hai.
+
+**Target chuno.** Apne kaam mein ek recurring task jo tum ab do ya zyada alag apps mein kar rahe ho kyun ke koi single tool poora cover nahi karta. Common shapes: CRM se deal data custom scorecard mein nikalna, teen alag accounts se expenses reconcile karna, inbound documents (résumés / contracts / PDFs) padhna aur structured report produce karna jo tumhari team teen second mein scan kar sake. *Do-ya-zyada-tools* part diagnostic hai: wahan Power 4 (universal compatibility) aur Power 5 (instant tool creation) rehte hain.
+
+**Situation likho, phir walkthrough maango.** Hello-world prompt ki same shape use karo. Inputs describe karo, outputs jo chahiye, aur steps jo tum chahte ho ke ek single tool cover kare. Phir poochho:
+
+```
+Mujhe walkthrough do ke tum isse kaise approach karo ge. Har step ke
+liye naam do ke Paanch Powers mein se kaunsi use hoti hai. Phir, jab
+main kahoon, sirf step 1 execute karo aur uska artifact produce karo.
+```
+
+**Phir build commission karo.** Jab walkthrough land kare, woh step chuno jo abhi sabse zyada time le raha hai, agent ko usse execute karne bolo, aur dekho kya produce karta hai. Agar artifact pehli baar mein bees minute bachaye, toh tumne agent se ek tool banwaya jo aaj subah laptop kholte waqt exist nahi karta tha. Us tool ka spec tumhari chat history mein hai. Save karo; agle hafte dobara chalao.
+
+**Do failures jin par nazar rakhna:**
+
+- *"Script" maangna "approach" ki bajaye.* "Mujhe receipts process karne wala script likh do" medium se lead karta hai aur framing skip karta hai. Agent ek path pick karta hai aur chala deta hai. "Apna approach walk karo aur har step ke liye naam do ke kaunsi powers use hoti hain" pehle design choices surface karta hai, taake jab tum execute karo toh tum samjho ke agent kya karega *aur kyun*.
+- *Ek power pe settle karna jab task ko teen chahiye.* Agar tumhara follow-up step sirf Power 1 (computation) use kare, toh tum wapas us cheez mein ho jo spreadsheet kar sakta hai. Bade wins wahan hote hain jahan do ya teen powers compose hoti hain — format-crossing *plus* tool-creation, orchestration *plus* precise thinking. Apna description dekho: agar yeh kam az kam do powers span nahi karta, toh yeh existing app ka kaam ho sakta hai, agent ka nahi.
+
+**Yeh kyun matter karta hai.** Breakthrough faster spreadsheet ya smarter search bar nahi hai. Yeh hai ke pehli baar tumhare paas ek tool hai jiska interface *tumhari demand ka description* hai, aur jiska mechanism code hai jo woh khud likhta hai. Specialized apps ne tumhein woh features di jo unhone ship ki. Agent tumhein woh features deta jo tumhare task ko actually chahiye.
+
+---
+
+## Principle 3 — Verification Core Step Hai
+
+> **Failure mode:** "Output sahi kyun lagta hai magar production mein toot jaata hai?"
+
+Finished-looking output verified output nahi hai. Models *plausible* outputs produce karte hain, jo *correct* se alag hai. Woh confidently list mein items miscount karenge, ek paragraph cite karenge jo exist nahi karta, aur code produce karenge jo cleanly compile kare jabke silently third edge case par fail kare.
+
+**Key rule:** woh agent jo output produce kiya woh us output ka worst possible verifier hai. Uske wahi blind spots hain jo original produce kiye. Verification ko independent path chahiye — tumhari apni reading, alag model, test, type-checker, ya database constraint.
+
+### Har Tool Mein "Verification" Ka Matlab
+
+| | **Claude Code** | **OpenCode** | **Cowork** | **OpenWork** |
+|---|---|---|---|---|
+| Primary mechanism | Unit tests, type-checks, linters | Same | Output rubric | Same |
+| Cross-model review | Doosra tool diff padhta hai aur critique likhta hai | Same | Doosri chat mein alag model: "Is memo mein kya ghalat hai?" | Same |
+
+### Examples
+
+*Litigation, citation grounding:* "Har case citation ke liye, underlying opinion kholо aur exact paragraph quote karo jo proposition support karta hai. Jo citation ground nahi kar sako use flag karo."
+
+*Accounting, claims triage:* "Har policy figure ke liye, exact policy section aur sublimit language quote karo."
+
+**Prompt pattern:**
+```
+Final version save karne se pehle, verification pass:
+- Draft mein har factual claim list karo
+- Har ek ke liye source location identify karo aur supporting text quote karo
+- Jo claim ground nahi kar sako use flag karo
+Jab tak har flag resolve na ho, save karne se inkaar karo.
+```
+
+### Ab apne kaam par apply karo
+
+Planted-error memo ek rigged game tha — tumhein pata tha errors exist karti hain. Asli test woh deliverable hai jo abhi tumhare desk pe hai jahan tumhein nahi pata ke koi error exist karti hai ya nahi aur galat number ki qeemat tumhari reputation hai.
+
+**Target chuno.** Is hafte ka koi bhi agent output jismein galat-hone-ki-qeemat sabse zyada ho: numbers wala memo, citations wala brief, decision recommend karne wali analysis. Kal ki brainstorm nahi, woh cheez jo tumhare haathon se nikalne wali hai. Log woh verify nahi karte jo professional lagta hai. Yeh woh failure mode hai jo ship hota hai.
+
+**Brief likho, method nahi.** Verify karne waale output ka naam do aur ground karne waale sources ka naam do. Agent ko mat batao ke kaise ground kare, batao *kya count karta hai*: quoted row, quoted page, quoted source paragraph.
+
+```
+<output-file> mein har factual claim verify karo. Har claim ke liye,
+<source> se exact row, sentence, ya section quote karo jo usse support
+kare. Jo claim ground na kar sako use flag karo. Audit
+<output>-verification.md mein save karo.
+```
+
+**Audit dekho.** Agent ko source files output file se *alag* padhne chahiye — agar sirf output padhta hai, toh woh apni homework check kar raha hai. Audit mein har claim ek literal quote ke saath hona chahiye, yeh nahi ke "yeh section revenue discuss karta hai."
+
+**Ek failure.** Audit wapas aaye aur kahe *"sab claims sources ke saath consistent hain"* bina koi source quote kiye. Yeh verification nahi hai. Brief mein fix karo: *"Har claim ke liye audit mein ek verbatim quote hona chahiye. Koi summary judgments nahi. Agar quote nahi kar sakte, toh claim unsupported hai."*
+
+**Yeh kyun matter karta hai.** Kisi bhi ek factual claim pe error rate har quarter gir raha hai, magar zero nahi hai aur jaldi nahi hoga. Humans padh ke nahi bata sakte ke kaunse claims galat hain; plausibility se truth ka koi talluq nahi hai. Durable defense yeh hai ke verification ek structural step banao, generation se alag, independent sources ke against, ek audit artifact produce karo jo tum actually dekh sako.
+
+---
+
+## Principle 4 — Chhoti, Reversible Decomposition
+
+> **Failure mode:** "Ek badi change ne dopahar ka kaam kyun barbaad kar diya?"
+
+Kaam ko *sabse chhoti reversible units* mein decompose karo. Land karo. Verify karo. Checkpoint karo. Phir agla shuru karo.
+
+**Rule of thumb:** *agar change reverse karne mein do minute se zyada lage, change bahut badi thi.*
+
+Models chhoti, specified moves par achhe hain aur progressively bure large, vague waalon par. Ek prompt mein 12-step task har step par drift karta hai koi course-correct karne ki jagah ke baghair.
+
+### Decomposition aur Reversibility Har Tool Mein
+
+| | **Claude Code** | **OpenCode** | **Cowork** | **OpenWork** |
+|---|---|---|---|---|
+| Atomic unit | Har working step ke baad git commit | Same | Numbered file versions (`memo-v1.md`) | Same; `/undo` message aur file changes rewind |
+| Undo mechanism | `git revert`; `Esc Esc` conversation rewind karta hai | `/undo` conversation AUR file changes | Numbered versions, copy back | `/undo` same |
+
+**Enforcement prompt:**
+```
+Is task ko sabse chhote steps mein todo karo. Har step ke baad:
+1. Jo kiya dikhao
+2. Us step ke liye verification check chalao
+3. Numbered version commit/save karo
+4. Agla step shuru karne se pehle meri OK ka intezaar karo
+```
+
+### Examples
+
+*Lawyer, settlement letter:* Ek bade prompt mein → paragraph three mein masla jo paragraph seven tak nahi dikhta. Decomposed: facts → pause → legal theory → pause → demand → pause → deadline. Har masla cheap hai fix karna jab sirf ek section hua ho.
+
+*Pixar disaster:* 1998 mein kisi ne *Toy Story 2* ki production files delete kar diin — do saal ka 90% kaam, seconds mein. Backup system silently fail ho chuka tha. Film sirf isliye bach gayi ke ek employee ke paas personal copy thi. **Reversibility system property honi chahiye, roz ki discipline nahi.**
+
+### Ab apne kaam par apply karo
+
+Contract dispute ek clean test tha — ek document, koi stakeholders nahi. Asli equivalent woh recurring multi-section deliverable hai jisne tumhein ek baar jala chuka hai, jahan ise decompose karna matlab ek sweep mein poora maangne ki aadat todna.
+
+**Target chuno.** Koi multi-section deliverable jise tumne recently ek shot mein produce kiya aur disappoint hue — woh memo jahan paragraph do ne paragraph six contradict kiya, woh model jahan ek tab ki assumptions doosri se drift kar gayin, woh brief jo thread kho baitha. Failure *sections ka ek doosre se drift karna* tha, koi ek section bura nahi tha. Yeh missing decomposition ka diagnostic hai.
+
+**Steps likho, prose nahi.** Shuru karne se pehle, chaar saat steps list karo jo dependency ke order mein hon. Har ek ke saath ek one-line *verification check* likho — kya padhoge ke confirm karo yeh step land hua? Check section list se zyada important hai; yeh woh hai jo pause ko meaningful banata hai.
+
+```
+<deliverable> ko <N> steps mein produce karo:
+Step 1: sirf <section>. Ruko aur meri OK ka intezaar karo.
+Step 2: <agle section>. <check> ke against verify karo. Ruko.
+...
+Numbered versions save karo (-v1, -v2, ...).
+```
+
+**Har step ko land hote dekho.** Claude Code / OpenCode mein agent ko commit ya numbered file save karna chahiye rukne se pehle — agar nahi karta, toh tum sasti reversibility kho chuke ho (`/undo` bahut saare steps ke across fragile ho jaata hai). Cowork / OpenWork mein numbered versions (`memo-v1.md`, `memo-v2.md`) working folder mein dikhne chahiye, ek single overwritten file nahi.
+
+**Ek failure.** Aadhe raaste pe agent offer kare ke "baaki complete kar doon" kyun ke ab tak ke steps smooth gaye. Woh momentum hi hai jo agla nuked afternoon produce karta hai. Inkaar karo: *"Ek waqt ek step. Sirf step 3 dikhao."*
+
+**Yeh kyun matter karta hai.** Agent-driven kaam mein sabse bade preventable disasters dramatic failures nahi hain — woh slow drifts hain jo ek lambe unbroken run ke across compound karte hain. Decomposition unhein boundaries pe catch karta hai, aur tumhein deliverable ke beech mein apna mind change karne deta hai: 6 mein se step 3 pe, tum pivot kar sakte ho kyun ke pehle do steps independently achhe hain. Wohi pivot ek one-shot run ke end pe matlab dobara shuru karna.
+
+---
+
+## Principle 5 — State Files Mein Persist Karo
+
+> **Failure mode:** "Agent kal ki decision kyun bhool jaata hai?"
+
+Conversation volatile hai. Filesystem durable. Jo kuch sessions ke across carry karne wala ho — project conventions, decisions, glossaries, plans — ek *file* mein jaata hai, chat history mein nahi.
+
+Woh file is course mein ek naam rakhti hai: **rules file**. Claude Code aur Cowork mein `CLAUDE.md`; OpenCode aur OpenWork mein `AGENTS.md`. Same idea chaaron tools mein: project root par ek chhoti markdown file jo agent automatically padhta hai jab project kholti hai.
+
+**Sabse common ghalti:** file ko documentation ki tarah treat karna. Natija 20,000-token file hai. Sahi model: **table of contents, encyclopedia nahi.** ~2,500 tokens se kam.
+
+**Woh shape jo chaaron tools mein kaam karta hai:**
+
+```markdown
+# Project: [naam]
+
+## Yeh kya hai
+[Do lines: domain, audience]
+
+## Cheezein kahan hain
+- folder-a/: [kya hai]
+- folder-b/: [kya hai]
+
+## Critical rules
+- [Ek ghalti jo log karte rehte hain]
+- [Ek non-obvious convention]
+- [Ek cheez jo undo karna mehenga hai]
+
+## On-demand references
+- @docs/conventions.md
+```
+
+### Examples
+
+*Lawyer ka matter folder, `CLAUDE.md`:*
+```markdown
+# Matter: Smith v. Acme (S.D.N.Y. 1:24-cv-04567)
+
+## Parties
+- Plaintiff: "Ms. Smith" ya "Plaintiff", kabhi bare "Smith" nahi.
+- Defendant: "Acme". Full entity list: parties.md dekho.
+
+## Citation style
+Bluebook 21st. Har record reference ke liye pin-cites required.
+
+## Kahan cheezein hain
+- /pleadings: filed papers (edit mat karo)
+- /depositions: transcripts YYYY-MM-DD-LASTNAME.pdf ke taur par
+
+## Critical rules
+- Record passage cite karne wala brief finalize mat karo jo humne quote nahi kiya.
+- Draft save karne se pehle privilege waive karne wali koi cheez flag karo.
+```
+
+*Accountant ka monthly close, `AGENTS.md`:*
+```markdown
+# Monthly close, FY26
+
+## Variance thresholds
+- Koi bhi GL line variance > $5,000 YA > 10% vs. prior month flag karo.
+
+## Commentary tone
+"[Account] variance $X driven by [cause]." Max 2 sentences per line.
+
+## Critical rules
+- Dollar amount cite mat karo jo GL detail file se confirmed na ho.
+```
+
+> **Hierarchy:** Conversation = volatile. Project folder mein files = durable. Referenced files = on-demand.
+
+### Hands-on: Hello World
+
+Persistence mehsoos karne ka sabse tez tareeka hai ek hi task do baar chalana — ek baar bina rules file, ek baar uske baad — aur doosri run ko woh calibration apply karte dekhna jo pehli run miss karti thi. Yeh pack ek paanch-résumé hiring loop hai jo exactly usi two-run diff ke liye set hai.
+
+**Setup (30 second):**
+1. **[Pack 6 — Hiring loop persistence](https://github.com/panaversity/problem-solving-practice-packs/releases/latest/download/pack-6-persistence.zip)** download karo aur unzip karo. Folder mein ek job spec, weighting guidelines, paanch candidate résumés `inbound/` mein, aur ek reference `CLAUDE.md` hai jise tum end tak nahi dekhoge.
+2. Apne tool mein unzipped folder kholo. Abhi reference rules file mat kholo — woh answer key hai.
+
+**Run A, yeh prompt verbatim paste karo:**
+```
+inbound/ mein har résumé padho. Har candidate ke liye chhoti
+recommendation produce karo: ADVANCE, HOLD, ya DECLINE, ek sentence
+rationale ke saath. inbound-screen-runA.md mein save karo.
+```
+
+**Ab rules file banao, yeh prompt verbatim paste karo:**
+```
+Yeh folder padho. Ek CLAUDE.md draft karo (250 words se kam) mein:
+yeh folder kya hai, cheezein kahan hain, hiring conventions, aur teen
+se paanch critical decision rules — khaas taur par credential
+verification aur required-vs-preferred gaps ke baare mein.
+```
+
+Draft edit karo agar kuch galat lage. Folder root pe `CLAUDE.md` ke taur par save karo.
+
+**Run B, wohi screening prompt dobara paste karo, ek tweak ke saath:**
+```
+inbound/ mein har résumé padho. Har candidate ke liye chhoti
+recommendation produce karo: ADVANCE, HOLD, ya DECLINE, ek sentence
+rationale ke saath. inbound-screen-runB.md mein save karo.
+```
+
+**Kya dikhna chahiye.** Run A mein agent paanch résumés screen karta hai jo bhi priors uske paas hain "achha Senior PM kaisa dikhta hai" ke baare mein — paanch judgments, mostly sensible, mostly even-handed, koi surprises nahi. Carlos khaas taur par apni MBA aur prior PM titles ki wajah se advance hota hai. Phir rules-file step ek chhota `CLAUDE.md` folder root pe land karta hai: agent `inbound/`, `shortlist/`, `scorecards/` name karega, required-vs-preferred distinction, aur (yeh hissa dekhna) ek credential-verification rule. Run B mein agent woh file *automatically* load karta hai, tumhari koi reminder ke baghair, aur screen subtly different nikalta hai.
+
+**Principle moment.** `inbound-screen-runA.md` aur `inbound-screen-runB.md` ko side by side kholo. Diff chhota hai magar load-bearing: Carlos ki MBA 2018 ki dated hai ek school se jo 2019 tak exist nahi karta tha. Run A mein woh detail uski résumé mein dabi hai aur agent use titles ki strength pe ADVANCE deta hai. Run B mein, credential-verification rule active, woh HOLD pe shift hota hai ek one-line note ke saath date mismatch ke baare mein. *Tumne Run B prompt mein credentials dobara mention nahi ki. Rule isliye fire hua kyun ke woh ek file mein tha jo agent ne session start pe khud padha.* Yeh woh hai jo persistence tumhein deti hai — calibration jo tum *repeat karna band karte ho*, uniformly har candidate pe apply hoti hai, har future run pe, har teammate jo yeh folder khole.
+
+> **Agar aisa nahi hua:** Carlos ko dono runs mein same recommendation mili. Do possibilities. Pehli, tumhare agent ne `CLAUDE.md` auto-load nahi ki — check karo woh folder root pe hai aur session dobara kholo. Doosri, tumhari draft rules file ne credential verification skip kar di (hota hai; agent ek pass se importance nahi pakad sakta). Pack mein reference `CLAUDE.md` kholo, apni draft se compare karo, jo missing hai woh copy karo, aur B dobara chalao. Maqsad pehli try mein draft sahi karna nahi hai — maqsad yeh dekhna hai ke jo *file mein hai*, agent apply karta hai; jo *nahi hai*, woh bhool jaata hai.
+
+### Ab apne kaam par apply karo
+
+Pack ka hiring loop ek closed system tha. Asli test woh folder hai jo tum har Monday dobara kholte ho, jahan calibration jo ek file mein rehni chahiye abhi tumhare paanch paragraphs of context mein rehti hai jo tum baar baar type karte rehte ho.
+
+**Target chuno.** Woh folder jise tum agent ke saath repeatedly reopen karte ho — monthly close, recurring client deliverable, hiring loop, campaign tracker — jahan tum har baar wohi context dobara dete ho: conventions, thresholds, preferences, non-obvious rules.
+
+**Rules file draft karo.** Folder kholo aur bolo:
+
+```
+Yeh folder padho. Ek CLAUDE.md (ya AGENTS.md) draft karo jo cover kare:
+yeh folder kya hai, cheezein kahan hain, is project ki specific
+conventions, aur teen se paanch critical rules jo expensive hain galat
+karne mein. Under 250 words. Sirf woh cheezein jo is folder ke liye
+specific hain — generic advice mat do.
+```
+
+Draft padho. Edit karo. Save karo.
+
+**Do runs karo.** Ek task jo tum regularly karte ho — ek baar bina rules file, ek baar uske saath. Diff dekho. Agar rules file mein kuch hai jo agent apply karta hai jo pehle miss hota tha, toh file kaam kar rahi hai. Agar kuch missing hai jo tumhein abhi bhi dobara batana padta hai, toh usse file mein add karo.
+
+**Ek failure.** Rules file ko documentation ki tarah treat karna — 500 lines, har cheez cover karte hue. Agent 90% context budget us cheez pe waste karta hai jo is task se related nahi hai. File chhoti rakho, is folder ke liye specific rakho, aur deeper docs ko reference ke taur par link karo (`@docs/conventions.md`).
+
+**Yeh kyun matter karta hai.** Yeh woh investment hai jo har session dividend deti hai. Ek baar rules file likh do aur tum re-explanation band karte ho. Agent consistent rehta hai — same calibration, same conventions, same guardrails — chahe tumhara colleague folder khole ya tum khud do hafte baad wapas aao. Chat window woh jagah hai jahan tum rule *figure out* karte ho. Rules file woh jagah hai jahan rule *rehta* hai jab tum figure out kar chuke ho.
+
+---
+
+## Principle 6 — Constraints aur Safety
+
+> **Failure mode:** "Agent ne woh files kyun chhu li jo main ne authorize nahi ki?"
+
+Constraints friction nahi hain — woh *autonomy enable* karte hain. Agent jo kuch bhi kar sakta hai woh agent hai jisے tum har second watch karo. Agent ek specific folder, specific connector list, aur specific approval mode tak constrained ek hai jis par tum walk away trust karte ho.
+
+### Teen Universal Trust Levers
+
+Sab chaaon tools mein same teen levers:
+
+1. **Scope** — kaunsi files/folders/data agent dekh sakta hai
+2. **Connections** — kaunse external services agent reach kar sakta hai
+3. **Approvals** — kab agent tumhari OK ke liye rukta hai
+
+| Lever | **Claude Code** | **OpenCode** | **Cowork** | **OpenWork** |
+|-------|----------------|--------------|------------|--------------|
+| Scope | Per-directory | Same | Folder grant via "Choose folder" card | Per-project workspace |
+| Connections | MCP servers in `.mcp.json` | `opencode.json` mein | Connectors via Customize > Connectors | Extensions tab |
+| Approvals | Per-tool allow/deny; `Shift+Tab` plan mode | `Tab` Plan agent | Per-action approval cards | Stack `allow always` |
+
+### Autonomy Ladder
+
+![Paanch-rung ladder: Closely watch → Ambient supervision → Walk away → Act without asking → Scheduled.](/img/figure-2-autonomy-ladder-b67d37efa37b8c13b61c3431c4d19cea.png)
+*Figure 2: Autonomy ladder. Deliberately charhao; jab task type badle toh neeche utro.*
+
+1. **Closely watch.** Novel task ka default.
+2. **Ambient supervision.** Kaam teen chaar baar bina surprise ke kiya.
+3. **Walk away.** Pattern par trust hai.
+4. **Act without asking.** Koi approval pauses nahi, magar actively watch kar rahe ho.
+5. **Scheduled/automated.** Recurring, hands-off. Sirf un tasks ke liye jo "walk away" par trusted hain.
+
+**Woh rule jo zyada tar accidents rokta hai:** *agar is task par "walk away" trust nahi karte, schedule mat karo.*
+
+### Prompt-Injection Trap
+
+Agar agent tumhari organization ke bahar ka content padhta hai — opposing-counsel email, inbound résumé, vendor PDF — woh content instructions contain kar sakta hai jo agent ko hijack karein.
+
+Defense sab chaaon tools mein same:
+- Untrusted content wale tasks par high-autonomy modes mat chalao
+- Scope creep ke liye dekho: agar proposed plan mein woh files ya connectors hain jo tumne mention nahi kiye, approve mat karo
+- Jis pal cheezein drift lagein Stop hit karo
+
+**Pattern:** install time par set scope durable hai. Prompt mein set scope aspirational hai.
+
+---
+
+## Principle 7 — Observability
+
+> **Failure mode:** "Agent ne actually kya kiya mujhe kyun nahi pata?"
+
+Tum sirf woh direct kar sakte ho jo dekh sako. Har meaningful action agent leta hai tumhare liye close to real time visible hona chahiye.
+
+### Har Tool Mein Agent Ko Kahan Dekho
+
+| | **Claude Code** | **OpenCode** | **Cowork** | **OpenWork** |
+|---|---|---|---|---|
+| Real-time view | Terminal har action stream karta hai | Same | Teen-panel UI: conversation left, execution center, file tracker right | Vertical timeline of step chevrons |
+| Per-step trace | Har command aur file edit inline | Same | Har step apna card hai | Same |
+
+**Discipline:** execution view ko har novel task par kam az kam ek baar dekho.
+
+### Paanch Symptoms Session Off the Rails Jaane Ke
+
+1. Agent earlier chat reference karta hai jo current task se related nahi
+2. Responses lambe aur vaguer hote jaate hain, zyada hedging ke saath
+3. Koi constraint contradict karta hai jo tumne paanch turns pehle state ki
+4. Repeatedly maafi maangta hai bina progress ke
+5. Files, folders, ya connectors touch karne ka propose karta hai jo tumne mention nahi kiye
+
+**Jab yeh dekho, typing band karo.** `/clear` ya new session. Woh ek do facts paste karo jo actually matter karte hain. Continue karo. Reset almost hamesha rescue se tez hota hai.
+
+---
+
+## Part 2: Chaar-Phase Workflow
+
+Saat principles production mein chaar-phase loop mein collapse ho jaate hain.
+
+![Ek loop: Explore → Plan → Implement → Commit, saat principles iske around arranged.](/img/figure-3-four-phase-workflow-04f35ee54a97abd98cad5222d87fab84.png)
+*Figure 3: Saat principles, chaar phases, ek loop.*
+
+1. **Explore** *(Bash + Observability)*: relevant files padho, unknowns surface karo. Read-only. Abhi koi writes nahi.
+2. **Plan** *(Code-as-Interface + Persistence)*: written plan structured artifact ke taur par produce karo. Save karo. Review karo. Edit karo. **Yeh sabse important phase hai; zyada tar leverage yahan hai.**
+3. **Implement** *(Decomposition + Verification)*: plan chhote atomic steps mein execute karo, har ke baad verify karo, commit/save karo.
+4. **Commit** *(Constraints + Observability)*: final verification pass, decisions rules file mein wapas persist karo.
+
+Shape same hai chahe end artifact merged pull request ho, redlined MSA ho, quarterly variance pack ho, ya hiring-loop debrief. Phases nahi badlte; sirf inputs aur outputs badlte hain.
+
+### Paanch Failure Patterns
+
+Jab loop mein kuch ghalat ho, yeh paanch named patterns mein se ek mein land karta hai:
+
+| # | Pattern | Symptom | Principle jo rokta hai |
+|---|---------|---------|----------------------|
+| 1 | **The Drift** | Agent brief se gradually wander karta hai | Persistence (P5) |
+| 2 | **The Confident Wrong** | Plausible output jo quietly incorrect hai | Verification (P3) |
+| 3 | **The Big Bang** | Ek badi change ghanton ka kaam barbaad | Decomposition (P4) |
+| 4 | **The Scope Creep** | Agent unauthorized cheezein touch karta hai | Constraints (P6) |
+| 5 | **The Black Box** | 20 minute chala; koi idea nahi kya kiya | Observability (P7) |
+
+---
+
+## Part 3: Ek Worked Example
+
+**Task family:** ek complex incoming artifact review karo, kya matter karta hai identify karo, verified claims ke saath structured response produce karo.
+
+- *Engineer track:* Ek PR contractor se aayi hai. Diff review karo, risks flag karo, response likho.
+- *Domain-expert track:* Vendor ne MSA bheji hai. Firm ke redline standard se deviations flag karo, comparison memo produce karo.
+
+### Hands-on: Hello World
+
+**Setup (60 second):**
+1. **[Pack 4 — Worked example](https://github.com/panaversity/problem-solving-practice-packs/releases/latest/download/pack-4-worked-example.zip)** download karo aur unzip karo.
+2. Apne tool mein unzipped folder kholo.
+
+**Har phase prompt verbatim paste karo, order mein. Agle se pehle artifact ka intezaar karo.**
+
+**Phase 1, Explore (P1 aur P7).** Read-only.
+
+*Cowork / OpenWork:*
+```
+Abhi kuch draft mat karo. inbound/vendor-msa-v1.md aur
+redline-standard.md padho. Summarize karo:
+- Yeh MSA kiske liye hai (ek paragraph)
+- Clause structure (section ke hisaab se numbered outline)
+- Hamare standard se obvious deviations (bullets, max 7)
+vendor-msa-explore.md mein save karo. Abhi koi drafting nahi.
+```
+
+**Phase 2, Plan (P2 aur P5).** Structured artifact. Save karo, review karo, approve karo.
+
+*Domain expert:*
+```
+vendor-msa-explore.md padho. Redline plan produce karo:
+## Redline plan
+- Depth mein review karne wale clauses (max 6, section number ke hisaab se)
+- Flag karne wale deviations (numbered, severity: HIGH / MED / LOW)
+- Counter-proposals (numbered, deviations ke parallel)
+- Vendor ke liye open questions (max 3)
+msa-plan.md mein save karo. Continue karne se pehle meri approval ke liye ruko.
+```
+
+**Phase 3, Implement (P4 aur P3).** Ek item ek waqt, har claim grounded.
+
+```
+Plan ek item ek waqt execute karo. Har item ke baad:
+1. Output produce karo
+2. Source se verify karo, specific lines quote karo (MSA ke liye section cite)
+3. Numbered version save karo (e.g., step3.md)
+4. Agla item se pehle meri OK ka intezaar karo.
+Agar claim ground nahi kar sakte, fabricate karne ki bajaye flag karo.
+```
+
+**Phase 4, Commit (P6 aur P7).** Final verification, phir assemble.
+
+```
+Final verification pass:
+- Har cited claim source location mein grounded hai
+- Structure plan se match karta hai
+- Tone project ki voice se match karta hai
+
+Phir final deliverable assemble karo: executive summary,
+numbered findings, review checklist, aur "Rules-file proposals"
+section jo kuch bhi sikhaya woh CLAUDE.md / AGENTS.md ke liye.
+```
+
+---
+
+## Part 4: Capstone — Apne Kaam Par Poora Loop Apply Karo
+
+Wohi loop, tumhara kaam, tumhari stakes. Ek baar. Saari saat principles consciously name karte hue ek real task chalao.
+
+**Setup:**
+1. Apne kaam mein ek recurring task chuno jo 60+ minute leta hai.
+2. Apna tool kholo. Folder set up karo. Iske liye `CLAUDE.md` ya `AGENTS.md` initialize karo.
+
+**Run:**
+
+| Phase | Kya karo | Principle invoked |
+|-------|----------|------------------|
+| 1. Explore | Agent ko relevant inputs padh ke structured summary file produce karne kaho | 1 (action), 7 (trace) |
+| 2. Plan | Structured plan maango, save karo, padho, edit karo, approve karo | 2 (structured format), 5 (file mein saved) |
+| 3. Implement | Ek step ek waqt, har ke baad verification | 4 (decomposition), 3 (verification) |
+| 4. Commit | Final verification pass, rules file update | 6 (review-before-ship), 7 (summary log) |
+
+**Baad mein paanch sawaal:**
+1. Manual baseline ke muqable total time?
+2. Kaunsa principle apply karna sabse mushkil tha? Kyun?
+3. Rules file mein kya add hua?
+4. Kaunsa constraint tighten kiya?
+5. Kaunsa failure pattern dikhaya (Drift/Confident Wrong/Big Bang/Scope Creep/Black Box)?
+
+---
+
+## Part 5: Isme Actually Achha Kaise Bano
+
+Yeh crash course padhna tumhein agents direct karne mein achha nahi banata. Use karna banata hai.
+
+Manual shuru karo. Friction feel karo. Har friction piece ek principle se map karta hai:
+
+- *"Agent sirf chat kyun kar raha hai?"* → P1. Action artifact ke saath prompt rewrite karo.
+- *"Output subtly ghalat kyun rehta hai?"* → P2. Format constrain karo.
+- *"Yeh confident jawab ghalat kyun nikla?"* → P3. Check step add karo.
+- *"Ek prompt ne kaam kyun barbaad kiya?"* → P4. Todo karo.
+- *"Agent same context baar baar kyun poochha?"* → P5. Rules file mein daal do.
+- *"Agent ne mention na kiya folder kyun touch kiya?"* → P6. Scope tighten karo.
+- *"Agent ne kya kiya mujhe kyun nahi pata?"* → P7. Execution view padho.
+
+**Portability dividend.** Jab ek tool mein yeh awareness build ho jaaye, chaaon mein transfer hoti hai.
+
+---
+
+## Quick Reference
+
+### Saat Principles Ek Line Mein
+
+**Paanch doing-principles:**
+1. **Bash hi Key Hai.** Haathon ko brief karo, brain ko nahi.
+2. **Code as Universal Interface.** Shape specify karo; prose ambiguity khatam karo.
+3. **Verification Core Step Hai.** "Sahi lagta hai" failure mode hai. Check force karo.
+4. **Chhoti, Reversible Decomposition.** Atomic units. Har verify karo. Har commit karo.
+5. **State Files Mein Persist Karo.** Conversation volatile hai. Files memory hain.
+
+**Do operating principles:**
+6. **Constraints aur Safety.** Constraints autonomy enable karte hain; limit nahi karte.
+7. **Observability.** Sirf woh direct kar sakte ho jo dekh sako.
+
+### Chaar-Phase Workflow
+
+```
+EXPLORE   → padho aur summarize karo (read-only)
+PLAN      → structured plan produce karo, save karo, review karo
+IMPLEMENT → chhote steps, har verify karo, har commit karo
+COMMIT    → final verification, summary, rules file update karo
+```
+
+### Paanch Failure Patterns
+
+| Pattern | Reach For |
+|---------|-----------|
+| The Drift (brief se wander) | Persistence (P5) |
+| The Confident Wrong (plausible magar incorrect) | Verification (P3) |
+| The Big Bang (ek change ghanton barbaad) | Decomposition (P4) |
+| The Scope Creep (unauthorized cheezein touch) | Constraints (P6) |
+| The Black Box (koi idea nahi kya hua) | Observability (P7) |
+
+### Autonomy Ladder
+
+```
+Closely watch → Ambient supervision → Walk away → Act without asking → Scheduled
+```
+
+Ek rung per task type, track record ke saath. Jab task type badle toh neeche utro.
+
+### Jab Kuch Ghalat Lage
+
+```
+Agent maafi maang raha hai bina progress ke, same cheez rewrite kar raha hai,
+earlier constraints contradict kar raha hai, unauthorized scope propose kar raha hai?
+    → Context poisoned hai. Typing band karo. Reset karo aur file se continue karo.
+       Kisi aur prompt se theek karne ki koshish mat karo.
+```
+
+---
+
+## Aage Kahan Jaana Hai
+
+- **Engineering depth build karo** → *Part 2: Agent Workflow Primitives*
+- **Principles deepen karo** → [**Chapter 18: Seven Principles of General Agent Problem Solving**](/docs/Agent-Workflow-Primitives/seven-principles/bash-is-the-key)
+- **Mode 1 mein tezi barhao** → Capstone teen aur recurring tasks par re-run karo
+- **Tool surface expand karo** → Doosra tool apne family mein uthao
+- **Mode 2 — manufacturing engagements** → [Agent Factory Thesis](/docs/thesis)
+
+---
+
+*Last substantially revised: May 2026.*

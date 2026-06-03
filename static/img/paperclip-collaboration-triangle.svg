@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" aria-labelledby="coll-title coll-desc">
+  <title id="coll-title">The collaboration triangle: three actors share the page</title>
+  <desc id="coll-desc">A triangle showing You at the top, your coding agent (Claude Code or OpenCode) at bottom-left, and OpenClaw (the AI Employee + Gateway) at bottom-right. You paste prompts and approve actions; your coding agent installs and configures OpenClaw; OpenClaw replies on your phone and runs scheduled tasks.</desc>
+  <style>
+    .bg { fill: transparent; }
+    .box-fill { fill: #ffffff; }
+    .box-stroke { stroke: #1a1a1a; stroke-width: 2; }
+    .label { font-family: system-ui, -apple-system, sans-serif; font-size: 15px; fill: #1a1a1a; text-anchor: middle; font-weight: 600; }
+    .sub { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; fill: #444; text-anchor: middle; }
+    .role { font-family: system-ui, -apple-system, sans-serif; font-size: 10px; fill: #2563eb; text-anchor: middle; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .arrow { stroke: #1a1a1a; stroke-width: 1.8; fill: none; }
+    .arrow-head { fill: #1a1a1a; }
+    .edge-label { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; fill: #555; text-anchor: middle; font-style: italic; }
+    @media (prefers-color-scheme: dark) {
+      .box-fill { fill: #1f2937; }
+      .box-stroke { stroke: #e5e7eb; }
+      .label { fill: #f9fafb; }
+      .sub { fill: #d1d5db; }
+      .role { fill: #60a5fa; }
+      .arrow { stroke: #e5e7eb; }
+      .arrow-head { fill: #e5e7eb; }
+      .edge-label { fill: #d1d5db; }
+    }
+  </style>
+  <rect class="bg" width="720" height="360" />
+
+  <!-- Title -->
+  <text x="360" y="28" class="label" style="font-size:16px">Three actors share this page</text>
+
+  <!-- You (top) -->
+  <rect x="290" y="58" width="140" height="80" rx="10" class="box-fill box-stroke" />
+  <text x="360" y="78" class="role">Actor 1</text>
+  <text x="360" y="100" class="label">You</text>
+  <text x="360" y="120" class="sub">supervise, paste,</text>
+  <text x="360" y="132" class="sub">approve, watch</text>
+
+  <!-- Coding agent (bottom-left) -->
+  <rect x="60" y="240" width="180" height="90" rx="10" class="box-fill box-stroke" />
+  <text x="150" y="260" class="role">Actor 2</text>
+  <text x="150" y="282" class="label">Your coding agent</text>
+  <text x="150" y="298" class="sub">Claude Code or OpenCode</text>
+  <text x="150" y="313" class="sub">installs, configures,</text>
+  <text x="150" y="326" class="sub">debugs, restarts</text>
+
+  <!-- OpenClaw (bottom-right) -->
+  <rect x="480" y="240" width="180" height="90" rx="10" class="box-fill box-stroke" />
+  <text x="570" y="260" class="role">Actor 3</text>
+  <text x="570" y="282" class="label">OpenClaw</text>
+  <text x="570" y="298" class="sub">the AI Employee</text>
+  <text x="570" y="313" class="sub">replies on phone,</text>
+  <text x="570" y="326" class="sub">runs scheduled tasks</text>
+
+  <!-- Arrows + labels -->
+  <defs>
+    <marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" class="arrow-head" />
+    </marker>
+  </defs>
+
+  <!-- You → Coding agent: paste prompts -->
+  <path d="M 310 142 L 200 235" class="arrow" marker-end="url(#ah2)" />
+  <text x="225" y="195" class="edge-label">paste prompts,</text>
+  <text x="225" y="208" class="edge-label">approve actions</text>
+
+  <!-- Coding agent → OpenClaw: install + configure -->
+  <path d="M 245 285 L 475 285" class="arrow" marker-end="url(#ah2)" />
+  <text x="360" y="278" class="edge-label">installs, configures</text>
+
+  <!-- OpenClaw → You: replies, scheduled work, summons -->
+  <path d="M 560 235 L 415 142" class="arrow" marker-end="url(#ah2)" />
+  <text x="520" y="195" class="edge-label">replies on phone,</text>
+  <text x="520" y="208" class="edge-label">fires heartbeats</text>
+
+</svg>

@@ -1,0 +1,108 @@
+.flashcard {
+  perspective: 1000px;
+  cursor: pointer;
+  margin: 1rem 0;
+  width: 100%;
+}
+
+.flashcard:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+.cardInner {
+  position: relative;
+  width: 100%;
+  min-height: 140px;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flipped .cardInner {
+  transform: rotateY(180deg);
+}
+
+.cardFront,
+.cardBack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 140px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+.cardFront {
+  background: linear-gradient(135deg, var(--ifm-color-primary-lightest, #e8f0fe), var(--ifm-color-primary-light, #c2d7f7));
+  border: 1px solid var(--ifm-color-primary-light, #a8c4f0);
+  color: var(--ifm-color-primary-darkest, #1a3a5c);
+}
+
+[data-theme='dark'] .cardFront {
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border: 1px solid #475569;
+  color: #e2e8f0;
+}
+
+.cardBack {
+  background: linear-gradient(135deg, var(--ifm-color-success-lightest, #e6f7e6), var(--ifm-color-success-light, #b8e6b8));
+  border: 1px solid var(--ifm-color-success-light, #82d982);
+  color: var(--ifm-color-success-darkest, #1a5c1a);
+  transform: rotateY(180deg);
+}
+
+[data-theme='dark'] .cardBack {
+  background: linear-gradient(135deg, #1a2e1a, #2d4a2d);
+  border: 1px solid #3d6b3d;
+  color: #b8e6b8;
+}
+
+.cardLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.5rem;
+  opacity: 0.7;
+}
+
+.cardContent {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  flex: 1;
+}
+
+.cardHint {
+  font-size: 0.75rem;
+  opacity: 0.5;
+  margin-top: 0.75rem;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Grid layout for multiple flashcards */
+:global(.flashcard-grid) {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 600px) {
+  :global(.flashcard-grid) {
+    grid-template-columns: 1fr;
+  }
+
+  .cardFront,
+  .cardBack {
+    min-height: 120px;
+    padding: 1rem;
+  }
+}

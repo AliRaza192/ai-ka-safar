@@ -1,0 +1,596 @@
+---
+sidebar_position: 7.1
+title: AI Prompting 2026
+---
+
+# AI Prompting 2026
+
+*13 concepts — Claude, ChatGPT, aur Gemini ko achha use karna: context, reasoning modes, deep research, multimodal, AI desktop apps*
+
+Zyada tar log AI ko Google search ki tarah use karte hain — chota sawaal, jawab skim karo, aage badho. Yeh trivia ke liye theek hai. Jo cheezein actually matter karti hain unke liye fail hai.
+
+Power users kuch alag karte hain. Woh AI ko brief karte hain jaise ek smart naye colleague ko brief karte — files, context, constraints, aur clear ask ke saath.
+
+**Sabse important insight:** Is page ki almost har "advanced technique" do moves mein se ek hai: **sahi context andar lao, ya galat context bahar rakho.**
+
+**Kaise parhein:** Abhi, parhna shuru karne se pehle, doosri browser tab mein Claude, ChatGPT, ya Gemini ka free account khol lo. In mein se har ek ka free tier hai jo lagbhag ek minute mein sign up hota hai. Abhi kuch karna nahi hai; bas khula rakho. Phir seedha ek baar shape ke liye poora parho, aur wapas aakar closing block ke prompts try karo. Bina try kiye parhna tumhe words deta hai; try karna tumhe skill deta hai. (Closing exercises mein se ek tumhe do tools side by side compare karne ko kahega, toh jab tak wahan pahunchoge tab tak doosra free account bhi khula hona chahiye.)
+
+---
+
+## Kya Badla 2022 Se?
+
+- **Context windows ~1000x barhe** — ab hundreds of thousands words, sometimes 1 million
+- **Reasoning real ho gayi** — models minutes tak sochte hain complex problems par
+- **Web search aur code execution built-in hain** — model khud decide karta hai kab use kare
+- **Multimodal mainstream ho gaya** — photo, PDF, spreadsheet, voice memo sab ek prompt mein
+- **Desktop apps aaye** — jo tumhari files dhundh ke kaam kar sakte hain
+
+Agar 18 mahine pehle ka mental model hai — tum shayad 20% capacity use kar rahe ho.
+
+---
+
+## Part 1: AI Cheezein Kaise Jaanta Hai
+
+### 1. Novice vs Power User
+
+![Novice vs Power User comparison](/img/novice-vs-power-user.png)
+
+**Novice:** "Kaun si car khareedni chahiye?" → Generic 3-model list
+
+**Power User:** Insurance quotes, dealer quotes, cost spreadsheet attach karo → "5-year cost comparison, safety analysis, Honda CR-V recommend karta hun kyunki..."
+
+Kuch aur real contrasts:
+
+- **Car khareedna:** Novice = "best car?" | Power user = spec sheets + quotes + insurance upload karo
+- **Self-review likhna:** Novice = "self-review likho" | Power user = project tracker screenshot + recent docs + voice memo upload karo
+- **Business idea critique:** Novice = "great idea hai, critique karo" (sycophancy bait) | Power user = "yeh rubric use karo: problem, market, competitive advantage"
+
+**Mental model:** AI ek smart fresh college grad ki tarah hai. Highly motivated. Tumhare baare mein zyada nahi jaanta. Brief karo jaise ek naye colleague ko.
+
+---
+
+### 2. Pretrained Knowledge
+
+AI ne duniya ko seedha nahi seekha — usne duniya ke baare mein text parha. Specifically: massive internet text.
+
+**Training data mein frequency ≈ answer ki reliability:**
+
+| Question Type | Training Data | Trust Level |
+| --- | --- | --- |
+| "Roux kaise banate hain?" | Cooking sabse zyada discussed topics mein | High |
+| Top-1000 movie plot | Thousands times reviewed | High |
+| Obscure village ka history | Maybe sirf ek Wikipedia paragraph | Low — verify karo |
+| Recent regulatory change | Almost certainly after cutoff | Nothing without web search |
+| "Hamare company ne last quarter kya decide kiya?" | Training data mein bilkul nahi | Trust mat karo |
+
+**Practical consequences:**
+
+- Typos fix karne ki zaroorat nahi — AI internet text par train hua jisme typos bhari hain
+- Confident answers mein errors absorbed ho sakte hain — important cheezein primary source se verify karo
+
+---
+
+### 3. Teen Retrieval Modes
+
+![Teen Retrieval Modes](/img/three-modes.png)
+
+| Mode | Speed | Depth | Best For |
+| --- | --- | --- | --- |
+| **Pretrained** | Seconds | Training data only | Definitions, common facts |
+| **Web Search** | 10s seconds | Live pages | Current events, quick research |
+| **Deep Research** | Minutes | Dozens of sources | Multi-dimensional structured reports |
+
+**Kab kaunsa:**
+
+- "Why do cats stare at walls" → Pretrained
+- "Latest news on X" / "Today" / specific city → Web Search
+- "Research X thoroughly, produce a report with citations" → Deep Research
+
+**Web search ka failure mode:** Friend ne "Henderson, Nevada mein running spots" poochhe → AI ne 20 saal purani website cite ki jisme school ab public ke liye band tha.
+
+**Fix:** Trusted sources name karo. "WHO, FDA, aur peer-reviewed studies use karo, forums nahi."
+
+---
+
+## Part 2: AI Se Achha Baat Karna
+
+### 4. Context Hi Sab Kuch Hai
+
+![Context Stack](/img/context-stack.png)
+
+**Context stack mein kya hota hai:**
+
+- Uploaded files (PDFs, spreadsheets, images, voice memos)
+- Chat history (har pehla turn)
+- **Tumhara prompt** (woh layer jo tum har baar edit karte ho)
+- Tool descriptions (web search, code execution)
+- System prompt (AI tool ka invisible setting)
+
+**Concrete contrast:**
+
+- Bare prompt: "physics vs zoology — pros and cons" → Generic high-school-counselor advice
+- Context-rich: Wahi sawaal + career assessment PDF + high-school schedule → Tumhari specific aptitude, course history ke hisaab se jawab
+
+**Checklist before any non-trivial prompt:**
+
+| Sawaal | Agar haan, karo |
+| --- | --- |
+| Koi document hai jisse answer consistent hona chahiye? | Attach karo |
+| Koi constraint hai jo AI infer nahi kar sakta? | State karo |
+| Koi prior context hai? | Summarize karo |
+| Output format chahiye? | Name karo |
+| Audience kaun hai? | Name karo |
+
+**Context Rot:** Ek bohat lamba conversation across unrelated topics mat chalao. Workout → spreadsheet debug → thank-you note — pehle ka context disturb karta hai. **Topic badalte hi new conversation shuru karo.**
+
+---
+
+### 5. Reasoning — "Think Hard"
+
+**Naye keywords:**
+
+- `"Think hard"` ya `"think carefully before answering"`
+- `"Ultrathink"` — kuch Claude products mein longer thinking trigger karta hai
+- Interface mein thinking-mode toggle
+
+**Power-user pattern:**
+
+    Main do cars ke darmiyan choose kar raha hun.
+
+    Attached:
+    - dono ke spec sheets
+    - insurance quotes
+    - 6 mahine ki driving pattern spreadsheet
+
+    Sab kuch parho. Think hard. Phir batao:
+
+    1. Teen trade-offs jo actually mere driving pattern ke liye matter karte hain
+    2. Kaun si car choose karoge aur kyun
+    3. Kaunsi condition mein recommendation flip hogi
+
+**Kab USE mat karo:** Quick lookups, paragraph summaries, casual brainstorming.
+
+---
+
+### 6. Sycophancy aur Isko Neutralize Karna
+
+AI models human feedback par train hue hain. Agreement = zyada thumbs up. Result: models tumhe woh batne ki taraf biased hain jo tum sunna chahte ho.
+
+**Same model, opposite framings:**
+
+- "Remote work better hai?" → AI agree karta hai
+- "Office work zyada productive hai?" → AI yeh bhi agree karta hai
+
+**Subtle bait jo tum likhte ho:**
+
+| Biased Prompt | Neutral Rewrite |
+| --- | --- |
+| "Evidence dhundho ke yeh strategy kaam karegi" | "Evaluate karo. Arguments for aur against list karo" |
+| "Approach A approach B se better kyun hai?" | "A aur B compare karo. Cost, risk, time par score karo" |
+| "Mera draft send karne ke liye ready hai batao" | "Yeh 4 yes/no criteria ke against critique karo" |
+
+**Objective rubric pattern:**
+
+| Vague (sycophancy milti hai) | Rubric-based (honesty milti hai) |
+| --- | --- |
+| "Meri story 100/100 score karo" | "4 criteria, 1-5 each, ek sentence justification" |
+| "Yeh email professional hai?" | "5 yes/no tests: greeting, ask first paragraph mein, no jargon..." |
+
+---
+
+### 7. Brainstorm-Iterate Loop
+
+**Sabse high-leverage habit is page par.**
+
+![Brainstorm-Iterate Loop](/img/iterate-loop.png)
+
+**Recipe:**
+
+1. Sab relevant context up front do
+2. 3-5 options maango, ek nahi
+3. Explicit feedback do — "option 1 reject, too passive. Option 3 like kiya lekin shorter chahiye. Forget kiya tha ke bad knee hai"
+4. 3-5 naye options maango feedback ke basis par
+5. 2-3 rounds iterate karo
+6. **Tabhi** chosen option ka detail maango
+
+**Writing ke liye — Outline Before Drafting:**
+
+- Round 1: 3 outline options
+- Round 2: Choose one, AI se critique karwao
+- Round 3: Headings ko 3-5 bullets mein expand karo
+- Round 4: Bullets critique karo
+- Round 5: Abhi poora draft maango
+
+---
+
+## Part 3: Text Se Aage
+
+### 8. Multimodal — Images, Audio
+
+**Image Input — Strong:**
+
+- Overall scene aur composition
+- Whiteboard contents aur diagrams
+- Handwritten text (double-check karo)
+
+**Image Input — Weak:**
+
+- Fine details (gym machines closely similar lagte hain)
+- Choti cheezon ka count
+- Image ke edge par chhota print
+
+**Image Output Tips:**
+
+- Text AI se image prompt likhwao — woh zyada rich prompts likhta hai
+- Visual vocabulary build karo: cinematic, watercolor, cyberpunk, anime, isometric
+
+**Power-user recipe: designer-quality diagrams bina designer ke (pehli baar parhne mein skip karna safe hai)**
+
+Agar tumhe kabhi document, slide, ya chapter ke liye diagram banana ho, toh ek aisa workflow hai jo lagbhag pandra minute mein designer-quality output deta hai — bina Figma ke aur bina kisi visual design skill ke. Zyada tar non-designers ko pata hi nahi ki yeh ab possible hai. Yeh designer-quality diagrams banane ka sabse simple tarika hai bina design tool seekhe. Yeh page par baqi sab se zyada involved hai, toh agar tum regularly diagrams banao toh abhi parho, warna pehli baar zaroorat hone par bookmark karo.
+
+Recipe, char steps mein:
+
+1. **Claude se concept ko SVG ke roop mein visualize karwao.** Underlying paragraph ya text paste karo. Poochho: _"Ise diagram ke roop mein visualize karo. SVG output karo. Har label, arrow, aur relationship jo text mein hai woh mojood hona chahiye."_ Claude is step ke liye strong choice hai kyunki iski reasoning ability major models mein se sab se mazboot mein se ek hai: ek paragraph de kar, woh sahi boxes, sahi arrows, sahi hierarchy, aur sahi labels bahut kam guidance ke saath figure out karta hai. SVG jo woh return karega woh structurally correct hoga lekin visually plain (bare rectangles, default fonts, koi design polish). Koi baat nahi; agla polish add karega.
+
+2. **SVG ko PNG mein convert karo.** Claude se poochho ki SVG ko PNG render kare (Claude yeh directly kar sakta hai), ya koi bhi online SVG-to-PNG converter use karo (cloudconvert.com, svgtopng.com), ya bas browser mein SVG ko high zoom par screenshot le lo. 2x resolution par render karo (1600 se 2400 pixels wide) taake agle step ke paas kaafi detail ho kaam karne ke liye.
+
+3. **PNG ChatGPT mein paste karo aur dobara redraw karwao.** ChatGPT ka in-product image generation is step ke liye strong hai kyunki woh text-heavy images mein unusually acha hai: labels preserve karta hai, typography sahi rakhta hai, aur source mein structural relationships respect karta hai. Prompt: _"Is diagram ko professional design quality se dobara draw karo. Har label, har box, har arrow, aur exact structural relationships preserve karo. Typography, spacing, color palette, aur visual hierarchy improve karo. information bilkul waisi hi rehni chahiye; sirf visual finish badalni hai."_
+
+4. **Result par iterate karo.** ChatGPT kabhi kabhi label drop kar deta hai ya box rearrange kar deta hai. Uska output original SVG ke saath side by side compare karo. Kuch galat ho toh bas correction type karo: _"Teesre box ki label 'Iterate' honi chahiye, 'Repeat' nahi. Box 2 se arrow box 3 ki taraf hona chahiye, box 4 ki taraf nahi."_ Teen ya char rounds mein aksar kuch aisa aata hai jo professional design studio se nikla lage. Final PNG save karo.
+
+**Har tool har step ke liye kyun.** Claude step 1 mein isliye jeetta hai kyunki diagram mein kya hona chahiye (kaunse boxes, kaunse arrows, kaunsi hierarchy) decide karna reasoning task hai, aur Claude ki reasoning is tarah ke structured-thinking work ke liye major models mein se sab se mazboot mein se ek hai. ChatGPT step 3 mein isliye jeetta hai kyunki text-heavy images ko acha render karna (labels jo parhne mein rahein, arrows jo sahi boxes se judein, layouts jo designed lagein) woh category hai jahan uski image generation abhi lead karti hai. Kisi bhi tool se doosre ka kaam karwana noticeably worse results deta hai dono ko chain karne se. Har ek woh karta hai jisme woh sab se acha hai, sequence mein.
+
+**Total waqt:** lagbhag das se pandra minute per diagram, Figma mein ek ghante ya usse zyada ke muqabale — assuming tumhe use karna aata tha.
+
+**Woh pattern jo tools se bachti rahegi.** Har category ka leader badlega. Claude agla saal sab se strong reasoning model nahi ho sakta. Aaj ka leading image model jo bhi next ship hoga woh replace karega. Upar ki recipe tool layer par stale ho jayegi. Jo bachta hai: **pehle structure sab se strong reasoning model mein, phir polish sab se strong text-heavy image model mein.** Jo bhi tools is waqt har category mein lead karein woh pick karo. Do-step chain woh move hai.
+
+**Image generation ke baare mein ek choti kahani.** Ek father jiski 7 saal ki beti billiyan pasand karti thi, uske liye custom birthday cake chahta tha. Usne Nano Banana se cake designs brainstorm kiye (dozens of variations generate kiye: cat-shaped, multi-tiered, frosting-styles, color palettes), jo beti ko pasand aaya woh pick kiya, phir chosen image ek baker ko di jisne usse real 3D cake mein render kiya. Design par total iteration time: ek dopahar. Total cost: image generation mein kuch cents.
+
+Maqsad cake nahi hai. Maqsad yeh hai ki ~$0.30 aur ek ghante ki taste-driven iteration ke liye, jo shaks designer nahi hai woh ek one-of-a-kind brief produce kar sakta hai jise ek professional execute kar sake. Yeh ek nayi qisim ki creative leverage hai, aur yeh widely available hai.
+
+**Audio:**
+
+- Dictation → AI clean kare → better prompts milte hain typing se
+- Meeting recordings → summary, decisions, action items
+- Commute/walk mein voice in/out
+
+---
+
+### 9. Ek Prompt Se Choti Apps Banana
+
+Modern AI ek single prompt se choti games, websites, tools bana sakta hai.
+
+**Recipe — Teen slots:**
+
+- Goal: yeh cheez kya karni chahiye?
+- Input: user kya provide karta hai?
+- Output: user kya dekhta hai?
+
+**Examples jo kaam karte hain:**
+
+- Pomodoro timer: "25 minute work, 5 min break, yellow theme, satisfying click"
+- Bill splitter: "total + tax + names, share per person"
+- Fireworks simulator: "click par colorful display"
+
+**Abhi mushkil:**
+
+- Internet par multiplayer
+- Real-time conversational avatar tutors
+
+---
+
+### 10. Data Analysis
+
+AI quietly remarkable kaam karta hai: model code likhta hai, chalata hai, aur result return karta hai. Math "head mein" karne se kahin zyada reliable.
+
+**Bubble tea shop example:**
+
+- Year ka sales data upload karo
+- "Kaunse drinks ki sales mein sabse bada change aaya? Graph karo"
+- AI month-over-month changes compute karta hai, colored line graph generate karta hai, patterns note karta hai
+
+**Kya double-check karo:**
+
+- Final totals
+- Graph ke labels
+- AI ne kaun sa column use kiya
+
+**Useful pattern:** Pehle poochho "Yeh dataset describe karo. Kaunse 3 charts best show karenge kya ho raha hai?" Phir chart maango.
+
+---
+
+## Part 4: Safely Kaam Karna
+
+### 11. AI Desktop Apps aur Permissions
+
+**Yeh kya kar sakte hain chat nahi kar sakta:**
+
+- Messy folder organize karo
+- Related files pull together karo project ke liye
+- Folder summarize karo
+
+**Safe workflow:**
+
+1. Task batao
+2. **Plan maango, action nahi** — app operations ki list propose kare
+3. Plan review aur edit karo
+4. Tabhi execution approve karo
+
+> ⚠️ ZAROORI PARHEIN
+>
+> - Deleted files **recycle bin mein nahi jaatay** jab AI app delete kare
+> - Edited files **edit history nahi rakhte** bina version control ke
+>
+> Pehli baar mein smallest folder scope karo. "Full disk access" approve mat karo.
+
+---
+
+### 12. Cost, Speed, aur Kaun Sa Model
+
+![Cost Tiers](/img/cost-tiers.png)
+
+| Modality | Speed | Cost |
+| --- | --- | --- |
+| **Text** | Seconds | Fractions of a cent |
+| **Speech** | Seconds | Cents per minute |
+| **Images** | 10s seconds | Several cents per generation |
+| **Video** | Minutes | Many cents to dollars |
+| **Deep Research** | Minutes | Several cents to quarter |
+
+**Kaun Sa Model:**
+
+| Tool | Strong At | Weaker At |
+| --- | --- | --- |
+| **ChatGPT** | Conversational range, image generation | Sometimes verbose |
+| **Claude** | Long documents, careful reasoning, writing | In-product image gen kam central |
+| **Gemini** | Fast web search, Google integration | Tone thoda clipped |
+
+**Teen habits:**
+
+1. Kam az kam do tabs open rakho
+2. Prompt scratchpad rakho — achhe results wale prompts save karo
+3. Jab model galat ho — note karo, yeh useful signal hai
+
+**Ek chota ritual jo faida deta hai.** Mahine mein ek baar, woh task chuno jo tum regularly karte ho (weekly status update, planning meals, recurring document summarize karna). Woh task teen alag AI tools se karwao. Dekho kaunsa sab se acha karta hai. Agle mahine tak us ek ko us task ke liye use karo, jab tak dobara test na karo. Tumhari tooling bina effort ke updated rehti hai.
+
+---
+
+### 13. Models Checking Models
+
+Jab koi ground truth nahi — models ek doosre ko grade kara sakte ho.
+
+![Three-Tier Ladder](/img/three-tier-ladder.png)
+
+**Three levels — lightest se heaviest:**
+
+#### Level 1 — Rubric Critique (quick sanity check)
+
+Concept 6 ka rubric — ek pass, bas.
+
+#### Level 2 — Single-Model Self-Critique Loop
+
+Score karo → implement karo → repeat → plateau ~9 tak
+
+    Score this 1-10 on clarity, accuracy, structure, and what's missing.
+    One sentence per score.
+    Then implement your suggestions.
+
+#### Level 3 — Multi-Model Loop (high-stakes work)
+
+1. Best model mein full context ke saath draft banao
+2. Khud grade karwao rubric se → implement → plateau tak
+3. Second model le jao — same rubric
+4. Second model ki critique first model ko do
+5. First model adjudicate kare
+6. High-stakes ke liye third model bhi
+
+**Honest caveat:** Teen models sab ek cheez par galat ho sakte hain. Score progress signal hai, truth signal nahi. Legal, medical, financial — human expert zaroori hai.
+
+---
+
+## Short Recap
+
+- Context hi sab kuch hai — smart colleague ki tarah brief karo
+- Teen retrieval modes — wording se steer karo
+- Thinking mode hard problems ke liye
+- Sycophancy = neutral framing aur rubrics se fix karo
+- Iterate loop — options maango, feedback do, iterate
+- Images, audio, small apps, data analysis sab possible hai
+- Desktop apps — tight permissions, plan pehle
+- Models check each other — progress signal
+
+**Ek sentence mein:** Sahi context andar lao, galat context bahar rakho.
+
+---
+
+## Abhi Karke Dekho: Thinking Baseline Se Pehle Gyarah Prompts
+
+Reading trying ki jagah hai. Doosri tab mein Claude, ChatGPT, ya Gemini kholo. Yeh gyarah prompts order mein chalao. In mein total pachees minute lagte hain aur is page ka har concept exercise hota hai.
+
+**1. Web-search trigger.** AI ko majboor karta hai ki training data chhode aur current info dhundhe.
+
+    Aaj mere mulk mein kya badi news hui? Har claim ke saath source link do. Koi claim jise citation se support nahi kar sako use "unverified" mark karo.
+
+**2. Sirf pretrained sawaal.** Common knowledge, lookup ki zaroorat nahi. Tez aur confident hona chahiye.
+
+    Bille deewaron ko kyun ghoorte hain? Do paragraph ka jawab do.
+
+**3. Context-rich personal prompt.** Constraints pehle se load karna practice karo.
+
+    Mere liye 15 minute ka home workout plan karo. Constraints: mere paas trampoline aur billi hai, squats nahi (ghutna kharab hai), main 3 din se zyada plans par stick nahi kar sakta, aur mujhe thoda silly feel karna hai workout karte waqt. 3 options do, koi commentary nahi.
+
+**4. Neutral-framing rewrite.** Apne prompt mein apna bias dhundhna practice karo.
+
+    Mera sawaal hai: "Kya tumhe nahi lagta ki char din ka hafta sab ke liye obviously better hai?" Ise neutral sawaal mein rewrite karo jo signal na de ki main kya jawab sunna chahta hun. Phir rewrite kiya hua version ka jawab do.
+
+**5. Teen options brainstorm with iteration.** Core power-user loop.
+
+    Round 1: Main ek chota side project shuru karna chahta hun jo hafte mein 3 ghante le aur saal mein paisa kama sake. Main [tumhaara profession] hun jo [tumhara hobby] karta hai. Mujhe 5 alag ideas do, har ek ek line mein. Kisi ko expand mat karo.
+    (5 parho. Kya pasand hai aur kya nahi batao. Phir, USI conversation mein:)
+    Round 2: Main options [N] aur [N] reject karta hun kyunki [wajah]. Mujhe [keyword] idea pasand aaya lekin mujhe chahiye ki yeh kam [cheez] use kare. Mujhe 5 naye options do jo yeh feedback shamil karein.
+
+**6. Outline-first writing.** Prose se pehle structure force karo.
+
+    Main [tumhe pasand topic] par 600-post likhna chahta hun. Abhi mat likho. Mujhe 3 alag outline options do, har ek mein 4-6 headings. Har heading ek line mein.
+
+**7. Think-hard reasoning prompt.** Real personal decision use karo.
+
+    Main [Option A] aur [Option B] ke darmiyan choose kar raha hun [real personal decision]. Yeh relevant context hai: [ek paragraph context]. Jawab dene se pehle socho. Batao:
+    1. 3 trade-offs jo actually matter karte hain.
+    2. Tum kya choose karte aur kyun.
+    3. Kis condition mein tumhari recommendation badal jayegi.
+
+**8. Objective-rubric critique.** Apne kaam par sycophancy se bachao.
+
+    Main kuch likh raha hun paste karta hun: [100-300 words kuch bhi paste karo]. Ise in 4 criteria par critique karo, har ek 1-5 score aur ek sentence wajah ke saath:
+    - Kya isme clear central claim hai?
+    - Kya har paragraph sahi order mein hai?
+    - Kya koi aisi sentence hai jise bina loss ke kaat sakte hain?
+    - Kya ending reader ka waqt justify karti hai?
+    Phir sab se choti change suggest karo jo sab se kam score ko barha de.
+
+**9. Image-input task.** AI ko photo parhne ka practice karo.
+
+    [Koi bhi handwritten note, receipt, ya whiteboard photo upload karo]
+    Jo likha hai uska transcription karo. Phir 3 bullets mein batao yeh kiske baare mein hai. Koi bhi cheez jise confidence se nahi parh sako use flag karo.
+
+**10. Small-app prompt.** Goal/Input/Output shape practice karo.
+
+    Mere liye Pomodoro timer banao.
+    Goal: 25 minute work sessions, 5 minute breaks.
+    Input: Main start dabata hun.
+    Output: Visible timer countdown, satisfying click jab har cycle khatam ho, yellow theme. Working version dikhao.
+
+**11. Cross-model review.** Real draft par multi-model habit practice karo. Do AI tools ek saath open hone chahiye.
+
+    Koi bhi 200-300 word draft lo jo tumne haal mein likha ho (email, memo, ya in exercises mein se ek paragraph).
+    Step 1: Apne primary AI tool mein paste karo aur poochho: "Ise 1-10 score karo clarity, structure, evidence, aur kya missing hai ke basis par. Har score ke liye ek sentence justification."
+    Step 2: Doosra AI tool kholo. Wahi draft paste karo, wahi sawaal poochho.
+    Step 3: Dono scores aur dono critiques side by side compare karo. Koi bhi point note karo jo sirf ek ne pakra. Yeh woh points hain jinke liye cross-model loop kaam aata hai.
+
+Ab tum jaante ho yeh tools kya kar sakte hain. Kya tum inhe direct karne ke liye clear enough soch sakte ho — yeh alag sawaal hai, aur yeh woh sawaal hai jis par Part 0 bana hai.
+
+---
+
+[Part 0: Sochna Hi Taleem Hai →](/docs/Thinking-is-the-Curriculum)
+
+---
+
+## Shuru Karne Se Pehle Aksar Poochhe Jane Wale Sawaal
+
+**Kya Part 0 ke exercises ke liye paid plan chahiye?** ChatGPT, Claude, aur Gemini ke free tiers Thinking Baseline aur zyada tar chapter exercises ke liye kaafi hain. Paid plan tab madad karta hai jab tum ek session mein bohat zyada deep research karo ya bohat saare files attach karo. Free se shuru karo; sirf tab upgrade karo jab usage limits tumhe rokne lagein.
+
+**Ek tool use karun ya teen?** Daily use ke liye ek default rakho, lekin kam az kam ek aur install karo comparison ke liye. Doosre tool ka maqsad do guna kaam karna nahi hai; tab tiebreaker rakhna hai jab pehla tool kuch aisa de jo theek na lage.
+
+**Meri company ChatGPT block karti hai. Exercises ke liye kya karun?** Jo bhi modern AI tool tumhari company allow karti hai, woh use karo. Part 0 ki skills kisi bhi text-in, text-out AI par transfer hoti hain. Agar kuch bhi allowed nahi hai, toh chapter exercises ke liye personal device par personal account use karo (Part 0 ke deliverables thinking ke baare mein hain, company data ke nahi).
+
+**Kya Thinking Baseline ke liye AI use karna cheating hai?** Haan, aur yeh sirf tumhe cheat karega. Baseline ungraded hai. Uska ek hi maqsad hai: ek honest snapshot lena jise baad mein compare kar sako. AI se boosted baseline tumhe misleading roop se high starting point dega aur tumhari growth ka evidence mita dega.
+
+**Agar is page ki recipes bhool jaun toh?** Page bookmark karo. Recipes (iterate loop, rubric pattern, neutral-rephrase trick) dekhne ke liye design ki gayi hain, yaad rakhne ke liye nahi. Sirf ek sentence yaad rakhna worth hai: sahi context andar lao, galat context bahar rakho.
+
+**Part 0 itna waqt thinking par kyun lagata hai jab AI itna capable hai?** Kyunki bina direction ke capability waste multiply karti hai. AI se confidently galat analysis kisi analysis se zyada khatarnak hai, kyunki woh complete lagta hai. Part 0 woh judgment train karta hai jo decide karta hai ki AI ki output ka kya karna hai. Yeh judgment AI-saturated workplace mein sabse valuable skill hai, aur zyada tar curricula ise completely skip karti hain.
+
+---
+
+## Pehle Hafte Mein Dekhne Wali Aam Ghaltiyan
+
+| Ghalti | Lakshan | Hal |
+| --- | --- | --- |
+| AI ko search engine samajhna | Chote prompts, shallow jawab, baar baar frustration | AI ko colleague ki tarah brief karo: context, files, constraints, ask |
+| Ek conversation hamesha ke liye chalana | Jawabon ki quality waqt ke saath girti hai | Topic badalte hi naya conversation shuru karo |
+| Pehli try mein final draft maango | Chamkeela output, khali content | Pehle outline, phir critique, phir bullets mein expand, phir draft |
+| Bait phrasing bina sochhe samjhe | AI tumhari implied baat se agree karta hai | Bhejne se pehle neutral sawalon mein rewrite karo |
+| Critique mein rubric skip karna | "Bohat acha!" bina specifics ke | Objective yes/no criteria do; har criterion par score maango |
+| Confidence ko accuracy samajhna | Obscure topics par hairat-angez ghaltiyan | Poochho "tumhe yeh kaise pata hai?" High-stakes claims primary sources se verify karo |
+| Pehle din broad permissions approve karna | Files gayab, edits overwrite | Tight folders rakho. Scope sirf track record ke saath barhao |
+
+Yeh character flaws nahi hain. Yeh woh habits hain jo pehli generation ke users (tum shamil) scratch bana rahe hain. Ek baar pakar lo toh yaad reh jaata hai.
+
+---
+
+## Flashcards — Yaad Karo
+
+Yeh section ke key concepts yaad karne mein madad karta hai. Har card pe pehle khud jawab socho, phir reveal karo.
+
+<details>
+<summary>**Card 1 / 10** — Novice aur Power User mein core farq kya hai?</summary>
+
+**Jawab:**
+Novice chota sawaal puchta hai: "Kaun si car khareedni chahiye?" → generic jawab. Power user context deta hai: spec sheets, quotes, insurance upload karta hai → specific recommendation. Mental model: AI ek smart fresh college grad hai — brief karo jaise naye colleague ko.
+
+</details>
+
+<details>
+<summary>**Card 2 / 10** — Teen Retrieval Modes kaunsi hain?</summary>
+
+**Jawab:**
+1. **Pretrained** — seconds, sirf training data. Definitions, common facts.
+2. **Web Search** — 10s seconds, live pages. Current events, quick research.
+3. **Deep Research** — minutes, dozens of sources. Multi-dimensional structured reports.
+Wording se steer karo: "research thoroughly, produce report" = Deep Research mode.
+
+</details>
+
+<details>
+<summary>**Card 3 / 10** — Context stack mein kya hota hai?</summary>
+
+**Jawab:**
+Uploaded files, chat history, tumhara prompt, tool descriptions, aur system prompt. Non-trivial prompt se pehle check karo: koi document attach karna hai? Constraint state karna hai? Prior context summarize karna hai? Output format batana hai? Audience name karna hai?
+
+</details>
+
+<details>
+<summary>**Card 4 / 10** — Context Rot kya hai aur isse kaise bachein?</summary>
+
+**Jawab:**
+Ek bohat lamba conversation across unrelated topics chalane se pehle ka context disturb hota hai. Workout → spreadsheet debug → thank-you note ek session mein mat karo. Fix: topic badalte hi **new conversation** shuru karo.
+
+</details>
+
+<details>
+<summary>**Card 5 / 10** — Sycophancy kya hai aur isse kaise neutralize karein?</summary>
+
+**Jawab:**
+AI models human feedback par train hue hain — agreement = zyada thumbs up. Result: models tumhe woh batne ki taraf biased hain jo tum sunna chahte ho. Fix: neutral framing use karo ("evaluate karo, arguments for aur against list karo") aur objective rubrics do (4 criteria, 1-5 each).
+
+</details>
+
+<details>
+<summary>**Card 6 / 10** — Brainstorm-Iterate Loop kya hai?</summary>
+
+**Jawab:**
+Sabse high-leverage habit: (1) sab context up front do, (2) 3-5 options maango, (3) explicit feedback do, (4) naye options maango, (5) 2-3 rounds iterate karo, (6) tabhi chosen option ka detail maango. Writing mein: pehle outline, phir critique, phir expand, phir draft.
+
+</details>
+
+<details>
+<summary>**Card 7 / 10** — Multimodal use mein kya strong hai aur kya weak?</summary>
+
+**Jawab:**
+**Strong:** overall scene, whiteboard contents, handwritten text. **Weak:** fine details (similar gym machines), choti cheezon ka count, edge par chhota print. Audio: dictation se better prompts milte hain, meeting recordings se summaries.
+
+</details>
+
+<details>
+<summary>**Card 8 / 10** — AI Desktop Apps ke liye safe workflow kya hai?</summary>
+
+**Jawab:**
+(1) Task batao, (2) **plan maango action nahi**, (3) plan review aur edit karo, (4) tabhi execution approve karo. Warning: deleted files recycle bin mein nahi jaatay, edited files edit history nahi rakhte. Pehli baar smallest folder scope karo.
+
+</details>
+
+<details>
+<summary>**Card 9 / 10** — Models Checking Models ka three-tier ladder kya hai?</summary>
+
+**Jawab:**
+Level 1: **Rubric Critique** — ek pass, quick sanity check. Level 2: **Self-Critique Loop** — score karo, implement karo, repeat, plateau ~9 tak. Level 3: **Multi-Model Loop** — pehle model draft, doosre model se critique, pehle model adjudicate. High-stakes ke liye teen models. Caveat: teen models sab ek cheez par galat ho sakte hain.
+
+</details>
+
+<details>
+<summary>**Card 10 / 10** — Is page ka ek sentence mein summary kya hai?</summary>
+
+**Jawab:**
+**Sahi context andar lao, galat context bahar rakho.** Almost har "advanced technique" do moves mein se ek hai — ya toh sahi information model tak pahunchao, ya galat information ko door rakho.
+
+</details>

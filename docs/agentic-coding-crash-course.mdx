@@ -1,0 +1,1356 @@
+---
+id: agentic-coding-crash-course
+title: Claude Code aur OpenCode — 45 Minute ka Crash Course
+sidebar_label: Agentic Coding Crash Course
+---
+
+# Claude Code aur OpenCode — 45 Minute ka Crash Course
+
+*15 Concepts, 80% Real Kaam*
+
+Yeh ek practical crash course hai. Koi bakwaas nahi, koi upsell nahi. Khatam hone tak aap ko pata chal jayega kya use karna hai, kab use karna hai, aur aur cheezein kahan se dhundhni hain — dono tools mein.
+
+**Ek aisi baat jo sab kuch samajhne mein madad karti hai: Agentic coding asal mein ek context-management ka masla hai jo coding tool ka bhes bana ke aata hai.** Har "advanced technique" asal mein yahi hai: model ko sahi waqt par sahi information dena, aur galat information ko bahar rakhna. Har section ko is nazar se parho.
+
+> **Zaruri shart: [AI Prompting in 2026](/docs/ai-prompting-2026).** Yeh page assume karta hai ke wo terah concepts aap ke haath mein hain. Colleague ki tarah brief karna (concept 1), context hi sab kuch (concept 4), thinking mode (concept 5), neutral framing (concept 6), iterate loop (concept 7), models checking models (concept 13) — yahi discipline hai. Yeh page dekhati hai ke yeh discipline kaisi lagti hai jab model aapki filesystem ko chhoo sakta hai.
+
+[Claude Code](https://claude.com/product/claude-code) aur [OpenCode](https://opencode.ai/) ek hi idea ki do implementations hain, mostly same vocabulary aur thoda alag keybinds.
+
+> **Original site ka tool switcher:** AgentFactory ki asli site par page-wide ek toggle hai — "Claude Code" ya "OpenCode" chuno, poora page usi tool ke instructions dikhata hai. Yeh Docusaurus mein replicate karna mushkil hai, isliye is translation mein dono tools ke instructions ek saath, inline likhe gaye hain. Jahan commands ya keybinds alag hain, woh "OpenCode mein kya badlega" ya "Claude Code mein kya badlega" ke taur par saath diya gaya hai.
+
+**Do tools, ek nahi. Janboojhkar.** Yahan jo discipline seekhi jaye woh kisi ek tool se zyada umr ki honi chahiye. Pricing changes, access restrictions, model preferences, aur strategic shifts aap ke seekhe hue lessons ko tباہ nahi karne chahiye. Dono tools mein ek concept dikhana yeh bhi test karta hai ke concept real hai ya nahi: agar technique sirf Claude Code mein kaam karti hai, toh yeh Claude Code ki trick hai; agar dono mein kaam karti hai (same shape, alag keybinds), toh yeh agentic coding ke asli kaam karne ka hissa hai. Claude Code tab use karo jab frontier model performance zaroori ho; OpenCode tab use karo jab flexibility, cost control, ya openness zaroori ho. OpenCode ke saath kuch free models bhi hain jo account banaye baghair use ho sakte hain. Dono mein banaye hue skills same hain. Yahi point hai, compromise nahi.
+
+> *April 2026 tak ka hai. Dono tools tezi se update hote hain: config schemas, command names, aur install commands badal jaate hain. Agar tools abhi tak install nahi hue, installation instructions unhi docs pages par hain: [Claude Code](https://docs.claude.com/en/docs/claude-code/overview), [OpenCode](https://opencode.ai/docs). Kisi bhi aur cheez mein shak ho toh unhi pages se shuru karo.*
+
+> Dono tools baar baar update hote hain; isliye, koi bhi session shuru karne se pehle `claude update` aur `opencode upgrade` commands dena, taake latest version use ho.
+
+> *Assumed background: aap command line par comfortable hain, aap ne git use kiya hai, aur aap ne pehle JSON config parhi ya likhi hai. LLM coding agents ka koi purva anubhav zaruri nahi. Isi ke liye yeh hai. Agar aap MCP, hooks, ya LLMs aur external tools ke darmiyan protocol layer se bilkul naye hain, toh aap inhe context se seekh lenge jaise hum aage badhenge.*
+
+---
+
+## Part 1: Bunyaad (Foundations)
+
+Ye pehle teen concepts dono tools mein bilkul ek jaisi tarah kaam karte hain. Jahan commands ya keybinds alag hain, woh farq inline mention kiya gaya hai.
+
+### 1. Ye tools asal mein kya hain
+
+Zyada tar logon ka mental model hai "ek chatbot jo code jaanta hai." Yeh galat hai, aur galti hi masla hai.
+
+Chatbot sawalon ke jawab deta hai. Claude Code aur OpenCode actions lete hain. Ye aapki files padhte hain, unhe edit karte hain, aapki machine par commands chalate hain, network se hit karte hain, aur sab kuch chain kar ke tab tak kaam karte hain jab tak task ho na jaye. Aap inhe brief dete ho, ye kaam karte hain, aap review karte ho.
+
+Mindset shift: sawaal likhna band karo, briefs likhna shuru karo. "Auth kaise add karun?" chatbot prompt hai. "Is Express app mein bcrypt aur JWT use karke email/password auth add karo, users existing Postgres `users` table mein store karo, tests likho, OAuth code ko mat chhuoo" — yeh agentic-coding prompt hai. Doosra kaam karega; pehla ek bhatak'ti hui monologue produce karega.
+
+Yeh [AI Prompting ka concept 1](/docs/ai-prompting-2026#1-novice-vs-power-user) hai — novice vs. power user — PDFs ki jagah files ke saath. Same brief ki shape; zyada stakes, kyunki model uss par kaam karta hai.
+
+Do tools defaults mein alag hain lekin fundamentals mein nahi. Claude Code Anthropic ka hai, Claude models ke saath aata hai, box se hi polished. OpenCode open-source hai, model-agnostic (Claude, GPT, Gemini, local), aur tool-level permission tak configurable. Model preferences aur config control ke hisaab se ek chunno; is crash course ka baaki hissa dono mein kaam karta hai.
+
+**Abhi tak koi bھی install nahi?** Age parhne se pehle canonical one-liner lo; in ke baad ke sections assume karte hain ke aap ek key press karke kuch dekh sako. Auth, IDE plugins, aur troubleshooting official docs par hain.
+
+```bash
+# Sab platforms ke liye — recommended
+curl -fsSL https://opencode.ai/install | bash
+
+# macOS Homebrew
+brew install opencode
+
+# npm / bun / pnpm / yarn
+npm install -g opencode-ai
+```
+
+Poora reference: [opencode.ai/docs](https://opencode.ai/docs).
+
+Ek baar install hone ke baad, kisi bhi folder mein terminal kholo jis mein kaam karna ho aur `claude` (ya `opencode`) type karo. Yeh tumhara pehla session shuru kar deta hai. Yahan se age, is page ka har concept woh cheez hai jo us session mein try ki ja sakti hai.
+
+---
+
+### 2. Plan Mode (Sabse Zyada Ignore Ki Hui Feature)
+
+Implementations thodi alag hain lekin idea bilkul same hai: model ko kuch likhne dene se pehle, use majboor karo ke ek likha hua plan produce kare jise aap review kar sako.
+
+**OpenCode mein:** Plan ek alag primary agent hai, mode nahi. `Tab` dabao `Build` (sab tools enabled) aur `Plan` (file edits aur bash default `ask` hote hain, matlab model inhe maang sakta hai lekin aapki approval ke baad hi milenge) ke darmiyan cycle karne ke liye. Same outcome spirit mein: kuch likhne se pehle investigate aur review karo.
+
+Yeh move do wajahaat se aapko slow karta hai jo asal mein speedups hain:
+
+1. **Misunderstandings ko pahle hi pakad leta hai.** Plan ek contract hai. Agar model ne brief galat parha, aap use plan mein dekhte ho, 200-line diff mein nahi jo revert karna padega.
+2. **Doosre pass mein behtar code produce karta hai.** Ek pre-written plan relevant context (file paths, function names, intended approach) ko ek clean artifact mein compress karta hai jis par implementation phase lean kar sakti hai. Plan ke baghair, model ek saath reason aur write kar raha hota hai, aur reasoning haar jaati hai.
+
+**Rule of thumb:** 10 minute se zyada ki koi bھی change pehle plan mode se guzrti hai. Bade features ke liye, model ko plan ek markdown file (`docs/plans/feature-x.md`) mein save karne ko kaho taake baad mein resume kiya ja sake ya fresh session ko diya ja sake.
+
+Plan mode ek move mein do prompting concepts hai: [think hard](/docs/ai-prompting-2026#5-reasoning-or-think-hard) (concept 5) ek contract ke saath, aur [outline before drafting](/docs/ai-prompting-2026#7-the-brainstorm-iterate-loop) (concept 7) filesystem ke saath. Diff ko nahi, plan ko edit karo.
+
+---
+
+### 3. Permissions Discipline
+
+Dono tools action lene se pehle approval maangte hain. Dono globally approvals skip karne dete hain: Claude Code ka `--dangerously-skip-permissions` hai, OpenCode `"permission": "allow"` set karne deta hai. Mat karo, kam az kam shuru mein nahi.
+
+Jo pattern kaam karta hai: kuch sessions ke liye manual shuru karo, notice karo ke kaunse actions auto-approve karne ke liye safe hain, phir woh config mein likh do.
+
+**`opencode.json`:**
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "*": "ask",
+    "read": "allow",
+    "edit": "allow",
+    "bash": {
+      "*": "ask",
+      "npm test": "allow",
+      "npm run lint": "allow",
+      "npm run build": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "rm -rf*": "deny",
+      "npm publish*": "deny",
+      "git push*": "deny"
+    }
+  }
+}
+```
+
+OpenCode ka permission system zyada fine-grained hai: aap tool name (`read`, `edit`, `bash`, `webfetch`, `skill`, etc.) par key karte ho aur har ek ko glob patterns se scope kar sakte ho. Iska ek built-in `doom_loop` permission bھی hai jo trigger hota hai jab same tool call teen baar identical input ke saath repeat ho — jo stuck-loop pathologies ko free mein pakad leta hai.
+
+Phir ek notification helper install karo. Jo pattern agentic coding ko *fast* feel karwata hai woh execution speed nahi hai: woh door jaane ki ability hai. Ek lamba task chhuoo do, doosre kaam par switch karo, wapas aao jab ping aaye. Agar aap parallel mein kai sessions chalate ho (yeh real hai, aur real productivity unlock hai), notifications hi batati hain kaunsa aapko chahiye.
+
+---
+
+## Part 2: Context Management
+
+![Session ka context ek stack hai, bucket nahi. Paanch layers hain system prompt aur rules file se (hamesha on, session start par fix) conversation history, referenced files, aur active skills (demand par load) tak. Subagents apni isolated context window ke saath chalte hain. Har layer ka payment hota hai, har turn.](/img/agentic-coding-context-stack.png)
+
+**Yeh crash course ka sab se ahem section hai. Agar sirf ek hissa internalize karna ho, yahi karo.** Yeh dono tools mein bilkul ek jaisa laagoo hota hai, sirf command names thodi kabhi kabhi alag hoti hain.
+
+Yeh [AI Prompting ka concept 4](/docs/ai-prompting-2026#4-context-is-the-whole-game) hai — context hi sab kuch hai — lekin volume upar kar ke. Wahan bura context aapko bura jawab de deta tha. Yahan, yeh bura jawab *aur* bura codebase deta hai. Same discipline, compounding consequences.
+
+### 4. Context Rot Haqiqi Hai
+
+Context window woh text ki miqdar hai jise model ek waqt mein hold kar sakta hai. Aaj ke modern models ke bade windows hain: laakho tokens, kabhi kabhi ek million. Yeh unlimited lagta hai. Nahi hai.
+
+**Do cheezein samajhni hain:**
+
+**Asli use window ko aap ki soch se zyada tezi se bharta hai.** Kuch code files, ek stack trace, kuch docs jo paste kiye, aur 30-turn conversation notice hone se pehle tens of thousands of tokens kha legi. Aapke laptop mein fuel gauge nahi dikhti.
+
+**Recall window ke pura hone se pehle hi kharab ho jaata hai.** Studies (aur aapka apna experience, agar dhyan do) dikhate hain ke jaise token counts chadhte hain, model context mein pehle se maujood specific details ko yaad karne mein kaafi bura ho jaata hai. Model bilkul *bhoolata* nahi. Woh sirf us information ko sahi tarah weight karna band kar deta hai. Symptoms: woh ek constraint ignore karta hai jo aap ne 20 messages pehle kahi thi, kaam dobarah karta hai jo pehle kar chuka tha, ek function signature hallucinate karta hai jo pehle sahi thi.
+
+**Ek financial dimension bhi hai.** Har message *poori* context window ko phir se bill karta hai: ek 50K-token conversation jo debug session mein bees baar ping hui woh ek million tokens ka input hai, har turn charged. Per-token APIs par (zyada tar OpenCode setups, raw Anthropic API) yeh wallet damage hai; subscription tiers par (Claude Code Pro/Max) yeh rate-limit hits ki form mein dikhta hai. Dono tarah, bloated context aapka budget tab khaali karta hai jab aapko kaam jaari rakhna sabse zyada zaroori ho.
+
+**Sada nirasa lekin practical sach: kam context, deliberately use kiya hua, zyada context se behtar hai jo hope mein dump kiya gaya ho.**
+
+### 5. `/clear` aur `/compact`
+
+Do commands, do situations.
+
+**Conversation wipe karo aur fresh shuru karo.** Tab use karo jab kisi unrelated task par switch kar rahe ho. Purana context irrelevant noise hai jo naye task ko confuse karega.
+
+- Claude Code: `/clear`
+- OpenCode: `/new` (jo `/clear` ke naam se bhi jana jaata hai)
+
+**Conversation summarize karo, summary rakh lo, baaki discard karo.** Tab use karo jab ek lamba task deep mein ho aur context bloated ho raha ho, lekin thread nahi kho sakta.
+
+- Dono tools: `/compact` (OpenCode mein `/summarize` ke naam se bhi jaana jaata hai)
+
+Compact mein guide kar sakte ho ke kya rakhna hai: `/compact keep the API contract decisions and current file paths`.
+
+Yeh interchangeable nahi hain. `/clear` matlab "nayi conversation." `/compact` matlab "wahi conversation, kam baggage." Galat chunna ya important context kho deta hai ya useless context rakh leta hai.
+
+### 6. Sessions Resume Karna
+
+Conversations save hoti hain. Dono tools resume karne dete hain, same idea, alag command:
+
+- **Claude Code:** `claude --resume` aur list se session chuno.
+- **OpenCode:** TUI ke andar `/sessions` (jo `/resume` ke naam se bhi jaana jaata hai) saved sessions ke darmiyan switch karne ke liye.
+
+**Do patterns jahan yeh matter karta hai:**
+
+- **Kal uthao.** Lamba features aksar ek sitting mein fit nahi hote. Resume bina model ki project ki working memory khoye rokne deta hai.
+- **Multiple branches chalao.** Koi bhi session resume karo, sirf aakhri nahi. Ek session backend task mein gehri ho sakti hai aur doosri frontend par kaam kar sakti hai, aur dono ke darmiyan switch kar sakte ho.
+
+Agar ek saved plan file (`docs/plans/feature-x.md`) hai, tو ek fresh session bھی ek message mein up to speed ho sakti hai: "read docs/plans/feature-x.md and continue from step 4." Resume zyada tez hai, lekin plan file safety net hai.
+
+**Conversation rewind dono mein maujood hai, lekin file changes par alag hain.** Claude Code mein, `Esc` do baar dabao (double-tap Esc) pichle user messages ki list kholne ke liye; ek chuno aur session us point se fork ho jaati hai, jo kuch baad mein aya usse drop kar deti hai. Yeh conversation rewind karta hai lekin disk par model ke kiye hue file edits REVERT NAHI karta. OpenCode ek qadam aage jaata hai: `/undo` aakhri user message *aur* us turn ke file changes revert karta hai (yeh git use karta hai under the hood, isliye aapka project ek git repo hona chahiye). `/redo` aakhri `/undo` ko reverse karta hai.
+
+---
+
+### Context Kharab Hone Ki Pehchaan
+
+Context rot ke visible symptoms hain. Inhe dekho:
+
+- Model bar bar maafi maangna shuru kar deta hai bina koi progress kiye.
+- Same block of code dobara likhta hai koi meaningful changes ke baghair.
+- Variables, files, ya functions reference karta hai jo exist nahi karte.
+- Usi session mein pehle batai constraint ke khilaaf jaata hai.
+- Har response lamba, vaguer, aur zyada deferential hota jaata hai.
+
+Jab yeh dekho, **type karna band karo.** "Bas ek aur clarifying prompt" ki khwahish galat hai; yeh sirf zyada polluted context add karta hai ek context mein jo pehle se poisoned hai. Sahi move reset karna aur re-brief karna hai. `/compact` chalao agar conversation mein ek useful core preserve karna hai, `/clear` (ya OpenCode ka `/new`) agar genuinely naye sar se shuru karna chahiye. Reset mein paanch minute ek ghante se behtar hai ek model ke saath jhagdene se jiska context zehreela ho chuka ho.
+
+---
+
+### Context Costs Badhne Ki Pehchaan
+
+Cost discipline context discipline hai; aap dono mein se ek wallet mein feel karte ho. Har turn poori context window ko phir se bill karta hai, isliye wahi bloat jo recall ko hurt karta hai bill ko bhi hurt karta hai. Paanch symptoms zyada tar surprise bills cover karte hain:
+
+```
+Symptom: token usage achanak mid-session mein spike hua
+    → Wajah: rules file ya system prompt badal gaya, cache hits toot gaye.
+       Fix: change revert karo, ya cache miss ko one-time cost maan lo.
+
+Symptom: har turn pichle se zyada cost kar raha hai
+    → Wajah: context bina had ke barh raha hai. Files padte jaate hain,
+       exploration output jam raha hai, conversation lamba hai.
+       Fix: /compact ke saath "keep architectural decisions and current
+       file paths" hint.
+
+Symptom: model over-explain kar raha hai, walls of text produce kar raha hai
+    → Wajah: reasoning effort task ke liye zyada hai; ya prompt narration
+       invite karta hai.
+       Fix: reasoning effort kam karo; "code only, minimal commentary" maango.
+
+Symptom: maheena bhar ka bill expected se kaafi zyada hai
+    → Wajah: frontier-tier model waise tasks par chal raha hai jo economy-tier
+       model sahi handle karega.
+       Fix: mechanical kaam (codemods, tests, formatting) cheaper tier par route
+       karo; frontier model planning aur mushkil reasoning ke liye rakhو.
+
+Symptom: cache hits achanak ~70% se ~10% par aa gaye
+    → Wajah: system prompt, CLAUDE.md, ya pehla user message structure badal gaya.
+       Cache prefixes byte-for-byte match karta hai.
+       Fix: jo pehle aata hai use stabilize karo; variable content baad mein aane do.
+```
+
+Zyada tar ek single config change mein recoverable hain. In paanchon ke neeche wahi mechanic hai jo Part 2 argue kar raha tha: stable, narrow context sasti hai aur better recall deti hai sprawling context se, har turn.
+
+---
+
+## Part 3: Rules File
+
+### 7. CLAUDE.md / AGENTS.md — Sahi Tarah Kiya
+
+Dono tools project-root markdown file ko har session ke shuru mein context mein load karte hain. Yeh project-level system prompt ke sabse kareeb hai.
+
+**Yeh file scratch se mat likho.** Nayi project mein, kisi bھی tool mein `/init` chalao. Model aapka folder scan karta hai aur file khud draft kar deta hai. Iske baad aapka kaam **ruthlessly delete** karna hai jo zaroori nahi: yeh authoring task nahi, editing task hai.
+
+**Claude Code** `CLAUDE.md` use karta hai. **OpenCode** `AGENTS.md` use karta hai. Migrators ke liye, **OpenCode `CLAUDE.md` bhi fallback ke taur par padhta hai** jab koi `AGENTS.md` maujood na ho; agar dono files hain, `AGENTS.md` jeetta hai aur `CLAUDE.md` ignore hoti hai.
+
+Galati jo lagbhag sab karte hain woh yeh file ko documentation ki tarah treat karna hai, architecture overviews, full coding standards, aur codebase ki har quirk thoos dena. Result ek 20,000-token file hai jo har task par aapka context budget kha jaata hai, un tasks samیت bhi jahan 90% irrelevant hai.
+
+Sahi model hai **table of contents, encyclopedia nahi.** ~2,500 tokens se kam ka nishana rakho. Deeper context reference karo jo demand par load ho:
+
+**`AGENTS.md` (OpenCode ke liye):**
+
+```markdown
+# Project: my-app
+
+## Stack
+Next.js 14, TypeScript, Postgres, Drizzle ORM.
+
+## Commands
+- `npm run dev`: local server shuru karo
+- `npm test`: vitest chalao
+- `npm run db:migrate`: migrations apply karo
+
+## Zaroori rules
+- `src/generated/` mein files edit mat karo. Yeh codegen se rebuild hote hain.
+- Sab API routes `src/lib/auth.ts` mein auth middleware use karte hain.
+
+## External references
+Jab @docs/conventions.md ya @docs/db-schema.md mile,
+inhe need-to-know basis par read tool se load karo.
+```
+
+Ya cleaner, `opencode.json` mein list karo:
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["docs/conventions.md", "docs/db-schema.md"]
+}
+```
+
+**Non-software projects ke liye bhi same shape kaam karta hai.** Ek consultant jo reports likh raha hai, ek teacher jo lesson plans bana raha hai, ek chhote business owner jo operations chala raha hai: rules file "table of contents, encyclopedia nahi" hai chahe domain koi bhi ho.
+
+Har line ke liye jo add karne ki khwahish ho, pucho: "agar yeh delete kar doon, kya model koi galati karega jo aur nahi karti?" Agar nahi, delete karo. Model ko TypeScript use karne ke liye mat batao: woh `.ts` files dekh sakta hai. Usse woh cheezein batao jo woh infer nahi kar sakta: codegen folder, auth pattern, jo cheezein pehle problem kar chuki hain.
+
+Yeh file real failures se barhnی chahiye, imagined ones se nahi. Git mein commit karo. Team ko isme add karne do.
+
+---
+
+## Part 4: Tool Personalize Karna
+
+Dono tools mein chaar extension types hain. Decision tree identical hai:
+
+- **Wahi prompt baar baar manually chalana?** → Slash command
+- **Model auto-invoke kare jab task match kare?** → Skill
+- **Har baar hona zaroori hai, koi exception nahi?** → Hook ya Plugin
+- **Noisy reads ko main thread se alag karna?** → Subagent
+
+Yeh sab context-management tools hain. Custom commands aur skills demand par sahi context inject karte hain. Hooks aur plugins rules enforce karte hain bina model par tokens kharchے ke "yaad rakhne" ke liye. Subagents context quarantine karte hain taake main thread mein leak na ho.
+
+### 8. Slash Commands
+
+Slash command ek saved prompt hai ek memorable shortcut ke saath. Dono tools inhe support karte hain, bahut similar shapes ke saath.
+
+**Ek gotcha: commands session start par ek baar load hoti hain.** Agar aap mid-session naya command create karo (chahe file khud likhi ho ya model se likhwaya ho), woh autocomplete mein tab tak nahi ayega jab tak CLI exit aur re-enter na karo.
+
+**OpenCode ke liye:** Markdown files `.opencode/commands/` (project) ya `~/.config/opencode/commands/` (personal) mein, optional YAML frontmatter ke saath. Example `.opencode/commands/review.md`:
+
+```markdown
+---
+description: Current diff review karo
+agent: plan
+subtask: true
+---
+
+Current diff review karo in cheezوں ke liye:
+
+1. Bugs aur edge cases
+2. Test coverage gaps
+3. Naming aur readability
+4. docs/conventions.md ke mutabiq
+
+Specific raho. Jo lines comment kar rahe ho unhe quote karo.
+```
+
+Yeh `/review` command [AI Prompting ka concept 6](/docs/ai-prompting-2026#6-sycophancy-and-how-to-neutralize-it) kaam mein laata hai. AI models aap se agree karna chahte hain. "Review my diff" bina kisi instruction ke kaho to milta hai *looks good, well-structured, nice naming* — chahe sach ho ya nah. Upar wala four-point checklist yeh rokta hai.
+
+**Ek non-software example** — `/standup` command:
+
+```markdown
+`journal/` mein kal ka note parho. 4-line standup produce karo:
+
+1. Kal kya ship kiya (1 line)
+2. Aaj kya kaam kar raha/rahi hoon (1 line)
+3. Blockers (1 line, "none" agar clear)
+4. Ek cheez jo seekhi (1 line)
+
+Tone: telegraphic. Koi filler nahi.
+```
+
+**Dono tools ka unifying test:** agar aap khud ko wahi instructions teen baar se zyada type karte hue pao, woh command honi chahiye.
+
+---
+
+### 9. Skills
+
+Skill custom command ka bada bhai hai. Same idea, packaged expertise, lekin teen meaningful upgrades ke saath:
+
+1. **Auto-invocation.** Model har session ke shuru mein skill descriptions padhta hai aur task match hone par sahi skill invoke karta hai.
+2. **Progressive disclosure.** Skill mein ek `SKILL.md` file hai (entry point) aur same folder mein doosri files reference kar sakti hai. Sirf `SKILL.md` pehle load hoti hai; baaki demand par. Yeh context-management principle ko file format mein bana deta hai.
+3. **Frontmatter controls.** `SKILL.md` ke upar YAML behavior configure karta hai.
+
+File format converge ho gayi hai. Ek tool ke liye likhi skill zyada tar doosre mein bhi kaam karti hai.
+
+**`.opencode/skills/extract-transcript/SKILL.md`:**
+
+```markdown
+---
+name: extract-transcript
+description: YouTube video URL se clean transcript nikalо. Tab use karo jab user YouTube link provide kare aur video ka transcript, captions, ya text maange.
+---
+
+# YouTube Transcript Nikalna
+
+1. URL user ke message se lo.
+2. `yt-dlp --skip-download --write-auto-sub --sub-format vtt "$URL"` chalao.
+3. VTT ko plain text mein convert karo: timestamps strip karo, overlapping captions deduplicate karo.
+4. `transcripts/{video-id}.txt` mein save karo.
+
+Formatting conventions ke liye (paragraph breaks, speaker labels), `references/style.md` dekho.
+```
+
+**OpenCode `~/.claude/skills/` aur `.claude/skills/` bhi fallbacks ki tarah padhta hai**, isliye Claude Code ke liye likhi koi bhi skill OpenCode mein bina changes ke kaam karti hai.
+
+Description sabse ahem field hai: yahi woh cheez hai jise model use karta hai decide karne ke liye ke skill laagoo hoti hai ya nahi. Vague descriptions ("videos mein madad karta hai") har cheez par fire karte hain; specific ("Tab use karo jab user YouTube link provide kare...") sirf relevant hone par.
+
+`SKILL.md` ko khud chhota rakho: ~200 lines se kam ek acha rule hai. Depth ko same directory mein reference files mein push karo.
+
+**Ek pattern: chhoti skills chain karo, monoliths mat banao.** Ek "weekly content digest" skill jo research, write, format, aur review ek go mein kare, char alag skills (`research`, `draft`, `format`, `review`) se zyada mushkil aur har step par badtar hai. Handoff usually filesystem-mediated hota hai: `research` output `tmp/research.md` mein likhti hai, phir `draft` use wahan se parhne ko kaha jaata hai. Har skill apne step par focused rehti hai.
+
+---
+
+### 10. Hooks (Claude Code) / Plugins (OpenCode)
+
+Skills *probabilistic* hain: model decide karta hai inhe invoke karna hai ya nahi. Hooks aur plugins *deterministic* hain: yeh specific events par fire karte hain, har baar, koi model judgment nahi.
+
+**OpenCode Plugins** JavaScript ya TypeScript modules hain `.opencode/plugins/` mein jo programmatically events subscribe karte hain:
+
+```javascript
+// .opencode/plugins/block-dangerous.js
+export const BlockDangerousPlugin = async () => {
+  return {
+    "tool.execute.before": async (input, output) => {
+      if (input.tool === "bash" && output.args.command?.includes("rm -rf")) {
+        throw new Error("Khatarnaak command block ho gaya");
+      }
+    },
+  };
+};
+```
+
+OpenCode plugins ke paas bahut ameer event set hai: `session.created`, `session.idle`, `session.compacted`, `tool.execute.before`, `tool.execute.after`, `permission.asked`, `file.edited`, aur aur.
+
+**Claude Code Hooks** `.claude/settings.json` mein shell commands hain lifecycle events se attached. Example: `rm -rf` ko block karo:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "command": "if echo \"$TOOL_INPUT\" | grep -q 'rm -rf'; then echo 'Khatarnaak command blocked' >&2; exit 2; fi"
+      }
+    ]
+  }
+}
+```
+
+**Trade real hai:** OpenCode plugins zyada capable hain; Claude Code hooks simpler hain. Jo bash jaanta ho woh paanch minute mein Claude Code hook likh sakta hai. OpenCode plugins ko Bun ya Node chahiye. One-line check ke liye shell wins; structured logging, async work, ya multiple event subscriptions ke liye JS/TS module sach mein cleaner hai.
+
+**Ek useful pattern:** write time par block mat karo, commit time par block karo. Model ko kaam khatam karne do (mid-edit interrupt karna confuse karta hai) aur commit step par ek hook/plugin chalao jo check kare tests pass hain, types check hain, formatter khush hai.
+
+---
+
+### 11. Subagents
+
+Subagent ek isolated agent instance hai apni khud ki context window ke saath. Aap use ek task delegate karte ho; woh private mein kaam karta hai; woh ek summary return karta hai. Iske file searches, log dumps, aur exploratory reads aapke main thread ko kabhi nahi chhoote.
+
+**Yeh context-management terms mein kyun matter karta hai:** Sabse zyada context-poisoning kaam "codebase ko explore karo X kahan hota hai dekhne ke liye" karna hai. Is tarah ka task context mein dozens of files pull karta hai, jin mein zyada tar zaroori nahi. Subagent mein karna matlab aapka main session sirf conclusion dekhta hai ("X `src/services/billing.ts:142` mein hai"), search nahi.
+
+**Custom subagent example:**
+
+```markdown
+---
+description: External library documentation fetch aur summarize karo. Tab use karo jab user kisi library ka reference kare aur hume iska current API samajhna ho.
+mode: subagent
+permission:
+  edit: ask
+  bash: deny
+  webfetch: allow
+---
+
+Aap ek documentation researcher ho. Library ka naam aur topic diya gaya, official docs fetch karo, sirf topic se relevant API surface nikalo, aur focused summary `tmp/docs-{library}.md` mein likho. Poore pages mat paste karo: patterns aur signatures nikalo jo hume chahiye.
+```
+
+**General rule, dono mein identical:** agar kisi task mein bahut zyada reading ho jو final answer se relevant nahi hogi, woh subagent mein jaani chahiye.
+
+---
+
+## Part 5: Dunya Se Connect Karna
+
+### 12. MCP — Imandari Se
+
+MCP (Model Context Protocol) external tools (Slack, Notion, aapka database, GitHub, jo bhi) ko agent ke saamne expose karne ka ek standardized tarika hai. Dono Claude Code aur OpenCode MCP ko same protocol use karke support karte hain.
+
+**OpenCode mein `opencode.json` mein declare karo:**
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "sentry": {
+      "type": "remote",
+      "url": "https://mcp.sentry.dev/mcp",
+      "oauth": {}
+    },
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp"
+    }
+  }
+}
+```
+
+Honest qualification: **MCP hamesha sahi jawab nahi hai.** Kuch experienced users heavy MCP use se door ho gaye hain simple CLIs ke favor mein. Reasoning: MCP server underlying tool ko ek fixed set of operations mein abstract karta hai, aur har operation pehle se context cost deta hai tool descriptions mein. CLI sirf ek CLI hai: agent iska `--help` parh sakta hai, flags compose kar sakta hai, outputs pipe kar sakta hai.
+
+OpenCode ki docs yeh explicitly kehti hain: *"MCP servers aapke context mein add karte hain, isliye dhyan rakhna zaroori hai ke kaunse enable karo."*
+
+Ek useful working model: MCP stateful ya auth-heavy services ke liye use karo (Playwright canonical example hai: browser session manage karna mushkil hai). Baaki sab ke liye CLIs use karo.
+
+---
+
+## Part 6: Ek Mukammal Worked Example — Do Baar
+
+Yeh woh section hai jis par crash course ka baaki hissa point karta hai. Ek realistic task, har concept, dono tools. Ek hi kaam, ek baar Claude Code mein, ek baar OpenCode mein, side by side.
+
+### Aapka Task
+
+Aapke paas `notes/` folder hai paanch files ke saath: aapki team ke pichhle hafte ke meeting notes. Woh ek ganda hai. Kuch meetings action items `## Action Items` ke neeche list karte hain. Kuch `## Todos` use karte hain. Ek lowercase `## todo` use karta hai. Kuch action items doosri sections ke andar chhupe hain. Kuch bullets `[private]` ya `[HR]` tagged hain aur public nahi jaane chahiye.
+
+Aap chahte ho ek clean file, `weekly-actions.md`, jo har action item list kare, owner ke hisaab se grouped, source meeting file ka link ke saath. Kuch bhi private nahi leakna chahiye. Kuch bhi nahi khona chahiye. Aur agar koi deadline public holiday par pade, aap warning chahte ho.
+
+---
+
+### Is Section Ko Kaise Parhein
+
+Neeche aath decisions hain, har ek numbered. Har decision ki teen cheezein likhi hain:
+
+- **Kya karo** — woh exact cheez jo aap type karte ho ya press karte ho
+- **Kyun** — ek paragraph ke is decision se kya milta hai
+- **OpenCode mein kya badlega** — doosre tool ke liye version
+
+Agar kisi step mein likha ho *"OpenCode mein identical"* toh us line ko skip karo aur agay barho.
+
+---
+
+#### Decision 1: Rules File Trim Karo
+
+**Kya karo (Claude Code).** Claude Code project folder mein kholo. `/init` chalao. `CLAUDE.md` file bahut lamba hoga. Zyada tar delete karo. Sirf yeh rakho:
+
+```markdown
+# weekly-rollup
+
+## Layout
+- `notes/`: meeting notes, ek file per meeting
+- `weekly-actions.md`: rollup jo hum bana rahe hain
+- `plans/weekly-rollup-plan.md`: plan jo save karke reuse karenge
+
+## Zaroori rules
+- Action items `## Action Items`, `## Todos`, `## Next Steps`, ya `## todo`
+  (ek meeting lowercase use karti hai) ke neeche aa sakte hain. Sirf top heading
+  nahi, sab heading levels dekho.
+- Owners `@name` ki tarah likhe hain. Jis item ka koi owner nahi woh "Unassigned"
+  section mein jaata hai.
+- Koi bhi bullet `[private]` ya `[HR]` tagged kabhi include mat karo.
+```
+
+**Kyun.** Yeh file *har* message ke shuru mein parhi jaati hai. Jo bhi yahan dalte ho, har turn cost karta hai. Isliye chhoti rakho: sirf woh cheezein jo model khud folder dekh ke infer nahi kar sakta.
+
+**OpenCode mein kya badlega.** File ka naam `AGENTS.md` hoga `CLAUDE.md` ki jagah. Same content, same purpose.
+
+---
+
+#### Decision 2: Likhne Se Pehle Plan Karo
+
+**Kya karo (Claude Code).** `Shift+Tab` do baar dabao. Yeh model ko *plan mode* mein dalta hai: woh aapki files parh sakta hai lekin kuch change nahi kar sakta. Phir type karo:
+
+```
+notes/ mein har file parho. weekly-actions.md banao owner ke hisaab se
+grouped. Har item ke liye action, source filename, aur meeting date
+include karo. [private] ya [HR] tagged kuch bhi skip karo. Koi action
+item kho mat jaaye.
+```
+
+Model ek minute sochta hai, phir ek likha hua plan le kar aata hai.
+
+**Kyun.** Yeh dono tools mein sabse zyada ignore ki hui feature hai. Plan parhna 30 second leta hai. Buri change revert karna kaafi zyada.
+
+**OpenCode mein kya badlega.** `Tab` dabao `Build` se `Plan` agent par switch karne ke liye. Brief aur result identical hain; sirf keystroke alag hai.
+
+---
+
+#### Decision 3: Plan Par Push Back Karo
+
+**Kya karo.** Plan dhyan se parho. Do cheezein shayad galat hongi.
+
+Pehli: woh sirf *top-level* headings mention karega. Lekin Q1 planning notes mein action items `### Year-end promotional campaign` ke andar hain. Plan unhe miss karega.
+
+Doosri: woh nahi batayega ke un action items ka kya karna hai jinka koi owner nahi. Push back karo:
+
+```
+Do changes. (1) Sirf top nahi, sab heading levels dekho. Kuch action
+items sub-headings ke neeche hain. (2) Bina owner wale items bottom
+par "Unassigned" section mein jaate hain; inhe kabhi drop mat karo.
+```
+
+Model plan update karta hai. Model se kaho ke final plan `plans/weekly-rollup-plan.md` mein save kare.
+
+**Kyun.** Plan ek contract hai. Masle yahan pakdo, jab kuch kharcha nahi, file likhne ke baad nahi.
+
+**OpenCode mein kya badlega.** Identical.
+
+---
+
+#### Decision 4: Kaam Karne Do
+
+**Kya karo (Claude Code).** `Shift+Tab` dabao plan mode se nikaalne ke liye. Model ko aage badhne kaho.
+
+Woh paanch files parhta hai. `weekly-actions.md` likhta hai. Owner ke hisaab se group karta hai. `[private]` aur `[HR]` bullets drop karta hai. Orphan items ko Unassigned section mein dalta hai.
+
+**Kyun.** Plan karne ki wajah se kaam zyada tar pehli baar sahi hota hai.
+
+**OpenCode mein kya badlega.** Pehli baar har file write par approve karne ko kaha jayega.
+
+---
+
+#### Decision 5: Jab Conversation Lamba Ho Jaye Toh Summarize Karo
+
+**Kya karo.** Conversation ab lamba hai. Model ne har meeting note parha hai, aur kafi raw content — kuch private bullets samیت jo sahi skip kiye — abhi bھی uski memory mein baithy hain. Type karo:
+
+```
+/compact keep the heading rules, the owner list, and the
+private/HR exclusion rule
+```
+
+Conversation summarize hokar sirf woh parts reh jaate hain jo aap ne rakhne ko kaha.
+
+**Kyun.** Lamba, cluttered conversation model ko behtar nahi, badtar banata hai. Private content kو memory mein zarurat se zyada rehne nahi dena chahiye.
+
+**OpenCode mein kya badlega.** Identical command.
+
+---
+
+#### Decision 6: Commit Par Safety Net Lagao
+
+**Kya karo (Claude Code).** `.claude/settings.json` kholo (file exist na kare tو banao) aur yeh bilkul paste karo:
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit *)",
+        "command": "for f in notes/*.md; do grep -q \"$(basename $f)\" weekly-actions.md || { echo \"Missing: $f\" >&2; exit 2; }; done"
+      }
+    ]
+  }
+}
+```
+
+Plain Urdu mein: kisi bھی `git commit` command se pehle, `notes/` mein har `.md` file loop karo, har file ka basename `weekly-actions.md` mein grep karo, aur koi file mention nahi tو exit code 2 se bahar niklo (jo commit rok deta hai).
+
+Model ko commit karne kaho. Safety net fire hoti hai: `Missing: notes/2026-12-11-vendor-review.md`. Wajah logical hai: us meeting mein har action item `[private]` tagged thi, isliye rollup mein us file se kuch nahi likha gaya, aur filename kabhi andar nahi aya. Hook yeh sab nahi jaanta; sirf dekhta hai ke file unmentioned hai, aur block karta hai.
+
+Model error parhta hai aur rollup ko ek placeholder entry ke saath patch karta hai jo file ko explicitly naam deta hai. Aap ne is loop mein kuch nahi kiya. Safety net ne galati pakdi aur model ne khud theek kiya.
+
+**OpenCode mein kya badlega.** OpenCode mein yeh *plugins* hain hooks ki jagah. `.opencode/plugins/check-rollup-complete.js` banao:
+
+```javascript
+import { readdirSync, readFileSync } from "fs";
+export const CheckRollupCompletePlugin = async ({ $ }) => {
+  return {
+    "tool.execute.before": async (input, output) => {
+      if (
+        input.tool === "bash" &&
+        output.args.command?.startsWith("git commit")
+      ) {
+        const rollup = readFileSync("weekly-actions.md", "utf8");
+        const missing = readdirSync("notes")
+          .filter((f) => f.endsWith(".md"))
+          .filter((f) => !rollup.includes(f));
+        if (missing.length) {
+          throw new Error(`Rollup mein missing: ${missing.join(", ")}`);
+        }
+      }
+    },
+  };
+};
+```
+
+---
+
+#### Decision 7: Ek Side-Task Helper Ko Bhejo
+
+**Kya karo (Claude Code).** Kuch action items mein deadlines hain jaise "by Dec 25." Type karo:
+
+```
+doc-fetcher helper use karo 2026 international public holidays
+list look up karne ke liye aur dates tmp/holidays-2026.md mein
+likho.
+```
+
+Ek alag helper jaata hai, ek lamba page web se fetch karta hai, sirf dates nikalta hai, aur ek chhoti file mein likhta hai. Aapki main conversation sirf chhoti file dekhti hai, lamba page nahi.
+
+Model phir aapke rollup mein deadlines padhta hai, holidays cross-reference karta hai, aur note add karta hai: `⚠ Christmas Day par padta hai` brochure deadline ke saath.
+
+**Kyun.** Web page seedha fetch karna conversation mein pages of text dump kar deta. Helper bhejne ka matlab sirf *jawab* wapas aata hai, noise nahi.
+
+**OpenCode mein kya badlega.** `@doc-fetcher` directly type kar sakte ho; autocomplete mein dikhta hai.
+
+---
+
+#### Decision 8: Jo Seekha Woh Save Karo
+
+**Kya karo (Claude Code).** Yeh Juma ka ritual hai; har hafte karoге. Aap nahi chahte yeh sab decisions agle Juma yaad rakhna ho. Isliye model se kaho ke inhe ek *skill* ke taur par save kare:
+
+```
+~/.claude/skills/weekly-meeting-rollup/SKILL.md par skill banao
+jo hum ne abhi kiya uss par based. Include karo: chaar heading
+variants, all-headings rule, private/HR exclusion, Unassigned
+section, missing-file check, aur holiday cross-reference.
+```
+
+Agle Juma, aap bas "do the weekly rollup" type karoge aur model yeh skill khud uthaayega. Har decision jo aaj kiya, free mein apply.
+
+**OpenCode mein kya badlega.** Skill thoda alag folder mein save hoti hai lekin file *byte-for-byte identical* hai. Dono tools ke darmiyan copy karo aur dono mein kaam karta hai.
+
+---
+
+### Kya Hua Abhi
+
+In aath steps mein se kisi mein code likhna nahi pada. Aap ne asal mein aath chhoti acts of *model ki attention manage karna* kiya: usse bataya kya dekhna hai, kab plan karna hai, kab bhoolna hai, kab delegate karna hai, kab khud par trust nahi karna, aur kab yaad karna.
+
+**Yahi poora chapter hai.**
+
+Aur dekho ke dono tools mein kitna thoda alag tha:
+- Rules file ke liye alag file name (`CLAUDE.md` vs `AGENTS.md`)
+- Plan mode enter karne ke liye alag keystroke (`Shift+Tab` vs `Tab`)
+- Safety-net file ke liye alag language (JSON vs JavaScript)
+- Skill ke liye alag folder (lekin *same file*)
+
+**Bas yahi.**
+
+Concepts tool hain. Configs decoration hain. Is tarah sochna seekho aur aapki skills survive karengi chahe koi bhi tool jeette.
+
+---
+
+## Part 7: Kahan Chalayenge, Aur Kaise Agے Badhein
+
+### 13. Terminal, IDE, Ya Desktop?
+
+**Claude Code:** terminal, VS Code / JetBrains plugins, Claude desktop app, aur async kaam ke liye cloud-hosted variants.
+
+**OpenCode:** terminal (TUI flagship hai), desktop app (macOS/Windows/Linux par beta mein), ACP support se IDE extension, SDK se web interface, aur GitHub aur GitLab integrations.
+
+Jo kaam kar rahe ho us ke hisaab se chunو. Bahut sari file editing ke saath greenfield development ke liye, IDE plugins hard to beat hain: diff hote hue dekhte ho. Notifications aur parallel sessions wale lamba kaam ke liye, terminal theek hai.
+
+**Strong recommendation:** terminal ya IDE plugin se shuru karo. Ek baar samajh jaao ke kya ho raha hai neeche (model kaun si files padhta hai, kaun si commands chalata hai, kaunse decisions karta hai), har doosra interface ek thin wrapper ban jaata hai.
+
+### 14. Personal Context Library — Aahista
+
+Kuch projects hone ke baad, notice karoge ke har rules file mein same cheezein likh rahe ho: apna code style, commit conventions, testing philosophy. Copy-paste karna band karo.
+
+Shared parts home config mein daalo:
+
+```json
+// ~/.config/opencode/opencode.json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": ["style/typescript.md", "style/commits.md"]
+}
+```
+
+**Discipline:** yeh pehle se mat banao. Hafte bhar perfect personal setup design karne ka laalach karo. Resist karo. Har entry real failure se aani chahiye. Library jo real friction se barhti hai chhoti aur useful hoti hai; jo advance mein design ki gayi large aur ignored.
+
+### 15. Memory Basics Se Agے
+
+Built-in resume + achi-tended rules file zyada tar logon ke liye kaafi hai. Agar aur chahiye:
+
+- **Project mein ek `notes/` folder**, agent ke saath major kaam ke baad structured notes likhتا ہوا. Sasta, durable, greppable.
+- **Ek memory MCP server.** Kuch maujood hain; agent ko explicit save/recall API dete hain.
+- **Apni conversation history par vector search** "kya maine yeh pehle solve kiya" queries ke liye.
+
+Jo yaad rakhna chahte ho uss ke hisaab se chunو.
+
+---
+
+## Part 8: Claude Code aur OpenCode Milana
+
+### Git Worktrees — Operational Layer
+
+Dono tools parallel sessions support karte hain, lekin agar do agents ek hi file ek saath edit karen, aakhri write jeeti hai. Fix **git worktrees** hai: har worktree ek alag branch par checked-out copy hai, same `.git` directory share karte hue.
+
+```bash
+# Apne main repo directory se
+git worktree add ../myproject-backend feature/auth-core
+git worktree add ../myproject-frontend feature/auth-ui
+
+# Ab aapke paas do parallel working dirs, do branches hain
+cd ../myproject-backend && claude
+# Doosre terminal mein
+cd ../myproject-frontend && opencode
+```
+
+**Rule of thumb:** ek task ke liye ek session se shuru karo. Doosra tab add karo jab clearly indicate kar sako ke kaunsi files har session ki hain.
+
+### Pattern 1: Plan / Execute Split
+
+Expensive cognitive kaam planning mein hai. Sasta mechanical kaam ek existing plan implement karna hai. Pricing reflect karta hai: frontier-tier models roughly order of magnitude zyada cost karte hain per token.
+
+Composition:
+
+1. Claude Code ko plan mode mein kholo. Brief batao. Plan produce karne do.
+2. Plan `docs/plans/feature-x.md` mein save karo.
+3. OpenCode ek alag worktree mein economy-tier model ke saath kholo. Pehla message: `docs/plans/feature-x.md parho aur implement karo.`
+4. OpenCode file edits karta hai, tests chalata hai, lint fix karta hai.
+5. (Optional) Merge se pehle review ke liye Claude Code dobara kholo.
+
+### Pattern 2: Cross-Model Review
+
+Yeh [AI Prompting ka concept 13](/docs/ai-prompting-2026#13-models-checking-models) ek habit se architecture tak promote hai. Alag models ke alag blind spots hain. Ek model jo ek code ka piece likha woh uss code ka sabse bura reviewer hai.
+
+Composition:
+
+1. Tool A (koi bھی model) ek feature apne worktree par implement karta hai.
+2. Tool B (alag model, ideally alag family) diff parhta hai aur `docs/reviews/feature-x.md` mein critique likhta hai.
+3. Tool A review parhta hai aur decide karta hai kaunsi points par act karna hai.
+
+---
+
+## Asal Mein Accha Kaise Banen
+
+Yeh crash course parhna aapko agentic coding mein accha nahi banata. Iska use karna banata hai, aur rasta kuch is tarah dikhta hai:
+
+Aap manual shuru karte ho. Friction feel karte ho: har approval prompt, har "yeh kyun nahi jaanta." Woh friction curriculum hai. Har friction piece upar ke paandra concepts mein se ek par map karti hai:
+
+- "Yeh auth pattern kyun bhoolata rehta hai?" → rules file missing ya bloated hai.
+- "Iس ne migrations folder kyun delete kiya?" → permissions tight nahi thin.
+- "Ek ghante baad yeh itna slow kyun hai?" → context rot; `/compact` chahiye tha.
+- "Main har Somwar wahi kyun type kar raha hoon?" → woh ek skill hai.
+- "Tests locally pass kyun hue lekin CI mein fail hue?" → woh ek hook ya plugin hai.
+- "Codebase explore karna conversation kyun pollute karta hai?" → woh ek subagent hai.
+
+Har masle ka jawab jab hit karo tab banao, pehle nahi. Aapki rules file das lines honi chahiye, phir barah, phir bees: har line ek galati se earn ki jو ab prevent hoti hai.
+
+**Portability dividend.** Ek baar yeh noticing ek tool ke liye build kar lo, transfer hoti hai. Claude Code aur OpenCode mein friction-to-concept map identical hai. Ek se shuru karo, kisi bhi wajah se switch karo — aapka ilm saath aata hai. Configs badal jaate hain. Thinking nahi.
+
+Ek project se shuru karo. Har non-trivial kaam ke liye plan mode use karo. Context dekhte raho. Baaki khud ban jaata hai.
+
+---
+
+## Quick Reference
+
+### 15 Concepts Ek Line Mein
+
+1. **Tools jawab nahi, actions lete hain.** Briefs likho, sawal nahi.
+2. **Plan mode** (CC mein Shift+Tab, OC mein Tab Plan agent ke liye). Koi bhi write se pehle read-only investigation.
+3. **Permissions discipline.** Manual shuru karo, waqt ke saath allow/deny codify karo.
+4. **Context rot haqiqi hai.** Recall window bharny se pehle kharab hoti hai, aur har turn poora context re-bill karta hai.
+5. **`/clear` vs `/compact`.** Naya task vs wahi task halka. Galat chuno aur galat cheez kho dete ho.
+6. **Sessions resume karo.** Dobara explain kiye bina wahan se uthao; saved plan files ke saath pair karo.
+7. **`CLAUDE.md` / `AGENTS.md` table of contents hai.** ~2,500 tokens se kam, references demand par load hoti hain.
+8. **Slash commands.** Saved prompts jo naam se trigger karo jab wahi cheez baar baar type karo.
+9. **Skills.** Saved expertise jo model description se auto-invoke karta hai.
+10. **Hooks (CC) / Plugins (OC).** Lifecycle events par deterministic guardrails.
+11. **Subagents.** Noisy reads ke liye isolated context windows.
+12. **MCP, carefully.** External tools ke liye standard protocol; stateless services ke liye CLIs aksar behtar.
+13. **Kahan chalao.** Terminal ya IDE plugin se shuru karo taake dekh sako kya ho raha hai.
+14. **Personal context library, aahista.** Projects mein configs share karo; regret se banao, imagination se nahi.
+15. **Memory basics se agے.** Built-in resume + achi rules file kaafi hai. Zyada ke liye `notes/` folder.
+
+### Command Quick-Ref
+
+| Kya karna hai | Claude Code | OpenCode |
+|---|---|---|
+| Project rules file initialize karo | `/init` | `/init` |
+| Plan mode enter karo | `Shift+Tab` (do baar) | `Tab` (Plan agent tak cycle karo) |
+| Conversation wipe karo | `/clear` | `/new` (ya `/clear`) |
+| Summarize aur continue karo | `/compact` | `/compact` (ya `/summarize`) |
+| Saved session resume karo | `claude --resume` | `/sessions` (ya `/resume`) |
+| Pichle message par wapas jao | `Esc Esc` | `/undo` (files bhi revert karta hai) |
+| Aakhri message + file changes undo karo | *(bundled nahi)* | `/undo` (git chahiye) |
+| Undo reverse karo | *(bundled nahi)* | `/redo` |
+
+### File Location Quick-Ref
+
+| Kya | Claude Code | OpenCode |
+|---|---|---|
+| Project rules | `CLAUDE.md` | `AGENTS.md` (fallback `CLAUDE.md` bhi padhta hai) |
+| Project permissions | `.claude/settings.json` | `opencode.json` |
+| Project commands | `.claude/commands/*.md` | `.opencode/commands/*.md` |
+| Project skills | `.claude/skills/<name>/SKILL.md` | `.opencode/skills/<name>/SKILL.md` |
+| Project hooks/plugins | `.claude/settings.json` (`hooks` block) | `.opencode/plugins/*.{js,ts}` |
+| Project subagents | `.claude/agents/*.md` | `.opencode/agents/*.md` |
+| Personal/global rules | `~/.claude/CLAUDE.md` | `~/.config/opencode/AGENTS.md` |
+| Personal commands/skills/agents | `~/.claude/{commands,skills,agents}/` | `~/.config/opencode/{commands,skills,agents}/` |
+| MCP servers | `.claude/settings.json` (`mcp` block) | `opencode.json` (`mcp` block) |
+
+### Extension Type Decision Tree
+
+```
+Wahi kaam baar baar manually karna hai?
+    → Slash command (CC) / Custom command (OC)
+
+Model automatically expertise apply kare jab task match kare?
+    → Skill
+
+Har baar hona zaroori hai, koi model judgment nahi?
+    → Hook (CC) / Plugin (OC)
+
+Kaam isolated context mein karna hai taake main context pollute na ho?
+    → Subagent
+```
+
+### Jab Kuch Galat Lage
+
+```
+Model bina progress ke maafi maang raha hai, wahi code dobara likh
+raha hai, variables hallucinate kar raha hai, pehle ki constraints
+contradict kar raha hai?
+    → Context poisoned hai. Type karna band karo. /compact ya /clear
+       chalao. Aur prompt se theek karne ki koshish mat karo.
+```
+
+---
+
+*Images download karne ke liye:*
+
+```bash
+wget https://agentfactory.panaversity.org/img/agentic-coding-context-stack.png \
+  -O ~/Desktop/ai-ka-safar/static/img/agentic-coding-context-stack.png
+```
+
+---
+
+## Flashcards — Yaad Karo
+
+Yeh flashcards crash course ke terah concepts yaad karne mein madad karti hain. Roman Urdu mein hain taake aasaan lage.
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+:::tip Flashcards Kaise Use Karein
+- **Space** — card flip karo
+- **← →** — agle ya pichle card pe jao
+- **Esc** — exit karo
+- Har card pe pehle khud jawab socho, phir flip karo
+:::
+
+<details>
+<summary>**Card 1 / 28** — Agentic coding mein sab kuch click karne wali ek insight kya hai?</summary>
+
+**Jawab:**
+Agentic coding asal mein ek **context-management ka masla** hai jo coding tool ka bhaes bandhe hua hai. Har "advanced technique" ek hi cheez tak aati hai: sahi waqt par sahi information model tak pahunchana, aur ghalat information ko door rakhna.
+
+</details>
+
+<details>
+<summary>**Card 2 / 28** — Chatbot prompt aur agentic coding prompt mein kya farq hai?</summary>
+
+**Jawab:**
+Chatbot sawaalon ke jawaab deta hai. Agentic coding brief pe actions leta hai — files padhna, edit karna, commands chalana, network hit karna.
+
+❌ Chatbot: *"Auth kaise add karoon?"*
+✅ Agentic: *"Is Express app mein email/password auth add karo bcrypt aur JWT use karke, users Postgres `users` table mein store karo, tests likho, OAuth code mat chhuona."*
+
+</details>
+
+<details>
+<summary>**Card 3 / 28** — Plan mode kyun use karte hain?</summary>
+
+**Jawab:**
+Plan mode model ko kuch bhi **likhne se pehle** ek written plan banane par majboor karta hai jo review karo. Do wajahaat:
+1. Misunderstandings plan mein dikhti hain, 200-line diff mein nahi
+2. Pre-written plan better code produce karta hai — model ek saath reasoning aur writing nahi karta
+
+</details>
+
+<details>
+<summary>**Card 4 / 28** — Plan mode kaise enter karte hain?</summary>
+
+**Jawab:**
+- **Claude Code:** `Shift+Tab` do baar dabao
+- **OpenCode:** `Tab` dabao `Build` se `Plan` agent switch karne ke liye
+
+</details>
+
+<details>
+<summary>**Card 5 / 28** — `--dangerously-skip-permissions` ya `"permission": "allow"` globally set karne ka main risk kya hai?</summary>
+
+**Jawab:**
+Model bina tumhari approval ke koi bhi action le sakta hai — files delete karna, packages publish karna, git push karna — sab kuch bina tumhara poochhe. Pehle manual start karo, phir waqt ke saath safe actions codify karo.
+
+</details>
+
+<details>
+<summary>**Card 6 / 28** — Context rot kya hai aur iski symptoms kya hain?</summary>
+
+**Jawab:**
+Jab context mein bahut zyada tokens ho jaatein hain, model pehle ki details sahi se weight karna band kar deta hai. Symptoms:
+- Baar baar maafi maangna bina progress ke
+- Same code dobara likhna
+- Non-existent variables ya functions reference karna
+- Pehle ki constraints contradict karna
+- Har response zyada lamba aur vaguer
+
+</details>
+
+<details>
+<summary>**Card 7 / 28** — `/clear` aur `/compact` mein kya farq hai?</summary>
+
+**Jawab:**
+- **`/clear`** — Poori conversation wipe karo. Naya task shuru karte waqt. No undo.
+- **`/compact`** — Same task, kam baggage. Conversation summarize karo, thread rakho. Guide kar sakte ho: `/compact keep the API decisions`
+
+</details>
+
+<details>
+<summary>**Card 8 / 28** — `/compact` ko kaise guide karte hain?</summary>
+
+**Jawab:**
+Command ke saath hint do:
+```
+/compact keep the API contract decisions and current file paths
+```
+Model sirf woh relevant parts rakhega summary mein.
+
+</details>
+
+<details>
+<summary>**Card 9 / 28** — Session resume karne ke do tools mein kya commands hain?</summary>
+
+**Jawab:**
+- **Claude Code:** `claude --resume` — list se session chuno
+- **OpenCode:** TUI ke andar `/sessions` ya `/resume`
+
+</details>
+
+<details>
+<summary>**Card 10 / 28** — OpenCode ka `/undo` Claude Code ke `Esc Esc` se kaise alag hai?</summary>
+
+**Jawab:**
+- **`Esc Esc` (Claude Code):** Conversation rewind karta hai lekin **disk pe file changes revert nahi karta**
+- **`/undo` (OpenCode):** Conversation rewind karta hai **aur** file changes bhi revert karta hai (git use karta hai)
+
+</details>
+
+<details>
+<summary>**Card 11 / 28** — CLAUDE.md / AGENTS.md likhne ka sahi model kya hai?</summary>
+
+**Jawab:**
+**Table of contents, encyclopedia nahi.** ~2,500 tokens se kam. Sirf woh cheezein jo model folder dekh kar khud infer nahi kar sakta. On-demand references link karo jo sirf zarurat pe load hon.
+
+</details>
+
+<details>
+<summary>**Card 12 / 28** — Claude Code aur OpenCode rules file kaunsi file use karte hain?</summary>
+
+**Jawab:**
+- **Claude Code:** `CLAUDE.md`
+- **OpenCode:** `AGENTS.md` (lekin `CLAUDE.md` bhi fallback mein padhta hai agar `AGENTS.md` na ho)
+
+</details>
+
+<details>
+<summary>**Card 13 / 28** — Slash command aur skill mein kya farq hai?</summary>
+
+**Jawab:**
+- **Slash command:** Manually trigger karte ho `/command-name` likh ke
+- **Skill:** Model **khud auto-invoke** karta hai jab task description match kare — tum explicitly call nahi karte
+
+</details>
+
+<details>
+<summary>**Card 14 / 28** — Skill ka description field itna important kyun hai?</summary>
+
+**Jawab:**
+Description woh cheez hai jisse model decide karta hai skill apply hoti hai ya nahi. Vague description (`"videos mein help karta hai"`) sab pe fire hoti hai. Specific description (`"YouTube link provide karne pe transcript nikalna"`) sirf relevant hone pe fire hoti hai.
+
+</details>
+
+<details>
+<summary>**Card 15 / 28** — Hooks aur Plugins mein fundamental farq kya hai?</summary>
+
+**Jawab:**
+- **Skills:** *Probabilistic* — model decide karta hai invoke karna hai ya nahi
+- **Hooks/Plugins:** *Deterministic* — specific events pe **har baar** fire hote hain, koi model judgment nahi
+
+</details>
+
+<details>
+<summary>**Card 16 / 28** — Claude Code hooks aur OpenCode plugins implement karne mein kya farq hai?</summary>
+
+**Jawab:**
+- **Claude Code Hooks:** `.claude/settings.json` mein shell command — bash kafi hai, exit code 2 se block
+- **OpenCode Plugins:** `.opencode/plugins/` mein JS/TS module — zyada events, async, structured logging, `throw` se block
+
+</details>
+
+<details>
+<summary>**Card 17 / 28** — Subagent kyun use karte hain?</summary>
+
+**Jawab:**
+Subagent isolated context window mein kaam karta hai. Uska file searches, log dumps, aur exploratory reads tumhara main thread pollute nahi karte. Sirf conclusion wapas aata hai, poori exploration nahi.
+
+**Rule:** Agar task mein bahut zyada reading ho jo final jawab ke liye relevant nahi, subagent use karo.
+
+</details>
+
+<details>
+<summary>**Card 18 / 28** — MCP use karna kab sahi hai aur kab nahi?</summary>
+
+**Jawab:**
+✅ **MCP use karo:** Stateful ya auth-heavy services jahan protocol layer genuinely kaam kare (e.g., Playwright browser session)
+
+❌ **CLI use karo:** Stateless tools (GitHub, AWS, Jira) jahan `gh`, `aws`, `jira` CLI zyada flexible hain — MCP context bloat karta hai
+
+</details>
+
+<details>
+<summary>**Card 19 / 28** — Git worktrees parallel sessions mein kyun zaroori hain?</summary>
+
+**Jawab:**
+Agar do agents same file ek saath edit karein, aakhri write jeetta hai aur doosre session ke edits kho jaate hain. Worktrees mein har agent apni branch pe kaam karta hai — koi contention nahi.
+
+```bash
+git worktree add ../myproject-backend feature/auth-core
+git worktree add ../myproject-frontend feature/auth-ui
+```
+
+</details>
+
+<details>
+<summary>**Card 20 / 28** — Plan/Execute split pattern kya hai?</summary>
+
+**Jawab:**
+1. Claude Code (frontier model) mein plan banao → `docs/plans/feature-x.md` mein save karo
+2. OpenCode (economy model) mein plan implement karo
+3. (Optional) Claude Code se diff review karo
+
+Frontier model sirf planning pe laga — economy model baaki kaam karta hai. Cost savings real hain.
+
+</details>
+
+<details>
+<summary>**Card 21 / 28** — Cross-model review pattern kyon effective hai?</summary>
+
+**Jawab:**
+Woh model jo code likha, uske wahi blind spots hain jo original produce kiye — worst possible reviewer. Alag family ka model (alag training data, alag reasoning) woh cheezein pakadta hai jo author miss kiya.
+
+</details>
+
+<details>
+<summary>**Card 22 / 28** — Personal context library kab aur kaise banao?</summary>
+
+**Jawab:**
+**Pehle se mat banao.** Har entry real failure se aani chahiye. Jab kisi cheez mein teesri baar same instructions likhni pare, tab command ya skill banao. `~/.claude/skills/` ya `~/.config/opencode/skills/` mein shared skills sab projects mein auto-available hoti hain.
+
+</details>
+
+<details>
+<summary>**Card 23 / 28** — Context costs spike kyun hoti hain?</summary>
+
+**Jawab:**
+Paanch main wajahaat:
+1. Rules file/system prompt badla → cache hits toot gaye
+2. Files baar baar read ho rahi hain → context bina bound ke barh raha hai → `/compact`
+3. Model over-explaining → reasoning effort zyada → neeche karo
+4. Frontier model mechanical tasks pe → economy model use karo
+5. System prompt structure badla → cache prefix match nahi → stabilize karo
+
+</details>
+
+<details>
+<summary>**Card 24 / 28** — Hook/Plugin kab use karo, skill kab?</summary>
+
+**Jawab:**
+- **Hooks/Plugins:** Jo cheezein **100% waqt** true honi chahiye — no exceptions (e.g., `rm -rf` block, commit pe tests)
+- **Skills:** Jo cheezein model ko **zyada tar** yaad rakhni hon — probabilistic
+
+</details>
+
+<details>
+<summary>**Card 25 / 28** — `/init` command kya karta hai?</summary>
+
+**Jawab:**
+Model tumhara project folder scan karta hai aur `CLAUDE.md` (ya `AGENTS.md`) draft karta hai. Tumhara kaam baad mein ruthlessly delete karna hai — yeh editing task hai, authoring nahi.
+
+</details>
+
+<details>
+<summary>**Card 26 / 28** — Skill ko scratch se likhna chahiye ya nahi?</summary>
+
+**Jawab:**
+Nahi. Claude Code `skill-creator` skill ke saath aata hai jo naye skills sahi se scaffold karta hai. OpenCode `~/.claude/skills/` fallback padhta hai, toh wahi `skill-creator` dono tools mein kaam karta hai.
+
+</details>
+
+<details>
+<summary>**Card 27 / 28** — Skill mein monolith banane ki bajaye chote skills kyun chain karein?</summary>
+
+**Jawab:**
+Har skill apne step pe focused rehti hai — context isolation per step. `format` skill ko research notes load karne ki zarurat nahi; `research` skill ko formatting conventions jaanne ki zarurat nahi. Reusability acha hai, magar real win per-step context isolation hai.
+
+</details>
+
+<details>
+<summary>**Card 28 / 28** — Ek tool se dusre mein jaane pe skills transfer kyun hoti hain?</summary>
+
+**Jawab:**
+`SKILL.md` format dono tools mein **byte-for-byte same** hai. Concepts same hain, sirf configs alag hain. Jo thinking seekhi, woh survive karti hai chahe koi bhi tool jeete.
+
+</details>
+
+---
+
+## Quiz: 15 Concepts Pe Sawal
+
+Har sawaal ke 4 options hain. Sahi jawab socho, phir reveal karo.
+
+<details>
+<summary>**Q1.** `--dangerously-skip-permissions` ka main risk kya hai?</summary>
+
+**Sahi Jawab: C — Model bina approval ke koi bhi action le sakta hai, including dangerous ones jaise rm -rf ya git push.**
+
+- A) Sirf context cost zyada hoti hai
+- B) Model slower ho jaata hai
+- ✅ C) Model bina approval ke koi bhi action le sakta hai, including dangerous ones jaise `rm -rf` ya `git push`
+- D) Sirf MCP connections fail hoti hain
+
+</details>
+
+<details>
+<summary>**Q2.** Context rot ki main wajah kya hai?</summary>
+
+**Sahi Jawab: B — Token counts badhne se model pehle ki cheezein sahi weight karna band kar deta hai, chahe window full na ho.**
+
+- A) Model ki RAM khatam ho jaati hai
+- ✅ B) Token counts badhne se model pehle ki cheezein sahi weight karna band kar deta hai
+- C) Internet connection slow ho jaata hai
+- D) API rate limits hit hoti hain
+
+</details>
+
+<details>
+<summary>**Q3.** `/clear` kab use karna chahiye?</summary>
+
+**Sahi Jawab: A — Naye unrelated task pe switch karte waqt jab purana context noise ban gaya ho.**
+
+- ✅ A) Naye unrelated task pe switch karte waqt jab purana context noise ban gaya ho
+- B) Jab same task pe deep ho aur context bloated ho
+- C) Jab koi bad turn hua ho aur files revert karni hon
+- D) Har ghante automatically
+
+</details>
+
+<details>
+<summary>**Q4.** OpenCode mein plan mode kaise enter karte hain?</summary>
+
+**Sahi Jawab: B — Tab dabao Build se Plan agent switch karne ke liye.**
+
+- A) `Shift+Tab` do baar
+- ✅ B) `Tab` dabao `Build` se `Plan` agent switch karne ke liye
+- C) `/plan` type karo
+- D) `Ctrl+P` dabao
+
+</details>
+
+<details>
+<summary>**Q5.** Rules file (CLAUDE.md/AGENTS.md) mein kya nahi hona chahiye?</summary>
+
+**Sahi Jawab: C — Poora TypeScript style guide, kyunki model .ts files dekh ke infer kar sakta hai.**
+
+- A) Stack aur tech list
+- B) Critical rules jo model guess nahi kar sakta
+- ✅ C) Poora TypeScript style guide kyunki model `.ts` files dekh ke infer kar sakta hai
+- D) Dangerous folders jo edit nahi karne chahiye
+
+</details>
+
+<details>
+<summary>**Q6.** Skill aur slash command mein kya farq hai?</summary>
+
+**Sahi Jawab: D — Skill auto-invoke hoti hai jab model description match karta hai; slash command manually trigger karna parta hai.**
+
+- A) Skill sirf Claude Code mein kaam karta hai
+- B) Slash command zyada advanced hai
+- C) Dono same hain, sirf naam alag hai
+- ✅ D) Skill auto-invoke hoti hai jab model description match karta hai; slash command manually trigger karna parta hai
+
+</details>
+
+<details>
+<summary>**Q7.** Hooks aur plugins mein kya farq hai?</summary>
+
+**Sahi Jawab: B — Hooks Claude Code mein shell commands hain (.claude/settings.json mein); Plugins OpenCode mein JS/TS modules hain (.opencode/plugins/ mein).**
+
+- A) Hooks OpenCode mein hain, plugins Claude Code mein
+- ✅ B) Hooks Claude Code mein shell commands hain; Plugins OpenCode mein JS/TS modules hain
+- C) Dono same hain
+- D) Hooks sirf read operations ke liye hain
+
+</details>
+
+<details>
+<summary>**Q8.** Subagent kyun use karte hain?</summary>
+
+**Sahi Jawab: A — Noisy reads (codebase exploration, doc fetching) ko isolated context mein karne ke liye taake main thread pollute na ho.**
+
+- ✅ A) Noisy reads ko isolated context mein karne ke liye taake main thread pollute na ho
+- B) Tezi se code likhne ke liye
+- C) API costs bachane ke liye
+- D) Multiple users ke liye
+
+</details>
+
+<details>
+<summary>**Q9.** Context cost spike hoti hai jab?</summary>
+
+**Sahi Jawab: C — Rules file ya system prompt badlne se cache hits toot jaate hain.**
+
+- A) Model naya update aata hai
+- B) Internet slow hoti hai
+- ✅ C) Rules file ya system prompt structure badlne se cache hits toot jaate hain
+- D) Zyada users same session use karein
+
+</details>
+
+<details>
+<summary>**Q10.** Plan/Execute split pattern mein economy model kab use karte hain?</summary>
+
+**Sahi Jawab: B — Implementation phase mein jab frontier model ne plan bana diya ho.**
+
+- A) Planning phase mein
+- ✅ B) Implementation phase mein jab frontier model ne plan bana diya ho
+- C) Testing phase mein
+- D) Kabhi nahi, sirf frontier model use karo
+
+</details>
+
+<details>
+<summary>**Q11.** Cross-model review effective kyun hai?</summary>
+
+**Sahi Jawab: D — Woh model jisne code likha uske wahi blind spots hain; alag family ka model different cheezein pakadta hai.**
+
+- A) Ek model dusre se tez hai
+- B) Cost bachti hai
+- C) Context kam hoti hai
+- ✅ D) Woh model jisne code likha uske wahi blind spots hain; alag family ka model different cheezein pakadta hai
+
+</details>
+
+<details>
+<summary>**Q12.** Git worktrees parallel sessions mein kyun use karte hain?</summary>
+
+**Sahi Jawab: A — Taake do agents same file pe stomp na karein — har worktree alag branch pe kaam karta hai.**
+
+- ✅ A) Taake do agents same file pe stomp na karein — har worktree alag branch pe kaam karta hai
+- B) Files zyada fast save hoti hain
+- C) Model zyada smart ho jaata hai
+- D) Internet bandwidth bachti hai
+
+</details>
+
+<details>
+<summary>**Q13.** Personal context library kab banana chahiye?</summary>
+
+**Sahi Jawab: C — Real failures ke baad — jab model ne ghalti ki ya teesri baar same instructions likhni parein.**
+
+- A) Project shuru karne se pehle
+- B) Pehle hafte mein
+- ✅ C) Real failures ke baad — jab model ne ghalti ki ya teesri baar same instructions likhni parein
+- D) Sirf team projects mein
+
+</details>
+
+<details>
+<summary>**Q14.** MCP kab use nahi karna chahiye?</summary>
+
+**Sahi Jawab: B — Stateless tools ke liye jaise GitHub, AWS, Jira jahan CLI zyada flexible aur kam context-heavy hain.**
+
+- A) Jab internet slow ho
+- ✅ B) Stateless tools ke liye jaise GitHub, AWS, Jira — CLI zyada flexible hai
+- C) Jab team mein zyada log hon
+- D) Free tier pe
+
+</details>
+
+<details>
+<summary>**Q15.** Skills scratch se likhne ki bajaye kya karna chahiye?</summary>
+
+**Sahi Jawab: A — Claude Code ka built-in skill-creator skill use karo jo sahi scaffold karta hai (OpenCode bhi ise padhta hai).**
+
+- ✅ A) Claude Code ka built-in `skill-creator` skill use karo — OpenCode bhi ise padhta hai
+- B) ChatGPT se likhwao
+- C) Official docs copy karo
+- D) Ek badi monolithic skill banao
+
+</details>
+
+---
+
+:::info Aur Deep Jaana Chahte Ho?
+- **[Chapter 14: General & Coding Agents ke saath kaam](/docs/General-Agents-Foundations/general-agents)** — Rules file hierarchy, plan mode depth, skill anatomy, subagent orchestration, hooks, session management
+- **[Chapter 18: Claude Code for Teams, CI/CD & Advanced Configuration](/docs/General-Agents-Foundations/claude-code-teams-cicd)** — Team workflows, CI/CD integration, advanced config
+:::

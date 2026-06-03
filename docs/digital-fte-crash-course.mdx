@@ -1,0 +1,2284 @@
+---
+sidebar_position: 12
+title: "Digital FTE Banana: 4-Ghante ka Crash Course"
+description: "Skills, System of Record, aur MCP ke saath AI Worker banana seekhein"
+---
+
+# Digital FTE Banana: 4-Ghante ka Crash Course
+
+*15 Concepts, 80% Real Use — Skills, System of Record, aur MCP*
+
+Yeh [Mode 2, Manufacturing track](/docs/getting-started#mode-2-the-manufacturing-track) mein doosra course hai. Yeh **saat moves mein se doosra hai**: aap apne pehle se banaye hue agent ko lete ho aur usse pehli baar **AI Worker** ki taraf ek asli kadam uthate ho. Pichla course, [Build AI Agents](/docs/build-agents-crash-course), ne agent khud banaya tha: ek streaming chat agent sessions, guardrails, aur tracing ke saath, sandbox par compute ke liye chal raha tha. Kaam karta tha. Lekin jaise hi aap terminal band karte, sab kuch bhool jata tha, aur uske har tools uski Python mein likhe hue the.
+
+> **Pehle sirf kaam karna dekhna hai?** Neeche [15-minute Quick Win](#the-fifteen-minute-quick-win-succeed-once-then-study-why-it-worked) par jump karo. Aap ek kaam karta hua Skill + Postgres + MCP slice banayenge, phir concepts ke liye wapas aana jo explain karein ke yeh is shape mein kyun hai.
+
+Ek **AI Worker** ek clever agent se zyada hai. Aap ise **AI Employee** ya **Digital FTE** (full-time equivalent) ke naam se bhi sunenge. Yeh teen naam ek hi cheez ke hain, har ek alag angle se describe karta hai: _AI Worker_ batata hai ke yeh kaise banaya gaya hai, _AI Employee_ batata hai ke yeh team mein kahan baithta hai, aur _Digital FTE_ batata hai ke yeh budget mein kaise dikhta hai. Yeh course **AI Worker** (ya sirf **Worker** short mein) use karta hai.
+
+Wohi agent teen tareeqon se evolve hokar AI Worker banta hai. Yeh **extensible hai**: bina rewrite ke naye abilities hasil karta hai. Yeh ek **system of record** ke khilaf chalta hai: company ki ground truth, na ke ek context window jo restart par khaali ho jaye. Aur yeh **owned hai**: aap control karte ho ke yeh kahan chalta hai, kya data rakhta hai, aur kya rules follow karta hai. Ek poora AI Worker hamesha-on, proactive, aur multi-channel bhi hota hai, lekin woh raaste mein baad ke moves hain. Yeh course **foundation** banata hai: extensible, durable, owned core jis par baaki sab cheezein add hoti hain.
+
+Aap wohi SDK aur wohi `SandboxAgent` runtime pichle course se rakhte ho. Ek chalte hue Worker ke do parts hain jo production mein alag deploy hote hain: **harness** (agent ka runtime, SDK loop khud) aur **compute** (**sandbox** jahan agent ka code actually execute hota hai). Jab agent tool chalata hai, woh code apne sandbox ko deta hai; woh sandbox compute hai. Is course mein dono local rehte hain: `UnixLocalSandboxClient` sandbox seedha aapki machine par chalata hai (zero infrastructure, ek API key), aur aap ise Docker, Cloudflare, E2B, ya Modal par ek line change se point kar sakte ho ([Part 5 ka Swap guide](#swap-guide-the-architecture-is-invariant-the-products-are-not)). Harness khud ko always-on cloud service ke tor par deploy karna apna course hai, [Deploy Your Agent Harness to the Cloud](/docs/deploying-agents-crash-course). Aap yahan koi bhi deploy nahi karte. Yeh course woh badalta hai jo runtime ke ird gird hai.
+
+Woh promotion do moves par aati hai, aur un ke beech ka wire, aur neeche ke bullets un teenon mein se ek ek hain. Agent Skills khud discover karta hai; ek wire usse stores se jodta hai.
+
+*   **Capabilities** se **Skills** bante hain: portable folders jo agent demand par discover aur load karta hai, na ke Python mein likhe hue tools.
+*   Woh cheezein jo agent restart par kho deta tha woh **Postgres** mein chali jaati hain. Teen mukhtalif cheezein wahan rehti hain, aur woh ek jaisi nahi hain:
+    *   **State**: kaam ki mojooda haalat. Kaunsi conversations khuli hain, kya approval ka intezaar kar raha hai.
+    *   **System of record**: jo waqai hua uski authoritative, audited trace. Worker ne liya har action, baad mein replay kiya ja sakta hai.
+    *   **Memory**: Worker ne kya seekha hai aur jis par woh bharosa kar sakta hai. Pichle cases, reference documents, purani conversations ka khulasa.
+*   **MCP (Model Context Protocol)** agent aur un stores ke beech ka **wire** hoga.
+
+Ek aur cheez, aur yeh woh hai jise zyada tar log galat label karte hain. **Semantic recall**, matlab meaning se dhundhna exact match ki bajaye, yeh ek _retrieval method_ hai, na ke chautha store. Aap ise state par, system of record par, ya memory par chala sakte ho. Humein yeh `pgvector` se milta hai, ek extension jo Postgres mein vector search add karta hai. Do sawal dikhate hain ke stores kyun alag hain:
+
+*   _"Hamari company policy is customer case ke liye kya hai?"_ yeh **system of record** se ek authoritative answer maangta hai.
+*   _"Kya humne is se pehle aisa sawaal dekha hai?"_ yeh **memory** se poochta hai, aur semantic recall woh tarika hai jis se aap match dhundhte ho.
+
+Wohi database, mukhtalif stores, ek search method jo sab par kaam karta hai.
+
+> **Yaad rakhne wala ek jumla.** Agent ko Worker mein promote karna do moves hai: iski **capabilities** ko iski code se bahar nikalo (Skills), aur iski **state, records, aur memory** ko iski process se bahar nikalo (Postgres, MCP ke zariye reach kiya gaya). Is course mein har cheez un dono moves mein se koi ek hai, ya un ke beech ka wire hai.
+
+![Ek tasveer mein promotion: capabilities agent ki code se bahar nikal kar discoverable Skills ki library mein chali jaati hain; agent ki state, system of record, aur memory iski process se bahar nikal kar pgvector ke saath Postgres mein chali jaati hain; agent Skills khud discover karta hai, aur MCP woh wire hai jis se woh us Postgres ko reach karta hai.](/img/01-worker-architecture-46a2ad6331f0c6dd796e6b1e61ad6b4e.webp)
+
+### Yeh course Agent Factory thesis mein kahan baithta hai
+
+[Thesis](https://agentfactory.panaversity.org/docs/thesis) saat invariants naam deta hai jo har production agent system satisfy karna chahiye. Pichle course ne **engine** banaya tha (Invariant 4): OpenAI Agents SDK sandbox par. Yeh course **Invariant 5** add karta hai: har Worker ek system of record ke khilaf chalta hai. Engine woh hai jis par Worker _chalta_ hai; system of record woh hai jis ke khilaf woh _chalta_ hai.
+
+Do open standards ise portable rakhte hain. **Skills** (originally Anthropic, ab ecosystem-wide [agentskills.io](https://agentskills.io) par) capabilities ko tools ke beech travel karne dete hain. **MCP** standard wire hai jis se agent record tak pahunchta hai; pichle course mein koi nahi tha, aur yeh yahan key naya pattern hai. Record khud **Neon Postgres + pgvector** hai, chosen kyunki yeh shuru karne ke liye free hai, idle par zero tak scale hota hai, aur ek official MCP server ship karta hai. Product replaceable hai; [Swap guide](#swap-guide-the-architecture-is-invariant-the-products-are-not) alternatives list karta hai.
+
+### 15-concept cheat sheet
+
+Zyada tar production failures teen cheezon mein se kisi ek par trace hoti hain: ek Skill jo agent ne kabhi discover nahi ki, ek database jo waqai source of truth nahi hai, ya ek MCP wire jo data drop karta hai.
+
+15 concepts ek nazar mein (poora map ke liye expand karein)
+
+| # | Concept | Layer | Kaunsa sawaal iska jawab hai |
+|---|---------|-------|------------------------------|
+| 1 | Agent Skill kya hota hai | **Skills** | Reusable capability kahan rehti hai? Ek folder mein, `SKILL.md` plus optional scripts/references ke saath. |
+| 2 | Progressive disclosure | **Skills** | Skills haath mein rakhna sasta kyun hai? Discovery → activation → execution sirf woh load karta hai jab zarurat ho. |
+| 3 | SKILL.md likhna | **Skills** | Skill file mein actually kya hota hai? Metadata, trigger description, operational instructions. |
+| 4 | Skill packaging conventions | **Skills** | Skills tools ke beech kaise travel karti hain? Wohi folder Claude Code, OpenCode, aur kisi bhi compliant client mein kaam karta hai. |
+| 5 | Skills ka composition | **Skills** | Choti skills ko filesystem handoff se kab chain karein vs ek badi skill kab likhein. |
+| 6 | Managed Postgres kyun | **System of record** | Kaunsa store "system of record" kamata hai? Persistence, branching, governance, aur vector primitives wala jo agent ko chahiye. |
+| 7 | Worker ka schema | **System of record** | Agent ko actually kaunsi tables chahiye? Conversations, messages, documents, embeddings, audit log, capability invocations. |
+| 8 | pgvector basics | **System of record** | Semantic search Postgres mein kaise kaam karta hai? Embedding column, distance operators, index types. |
+| 9 | Embedding pipeline | **System of record** | Text queryable vector kaise banta hai? Chunking, embedding model, kab re-embed karein. |
+| 10 | Audit trail as discipline | **System of record** | Worker ke liye "reads and writes" ka kya matlab hai? Worker ka har action ek trace chodta hai jo company replay kar sakti hai. |
+| 11 | MCP kya hai aur kya nahi hai | **MCP** | Tools, resources, aur prompts ke liye ek protocol: na framework, na service. |
+| 12 | Neon MCP server | **MCP** | Agent ka apne database se interface: kya expose karta hai, kaise authenticate karta hai. |
+| 13 | MCP ko Agents SDK se connect karna | **MCP** | SDK ka MCP integration: server kaise register karein, model kya dekhta hai, trust boundary kahan hai. |
+| 14 | Custom MCP servers | **MCP** | Apna server kab likhein vs sirf `@function_tool` kab use karein. Decision tree. |
+| 15 | MCP load ke neeche | **MCP** | Transport choices, connection pooling, kab queue karein. |
+
+Jab aapke paas yeh mapping ho, baaki mostly mechanics hai. Production mein failure in mein se kisi ek par trace hoti hai: ek Skill jo kabhi discover nahi hui (description bohot vague thi), ek system of record jis par do Workers disagree karein (schema race), ya ek MCP wire jo events drop kare (kaam ke liye galat transport). Diagnostic batata hai kaunsa.
+
+### Yeh course kiske liye hai
+
+Intermediate. Aapke paas hona chahiye:
+
+*   Agar ho sake toh [Build AI Agents](/docs/build-agents-crash-course) complete kiya ho: recommended, zaruri nahi (companion zip uski end state reproduce karta hai, toh aap bina uske shuru kar sakte ho; details [Appendix A.1](#a1-audience--prerequisites) mein).
+*   [Agentic Coding Crash Course](/docs/agentic-coding-crash-course) se Plan-mode aur rules-file ki aadatein.
+*   Ek [PRIMM-AI+ cycle](/docs/Programming-in-the-AI-Era/the-workbench/the-primm-ai-framework/the-primm-framework) aapke naam.
+*   Postgres ka ek working mental model (tables, rows, SQL).
+
+Aap yahan Python haath se nahi likhte. Aapka coding agent (Claude Code ya OpenCode) har code block likhta hai; aapka kaam usse direct karna, jo woh produce kare woh padhna, aur pakadna jab woh drift kare. Yeh Mode 2 discipline hai, pichle course ki tarah. Parts 2 aur 3 dense hote hain (Pydantic models, asyncpg pools, ek chota custom MCP server), toh wahan agent ke saath zyada back-and-forth expect karein. Poori prerequisites aur glossary [Appendix A.1 aur A.5](#a1-audience--prerequisites) mein hain.
+
+:::note Currency
+
+**May 2026 tak current.** `openai-agents` 0.17.x, current `mcp` SDK, Neon ke MCP server docs, aur `pgvector` 0.8+ ke against verified. Jab aap build karo toh apne `pyproject.toml` mein versions pin karo. Jab docs aur is page mein disagreement ho, docs jeet ti hain: [Cloudflare Sandbox tutorial](https://developers.cloudflare.com/sandbox/tutorials/openai-agents/) aur [Neon docs](https://neon.com/docs) canonical hain.
+
+:::
+
+### Pichle course se kya rehta hai, kya naya hai
+
+Jo aap use karte rehte ho: `Agent`, `Runner`, `@function_tool`, sessions, streaming events, guardrails, aur `SandboxAgent` `Shell()` aur `Filesystem()` capabilities ke saath. Sandbox abhi bhi woh jagah hai jahan agent jo kuch execute karta hai woh chalta hai, Skill scripts jo shell commands chalati hain shamil. Aapko kitni isolation milti hai yeh client par depend karta hai: `UnixLocalSandboxClient` (starter ka default) aapki asli machine par bina isolation ke chalta hai, jabke `DockerSandboxClient` ya `CloudflareSandboxClient` ek line change se real isolation dete hain.
+
+Kya naya hai: pichle course ke stub tools aur in-process SQLite session gayab hain. **Skills library**, **Neon system of record**, aur **MCP** wire jo unki jagah lete hain, woh Parts 1–3 banate hain.
+
+Yeh **Python-first** course hai, apne predecessor ki tarah. Skills format language-agnostic hai (`SKILL.md` ek Markdown file hai chahe aapka agent Python ho ya TypeScript) aur MCP transport-agnostic hai, lekin hum Part 4 mein jo agent extend karte hain woh wohi Python `chat-agent` hai jo aapne pichle course mein banaya tha.
+
+:::tip Apna tool chuno, page sync hota hai
+
+Pichle course ka dual-tool pattern jari hai. Jo sections Claude Code aur OpenCode ke beech diverge karti hain un mein switcher hai; ek chuno aur page visits ke beech sync hoti hai.
+
+:::
+
+### Non-tech leaders ke liye reading path (aap build nahi karoge; aapko scope karna hai ke aapki team kya karegi)
+
+Agar CTO ya product partner ne aapko yahan bheja hai taake aap agli planning meeting mein ache sawal pooch sakein, toh aapko poore chapter ki zarurat nahi. 25-minute ka path:
+
+1.  Upar callout mein **"yaad rakhne wala ek jumla"** (capabilities + memory).
+2.  **Skill actually kya hai:** [Concept 1](#concept-1-agent-skill-kya-hota-hai). Do paragraphs.
+3.  **System of record kyun zaruri hai:** [Concept 6](#concept-6-managed-postgres-kyun-aur-khaas-tor-par-neon-kyun) ka opening (schema details skip karo).
+4.  **Audit-trail discipline:** [Concept 10](#concept-10-audit-trail-as-discipline-worker-ke-liye-reads-aur-writes-ka-matlab) ka opening.
+5.  **Cost shape:** [Part 5 ka "Worker ki cost shape"](#worker-ki-cost-shape-operate-karne-mein-asli-kharcha-kya-hai). Asli numbers: ek Worker ke liye $60–$240/month, 50 Workers ki workforce ke liye $3K–$12K.
+6.  **Swap guide:** [Part 5 ka "Swap guide"](#swap-guide-the-architecture-is-invariant-the-products-are-not). Kaunse vendor choices strategic hain (architecture rehta hai) vs. tactical (engineers chunte hain).
+
+In chhe ke baad, planning meeting mein le jaane ke teen sawaal: _(1) Humein pehle Worker ko kaunse Skills chahiye, aur har ek kis existing playbook se aata hai? (2) Hum sab se chota audit trail ship kar sakte hain jo abhi bhi review pass kare? (3) Kaunse vendor commitments hum 12 mahine ke liye lock-in ke liye OK hain, aur kaunse swappable rehte hain?_
+
+### Yeh chapter aapke coding agent ko kaise use karta hai
+
+[digital-fte-crash-course.zip](/downloads/digital-fte-crash-course.zip) download karo aur unzip karo: yeh ek **complete, runnable starter project** hai, na ke kisi existing cheez mein drop karne ka patch. (Setup do commands hai, Quick Win ke "Before you start" mein diye gaye.) Yahan jo cheez flag karna zaruri hai: aapka coding agent session shuru hone par `AGENTS.md` brief pick up karta hai, aur woh brief saat decisions mein durable rules carry karta hai: MCP boundaries, audit discipline, embedding-model invariants, canonical action vocabulary.
+
+Part 4 mein per-decision briefs phir surgical hain: sirf woh naam lete hain jo IS step mein badalta hai (ek nayi file, ek naya tool, ek nayi wiring), jabke `AGENTS.md` architectural rules ko context turn after turn rakhta hai.
+
+Agar aap padhne ki bajaye build karna chahte ho, toh Quick Win seedha neeche hai. Poora cheez ke liye, pichle course ka chat agent Part 4 mein aath surgical decisions ke zariye ek customer-support Worker mein evolve hota hai, ussi course ke worked example ki shape mein.
+
+---
+
+## The fifteen-minute quick win: succeed once, then study why it worked
+
+Is se pehle ke aap 15 concepts parhein jo explain karein ke _yeh_ architecture kyun kaam karti hai, iska sab se chota version banao jo actually kaam kare. Is section ke khatam hone tak aapke paas hoga:
+
+*   ek Postgres table jo agent ki pehli durable write hold karti hai
+*   ek audit row jo record karti hai ke agent ne kya kiya, wohi transaction mein
+*   ek MCP boundary jo agent ne cross ki
+*   is sawaal ka kaam karta hua jawab: "kya system of record + MCP boundary ne mere liye actually kuch kiya?"
+
+Yeh Part 4 worked example nahi hai; woh poora Worker hai, aath Decisions, sain lines. **Yeh ek screen hai.** Agar aapke paas sirf ek sitting hai, yeh karo, phir concepts ke liye wapas aana jab aap jaanna chahein ke har cheez is shape mein kyun banayi gayi thi.
+
+:::warning Before you start: starter project zip mein hai.
+
+[digital-fte-crash-course.zip](/downloads/digital-fte-crash-course.zip) download karo, unzip karo, `uv sync` run karo, aur `.env` mein `OPENAI_API_KEY` set karo. Ab aapke paas ek fully runnable sandboxed chat agent hai, koi pichla course zaruri nahi. Quick Win phir ek MCP server aur project ke `cli.py` mein \~30 lines add karta hai (plus ek optional Skill folder jo aap Part 4 ke liye rakh sakte ho). Starter unzipped hone ke baad yeh do `uv` commands hai (`uv add`, phir `uv run`).
+
+:::
+
+MCP boundary par focus rakhne ke liye, Quick Win ek standalone `cli.py` chalata hai (ek plain `Agent`, pichle course ka `SandboxAgent` nahi) aur "Remember this: …" ko MCP tool ki docstring ke zariye route karta hai. Yeh koi shell ya filesystem operation nahi chalata, toh isse sandbox client ki zarurat hi nahi.
+
+**Step 1.** Ek Postgres table aur ek choti audit table banao **fresh database ya Neon branch** par, na ke kisi aisi par jis mein pehle se tables hon. (Neon ki web console use karo, ya kisi bhi Postgres par `CREATE DATABASE` jo aap control karte ho; aapko abhi pgvector nahi chahiye.) `notes` aur `audit_log` naam generic enough hain ke existing schema se takra sakte hain, aur neeche ka `CREATE TABLE` khaali target assume karta hai.
+
+```sql
+CREATE TABLE notes (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    note_text   TEXT NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE audit_log (
+    id          BIGSERIAL PRIMARY KEY,
+    action      TEXT NOT NULL,
+    payload     JSONB NOT NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+```
+
+**Step 2.** Ek 30-line MCP server likho jo ek tool expose karta hai. Poora pattern Concept 14 aur Decision 6 mein dobara aata hai; yeh sab se chota version hai:
+
+```python
+# notes_mcp.py
+import json
+import os
+import asyncpg
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("notes")
+
+_pool = None
+
+async def pool():
+    global _pool
+    if _pool is None:
+        _pool = await asyncpg.create_pool(os.environ["DATABASE_URL"])
+    return _pool
+
+@mcp.tool()
+async def save_note(text: str) -> dict[str, str]:
+    """Save a note to the durable notes table. Returns the row_id."""
+    p = await pool()
+    async with p.acquire() as c:
+        async with c.transaction():
+            row_id = await c.fetchval(
+                "INSERT INTO notes (note_text) VALUES ($1) RETURNING id::text", text)
+            await c.execute(
+                "INSERT INTO audit_log (action, payload) VALUES ($1, $2::jsonb)",
+                "note_saved",
+                json.dumps({"row_id": row_id, "len": len(text)}),
+            )
+    return {"row_id": row_id, "status": "saved"}
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
+```
+
+Audit payload ke liye `json.dumps()` use karo, f-string nahi. Quick Win ki values safe hain (UUID aur int), lekin poora worked example user-typed strings accept karta hai, toh wohi pattern dono ko protect karta hai. `row_id` key important hai: Step 4 ki verification query `payload->>'row_id'` par join karti hai, toh woh exact key payload mein hona chahiye.
+
+**Step 3.** Agent banao. Pehle, SDK, DB driver, aur MCP package install karo (starter pehle se SDK ship karta hai, toh practically aap `asyncpg` aur `mcp` add kar rahe ho):
+
+```bash
+uv add openai-agents asyncpg mcp
+```
+
+Phir starter ke `cli.py` mein, imports aur `main()` wiring aisi dikhti hai (`cli.py` baqi starter jaisi ship hoti hai rehti hai):
+
+```python
+# cli.py — Quick Win shape
+import asyncio
+import os
+from agents import Agent, OpenAIChatCompletionsModel, Runner, set_tracing_disabled
+from agents.mcp import MCPServerStdio
+from openai import AsyncOpenAI
+
+# Uncomment if your backend is not OpenAI (DeepSeek, OpenRouter, local proxy):
+# set_tracing_disabled(True)
+
+async def main():
+    # The OpenAI Agents SDK accepts any OpenAI-API-compatible backend.
+    # Set OPENAI_BASE_URL only when pointing at a non-OpenAI host.
+    client = AsyncOpenAI(
+        api_key=os.environ["OPENAI_API_KEY"],
+        base_url=os.environ.get("OPENAI_BASE_URL"),
+    )
+    model = OpenAIChatCompletionsModel(
+        model=os.environ["MODEL_NAME"],
+        openai_client=client,
+    )
+
+    async with MCPServerStdio(
+        name="notes",
+        params={
+            "command": "python",
+            "args": ["notes_mcp.py"],
+            "env": {**os.environ},  # inherit PATH + DATABASE_URL into the subprocess
+        },
+        client_session_timeout_seconds=30,  # default 5s is too short for first call to a remote Postgres
+    ) as notes:
+        agent = Agent(
+            name="ChatAgent",
+            model=model,
+            mcp_servers=[notes],
+            instructions="You are a helpful assistant. Use the tools available to you.",
+        )
+        result = await Runner.run(
+            agent,
+            "Remember this: the production deploy needs a new env var before Friday.",
+        )
+        print(result.final_output)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+Teen details naam ke laayak:
+
+*   **`env={**os.environ}`** sab se common Quick Win failure ka fix hai. Agar aap sirf `DATABASE_URL` pass karo, spawned subprocess `PATH` kho deta hai aur `python notes_mcp.py` kuch shells par findable nahi rehta. Parent env inherit karna subprocess ko saaf se shuru karta hai.
+*   **`client_session_timeout_seconds=30`** SDK ke 5-second default ko override karta hai. Pehle `save_note` call ko remote Postgres se TLS connection kholna hota hai, fresh pool acquire karna hota hai, aur transaction ke andar do inserts run karne hote hain. 5 seconds par client give up karta hai aur retry karta hai, pehla call server-side commit hota hai, aur aapke paas duplicate rows ho jaate hain.
+*   **`set_tracing_disabled(True)`** upar example mein commented hai. Yeh SDK ke `platform.openai.com` ke khilaf trace-upload attempt ko silence karta hai. Real OpenAI run par commented rehne do; uncomment karo agar aapka backend kuch aur hai.
+
+**Step 4.** Run karo.
+
+```bash
+export DATABASE_URL='postgresql://…/your_db?sslmode=require'
+export OPENAI_API_KEY='sk-…'           # OpenAI, DeepSeek, OpenRouter, jo bhi aapke paas ho
+
+# Pick any model your provider serves. Common choices:
+#   'gpt-4o' or 'gpt-5.5' (OpenAI), 'deepseek-chat' (DeepSeek),
+#   'meta-llama-3.1-…' (OpenRouter), etc.
+export MODEL_NAME='gpt-4o'
+
+# UNCOMMENT THIS UNLESS your OPENAI_API_KEY is from OpenAI itself.
+# DeepSeek, OpenRouter, and other OpenAI-API-compatible providers need
+# the base URL set, otherwise the SDK will hit api.openai.com with your
+# non-OpenAI key and you'll see a 401.
+# export OPENAI_BASE_URL='https://api.deepseek.com/v1'
+
+# Smoke-test the key before the full run. This should print the start of a
+# JSON model list; a 401 here means the key or OPENAI_BASE_URL is wrong, and
+# you learn that in one second instead of four files deep.
+curl -sS "${OPENAI_BASE_URL:-https://api.openai.com/v1}/models" \
+  -H "Authorization: Bearer $OPENAI_API_KEY" | head -c 200; echo
+
+uv run python cli.py
+```
+
+MCP tool ki docstring ek hi routing signal hai: model "Remember this: …" ko `save_note` se match karta hai, use call karta hai, aur server dono rows ek transaction mein likhta hai. **Ek MCP boundary, ek trigger word, ek transaction** (neeche ki figure poora path trace karti hai).
+
+![Quick Win flow ek single horizontal pipeline ke tor par: user prompt SDK mein enter hota hai, jo notes_mcp.py par `list_tools()` call karta hai aur `save_note(text)` wapas leta hai; model prompt ko us tool ki docstring se match karta hai; MCPServerStdio call ko stdio ke zariye notes_mcp.py par route karta hai, jo ek row notes mein aur ek audit_log mein ek transaction mein likhta hai; neeche ek SQL JOIN verify karta hai ke do-row commit aa gaya.](/img/05-quick-win-flow-f9f2528e150de69785ad7793cfb6dfd1.png)
+
+_MCP tool ki docstring saara routing kaam kar rahi hai. Ek transaction dono rows likhta hai. Ek JOIN commit verify karta hai._
+
+**Verification, ek SQL query mein:**
+
+```sql
+SELECT n.id, n.note_text, n.created_at, al.action, al.payload
+FROM notes n
+JOIN audit_log al ON al.payload->>'row_id' = n.id::text
+ORDER BY n.created_at DESC LIMIT 1;
+```
+
+Agar aapko ek row mein apni note text dikhai de aur joined audit row mein `"action": "note_saved"` ke saath matching `row_id`, toh **architecture kaam kar raha hai.** Ek system of record jo truth hold karta hai. Ek MCP boundary jise agent ne cross kiya use likhne ke liye. Ek audit trail jo aap replay kar sakte ho.
+
+Agar ek prompt ke baad `SELECT COUNT(*) FROM notes;` 1 ki bajaye 2 return kare, toh pehle `save_note` call ne client-side timeout kiya aur SDK ne server-side retry kiya. Fix Step 3 mein `client_session_timeout_seconds=30` hai (edit karke dobara run karo). Upar ki verification JOIN ise `LIMIT 1` se chupaati hai, isliye count check karna worth hai.
+
+**Step 5 (optional): Part 4 ke liye Skill seed rakh do.** Upar sab kuch MCP boundary prove karta hai bina Skill ke. Agar aap pehla _move_ baad ke liye staged karna chahte ho, toh abhi ek Skill folder project mein drop karo:
+
+```bash
+mkdir -p .claude/skills/log-a-note
+
+cat > .claude/skills/log-a-note/SKILL.md << 'EOF'
+---
+name: log-a-note
+description: Saves a short text note to the durable notes table in Postgres, along with a timestamp. Use when the user says "remember this", "save a note", "log that", or otherwise asks for something to be persisted between sessions. Returns the row_id of the saved note.
+---
+
+# Log a note
+
+When this skill activates:
+
+1. Extract the note text from the user's message — everything after "remember:" or "save this:" or similar trigger phrases, or the whole message if no trigger phrase is used.
+2. Call the `save_note` tool with the extracted text.
+3. Reply with one short sentence confirming the save and citing the row_id.
+EOF
+```
+
+Aaj yeh kuch nahi karta, aur yeh expected hai: OpenAI Agents SDK ka ek bare `Agent(...)` Skills khud discover nahi karta (yeh ek client capability hai, [Decision 8](#decision-8-end-to-end-verify-karo-test-scenario-se) mein explain ki gayi). Folder Part 4 tak ready baitha hai, jahan Claude Code ke andar yehi project chalane se Skill fire hoti hai. Abhi rakhne ka matlab hai ke jab aap pahunchon toh yeh pehle se jagah par hai.
+
+Yeh ek MCP tool, do tables, aur kuch naye lines hain (plus optional Skill folder). Part 4 ka worked example yehi pattern kayi Skills, das tables, teen MCP tools, aur ek embedding pipeline tak scale karta hai, lekin shape wohi hai. Agar yeh quick win kaam kiya, toh baaki course explain karta hai ke har cheez is shape mein kyun banayi gayi hai aur jab aap ise barhate ho toh kya badalta hai.
+
+Agar kuch kaam nahi kiya, toh document ke end mein "Jab kuch galat lage" table scan karo; woh har common failure ko us concept se map karta hai jo use explain karta hai. Phir yahan wapas aao.
+
+---
+
+## Part 1: Skills, capability as portable folders
+
+Pichle course ke agent ki capabilities Python mein baked thi. Har tool `tools.py` mein ek `@function_tool`-decorated function tha; har behavior `agents.py` mein ek instruction string tha. Woh ek demo ke liye kaam karta tha. Workforce ke liye kaam nahi karta. **Skills capability ko code se aur folders mein extract karti hain jo agent demand par discover, load, aur execute karta hai**: version-controlled, agents ke beech sharable, bina redeploy ke addable.
+
+### Concept 1: Agent Skill kya hota hai
+
+Ek [Agent Skill](https://agentskills.io/) ek folder hai jis mein ek `SKILL.md` file hoti hai plus optional scripts, references, aur assets. Folder _hi_ skill hai; `SKILL.md` uska entry point hai. Format originally Anthropic ne release kiya tha aur ab ek open standard hai jo [agentskills.io](https://agentskills.io/) par publish hai, Claude Code aur OpenCode aaj do reference clients hain aur uske aage compliant clients ki growing list hai. agentskills.io specification compatibility claims ke liye authoritative source hai.
+
+Minimum viable skill:
+
+```
+hello-skill/
+└── SKILL.md
+```
+
+Contents ke saath:
+
+```yaml
+---
+name: hello-skill
+description: A skill that responds with a friendly greeting tailored to the user's name and the time of day. Use when the user asks to be greeted, says hello, or starts a conversation.
+---
+
+# Hello skill
+
+When the user greets you or asks to be greeted:
+
+1. Determine the current local time of day.
+2. Compose a friendly, time-appropriate greeting that uses the user's name if available.
+3. Keep the greeting under 25 words.
+
+Examples:
+- Morning + name known: "Good morning, Sara — hope your week is starting well."
+- Evening + no name: "Good evening — happy to be of help."
+```
+
+Yeh ek complete, valid skill hai. Shuru hone par client name aur description padhta hai; body sirf tab load hoti hai jab model task ke liye skill select kare. **Koi code. Koi deployment. Koi SDK call. Ek folder markdown file ke saath.**
+
+Woh file-on-disk property hai jo skills ko tools ke beech portable, teams ke beech shareable, aur kisi bhi text artifact ki tarah version-controllable banati hai. Skills woh Python objects nahi hain jo aap import karte ho, API endpoints jo aap call karte ho, ya framework primitives jo aap instantiate karte ho.
+
+:::tip PRIMM — Predict
+
+Upar diye gaye `hello-skill` folder ko dekhte hue, agent startup par, kisi bhi user message se pehle, context mein _kya load_ karta hai? Teen options: (a) poori `SKILL.md` file, instructions shamil; (b) sirf frontmatter `name` aur `description`, kuch aur nahi; (c) kuch nahi, kyunki skills sirf tab load hoti hain jab invoke hon. Confidence 1–5.
+
+:::
+
+Jawab **(b)** hai. Startup par, agent apni skill library ki har skill ka sirf metadata padhta hai. Poori body (instructions, examples, references) demand par load hoti hai. Yeh **progressive disclosure** hai, aur yeh agla concept hai.
+
+**Try with AI**
+
+```
+Mujhe apni pehli Agent Skill likhni hai. Mujhe teen skill ideas do
+jo customer-support agent ke liye suitable hon. Har ek ke liye sirf
+frontmatter likho (name + description). Description itni specific
+honi chahiye ke agent ko EXACTLY pata ho ke kab invoke karna hai —
+vague descriptions jaise "Helps with tickets" count nahi karte.
+Jab main tumhari teenon review karloon, poochho main pehle kis ko
+refine karta.
+```
+
+---
+
+### Concept 2: Progressive disclosure, teen-stage skill loading model
+
+Panch skills, sab ek saath loaded, model ko instructions mein daba deti hain jo use abhi nahi chahiye. Isliye skills teen stages mein load hoti hain. Har stage pichle se zyada costly hai, aur agla stage sirf tab load hota hai jab pichla kahe ke skill relevant hai. Woh staged loading **progressive disclosure** hai.
+
+**Stage 1, Discovery.** Startup par, agent har available skill ka `name` aur `description` load karta hai. Spec recommend karta hai ke yeh footprint tiny rakho: roughly **100 tokens per skill**. Panch skills wale Worker ko discovery ke liye roughly 5,000 tokens milte hain, har turn, har conversation. Yeh library mein kya hai yeh jaanne ki cost hai.
+
+**Stage 2, Activation.** Jab model decide karta hai ke kisi task ko skill ki description se match karta hai, woh poori `SKILL.md` body context mein load karta hai. Spec recommend karta hai ke yeh **5,000 tokens se kam** rakho per skill. Zyada tar ache se likhi hui skills 500–2,000 tokens par hoti hain. Activation cost sirf un turns par pay hoti hai jo actually skill use karti hain.
+
+**Stage 3, Execution.** Agar skill ki instructions doosri files refer karti hain (`scripts/` ke neeche script, `references/` ke neeche reference, `assets/` ke neeche template), woh sirf tab load hoti hain jab agent unhe explicitly reach kare. Kuch skills koi references load nahi karti; deep technical skills teen ya char load kar sakti hain.
+
+![Progressive disclosure timeline: startup par, sab skills ke sirf names aur descriptions load hote hain (sasta, har turn par pay hota hai). Activation par, poori SKILL.md body load hoti hai (medium, sirf matching turns par pay hota hai). Execution par, referenced files demand par load hoti hain (variable, sirf jab reach kiya jaye tab pay hota hai).](/img/02-progressive-disclosure-a9a3d68d63ee6a841f5a34447f76d65c.webp)
+
+**Practice mein yeh kaisa dikhta hai, ek chota walkthrough.** Imagine karo aapke customer-support Worker ke paas `.claude/skills/` mein 30 Skills hain, har ek ke saath ek `SKILL.md`. Agent shuru hota hai; runtime har `SKILL.md` padhta hai aur sab 30 files ke liye sirf YAML frontmatter extract karta hai (`name` aur `description`). Roughly 3,000 tokens model ke context mein "available skills" ki table ke tor par utarte hain. Har `SKILL.md` ki body load _nahi_ hoti; `references/` ke neeche ke references load _nahi_ hote; `scripts/` ke neeche ke scripts _padhe bhi nahi jaate_. Model ab jaanta hai ke uske paas kya tools hain, lekin un mein se kisi ko kaise use karna hai nahi.
+
+User message bhejta hai: _"Mujhe ticket TKT-1042 ka haal batao."_ Model apni 30-description list scan karta hai, `summarize-ticket` description match karta hai (jo "ticket ID," "bring me up to speed" mention karti hai), aur decide karta hai ke yeh skill apply hoti hai. _Ab_ runtime poori `summarize-ticket/SKILL.md` body load karta hai, lagbhag 1,500 tokens, context mein. Model operational instructions padhta hai: "ticket ID nikaalo, `lookup_customer` call karo, `find_similar_resolved_tickets` call karo, paanch-section ka summary banao." Woh instructions follow karta hai.
+
+Un instructions ka Step 3 `references/style.md` refer karta hai, summaries ke liye formatting guide. Model us file ke liye reach karta hai; runtime use demand par load karta hai. Baqi 29 skills ki bodies, baqi reference files, `scripts/` ke neeche ke scripts: koi bich kabhi model ke context mein nahi aaya. Sirf sab 30 ka metadata, plus ek skill ki body aur ek reference jo _fire_ hui, ke liye pay kiya gaya. Neeche Predict us gap par numbers rakhta hai.
+
+:::tip PRIMM — Predict
+
+Ek Worker ke paas library mein 30 skills hain. Average `SKILL.md` frontmatter 80 tokens hai; average body 1,500 tokens hai; har skill ke paas average mein do reference files hain jo mil kar 4,000 tokens ke references hain. Ek typical turn par jo ek skill activate karta hai aur ek reference padhta hai, skill system ka roughly context cost kya hai? Teen options: (a) \~2,400 tokens (startup metadata + ek activation + ek reference); (b) \~6,900 tokens; (c) \~135,000 tokens (sab kuch hamesha loaded). Confidence 1–5.
+
+:::
+
+Jawab **(b), roughly 6,900 tokens** hai: 30 × 80 tokens discovery ke liye (2,400), plus ek activate skill ke liye 1,500 tokens, plus ek referenced file ke liye \~2,000 tokens. Cost library size ke saath discovery ke liye linearly scale karti hai, aur per-turn activation aur execution ke liye constant. **Yeh woh hai jo skill library ko affordable banata hai.** Bina progressive disclosure ke, 30 skills × 1,500 tokens body × 4,000 tokens references = 165,000 tokens per turn sirf yeh jaanne ke liye ke agent kya kar sakta hai. Koi yeh nahi chalata.
+
+Skill design ke liye do consequences:
+
+*   **Description key field hai.** Yeh Stage 1 mein fire hoti hai aur determine karti hai ke Stage 2 hota bhi hai ya nahi. Vague description ("helps with PDFs") baar baar fire hoti hai aur activation tokens waste karti hai; sharp description ("extracts text and tables from PDFs, fills PDF forms, merges PDFs; use when working with PDF files") tab fire hoti hai jab hona chahiye aur tab chup rehti hai jab nahi hona chahiye. Zyada tar skill failures description failures hain.
+
+*   **Lambi `SKILL.md` bodies mehengi hain.** `SKILL.md` ko \~500 lines se neeche rakho, ideally 100–300. Depth ko reference files mein move karo. 500-line limit arbitrary nahi hai; yeh woh threshold hai jahan activation cost actual reasoning context ko crowd out karna shuru karti hai.
+
+**Try with AI**
+
+```
+Mere paas ek SKILL.md hai jo 1,200 lines tak barh gayi hai kyunki
+maine edge cases add karte raha. Mujhe batao ise kaise split karein.
+Skill ek "customer-refund-issuance" skill hai: is mein core refund
+process hai, paanch edge cases (international, partial, post-30-days,
+with-restocking-fee, fraud-flagged), teen reference policies (US, EU,
+UK), aur ek Python script jo payment gateway call karti hai. Meri
+madad karo decide karne mein ke SKILL.md mein kya rehta hai,
+references/ mein kya jaata hai, assets/ mein kya jaata hai, aur
+scripts/ ke tor par kya rehta hai.
+```
+
+---
+
+### Concept 3: SKILL.md likhna, skill ka model se contract
+
+`SKILL.md` file ke do parts hain: **YAML frontmatter** (contract) aur **Markdown body** (operational instructions). Frontmatter agent-facing API hai; body kaam karne wali hai.
+
+**Frontmatter, field by field.**
+
+| Field | Required | Constraint | Purpose |
+|-------|----------|------------|---------|
+| `name` | Haan | 1–64 chars, lowercase alphanumeric + hyphens, leading/trailing/consecutive hyphens nahi, folder name se match hona chahiye | Skill ka identifier. |
+| `description` | Haan | 1–1024 chars, khaali nahi | Trigger surface. Agent discovery par padhta hai ke is skill ko invoke karna hai ya nahi. |
+| `license` | Nahi | License name ya bundled license file ka path | Skill kis terms ke under ship hoti hai. |
+| `compatibility` | Nahi | ≤500 chars | Environment requirements (intended product, system packages, network access). Zyada tar skills ko zarurat nahi. |
+| `metadata` | Nahi | Arbitrary key-value mapping | Client-specific extensions (author, version, etc.). |
+| `allowed-tools` | Nahi | Space-separated tool list | Pre-approved tools jo skill use kar sakti hai. Experimental; support varies. |
+
+Minimum viable frontmatter do fields hai:
+
+```yaml
+---
+name: my-skill
+description: One sentence explaining what this skill does and when to use it.
+---
+```
+
+Ek zyada production-shaped frontmatter:
+
+```yaml
+---
+name: extract-meeting-notes
+description: Extracts structured action items, decisions, and follow-ups from raw meeting transcripts. Use when the user provides a transcript, meeting recording text, or asks to summarize a meeting. Produces a markdown summary with explicit sections for Decisions, Action Items (with owner and deadline), and Follow-ups.
+license: MIT
+compatibility: Requires Python 3.12+ and access to the OpenAI API.
+metadata:
+  author: panaversity
+  version: "1.2"
+---
+```
+
+**Description key field hai.** Spec ke good vs. poor examples dobara parho aur farq internalize karo:
+
+> **Good:** "Extracts text and tables from PDF files, fills PDF forms, and merges multiple PDFs. Use when working with PDF documents or when the user mentions PDFs, forms, or document extraction."
+>
+> **Poor:** "Helps with PDFs."
+
+Good description **kya** batati hai ("extracts text and tables, fills forms, merges"), **kab** ("when working with PDF documents or when the user mentions PDFs, forms, or document extraction"), aur **specific keywords** surface karti hai jo model match kar sake ("PDFs," "forms," "extraction"). Poor wali kuch nahi batati. Description quality yeh determine karne ka sab se bada factor hai ke aapki skill tab fire hoti hai jab hona chahiye aur tab chup rehti hai jab nahi hona chahiye.
+
+**Body, convention se.** Koi format requirements nahi; spec kehta hai "Jo bhi agents ko task effectively perform karne mein madad kare woh likho." Lekin teen sections har ache se likhi hui skill mein nazar aate hain:
+
+1.  **Step-by-step instructions.** Agent kya karta hai, numbered steps mein, operational language mein. Narrative nahi ("Yeh skill refunds mein madad ke liye design ki gayi hai") balki imperative ("Order lookup karo. Policy check karo. Refund issue karo."). Imperative skills narrative se behtar chalti hain.
+
+2.  **Inputs aur outputs ke examples.** Ek ya do chote examples jo input ki expected shape aur output ki expected shape dikhayein. Examples descriptions se lagbhag paanch guna zyada valuable hain model behavior steer karne ke liye. Inhe skip mat karo.
+
+3.  **Common edge cases.** Do ya teen cases jo happy path se obvious nahi hain, typically woh cases jo actually production mein toot chuke hain. Edge cases apni jagah asli failures se hasil karte hain, imagined ones se nahi.
+
+:::tip PRIMM — Predict
+
+Do skills ka `name` field same hai (`summarize-document`) lekin alag folders mein rehti hain: ek `~/.claude/skills/` mein (user-level) aur ek `.claude/skills/` mein (project-level). Current task dono descriptions se match karta hai. Kya hota hai? Teen options: (a) agent randomly ek pick karta hai; (b) project-level skill jeet ti hai folder precedence ki wajah se; (c) agent dono load karta hai aur model ko choose karne deta hai. Confidence 1–5.
+
+:::
+
+Jawab client par depend karta hai, lekin Claude Code aur OpenCode dono mein prevailing convention **(b) hai, project-level user-level par jeet ti hai**. Wohi precedence pattern jo `CLAUDE.md` resolution hai, agentic-coding crash course ki rules-file behavior, aur zyada tar tool configuration ka. Principle: zyada specific context zyada general context ko override karta hai. Ek folder se do skills ke same naam ek alag problem hai; woh usually error hai, kyunki folder names `name` values se match karne chahiye.
+
+**Try with AI**
+
+```
+Tumhare paas ek hi project mein do skills hain:
+- name: lookup-customer
+  description: Looks up a customer record.
+- name: get-customer-profile
+  description: Retrieves customer profile information.
+
+Ek user poochta hai: "What's John Smith's email?"
+
+AI ke saath teen steps walk through karo:
+1. Har skill ke liye predict karo kya yeh IS prompt par fire hogi.
+   Confidence 1-5.
+2. Agar dono fire hon, model ko ek pick karni hogi — predict karo
+   kaunsi aur kyun.
+3. DONO descriptions aisi rewrite karo ke exactly ek is prompt par
+   fire ho, aur doosri clearly alag prompt par fire ho. Woh prompt
+   batao jo DOOSRI skill SHOULD fire kare.
+```
+
+---
+
+### Concept 4: Skill packaging, skills kahan rehti hain aur kaise travel karti hain
+
+Skills filesystem artifacts hain. Yeh woh hai jo unhe portable banata hai; yeh woh hai jis ki wajah se unke packaging conventions matter karte hain. Folder structure sahi rakho aur aapki skill har compliant client mein kaam karti hai; galat rakho aur kisi mein nahi.
+
+**Har tool skills kahan dhundhta hai.**
+
+| Tool | Project-level | User-level (global) |
+|------|--------------|---------------------|
+| Claude Code | `.claude/skills/<skill-name>/SKILL.md` | `~/.claude/skills/<skill-name>/SKILL.md` |
+| OpenCode | `.opencode/skills/<skill-name>/SKILL.md` | `~/.config/opencode/skills/<skill-name>/SKILL.md` |
+| OpenCode (fallback) | `.claude/skills/<skill-name>/SKILL.md` | `~/.claude/skills/<skill-name>/SKILL.md` |
+
+**OpenCode fallback portability ke liye key piece hai.** OpenCode pehle apne `.opencode/skills/` se padhta hai, lekin agar skill wahan na mile toh `.claude/skills/` par fallback karta hai. Practical consequence: **apni skill ek baar `.claude/skills/` mein likho, aur yeh bina modification ke dono tools mein kaam karti hai.** Yeh open Agent Skills format ka sab se concrete payoff hai. Wohi `SKILL.md` jo aap Claude Code user ko ship karte ho OpenCode user ke liye kaam karti hai, byte-for-byte.
+
+**Poori folder structure, directory by directory.**
+
+```
+my-skill/
+├── SKILL.md              # Required: frontmatter + body. Entry point.
+├── scripts/              # Optional: executable code jo skill chala sakti hai.
+│   ├── extract.py
+│   └── normalize.sh
+├── references/           # Optional: deep documentation, demand par loaded.
+│   ├── REFERENCE.md
+│   └── policies/
+│       └── us-refund-policy.md
+└── assets/               # Optional: templates, schemas, lookup tables.
+    ├── report-template.md
+    └── status-codes.json
+```
+
+Har directory ka ek specific kaam hai:
+
+*   **`scripts/`** executable code rakhta hai jo agent chala sakta hai. Python, Bash, JavaScript: language support client aur sandbox par depend karti hai. Agent scripts ko relative path se invoke karta hai (e.g., `scripts/extract.py`). Scripts self-contained hone chahiye, comment header mein apne dependencies document karein, aur edge cases gracefully handle karein kyunki agent nahi karega.
+
+*   **`references/`** deep documentation rakhta hai jo agent demand par load karta hai. Convention: har reference file ko ek topic par focused rakho (`finance.md`, `legal.md`, `error-codes.md`) taake agent sirf woh load kare jo current task ko chahiye. 5,000-token reference file jo agent session mein ek baar reach kare woh sasta hai; 50,000-token reference file nahi. **References ko SKILL.md se ek level neeche rakho.** `references/category/subcategory/file.md`-style nesting se bacho; spec is par explicit hai.
+
+*   **`assets/`** static resources rakhta hai: document templates, configuration templates, lookup tables, schemas, images. Yeh agent (ya agent ke chalaye hue scripts) dwara _consume_ kiye jaate hain lekin instructions ke tor par _nahi padhe jaate_.
+
+**SKILL.md ke andar file reference syntax.** Skill root se relative paths use karo:
+
+```markdown
+For policy details, see [the US refund policy](references/policies/us-refund-policy.md).
+To extract the structured data, run `scripts/extract.py`.
+The output should follow the template in `assets/report-template.md`.
+```
+
+Agent SKILL.md body padhta hai, path dekhta hai, aur referenced file demand par load karta hai. Koi special syntax, koi link resolution gymnastics, sirf relative paths.
+
+:::note Quick check
+
+Aapke paas `.claude/skills/refund-issuance/SKILL.md` par ek skill hai jo `references/policies/us.md` refer karti hai. Skill tab invoke ho rahi hai jab agent ka working directory `/home/user/projects/customer-support` hai. Agent policy file ke liye kahan dhundhta hai? Jawab: `/home/user/projects/customer-support/.claude/skills/refund-issuance/references/policies/us.md`; paths skill ki directory ke relative hain, agent ke working directory ke nahi. Yeh galat samjho toh aapki skill deployment ke under subtle tareeqon se toot jaati hai.
+
+:::
+
+**Try with AI**
+
+```
+Main ek skill Claude Code se OpenCode mein port kar raha hun aur
+verify karna chahta hun ke mera folder layout sahi hai. Skill
+.claude/skills/extract-meeting-notes/ par hai aur is mein SKILL.md,
+scripts/parse.py, aur references/glossary.md hain.
+
+In claims ke liye, mujhe TRUE ya FALSE batao aur explain karo kyun:
+1. Bina kisi change ke, yeh skill OpenCode discover karegi.
+2. Agar main folder ko .opencode/skills/extract-meeting-notes/ mein
+   move karun, Claude Code discover karna band kar degi.
+3. SKILL.md ke andar script reference absolute path use karna chahiye:
+   ~/.claude/skills/extract-meeting-notes/scripts/parse.py.
+4. Agar do skills ka same naam hai aur ek .claude/skills/ mein hai
+   aur doosri ~/.claude/skills/ mein, user-level wali jeet ti hai.
+```
+
+---
+
+### Concept 5: Skills ka composition, choti skills kab chain karein vs ek badi kab likhein
+
+Skills compose hoti hain. Ek "weekly customer-health report" capability ek badi skill ho sakti hai jo research, drafting, formatting, aur review ek shot mein karti hai. Ya char skills ho sakti hain (`research-customer-health`, `draft-customer-health-report`, `format-customer-health-report`, `review-customer-health-report`) jo filesystem ke zariye ek doosre ko hand off karti hain.
+
+Dono kaam karti hain. Unke bohot alag properties hain.
+
+**Ek badi skill.** Discover karna aasan (ek description, ek match). Kam discovery cost (discovery stage mein ek entry). Tighter coupling: jab activation trigger ho, sab steps ek context mein, ek order mein chalte hain. Isolation mein test karna mushkil. Kahin aur reuse karna mushkil. Jab kuch aadhe raaste mein fail ho, model ko abhi tak irrelevant sab pehle ke kaam ke saath recover karna padta hai context mein.
+
+**Bohot choti skills.** Zyada discovery cost (char entries ek ki bajaye). Zyada activation orchestration cost (kuch ko unhe chain karna padta hai). Looser coupling: har step independently test, replace, ya reuse ho sakta hai. Jab ek fail ho, failure localized hai; pehle ke steps ke artifacts disk par hain. **Har step fresh activation paata hai, matlab koi accumulated context pollution nahi.**
+
+![Skills ka composition: monolithic customer-health-report Skill (upar) ek context mein char steps ek activation ke saath chalati hai, vs char choti Skills (neeche) tmp/ files ke zariye hand off karti hain. Monolithic version discover karna simple hai lekin steps ke across context accumulate karti hai; chained version char activations pay karti hai lekin har ek fresh shuru hoti hai, akele reuse ho sakti hai, aur debugging ke liye intermediate artifacts disk par chodti hai.](/img/06-skill-composition-cce735c67dd9ff02077c0d61ea793200.webp)
+
+Jo decision rule practice mein kaam karta hai:
+
+> **Ek skill likho agar steps tightly coupled hain aur rarely akele reuse hoti hain. Bohot skills likho agar koi bhi step kisi alag workflow se akele invoke ho sakti hai, ya agar steps ke beech context-isolation orchestration simplicity se zyada valuable hai.**
+
+Customer support karne wale Worker ke liye, `summarize-ticket` shayad apni skill hai (humans use karti hain, escalation flow use karta hai, weekly digest use karta hai, audit replay use karta hai). `escalate-to-tier-2` shayad apni skill hai (escalation criteria aur tone requirements reuse hoti hain). Decomposition value-of-isolation versus cost-of-orchestration hai; isolation usually do ya teen composed steps ke baad jeet ti hai.
+
+**Filesystem handoff pattern.** Jab skills compose hoti hain, sab se saaf handoff filesystem hai, conversation nahi. Skill A apna output `tmp/research-customer-{id}.md` mein likhti hai. Skill B invoke hoti hai, `tmp/research-customer-{id}.md` se padhti hai, `tmp/draft-customer-{id}.md` mein likhti hai. Skill C draft padhti hai, report likhti hai. Conversation sirf final report dekhti hai; intermediate artifacts disk par rehte hain jahan agent unhe dobara padh sakta hai, insaan inspect kar sakta hai, aur audit trail baad mein dhundh sakta hai. Yeh wohi pattern hai jo pichle course ne subagent output isolation ke liye use kiya tha: wohi insight, skill granularity par apply kiya gaya.
+
+```
+customer-health-pipeline/
+├── tmp/                                       # ephemeral handoff dir
+│   ├── research-customer-{id}.md              # skill A output
+│   ├── draft-customer-{id}.md                 # skill B output
+│   └── reviewed-draft-customer-{id}.md        # skill C output
+└── output/
+    └── customer-health-{id}.pdf               # skill D final
+```
+
+Yeh woh jagah bhi hai jahan course ke agle do parts matter karna shuru karte hain. **Kuch skill handoffs filesystem par nahi hote**: woh system of record mein hote hain. Skill A ki "customer health" snapshot sirf Skill B ko feed nahi karti; yeh ek record bhi hai jo company ko rakhna hai, baad mein query karna hai, similar cases ke khilaf dhundhna hai, agar customer chhe haftaad baad complain kare toh audit karna hai. **Ek skill jo temp file mein likhti hai draft hai. Ek skill jo system of record mein likhti hai action hai.** Yeh farq woh hai jo Part 2 banata hai.
+
+**Try with AI**
+
+```
+Customer-refund-issuance workflow ke liye do design approaches compare karo:
+
+Design A: Ek badi skill "issue-refund" jo eligibility check, policy
+lookup, amount calculation, gateway call, ticket update, aur customer
+notification handle karti hai.
+
+Design B: Paanch choti skills (check-refund-eligibility,
+lookup-refund-policy, calculate-refund-amount, call-payment-gateway,
+update-support-ticket, notify-customer) tmp/ mein filesystem handoffs
+ke zariye chained hain.
+
+Har design ke liye, (1) ek aisi situation batao jahan yeh sahi choice
+ho aur (2) ek specific failure mode batao jis par yeh vulnerable hai.
+Phir batao kaunsi design aap ship karte aur kyun.
+```
+
+:::note Kam disciplined models ke liye skills likhna
+
+Concepts 1-5 describe karte hain ke skills _kaise_ kaam karti hain jab model strong instruction-follower ho (Claude Sonnet/Opus, GPT-5-class, Gemini 2.5 Pro). Chote ya saste model ke saath (`deepseek-chat`, Haiku-class, Llama-70B, Mistral, zyada tar local models), teen cheezein drift karti hain:
+
+1.  **Multi-skill sequencing.** SKILL.md imperatives jaise "ALWAYS run this BEFORE drafting" ya "call X, then Y, then Z" strong models par reliably land karte hain aur weaker par nahi. Fix hai agent ke system prompt mein ek chota **GENERAL-FLOW preamble** add karna jo order spell out kare. SKILL bodies declarative rehti hain; system prompt orchestration scaffold provide karta hai.
+2.  **Format drift.** Ek weaker model silently emojis, markdown tables, "Action Taken" headers add kar dega, ya aapke inputs paraphrase kar dega jab SKILL body kahe "output as five paragraphs, no tables, preserve the user's text verbatim." Weaker model par zyada explicit raho: kya NAHI karna hai list karo, sirf kya karna hai nahi.
+3.  **Trigger blindness.** Jo descriptions "summarize ticket TKT-1042" par fire hoti hain woh chote model par "what's the story on #1042" miss kar sakti hain. Descriptions ko zyada concrete trigger phrasings ke saath likho (Concept 3 ki discipline zyada matter karti hai, kam nahi, jab model weaker ho).
+
+Rule of thumb: strong model ki effort ko SKILL.md mein budget karo, weak model ki effort ko system prompt mein. Architecture abhi bhi weaker models par kaam karti hai, aap bas ird gird zyada scaffolding likhte ho. Skills, MCP, aur database ke beech boundaries wohi rehti hain; sirf prompts badalte hain.
+
+:::
+
+---
+
+## Part 2: Neon Postgres + pgvector as system of record
+
+Part 1 ne agent ko capabilities di. Ab use **state chahiye jis ke khilaf kaam kare**: customer history, pehli conversations, policy library, audit log. Pichle course ka agent state local SQLite file mein rakhta tha aur stub data Python lists mein. Woh demo ke liye kaam karta tha. Worker ke liye kaam nahi karta jis ko jawab dena ho "humne chhe haftaad pehle is customer ko kya bataya tha?" ya "kya humne is se pehla yeh sawaal dekha tha, aur resolution kaisa tha?"
+
+Yeh Part dono ko **system of record** se replace karta hai: [thesis ka term](https://agentfactory.panaversity.org/docs/thesis#invariant-5-every-worker-runs-against-a-system-of-record) us durable store ke liye jis se workforce padhta hai aur likhta hai. Hum Neon Postgres use karte hain pgvector extension ke saath. Architecture fixed hai; Neon product hai. Koi bhi durable, governed Postgres requirement satisfy karta hai.
+
+:::tip Pehle pass ke liye skim path
+
+Part 2 dense hai (chhe tables, SQL, embedding pipelines, vector index math). Agar aapka Postgres rusty hai, Concepts 6 aur 7 shape ke liye parho aur 8–10 skim karo. Minimum-viable Worker ko pehle din chhe tables mein se sab nahi chahiye: `messages` + `embeddings` architecture ko feel karne ke liye enough hai. `documents` tab add karo jab aapke paas embed karne ke liye real library ho; `audit_log` + `capability_invocations` pehli baar jab aapko jawab dena ho "agent ne pichle mangal ko 3 baje kya kiya?"; `conversations` jab ek user ke paas ek se zyada hon. Neeche chhe-table schema woh hai jahan aap pahunchte ho, na ke jahan shuru karte ho.
+
+:::
+
+### Concept 6: Managed Postgres kyun, aur khaas tor par Neon kyun
+
+Thesis systems of record ke baare mein product-agnostic rehti hai: "AI-Native Company ke existing databases, workflows, aur operational platforms (CRMs, ERPs, ticketing systems, data warehouses, ledgers) system of record ke tor par kaam karte hain." Lekin ek scratch se banaye hue agent ke liye, aapko kuch choose karna padta hai. Sawaal "Postgres vs. MongoDB vs. vector DB" nahi hai. Sawaal hai "kaunsa Postgres."
+
+**Postgres kyun, na ke dedicated vector database.** Teen reasons jo 2026 mein bhi hold karte hain.
+
+1.  **Ek database, ek transaction, ek auth boundary.** Vector DB plus relational DB ka matlab do stores consistent rakhne ke liye, do auth systems scope karne ke liye, do backup pipelines maintain karne ke liye. pgvector extension vectors ko un user records, ticket records, aur audit logs ke _bagal mein_ rakhta hai jin se woh related hain: ek JOIN ek JOIN hai, na ke do eventually-consistent services ke beech network hop. Har major managed Postgres provider (AWS RDS, Google Cloud SQL, Azure, Supabase, Neon) by default pgvector ship karta hai, aur yeh consistently [most-installed Postgres extensions](https://neon.com/blog/ten-most-popular-postgres-extensions) mein rank karta hai. Zyada tar workloads ke liye, yeh "kya yeh enough hai" ka empirical jawab hai. Almost hamesha hai.
+
+2.  **Postgres pehle se hard parts karta hai.** Transactions, indexes, foreign keys, row-level security, point-in-time recovery, query planning. Dedicated vector DB ko inhe scratch se invent karna padta hai aur usually kuch mein se kuch worse karta hai. Default boring choice compounding advantages rakhti hai.
+
+3.  **Postgres ke liye har layer par MCP servers hain.** Neon ek ship karta hai (management ke liye). General Postgres MCP servers hain (SQL execution ke liye). Aap apna likh sakte ho (scoped runtime access ke liye). Postgres ke ird gird MCP ecosystem sab se mature hai.
+
+**Neon kyun khaas tor par: teen differentiators.**
+
+*   **Serverless scale-to-zero ke saath.** Free tier idle par kuch cost nahi karta. Worker jo roz 50 conversations handle karta hai apna zyada waqt $0 cost par guzarta hai, na ke provisioned instance ke liye $50/month. Multi-Worker AI-Native Company ki economics ke liye critical jahan bohot Workers bursty hain.
+
+*   **Branching.** Neon database seconds mein branch hota hai: aapke production data ka full copy-on-write clone, query karne ke liye ready. Maqsad dev/test environments aur migration safety hai; agent-relevant use hai **agent ko branch par experiment karne dena bina production ko chhue**. Branch par galat migration branch delete karke revert hoti hai. Non-branchable database par wahi operation backup se restore hai.
+
+*   **First-class MCP integration.** Neon ek [official MCP server](https://neon.com/docs/ai/neon-mcp-server) ship karta hai (remote `https://mcp.neon.tech/mcp` par, OAuth-authed) jo project management, branch lifecycle, SQL execution, aur migration tooling kisi bhi MCP client ko expose karta hai. Hum ise _development_ ke liye use karenge. Critically (aur hum is par wapas aayenge) **Neon explicitly recommend nahi karta ke Neon MCP server production runtime use ke liye ho.** Yeh ek powerful natural-language interface hai; production agents Postgres se narrower, scoped MCP servers ke zariye baat karte hain jo aap khud likhte ho, ya direct connections ke zariye. Farq matter karta hai; Part 3 ise operational banata hai.
+
+:::note Quick check
+
+Teen claims, har ek ko True ya False mark karo agla paragraph padhne se pehle: (a) Neon MCP server production AI Workers ke liye runtime database connection ke liye intended hai. (b) Production se branched Neon database mein pehle se saara production data hota hai. (c) Neon database jis par ek ghante se query nahi aayi free tier ke under abhi bhi paisa cost karta hai.
+
+:::
+
+Jawab: **(a) False**: Neon ke apne docs kehte hain ke MCP server sirf development/testing ke liye hai. **(b) True**: branches copy-on-write hain, toh branch production ka logical clone ke tor par shuru hota hai bina data movement ke. **(c) False**: scale-to-zero ka matlab free tier par idle databases kuch cost nahi karte. Yeh teen jawab Neon ke SoR ke tor par fit hone ki operational shape hain.
+
+**Try with AI**
+
+```
+Aapka customer-support Worker EU customers handle karta hai. Aapki
+legal team kehti hai: "Saara customer data Frankfurt mein rehna
+chahiye." Neon ki free tier sirf US-East regions offer karti hai;
+unki paid tier EU regions offer karti hai.
+
+In teen approaches ke liye, GO ya NO-GO decide karo aur ek sentence
+justification do:
+A) Neon ki paid tier EU region mein use karo (pay-as-you-go, typically
+   $25–75/month single Worker ke liye Neon ki pricing ke hisab se) aur
+   ship karo.
+B) Frankfurt VPS par Postgres use karo jo aap khud manage karo (koi
+   pgvector MCP server, koi branching, koi scale-to-zero) aur ship
+   karo.
+C) Neon ki free US tier use karo; sab kuch client-side embed karo
+   bhejne se pehle; legal ko batao yeh "encrypted at rest" hai.
+Phir batao aap waqai kaunsi pick karte aur commit karne se pehle legal
+se kya poochte.
+```
+
+---
+
+### Concept 7: Worker ka schema, agent ko actually kaunsi tables chahiye
+
+Worker ka system of record sirf "conversations kahin store karo" nahi hai. Yeh ek structured schema hai jo thesis ki cheezein support karta hai jo har Worker karta hai: **truth padho, outcomes likho, traces chodho, similar pehle ka kaam dhundho.** Chhe tables 90% case cover karti hain. Domain specifics ke liye aap aur add karengi; yeh key chhe hain.
+
+```sql
+-- 1. CONVERSATIONS: kaam ka top-level unit
+CREATE TABLE conversations (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id     TEXT NOT NULL,
+    started_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    ended_at    TIMESTAMPTZ,
+    metadata    JSONB NOT NULL DEFAULT '{}'::jsonb,
+    -- searchable summary; agent conversation end par populate karta hai
+    summary     TEXT
+);
+CREATE INDEX idx_conversations_user ON conversations(user_id, started_at DESC);
+
+-- 2. MESSAGES: conversation ke turns
+CREATE TABLE messages (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    role            TEXT NOT NULL CHECK (role IN ('user', 'assistant', 'tool', 'system')),
+    content         TEXT NOT NULL,
+    -- token counts aapko cost ke baare mein sochne dete hain bina dobara count kiye
+    input_tokens    INT,
+    output_tokens   INT,
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_messages_conv ON messages(conversation_id, created_at);
+
+-- 3. DOCUMENTS: agent ki reference library
+CREATE TABLE documents (
+    id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    source      TEXT NOT NULL,      -- 'policy_library', 'kb_article', 'past_case', etc.
+    title       TEXT NOT NULL,
+    body        TEXT NOT NULL,
+    metadata    JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_documents_source ON documents(source);
+
+-- 4. EMBEDDINGS: documents AUR past conversations ke vector representations
+CREATE TABLE embeddings (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    -- in mein se ek populated hai; doosra NULL hai
+    document_id     UUID REFERENCES documents(id) ON DELETE CASCADE,
+    conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE,
+    chunk_text      TEXT NOT NULL,
+    chunk_index     INT NOT NULL,
+    embedding       VECTOR(1536) NOT NULL,
+    model           TEXT NOT NULL,  -- 'text-embedding-3-small', etc.
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CHECK (
+        (document_id IS NOT NULL)::int + (conversation_id IS NOT NULL)::int = 1
+    )
+);
+-- semantic search ke liye key index; Concept 8 dekhein
+CREATE INDEX idx_embeddings_hnsw
+  ON embeddings USING hnsw (embedding vector_cosine_ops);
+
+-- 5. AUDIT_LOG: Worker ka har action, hamesha ke liye replayable
+CREATE TABLE audit_log (
+    id              BIGSERIAL PRIMARY KEY,
+    conversation_id UUID REFERENCES conversations(id) ON DELETE SET NULL,
+    actor           TEXT NOT NULL,        -- 'worker:customer-support', 'system', etc.
+    action          TEXT NOT NULL,        -- neeche "canonical action vocabulary" dekhein
+    target          TEXT,                 -- table name, skill name, etc.
+    payload         JSONB NOT NULL,       -- action ka data
+    result          JSONB,                -- kya hua
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_audit_conv ON audit_log(conversation_id, created_at);
+CREATE INDEX idx_audit_action ON audit_log(action, created_at);
+
+-- 6. CAPABILITY_INVOCATIONS: har skill ya tool call, replay aur metrics ke liye
+CREATE TABLE capability_invocations (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    capability      TEXT NOT NULL,        -- 'skill:summarize-ticket', 'tool:search_docs', etc.
+    arguments       JSONB NOT NULL,
+    result          JSONB,
+    status          TEXT NOT NULL CHECK (status IN ('ok', 'error', 'timeout')),
+    latency_ms      INT,
+    cost_cents      INT,                  -- 1/100 cents mein approximate cost
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX idx_cap_conv ON capability_invocations(conversation_id, created_at);
+```
+
+![Worker schema: chhe tables. Conversations aur messages dialogue hold karti hain. Documents aur embeddings reference library aur uske vectors hold karti hain. Audit log aur capability invocations trace hold karti hain. Foreign keys unhe ek consistent system of record mein jodte hain.](/img/03-worker-schema-2ff9b01dee5659e7975c4cbcf9a8c61f.webp)
+
+Design choices par kuch notes, kyunki har ek matter karti hai:
+
+*   **Ek embeddings table documents aur conversations dono ke liye.** Ek `CHECK` constraint ensure karta hai ke `document_id` ya `conversation_id` mein se exactly ek set ho. Yeh aapko ek query mein "policies AUR past conversations" ke across semantic search karne deta hai; "kya humne is se pehle jawab diya hai?" sawaal ek index paata hai, do nahi.
+
+*   **`audit_log` `BIGSERIAL` use karta hai, `UUID` nahi.** Audit rows constantly likhi jaati hain; simpler integer key inserts ko fast aur ordering ko trivial rakhta hai. Baqi tables `UUID` use karti hain kyunki rows database se bahar jaati hain (API responses mein, URLs mein) aur UUIDs row counts leak karne se bachate hain.
+
+*   **`capability_invocations` skills ko tools se alag karta hai.** Skill invocation aur `@function_tool` invocation conceptually similar hain lekin operationally alag (alag code paths, alag cost profiles, alag failure modes). Unhe ek table mein `capability` discriminator ke saath store karna aapko dono ke saath query karne deta hai jab "agent ne kya kiya?" poochte hue, phir bhi unhe split kar sakta hai jab "skills ka cost vs tools ka kya tha?" poochte hue.
+
+*   **`metadata JSONB` columns escape hatches hain.** Schema har domain-specific field predict nahi kar sakta jo aapko chahiye; JSONB aapko bina migrations ke fields add karne deta hai. Sparingly use karo: jo fields bohot queries mein aate hain unhe columns mein promote karna chahiye.
+
+Yeh **Worker ke liye minimum operational schema** hai: kaam ke liye teen tables (conversations, messages, documents), embeddings ke liye ek, trace ke liye do (audit\_log, capability\_invocations). Domain specifics ke liye aap aur add karengi: ek `customers` table, ek `tickets` table, versioning ke saath ek `policies` table. Wohi shape hain: relational data jo agent MCP ke zariye padhta hai aur likhta hai.
+
+:::tip PRIMM — Predict
+
+Ek Worker roz 200 conversations handle karta hai, har ek average 10 messages, 30% ek skill invocation trigger karti hain aur 50% skill row ke beyond do audit rows likhti hain. Ek mahine (30 din) ke baad, chhe tables mein se har ek mein lagbhag kitni rows hain? Teen options: (a) sab chhe mein similar volumes (\~6,000–60,000 har ek); (b) audit\_log baqion se 10×–50× bada hai; (c) embeddings sab se bada hai kyunki har message embed hoti hai. Confidence 1–5.
+
+:::
+
+Jawab **(b)** hai: audit\_log wide margin se sab se bada hoga kyunki har interaction multiple audit rows produce karti hai: message bheja, skill invoke hui, db write, db dobara write, conversation band hui, etc. Rough estimate: conversations \~6,000; messages \~60,000; capability\_invocations \~1,800; audit\_log probably 150,000–300,000. Apni retention aur indexing accordingly plan karo; `audit_log` woh table hai jise aap sab se pehle partition karengi jab barho.
+
+**Try with AI**
+
+```
+Main is schema ko customer-support Worker ke liye extend karna chahta
+hun jo specifically software bug reports handle karta hai. Aap kaunsi
+teen additional tables add karte, aur unke kaunse columns hote? Har ek
+ke liye batao agent use kis liye use karega (read access? write access?
+dono?) aur kaunsi foreign keys use chhe core tables se jodti hain.
+```
+
+---
+
+### Concept 8: pgvector basics, types, distance operators, indexes
+
+`embeddings` table woh hai jo Worker ko stored text meaning se search karne deti hai, na ke sirf exact match se. Woh text memory ho sakti hai, system-of-record entry ho sakti hai, ya document ho sakti hai. Search ko power deta hai [pgvector](https://github.com/pgvector/pgvector): ek Postgres extension jo vector data types aur similarity-search operators add karta hai. Yeh har major managed Postgres provider par by default ship hota hai. Zyada tar workloads ke liye, yeh "kya mujhe separate vector DB use karna chahiye?" ka jawab hai. Jawab nahi hai.
+
+**Vector type.** `VECTOR(n)` ek fixed-length floating-point column hai. `n` aapke embeddings ki dimensionality hai: OpenAI ke `text-embedding-3-small` ke liye 1536, `text-embedding-3-large` ke liye 3072, doosre models ke liye varies. **Dimension us model se match hona chahiye jo embedding produce karta hai.** Mix karna sab se common pgvector bug hai: model A se 1536-dim vectors insert karo, model B se 1536-dim vectors ke saath query karo, aur results nonsense hain jabke har query "kaam" karti hai.
+
+2000 se oopar dimensions ke liye, `HALFVEC` type half-precision floats use karta hai (32-bit ki bajaye 16-bit, har value mein kam precision) aur minor recall cost par roughly storage aadha karta hai. Hamare 1536-dim case ke liye, plain `VECTOR(1536)` theek hai.
+
+**Teen distance operators.** pgvector do vectors kitne similar hain yeh measure karne ke teen tarike expose karta hai. Apne use case ke liye ek chuno aur us par raho; mix karna confusion ki recipe hai.
+
+| Operator | Name | Kya measure karta hai | Kab use karein |
+|----------|------|----------------------|----------------|
+| `<->` | L2 distance (Euclidean) | N-dimensional space mein straight-line distance | Image embeddings, geometric similarity |
+| `<#>` | Negative inner product | Dot product (negated) | Jab aapka embedding model _un-normalized_ vectors produce karta hai aur aap magnitude par depend karte ho |
+| `<=>` | Cosine distance | Vectors ke beech angle, magnitude se ghair-mutaliq | **Text embeddings: hamare case ke liye default** |
+
+OpenAI ke `text-embedding-3-small` aur `text-embedding-3-large` normalized vectors produce karte hain, jiska matlab cosine distance aur Euclidean distance equivalent rankings dete hain. **Text embeddings ke liye convention se cosine distance (`<=>`) use karo**; yeh sab se common hai, sab se documented hai, aur index ops is ke liye `vector_cosine_ops` naam se hain.
+
+Ek semantic-search query, poora:
+
+```sql
+-- Find the 5 documents most similar to the user's question
+SELECT d.id, d.title, d.body,
+       e.embedding <=> $1 AS distance
+FROM embeddings e
+JOIN documents d ON d.id = e.document_id
+WHERE e.document_id IS NOT NULL  -- conversation embeddings exclude karta hai
+ORDER BY e.embedding <=> $1      -- kam distance = zyada similar
+LIMIT 5;
+```
+
+`$1` yahan user ke sawaal ka embedding hai, query time par generate kiya gaya. `<=>` operator sahi index ke saath is O(n) ko O(log n) banata hai.
+
+**Do index types: HNSW aur IVFFlat.** pgvector ke do practical index choices hain. 2026 tak, recommendation converge ho gayi hai:
+
+*   **HNSW se shuru karo jab tak koi reason na ho.** Graph-based (ek in-memory neighbor graph jo database query time par walk karta hai), slowly build hota hai lekin fast query karta hai, broadest operator support hai, predictable performance. Naye projects ke liye default.
+*   **IVFFlat use karo jab build time query time se zyada matter kare.** Partition-based (vectors buckets mein clustered jo baari baari search hote hain), HNSW se 5–6× fast build hota hai, slow query karta hai. Useful jab aap frequently index re-build karo ya insert-heavy workload ho.
+*   **DiskANN exist karta hai** (Timescale ke pgvectorscale extension ke zariye, ek separate add-on) bohot bade indexes ke liye jo RAM mein fit nahi hote. Aapko almost certainly zarurat nahi.
+
+Upar schema se HNSW index:
+
+```sql
+CREATE INDEX idx_embeddings_hnsw
+  ON embeddings USING hnsw (embedding vector_cosine_ops);
+```
+
+Do tuning knobs agar tune karo toh: `m` (har node ke connections ki tadad, default 16) aur `ef_construction` (build-time effort, default 64). Defaults zyada tar workloads ke liye sensible hain; sirf tab touch karo jab benchmark kiya ho.
+
+:::note Quick check
+
+Teen claims True ya False ke liye. (a) Aapke paas ek hi `embedding` column par multiple HNSW indexes ho sakte hain, har distance operator ke liye ek. (b) HNSW index wali table mein vector insert karna bina vector index wali table se zyada cost karta hai. (c) HNSW index table mein koi data load hone se pehle banaya ja sakta hai. Jawab: teeno **True** hain. Pgvector aapko multiple distance operators ke liye index karne deta hai (rare lekin possible), index maintenance cost real hai (isliye kuch workloads batch-insert-then-index prefer karti hain), aur HNSW (IVFFlat ke baraks) training step nahi maangta.
+
+:::
+
+**Try with AI**
+
+```
+Do scenarios. Har ek ke liye, HNSW ya IVFFlat chuno aur index ki ek
+specific property se justify karo:
+
+Scenario A: 10M scientific papers ka research index. Ek baar build
+hoti hai, million baar query hoti hai. Build time "jo bhi ho — raat
+theek hai." Query latency directly user experience ko affect karta hai.
+
+Scenario B: Customer support tickets ka live index jo har 4 ghante
+re-index hoti hai kyunki hazaar naye tickets aate rehte hain. Query
+patterns simple hain (top-5 nearest neighbors). Current HNSW build
+20 minutes leti hai — re-index cycle ka teesra hissa.
+
+Jawab dene ke baad: ek cheez naam batao jo har scenario ke liye
+aapka jawab badal degi. Specifically batao production metrics mein
+kya dekhna padega switch karne se pehle.
+```
+
+---
+
+### Concept 9: Embedding pipeline, text andar, queryable vector bahar
+
+Ek embedding text ka ek tukda space mein ek point mein badalta hai. Refunds ke baare ka text doosre refunds ke text ke qareeb utarta hai; login bugs ke baare ka text kahin aur. Toh "similar tickets dhundhna" "qareebatay points dhundhna" ban jata hai. Yeh poora idea hai. Baqi plumbing hai.
+
+Plumbing chaar steps hai, aur har ek mein ek decision matter karti hai:
+
+1.  **Chunk** karo document ko chote tukdon mein jo har ek ek idea carry karein.
+2.  **Embed** karo har tukde ko model ko call karke; aapko uska point wapas milta hai.
+3.  **Store** karo text, uska point, aur thora sa metadata `embeddings` table mein.
+4.  **Query** karo user ke sawaal ko bhi ek point mein badal kar, phir qareebatay stored points dhundh kar.
+
+![Embedding pipeline: raw policy document (upar-bayan) semantic boundaries par \~400-token tukdon mein chunk hoti hai overlap ke saath; har chunk OpenAI ke text-embedding-3-small ke zariye 1536-dim vector mein batch-embed hota hai; vectors VECTOR(1536) rows ke tor par embeddings table mein HNSW index ke saath store hote hain. Query time par (neeche), user ka sawaal wohi embed step se guzarta hai, phir ek SQL query cosine-distance operator ke saath top-5 qareebatay chunks dhundhti hai. Neeche teen traps call out kiye gaye hain: model mismatch, galat chunk size, bina filter ke sources mix karna.](/img/07-embedding-pipeline-15dd75de40f51eb7176d39b36131c7c8.webp)
+
+**Chunking.** Embedding models ke token limits hain: OpenAI ke `text-embedding-3-small` har chunk ke liye 8,191 tokens accept karta hai, bohot zyada jo aap usually chahte ho. Sawaal "maximum kya hai" nahi balki "chunk size kya hai jo meaning ka woh unit preserve kare jo user dhundhega." Teen rules jo practice mein kaam karte hain:
+
+*   **Semantic boundaries par chunk karo jab kar sako.** Section headings, paragraph breaks, source mein structural markers. Jo chunk sentence ke beech mein khatam ho woh badly retrieve karta hai.
+*   **Zyada text ke liye 200–500 tokens per chunk target karo.** Meaning carry karne ke liye enough lamba, specific hone ke liye enough chota. Longer chunks wale documents "sab se weak match" karte hain na ke "sahi cheez se strong match."
+*   **Chunks ke beech 10–20% overlap rakho** jo natural boundaries par girte hain. Overflow storage cost karta hai lekin recall improve karta hai jab user ka sawaal chunk boundary ke qareeb ho.
+*   **Jo pehle se chota hai use chunk mat karo.** Jo documents \~300 tokens se neeche hain (single resolved tickets, choti policy paragraphs, FAQ entries) ko chunking ki zarurat nahi; unhe ek tukde ke tor par embed karo. Neeche ka chunker lambi source documents (policy PDFs, knowledge-base articles, conversation transcripts) ke liye shaped hai. Worked example ke seed corpus of short resolved tickets ke liye, aap chunker skip kar sakte ho aur har ticket ko single chunk ke tor par embed kar sakte ho (Decision 5 har ticket ko ek `documents` row ke tor par store karta hai jiska `body` `summary || '\n' || resolution` hai, aur use embed karta hai).
+
+Worked example ke liye ek typed chunking function:
+
+```python
+# src/chat_agent/embedding/chunker.py
+from dataclasses import dataclass
+
+@dataclass(frozen=True)
+class Chunk:
+    text: str
+    index: int
+    source_offset: int  # original document mein character offset
+
+def chunk_text(
+    text: str,
+    target_tokens: int = 400,
+    overlap_tokens: int = 60,
+) -> list[Chunk]:
+    """Split text into overlapping chunks at paragraph boundaries.
+
+    Approximates tokens as words * 0.75 — fine for chunking; not for
+    actual token counting. Use tiktoken for precise counts.
+    """
+    paragraphs: list[str] = [p.strip() for p in text.split("\n\n") if p.strip()]
+    target_words: int = int(target_tokens / 0.75)
+    overlap_words: int = int(overlap_tokens / 0.75)
+
+    chunks: list[Chunk] = []
+    current: list[str] = []
+    current_word_count: int = 0
+    source_offset: int = 0
+
+    for para in paragraphs:
+        para_words: int = len(para.split())
+
+        if current_word_count + para_words > target_words and current:
+            chunks.append(Chunk(
+                text="\n\n".join(current),
+                index=len(chunks),
+                source_offset=source_offset,
+            ))
+            # carry overlap forward
+            overlap_chunk: list[str] = []
+            overlap_count: int = 0
+            for prev in reversed(current):
+                if overlap_count + len(prev.split()) > overlap_words:
+                    break
+                overlap_chunk.insert(0, prev)
+                overlap_count += len(prev.split())
+            current = overlap_chunk
+            current_word_count = overlap_count
+            source_offset += sum(len(p) for p in current) + 2 * len(current)
+
+        current.append(para)
+        current_word_count += para_words
+
+    if current:
+        chunks.append(Chunk(
+            text="\n\n".join(current),
+            index=len(chunks),
+            source_offset=source_offset,
+        ))
+
+    return chunks
+```
+
+**Embedding.** Batched chunks ke saath model call karo (OpenAI API ek request mein inputs ki arrays accept karta hai, har chunk ke liye ek call se bohot zyada efficient):
+
+```python
+# src/chat_agent/embedding/embedder.py
+from openai import AsyncOpenAI
+
+EMBEDDING_MODEL: str = "text-embedding-3-small"
+EMBEDDING_DIM: int = 1536  # table column match hona chahiye
+
+async def embed_chunks(
+    client: AsyncOpenAI, chunks: list[str],
+) -> list[list[float]]:
+    """Embed a batch of chunks. Returns one vector per chunk, in order."""
+    response = await client.embeddings.create(
+        model=EMBEDDING_MODEL, input=chunks,
+    )
+    return [item.embedding for item in response.data]
+```
+
+:::warning pgvector ko asyncpg se register karo, warna INSERTs silently fail hongi
+
+`embed_chunks` jo vectors return karta hai woh Python `list[float]` hain. Out of the box, `asyncpg` nahi jaanta ke pgvector ka `VECTOR(1536)` column unhe vector literal ke tor par serialize chahta hai, toh woh unhe Postgres `real[]` array ke tor par bhejta hai aur INSERT ya toh error deta hai `expected vector, got list[float]` ya (bura) silently kuch store karta hai jo query time par fail hota hai. **Connection par ek baar type register karo** embeddings likhne se pehle:
+
+```python
+from pgvector.asyncpg import register_vector
+
+# Option A: har connect par register karo
+conn = await asyncpg.connect(NEON_DATABASE_URL)
+await register_vector(conn)
+
+# Option B (production ke liye recommended): pool init callback taake har
+# pooled connection automatically register ho, bhoolne ka chance na ho.
+pool = await asyncpg.create_pool(
+    NEON_DATABASE_URL, init=register_vector,
+)
+```
+
+Aapko sirf un connections par zarurat hai jo `embedding` column padhte ya likhte hain. Decision 5 neeche pool form use karta hai; Decision 6 ka MCP server wohi pattern use karta hai.
+
+:::
+
+**Agar aapka inference provider OpenAI nahi hai toh?** OpenAI ek hi major provider hai jo first-class embeddings API bhi ship karta hai. Agar aap inference DeepSeek, Anthropic, Gemini, ya local model ke zariye route karte ho, toh aapke paas char options hain. Ek chuno `VECTOR(n)` column banane se pehle: column dimension embedding model se match hona chahiye.
+
+| Model | Dimensions | Cost (input, per 1M tokens) | Kahan hai | Kab use karein |
+|-------|-----------|----------------------------|-----------|----------------|
+| `text-embedding-3-small` | 1536 | $0.02 | OpenAI (aur OpenAI-compatible aggregators jaise OpenRouter) | **Default agar aapke paas OpenAI key hai.** Sasta, fast, zyada tar retrieval ke liye acha. |
+| `text-embedding-3-large` | 3072 | $0.13 (standard) / $0.065 (batch) | OpenAI | Jab aapne `-small` ko underperform karte hue measure kiya ho. |
+| `embed-english-v3` / `embed-multilingual-v3` | 1024 | $0.10 | Cohere | Jab aap pehle se inference ke liye Cohere par ho, ya jab multilingual recall matter kare. |
+| `voyage-3` / `voyage-3-lite` | 1024 | $0.06 / $0.02 | Voyage | Embeddings-as-a-service; Anthropic-shaped stacks ke saath cleanly integrate hota hai. |
+| `all-MiniLM-L6-v2` / `bge-small-en-v1.5` (local) | 384 / 384 | "free" (aapka compute) | `sentence-transformers` package; CPU-only chalta hai bina API call ke | Jab aapke inference provider ke paas embeddings API na ho (DeepSeek, zyada tar local LLMs), ya jab data residency text kisi third party ko bhejne se mana kare. |
+
+Headline cost number: 50,000 chunks ko \~300 tokens each par embed karna = 15M tokens × $0.02/M = **$0.30** OpenAI par. Wohi `-large` ke saath $1.95 hai. Local 384-dim model ke saath, $0 plus 30 seconds CPU. Embeddings bill par sab se sasti line hai; choice rarely dollar dial move karti hai, lekin architecture zarur move karti hai.
+
+**Dimension contract hai.** `VECTOR(1536)` sirf 1536-dim vectors accept karta hai. Agar aap `text-embedding-3-small` (1536) se `all-MiniLM-L6-v2` (384) par switch karo, toh column ko `VECTOR(384)` ke tor par re-create karo aur har row re-embed karo. pgvector ke saath koi "close enough fits" nahi hai; dimensions absolute hain.
+
+**Re-embedding.** Kab re-embed karo? Teen triggers:
+
+1.  **Source document badal gayi.** Un saari embeddings ko delete aur dobara insert karo jinka `document_id` match karta hai.
+2.  **Embedding model badal gaya.** Lifetime ki migration; agar aap `-small` se `-large` par switch karo, har existing embedding nayi ke saath incompatible hai. Sab kuch re-embed karo, ya transition ke doosre daur mein do embedding columns chalao.
+3.  **Chunking strategy badal gayi.** Agar aap decide karo ke 400 tokens galat tha aur 250 sahi hai, toh re-chunk aur re-embed karo. Apne chunks ko version karna (`metadata` JSONB mein `chunk_strategy_version` store karna) aapko yeh safely karne deta hai.
+
+:::tip PRIMM — Predict
+
+Aapne `text-embedding-3-small` ke saath 100,000 chunks embed kiye hain. Phir aap decide karte ho ke saari _messages_ bhi embed karni hain (sirf documents nahi) taake agent "kya humne is se pehle discuss kiya hai?" lookups kar sake. Aap message embeddings wohi `embeddings` table mein wohi column ke saath likhte ho. Ek semantic search query (user sawaal ke 5 nearest neighbors dhundho, koi filter) mixed document aur message results ke saath wapas aati hai. Kya yeh woh hai jo aap chahte the? Sahi query shape kya hai? Confidence 1–5.
+
+:::
+
+Jawab: **lagbhag certainly woh nahi jo aap chahte the**. Bina unhe distinguish kiye documents aur messages ko retrieval results mein mix karna incoherent answers produce karta hai: model top result dekhta hai jo customer ki pehli message hai aur use authoritative documentation ke tor par treat karta hai. Sahi pattern hai query mein **source type ke saath filter karna**: ya join karke `WHERE document_id IS NOT NULL` se document search ke liye filter karna, ya do alag searches chala kar unhe alag weights ke saath rank karna. Schema ka `CHECK` constraint jo ensure karta hai ke `document_id`/`conversation_id` mein se exactly ek set ho yeh filter ko sasta aur intent ko explicit banata hai.
+
+**Poor retrieval debug karna.** Jab top-k results expectations se match na kare, chaar checks order mein, har ek ek common cause rule out karta hai:
+
+| Symptom | Likely cause | Fix |
+|---------|-------------|-----|
+| Sab top-5 distances > 0.7 hain (cosine distance, toh > 0.5 "door" hai) | Query embedding model corpus embedding model se alag hai | Confirm karo dono ne wohi `EMBEDDING_MODEL` se gaye. `text-embedding-3-small` ko `-large` ke saath, ya local ko OpenAI ke saath mix karna dono pools mein nonsense ranks produce karta hai. |
+| Top-5 results sab ek source type se hain jab variety expect ki | Source-type filter missing hai | Query mein `WHERE document_id IS NOT NULL` (ya `CHECK` constraint ka sahi side) add karo, ya do ranked queries chala kar explicit weights ke saath merge karo. |
+| Top-k lagbhag identical queries ke beech wildly change hota hai | Chunk size bohot chota hai (har chunk mein enough context nahi) | Bade chunks ke saath re-chunk karo (200, phir 400, phir 600 tokens) aur re-embed karo. Wohi query dobara chalan se ab stable top-k milna chahiye. |
+| Query kuch return nahi karti | HNSW index missing hai, ya vector dimension mismatch hai | psql mein `\d+ embeddings` confirm karo ke column `VECTOR(1536)` hai aur HNSW index `vector_cosine_ops` ke saath exist karta hai. Agar column galat dimensionality hai, toh re-create karo. |
+
+Teen diagnostic queries jo `scratch.sql` mein rakhne ke laayak hain:
+
+```sql
+-- 1. Distance band on the top-5 for a known-good query
+SELECT chunk_text, embedding <=> :query_vec AS distance
+FROM embeddings ORDER BY distance LIMIT 5;
+
+-- 2. Source-type breakdown of top-20 (catch the "wrong source dominates" bug)
+SELECT
+  CASE WHEN document_id IS NOT NULL THEN 'document' ELSE 'message' END AS src,
+  COUNT(*)
+FROM (SELECT * FROM embeddings ORDER BY embedding <=> :query_vec LIMIT 20) t
+GROUP BY src;
+
+-- 3. Confirm the index is actually being used
+EXPLAIN (FORMAT TEXT) SELECT id FROM embeddings ORDER BY embedding <=> :query_vec LIMIT 10;
+```
+
+Retrieval quality Worker accuracy ka silent killer hai. Final answer perfectly reasonable lag sakta hai jabke galat evidence cite kar raha ho; yeh pakadne ka ek hi tarika hai ke final answer se pehle retrieval evaluate karo.
+
+**Try with AI**
+
+```
+Main legal contracts ka corpus (har ek average 8,000 words) semantic
+search ke liye chunk kar raha hun. User aisi cheezein query karega
+jaise "is contract mein termination clause kya hai" — phrases jo
+cleanly specific sections se map hoti hain. Mujhe teen chunking
+strategies walk through karo:
+A) Fixed 400-token chunks 60-token overlap ke saath (default)
+B) Sirf section headings par chunk, koi overlap nahi
+C) Two-level approach: 400-token chunks AUR whole-section chunks
+   dono store karo, dono search karo, results combine karo
+Har ek ke liye, (1) batao kab jeetta hai aur (2) kab haarta hai.
+```
+
+---
+
+### Concept 10: Audit trail as discipline, Worker ke liye "reads aur writes" ka matlab
+
+Agent ka har meaningful action database mein ek row chodna chahiye. Us row ke bina, aap baad mein jawab nahi de sakte "agent ne kya kiya, aur kab?" Woh trail woh hai jo real action ko plausible-sounding reply se alag karta hai.
+
+Operational terms mein translate karein: **agent ka har meaningful action `audit_log` mein ek row likhta hai, plus ek zyada structured row `capability_invocations` mein agar yeh skill ya tool call hai.** Data jis par action ho raha hai uski appropriate table mein rehta hai (message `messages` mein jaata hai, document update `documents` mein jaata hai); _us action ke hone ka fact_ `audit_log` mein rehta hai. Dono foreign key se jude hue hain.
+
+**Kya log karein.**
+
+*   Har model call: input tokens, output tokens, model name, cost estimate
+*   Har skill invocation: skill name, arguments, result summary, latency, success/error/timeout
+*   Har database write: kaunsi table, kya badla (JSONB payload), kaunsi conversation context ke under
+*   Har external tool call: tool name, input, output summary, latency
+*   Har guardrail event: kaunsa guardrail trip hua, input kya tha, action kya tha (blocked/allowed/modified)
+
+**Kya log na karein.**
+
+*   Har turn par poori conversation history; woh pehle se `messages` mein hai, aap use dobara store kar rahe ho
+*   Sensitive payload data verbatim agar row humans ke liye queryable hai; hash ya summary store karo, poora data restricted table mein rakho
+*   Internal model reasoning jo user ko nahi dekhni chahiye; yeh ek context-management decision hai, audit decision nahi
+
+**Replay test.** Ek acha audit trail ek specific test pass karta hai: **ek conversation\_id aur timestamp diye hue, aap bina model dobara chalaye agent ne kya kiya aur kyun reconstruct kar sakte ho.** Agar aapka audit log yeh test pass nahi karta, toh yeh logging hai, auditing nahi.
+
+Ek concrete write-on-action helper, har jagah use hota hai jab capability chalti hai:
+
+```python
+# src/chat_agent/audit.py
+import time
+import json
+from typing import Any
+from uuid import UUID
+import asyncpg
+
+async def log_capability(
+    pool: asyncpg.Pool,
+    conversation_id: UUID,
+    capability: str,
+    arguments: dict[str, Any],
+    result: Any,
+    status: str,
+    started_at: float,
+    cost_cents: int | None = None,
+) -> None:
+    """Write a capability_invocations row plus a denormalized audit_log row.
+
+    Both writes happen in one transaction so they're either both present
+    or both absent — the audit trail never gets partial.
+    """
+    latency_ms: int = int((time.monotonic() - started_at) * 1000)
+
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            await conn.execute(
+                """INSERT INTO capability_invocations
+                   (conversation_id, capability, arguments, result, status,
+                    latency_ms, cost_cents)
+                   VALUES ($1, $2, $3::jsonb, $4::jsonb, $5, $6, $7)""",
+                conversation_id, capability,
+                json.dumps(arguments), json.dumps(result),
+                status, latency_ms, cost_cents,
+            )
+            await conn.execute(
+                """INSERT INTO audit_log
+                   (conversation_id, actor, action, target, payload, result)
+                   VALUES ($1, $2, $3, $4, $5::jsonb, $6::jsonb)""",
+                conversation_id, "worker:customer-support",
+                "capability_invoked", capability,
+                json.dumps({"arguments": arguments, "latency_ms": latency_ms}),
+                json.dumps({"status": status, "result": result}),
+            )
+```
+
+Ek transaction mein do writes key detail hai. **Aadhe likhe hue audit trails missing audit trails se bura hain**: woh completeness suggest karte hain bina deliver kiye. Ya toh dono rows jaati hain ya koi nahi.
+
+**Canonical action vocabulary.** `audit_log` mein likne wali har site ek choti, agreed list se `action` value choose karti hai. Yahan drift (codebase mein wohi event teen alag naam se jaana) woh hai jo replay queries ko chhe mahine baad fragile banata hai. Worked example mein chhe values, aur kaunsa code path har ek likhta hai:
+
+| `action` | `target` | Kahan likha gaya |
+|----------|----------|------------------|
+| `message_received` | (null) | `cli.py`, jab user message bhejta hai aur `messages` mein row utarti hai |
+| `message_sent` | (null) | `cli.py`, jab agent ka jawab `messages` mein utarta hai |
+| `skill_activated` | skill name | `cli.py`, skill load ke liye `RunItemStreamEvent` par |
+| `capability_invoked` | capability id | `log_capability` helper upar, har skill ya MCP-tool call par |
+| `mcp_called` | tool name | `cli.py`, har MCP tool return hone ke baad (`capability_invoked` se lower-level; ek ya doosra consistently use karo) |
+| `refund_issued` / `refund_blocked` | order id | `customer-data` MCP server ka `issue_refund` tool, success aur policy denial par |
+
+`capability_invoked` aur `mcp_called` mein se ek chuno aur us par raho; dono per call likhna double-count karta hai. Worked example agent-side helper ke liye `capability_invoked` use karta hai (Decision 7) aur MCP tools ke andar state-changing writes ke liye named domain actions jaise `refund_issued` (Decision 6). Domain-state writes hamesha apna action naam paate hain taake audit row business event ke liye receipt ho, sirf us tool call ke liye nahi jo trigger kiya.
+
+**Yeh sirf logging kyun nahi hai.** Teen properties audit data ko log data se alag karte hain:
+
+1.  **Replayable.** Schema aapko `audit_log` se `messages` se `capability_invocations` ke saath join karke agent ka reasoning trace reconstruct karne deti hai. JSONL file mein ek log line yeh nahi karta.
+2.  **Queryable.** "Agent ne pichle mahine customer X ko kya bataya, aur kis policy ko cite kiya?" ek SQL query hai. "Pichle 7 dinon mein kis skill ne sab se zyada timeouts trigger kiye?" ek SQL query hai. Logs ke liye grep aur luck chahiye.
+3.  **Trustworthy.** Audit rows business data ke saath same database mein hain. Woh saath mein backup hote hain, saath mein point-in-time-recoverable hain, saath mein access-controlled hain. Woh agent process, deployment region, aur model version se survive karte hain.
+
+Yeh woh hai jo thesis kahti hai jab kehti hai "Workers sirf tab governable hote hain jab ek ledger unhe legible banaye, capability, cost, latency, aur outcome ki units ke tor par." Aapki `audit_log` aur `capability_invocations` tables _hi_ woh ledger hain. Unhe waisa treat karo.
+
+**Try with AI**
+
+```
+Yeh customer support scenario hai: ek customer claim karta hai Worker
+ne unhe bataya ke unhe $50 refund milega, lekin actual refund $30
+issue hua. Worker ne conversation 19 din pehle handle ki thi.
+
+Is resolve karne ke liye audit-trail query path walk through karo:
+1. Conversation dhundho. (Kaunsi tables ke kaunse columns?)
+2. Woh message dhundho jahan refund amount promise kiya gaya tha.
+   ("discussed" aur "promised" mein kaise farq karte ho?)
+3. Woh capability invocation dhundho jo refund issue kiya.
+4. Woh database write dhundho jo $30 amount record karti hai.
+
+Har step ke liye, batao kaunsi table query karoge aur WHERE clauses.
+Phir batao chhe-table schema mein kya MISSING hai jo yeh query
+aasaan banaye.
+```
+
+---
+
+## Part 3: MCP, agent ko system of record se wire karna
+
+Part 1 ne agent ko Skills ki library di. Part 2 ne use Postgres system of record diya. **Part 3 dono ko Model Context Protocol ke saath wire karta hai**: open standard jo batata hai ke agents external state aur external capability ko kaise reach karte hain. Thesis MCP ki jagah ke baare mein direct hai: _"MCP woh hai jis se workforce [apne systems of record] tak pahunchta hai: har authoritative store MCP server ke zariye kisi bhi Worker ke liye addressable ban jaata hai, policy ke under."_ Yeh Part use operational banata hai.
+
+### Concept 11: MCP kya hai aur kya nahi hai
+
+**Model Context Protocol** ([modelcontextprotocol.io](https://modelcontextprotocol.io/)) ek open client/server protocol hai (originally Anthropic se, ab open standard ke tor par governed) jo batata hai ke AI agent external tools, data, aur prompts se kaise connect hota hai. Framing jo repeat hoti hai woh "USB-C for AI tools" hai: ek protocol, bohot implementations, kisi bhi side ko swap karo bina doosri ko tode. Framing sahi hai; saari metaphors ki tarah, iski limits bhi hain jo naam ke laayak hain.
+
+**MCP kya hai.** Ek protocol. Ek specification. Teen primitives jo server client ko expose kar sakta hai.
+
+1.  **Tools**: functions jo model invoke kar sakta hai. Client unhe list karta hai, model ek choose karta hai, server use execute karta hai. Conceptually pichle course ke `@function_tool` decorator jaisa, lekin implementation MCP server process mein rehta hai, agent ki process mein nahi. Yeh ab tak sab se zyada used primitive hai.
+2.  **Resources**: read-only data jo agent fetch kar sakta hai. Files, database query results, API responses. Inhe MCP ka GET-only side samjho. Practice mein tools se kam common, lekin "agent ko yeh document demand par padhne do" ke liye useful.
+3.  **Prompts**: reusable prompt templates jo server provide karta hai. Ek team standardized prompts publish kar sakta hai (e.g., "customer-support triage prompt," "bug-report template"). Agents unhe by name request karte hain. Practice mein sab se kam used primitive, lekin jab standardised workflows matter karein tab valuable.
+
+**MCP kya nahi hai.** Yeh framework nahi hai (aap iske _upar_ agent nahi banate, aap ise apne agent ke _saath_ wire karte ho). Yeh service nahi hai (koi hosted endpoint nahi hai jo aapko "MCP" deta hai — aap servers khud chalate ho ya existing ones use karte ho). Yeh agent ka replacement nahi hai (MCP ke paas koi planning, reasoning, ya memory nahi hai; yeh sirf tools, data, aur prompts expose karta hai). Yeh auth system nahi hai (authentication transport layer par hoti hai, protocol khud mein nahi — iska matlab aapko alag se auth manage karni padti hai).
+
+**MCP ka transport layer.** MCP do transports support karta hai:
+
+*   **stdio**: client ek subprocess spawn karta hai, MCP messages stdin/stdout ke zariye pass hote hain. Yeh Quick Win aur Part 4 mein use hota hai. Simple hai, lekin sirf local servers ke liye kaam karta hai.
+*   **Streamable HTTP**: client HTTP ke zariye server se baat karta hai, optional Server-Sent Events (SSE) streaming ke saath. Remote servers ke liye; Neon ka MCP server yeh use karta hai.
+
+Dono transports same protocol speak karte hain; farq sirf hai ke bytes kaise travel karti hain. Ek MCP server ko stdio par expose karo aur woh local kaam karta hai; usse HTTP par expose karo aur woh remote kaam karta hai. Client-side code same rehta hai.
+
+:::note Quick check
+
+Teen claims, True ya False: (a) MCP ek framework hai jis ke upar aap agent banate ho. (b) MCP server tools, resources, aur prompts expose kar sakta hai. (c) MCP ke paas built-in authentication hai. Jawab: **(a) False**, yeh ek protocol hai, framework nahi. **(b) True**, yeh teen primitives hain. **(c) False**, auth transport layer par hoti hai.
+
+:::
+
+**Try with AI**
+
+```
+Mujhe MCP samjhne mein madad karo. Teen comparisons do:
+1. MCP vs REST API — dono external services se baat karte hain.
+   Farq kya hai?
+2. MCP @function_tool vs — dono agent ko tools dete hain. Farq kya hai?
+3. MCP stdio vs HTTP — dono transports hain. Kab kaunsa chuno?
+Har ek ke liye ek sentence mein batao farq, phir ek example do
+jahan ek doosre se behtar hai.
+```
+
+---
+
+### Concept 12: Neon MCP server
+
+Neon ek [official MCP server](https://neon.com/docs/ai/neon-mcp-server) ship karta hai jo aapke Neon project ko kisi bhi MCP-compatible client se manage karne deta hai. Yeh remote hai (`https://mcp.neon.tech/mcp` par), OAuth-authed, aur project management, branch lifecycle, SQL execution, aur migration tooling expose karta hai.
+
+**Yeh kya karta hai.** Neon MCP server aapko natural language mein Neon projects manage karne deta hai: databases create karna, branches banana, SQL queries chalana, migrations run karna. Claude Code ya OpenCode mein aap bolo "mere liye ek nayi branch banao" aur woh MCP ke zariye kar deta hai.
+
+**Yeh kya nahi karna chahiye.** Neon khud explicitly kehta hai: **Neon MCP server production runtime use ke liye nahi hai.** Yeh development aur testing ke liye ek powerful natural-language interface hai. Production agents ko Postgres se baat karne ke liye narrower, scoped MCP servers chahiye jo aap khud likhte ho (Concept 14), ya direct connections. Kyun? Kyunki Neon MCP server poore Neon project par full access deta hai — branches create karna, SQL chalana, migrations — woh sab cheezein jo ek production agent ko kabhi nahi karni chahiye.
+
+**Development vs runtime: ek important farq.** Development mein, Neon MCP server aapka best friend hai: "ek branch banao, schema apply karo, test data insert karo, query chalao." Runtime mein, yeh ek loaded gun hai: agar agent galti se `DROP TABLE` chala de kyunki model ne galat interpret kiya, toh production data gayab. Isliye Part 4 ke worked example mein do alag MCP servers hain: ek development ke liye (Neon ka), ek runtime ke liye (aapka custom `customer-data` MCP server jo sirf safe operations expose karta hai).
+
+**Authentication.** Neon MCP server OAuth use karta hai. Jab pehli baar connect karo, aapko browser mein Neon login karna padta hai; token phir cache hota hai. Production ke liye, aap apne custom MCP server mein direct `DATABASE_URL` use karte ho (jaise Quick Win mein kiya).
+
+:::tip PRIMM — Predict
+
+Aapka agent Neon MCP server se connected hai aur aap bolo "production database se saare customers delete karo." Kya hota hai? Teen options: (a) agent SQL chalata hai aur customers delete ho jaate hain; (b) Neon MCP server ke paas `DELETE` tool nahi hai, toh agent refuse karta hai; (c) agent SQL chalata hai lekin Neon ki branching wajah se woh branch par hota hai, production par nahi. Confidence 1–5.
+
+:::
+
+Jawab **(a)** hai — Neon MCP server SQL execution expose karta hai, aur `DELETE` valid SQL hai. Yeh exactly kyun production mein use nahi karna chahiye. Agent ko limited scope dena (sirf read-only, ya sirf specific tables) woh hai jo custom MCP servers karte hain (Concept 14).
+
+**Try with AI**
+
+```
+Mujhe Neon MCP server ke teen use cases batao jo development
+workflow ko speed up karte hain. Har ek ke liye batao:
+1. Kya natural language command doge
+2. MCP server kya karega (kaunsi API calls)
+3. Yeh manually kitna time leta
+
+Phir ek use case batao jahan Neon MCP server ke bajaye custom
+MCP server likhna better hai, aur explain karo kyun.
+```
+
+---
+
+### Concept 13: MCP ko Agents SDK se connect karna
+
+OpenAI Agents SDK ke paas MCP ke liye built-in support hai. Aap MCP servers register karte ho jab agent banate ho, aur model automatically un servers ke tools dekhta hai apne available tools ke tor par. Yeh woh wiring hai jo Quick Win mein `MCPServerStdio` ke zariye dikhai thi.
+
+**SDK integration kaise kaam karti hai.** Jab aap `Agent(mcp_servers=[...])` pass karte ho, SDK startup par har MCP server se connect hota hai aur `list_tools()` call karta hai. Server jo tools expose karta hai woh model ke liye available tools mein add ho jaate hain, bilkul waise jaise `@function_tool`-decorated functions. Model ko pata nahi ke tool MCP server par hai ya agent ki process mein — dono same dikhte hain.
+
+```python
+from agents import Agent, Runner
+from agents.mcp import MCPServerStdio
+
+async with MCPServerStdio(
+    name="notes",
+    params={
+        "command": "python",
+        "args": ["notes_mcp.py"],
+        "env": {**os.environ},
+    },
+    client_session_timeout_seconds=30,
+) as notes_server:
+    agent = Agent(
+        name="ChatAgent",
+        model=model,
+        mcp_servers=[notes_server],
+        instructions="You are a helpful assistant.",
+    )
+    result = await Runner.run(agent, "Remember this: meeting at 3pm.")
+```
+
+**Trust boundary.** MCP server ek trust boundary hai. Agent MCP server ko tool call bhejta hai; server decide karta hai ke kya karna hai. Agent directly database access nahi karta — woh MCP server ke zariye request karta hai. Yeh woh boundary hai jo production mein matter karti hai: agent ko sirf woh karna chahiye jo MCP server allow karta hai.
+
+**Model kya dekhta hai.** Jab SDK `list_tools()` call karta hai, har MCP tool ka naam, description, aur input schema wapas aata hai. Model wohi information dekhta hai jab decide karta hai ke kaunsa tool call karna hai. Isliye MCP tool ki docstring itni important hai — yeh woh description hai jo model padhta hai (Quick Win mein, docstring ne saara routing kiya).
+
+**Timeout aur error handling.** MCP server ke saath baat karte waqt do common issues hain:
+
+1.  **Timeout**: pehla call remote Postgres ke liye TLS connection, pool acquisition, aur transaction ke zariye jaata hai. Default 5-second timeout bohot chota hai. `client_session_timeout_seconds=30` fix hai.
+2.  **Server crash**: agar MCP server process crash ho jaaye, SDK gracefully handle karta hai aur model ko batata hai ke tool unavailable hai. Model phir decide karta hai ke kya karna hai (usually apologize karta hai aur batata hai ke service temporarily down hai).
+
+:::note Quick check
+
+Aapke paas ek agent hai jo do MCP servers se connected hai: ek `notes` aur ek `customer-data`. Model ek prompt process karta hai jo `customer-data` ke tool ko call karta hai. Kya `notes` server ko pata chalta hai is call ke baare mein? Jawab: **Nahi.** MCP servers ek doosre se independent hain. SDK sirf us server ko call route karta hai jis ka tool model ne select kiya.
+
+:::
+
+**Try with AI**
+
+```
+Mujhe MCP server registration ke teen edge cases batao:
+1. Kya hota hai agar MCP server start hone mein 30 seconds se
+   zyada lagta hai?
+2. Kya hota hai agar do MCP servers same tool name expose karte hain?
+3. Kya hota hai agar MCP server ka tool schema change ho jaaye
+   beech mein (agent ke restart ke bina)?
+Har ek ke liye batao SDK kaise behave karta hai aur fix kya hai.
+```
+
+---
+
+### Concept 14: Custom MCP servers, kab apna server likhein vs `@function_tool` kab use karein
+
+Zyada tar cases mein, aapko custom MCP server likhne ki zarurat nahi — `@function_tool` sufficient hai. Lekin kuch situations mein MCP server likhna sahi choice hai. Decision tree yeh hai:
+
+**`@function_tool` use karo jab:**
+
+*   Tool agent ki process mein chal sakta hai bina external state ko chhueye.
+*   Tool ko sirf ek specific agent chahiye, na ke kayi agents ya tools ke beech share karna.
+*   Tool ka logic simple hai aur bina database ke kaam karta hai.
+
+**Custom MCP server likho jab:**
+
+*   Tool ko database ya external service access chahiye jo agent ki process ke bahar hai.
+*   Tool ko multiple agents ya clients ke beech share karna hai.
+*   Tool ek trust boundary chahiye — agent ko direct database access dena unsafe hai.
+*   Tool ko apna connection pool, auth, aur lifecycle manage karna hai.
+
+**Ek custom MCP server ka anatomy.** Quick Win ka `notes_mcp.py` sab se chota example tha. Ek production-shaped custom MCP server thoda zyada structured hota hai:
+
+```python
+# customer_data_mcp.py
+import json
+import os
+import asyncpg
+from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("customer-data")
+
+_pool = None
+
+async def get_pool():
+    global _pool
+    if _pool is None:
+        _pool = await asyncpg.create_pool(os.environ["DATABASE_URL"])
+    return _pool
+
+@mcp.tool()
+async def lookup_customer(customer_id: str) -> dict:
+    """Look up a customer record by ID. Returns name, email, account status."""
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT id, name, email, account_status FROM customers WHERE id = $1",
+            customer_id,
+        )
+        if row is None:
+            return {"error": "Customer not found"}
+        return dict(row)
+
+@mcp.tool()
+async def get_customer_tickets(customer_id: str, limit: int = 10) -> list[dict]:
+    """Get recent support tickets for a customer."""
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """SELECT id, subject, status, created_at
+               FROM tickets WHERE customer_id = $1
+               ORDER BY created_at DESC LIMIT $2""",
+            customer_id, limit,
+        )
+        return [dict(r) for r in rows]
+
+@mcp.tool()
+async def issue_refund(order_id: str, amount_cents: int, reason: str) -> dict:
+    """Issue a refund for an order. Requires amount in cents and a reason."""
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            # Verify order exists and is refundable
+            order = await conn.fetchrow(
+                "SELECT id, total_cents, status FROM orders WHERE id = $1", order_id
+            )
+            if order is None:
+                return {"error": "Order not found"}
+            if order["status"] != "completed":
+                return {"error": "Only completed orders can be refunded"}
+            if amount_cents > order["total_cents"]:
+                return {"error": "Refund exceeds order total"}
+
+            # Issue refund
+            refund_id = await conn.fetchval(
+                """INSERT INTO refunds (order_id, amount_cents, reason, status)
+                   VALUES ($1, $2, $3, 'pending') RETURNING id""",
+                order_id, amount_cents, reason,
+            )
+
+            # Audit trail
+            await conn.execute(
+                """INSERT INTO audit_log (actor, action, target, payload)
+                   VALUES ($1, $2, $3, $4::jsonb)""",
+                "worker:customer-support", "refund_issued", order_id,
+                json.dumps({"refund_id": str(refund_id), "amount_cents": amount_cents}),
+            )
+
+            return {"refund_id": str(refund_id), "status": "pending"}
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
+```
+
+Is server ke baare mein teen important cheezein:
+
+1.  **Scoped access.** Sirf specific operations expose kiye gaye hain (`lookup_customer`, `get_customer_tickets`, `issue_refund`). Agent `DROP TABLE` nahi chala sakta, `DELETE FROM customers` nahi chala sakta, schema nahi badal sakta. Yeh trust boundary hai.
+2.  **Business logic server mein hai.** Refund validation (order exists? completed? amount valid?) server mein hai, agent ke prompt mein nahi. Agar model galat arguments bheje, server reject karega.
+3.  **Audit trail built-in hai.** `issue_refund` ek hi transaction mein refund aur audit row likhta hai. Half-written audit trails impossible hain.
+
+**stdio vs HTTP transport.** Part 4 stdio use karta hai (local development ke liye simple). Production ke liye, aap HTTP transport par switch kar sakte ho taake MCP server alag process ya machine par ho:
+
+```python
+# Local development: stdio
+mcp.run(transport="stdio")
+
+# Production: HTTP
+mcp.run(transport="http", host="0.0.0.0", port=8080)
+```
+
+:::note Quick check
+
+Aap ek MCP server likh rahe ho jo customer data expose karta hai. Model ko sirf read access chahiye, lekin aap `issue_refund` bhi expose karna chahte ho (write operation). Kya yeh safe hai ek hi server mein dono rakhna? Jawab: **Haan**, jab tak write operation server-side validation ke saath aaye. Trust boundary server hai, na ke transport. Agent sirf woh kar sakta hai jo tools allow karte hain; server har call par validate karta hai.
+
+:::
+
+**Try with AI**
+
+```
+Mujhe decide karna hai ke in teen capabilities ke liye @function_tool
+ya custom MCP server likhna hai:
+1. Weather lookup (external API call, koi database nahi)
+2. Customer record update (Postgres write, audit trail chahiye)
+3. PDF generation (local file creation, agent ki process mein)
+Har ek ke liye batao kaunsa approach aur ek sentence mein kyun.
+```
+
+---
+
+### Concept 15: MCP load ke neeche, transport choices, connection pooling, kab queue karein
+
+Jab aap MCP production mein use karte ho, teen cheezein matter karti hain jo development mein nahi dikhai.
+
+**Transport choice.** Do transports hain, har ek ke trade-offs hain:
+
+| Transport | Kahan kaam karta hai | Latency | Limitation |
+|-----------|---------------------|---------|------------|
+| stdio | Local, same machine | Bohot kam (no network) | Sirf local processes; ek agent = ek server instance |
+| HTTP (Streamable) | Local ya remote | Network latency add hoti hai | Multiple agents ek server share kar sakte hain |
+
+Development ke liye stdio almost hamesha sahi hai. Production mein, agar aapka MCP server alag machine par hai (managed service, container, ya serverless), toh HTTP use karna padega.
+
+**Connection pooling.** `asyncpg.create_pool()` connection pooling provide karta hai — ek se zyada database queries ek saath chal sakti hain bina har baar naya connection banaye. MCP server mein pooling ka matlab hai ke multiple tool calls ek saath efficiently handle ho sakti hain. Ek important detail: **pool ko MCP server lifetime ke liye rakho**, har tool call par naya pool mat banao. Quick Win mein `_pool` global exactly yeh karta hai.
+
+**Kab queue karein.** Agar aapka MCP server bohot zyada requests handle kar raha hai, do options hain:
+
+1.  **Connection pool size barhao.** Default pool size usually 10 connections hai. Agar aapke paas 50 concurrent tool calls hain, toh pool size 50+ karo. Yeh immediate fix hai.
+2.  **Queue add karo.** Agar database connections limited hain (managed Postgres ke limits), toh MCP server ke andar ek queue rakho jo requests ko ek ek karke process kare. Yeh zyada complex hai lekin database ko overload hone se bachata hai.
+
+Zyada tar cases mein, pool size barhana sufficient hai. Queue sirf tab chahiye jab database connection limits aapko force karein.
+
+:::note Quick check
+
+Aapka MCP server stdio par chal raha hai aur aap 100 concurrent users serve karna chahte ho. Kya stdio sufficient hai? Jawab: **Nahi.** stdio ek subprocess hai — ek agent = ek server instance. 100 concurrent users ke liye, aapko HTTP transport chahiye taake multiple agents ek server share kar sakein, ya 100 alag server instances chalani padengi.
+
+:::
+
+**Try with AI**
+
+```
+Mera customer-support Worker production mein hai. MCP server Neon
+Postgres se connected hai. Do problems aa rahe hain:
+1. Peak hours mein tool calls 5-second timeout hit kar rahe hain
+2. Kabhi kabhi "connection limit exceeded" error aata hai
+Har problem ke liye do possible fixes batao (ek quick, ek proper),
+aur batao kaunsi pehle try karoge aur kyun.
+```
+
+---
+
+## Part 4: Worked Example — Customer Support Worker
+
+Yeh section pichle course ke chat agent ko aath surgical decisions ke zariye customer-support Worker mein evolve karta hai. Har decision ek specific cheez add karta hai: ek naya file, ek naya tool, ek nayi wiring. `AGENTS.md` architectural rules hold karta hai turn after turn; per-decision briefs sirf woh naam lete hain jo IS step mein badalta hai.
+
+:::warning Before you start
+
+Starter project [digital-fte-crash-course.zip](/downloads/digital-fte-crash-course.zip) mein hai. Quick Win complete kar chuke ho toh aapke paas abhi `cli.py`, `notes_mcp.py`, aur `.claude/skills/log-a-note/SKILL.md` hain. Agar nahi kiya, pehle Quick Win karo — yeh worked example us par build karta hai.
+
+:::
+
+### Decision 1: Schema setup — chhe tables banao
+
+Pehla kaam: system of record ka foundation. Concept 7 ki chhe tables banao Neon branch par:
+
+```bash
+# Neon console mein ya kisi bhi Postgres client se
+# pgvector extension enable karo
+CREATE EXTENSION IF NOT EXISTS vector;
+
+# Concept 7 ki chhe tables (poora SQL wahan hai)
+# conversations, messages, documents, embeddings, audit_log, capability_invocations
+```
+
+Yeh schema aapka system of record hai. Har cheez yahan jaati hai: conversations, messages, audit trail, embeddings.
+
+**Verify:** `dt` command se chhe tables dikhni chahiye. `\d+ embeddings` se `VECTOR(1536)` column aur HNSW index confirm karo.
+
+---
+
+### Decision 2: MCP server — customer-data MCP banao
+
+Quick Win ka `notes_mcp.py` ek proof-of-concept tha. Ab real MCP server banao jo customer support operations expose kare:
+
+```python
+# src/chat_agent/mcp/customer_data.py
+import json
+import os
+import asyncpg
+from mcp.server.fastmcp import FastMCP
+from pgvector.asyncpg import register_vector
+
+mcp = FastMCP("customer-data")
+
+_pool = None
+
+async def get_pool():
+    global _pool
+    if _pool is None:
+        _pool = await asyncpg.create_pool(
+            os.environ["DATABASE_URL"],
+            init=register_vector,  # pgvector registration!
+        )
+    return _pool
+
+@mcp.tool()
+async def lookup_customer(customer_id: str) -> dict:
+    """Look up a customer by ID. Returns name, email, account_status, created_at."""
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT id, name, email, account_status, created_at "
+            "FROM customers WHERE id = $1",
+            customer_id,
+        )
+        if row is None:
+            return {"error": "Customer not found"}
+        return {k: str(v) if not isinstance(v, str) else v for k, v in dict(row).items()}
+
+@mcp.tool()
+async def get_ticket(ticket_id: str) -> dict:
+    """Get a support ticket by ID. Returns full ticket details including status and priority."""
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        row = await conn.fetchrow(
+            "SELECT id, customer_id, subject, body, status, priority, created_at "
+            "FROM tickets WHERE id = $1",
+            ticket_id,
+        )
+        if row is None:
+            return {"error": "Ticket not found"}
+        return {k: str(v) if not isinstance(v, str) else v for k, v in dict(row).items()}
+
+@mcp.tool()
+async def search_similar_tickets(query: str, limit: int = 5) -> list[dict]:
+    """Semantic search for similar resolved tickets. Returns top matches with resolution."""
+    from openai import AsyncOpenAI
+    client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+    # Embed the query
+    response = await client.embeddings.create(
+        model="text-embedding-3-small", input=[query]
+    )
+    query_vec = response.data[0].embedding
+
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        rows = await conn.fetch(
+            """SELECT d.id, d.title, d.body,
+                      e.embedding <=> $1 AS distance
+               FROM embeddings e
+               JOIN documents d ON d.id = e.document_id
+               WHERE e.document_id IS NOT NULL
+               ORDER BY e.embedding <=> $1
+               LIMIT $2""",
+            query_vec, limit,
+        )
+        return [
+            {"id": str(r["id"]), "title": r["title"],
+             "body": r["body"][:500], "distance": round(r["distance"], 4)}
+            for r in rows
+        ]
+
+@mcp.tool()
+async def update_ticket_status(ticket_id: str, new_status: str) -> dict:
+    """Update a ticket's status. Valid values: open, in_progress, resolved, closed."""
+    valid_statuses = {"open", "in_progress", "resolved", "closed"}
+    if new_status not in valid_statuses:
+        return {"error": f"Invalid status. Must be one of: {valid_statuses}"}
+
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            result = await conn.execute(
+                "UPDATE tickets SET status = $1 WHERE id = $2",
+                new_status, ticket_id,
+            )
+            if result == "UPDATE 0":
+                return {"error": "Ticket not found"}
+
+            # Audit trail
+            await conn.execute(
+                """INSERT INTO audit_log (actor, action, target, payload)
+                   VALUES ($1, $2, $3, $4::jsonb)""",
+                "worker:customer-support", "ticket_status_updated", ticket_id,
+                json.dumps({"new_status": new_status}),
+            )
+
+            return {"ticket_id": ticket_id, "status": new_status, "updated": True}
+
+if __name__ == "__main__":
+    mcp.run(transport="stdio")
+```
+
+**Is MCP server ke baare mein key points:**
+
+*   **Scoped tools.** Sirf safe operations: lookup, search, update status. Koi `DELETE`, koi `DROP`, koi schema changes.
+*   **pgvector integration.** `search_similar_tickets` query-time embedding aur cosine distance use karta hai.
+*   **Built-in audit trail.** `update_ticket_status` ek transaction mein ticket update aur audit row likhta hai.
+
+---
+
+### Decision 3: Skills library — customer support skills banao
+
+Ab Skills library banao. Chaar skills jo customer support Worker ko chahiye:
+
+```bash
+mkdir -p .claude/skills/{summarize-ticket,lookup-customer-info,escalate-to-tier-2,find-similar-resolved}
+```
+
+**Skill 1: summarize-ticket**
+
+```yaml
+# .claude/skills/summarize-ticket/SKILL.md
+---
+name: summarize-ticket
+description: Summarizes a support ticket including customer info, issue details, and current status. Use when the user asks to "bring me up to speed", "summarize ticket", "what's the story on", or asks about a specific ticket.
+---
+
+# Summarize ticket
+
+When this skill activates:
+
+1. Extract the ticket ID from the user's message (format: TKT-XXXX or similar).
+2. Call `get_ticket` to get the ticket details.
+3. Call `lookup_customer` with the ticket's customer_id to get customer info.
+4. Compose a five-section summary:
+   - **Customer**: name, email, account status
+   - **Issue**: subject and first message
+   - **Current status**: status, priority, age
+   - **What's been done**: any status changes from audit trail
+   - **Recommended next step**: based on status and priority
+
+Keep the summary under 200 words. Use bullet points.
+```
+
+**Skill 2: lookup-customer-info**
+
+```yaml
+# .claude/skills/lookup-customer-info/SKILL.md
+---
+name: lookup-customer-info
+description: Looks up customer information including their profile and recent tickets. Use when the user asks about a customer, needs customer details, or asks "who is", "what's their email", "show me their account".
+---
+
+# Lookup customer info
+
+When this skill activates:
+
+1. Extract the customer identifier from the user's message (name, email, or customer ID).
+2. Call `lookup_customer` to get the customer record.
+3. Call `get_customer_tickets` to get their recent tickets.
+4. Present the information clearly:
+   - Account details (name, email, status, member since)
+   - Recent tickets (ID, subject, status, age)
+
+If the customer is not found, say so clearly and ask for a different identifier.
+```
+
+**Skill 3: escalate-to-tier-2**
+
+```yaml
+# .claude/skills/escalate-to-tier-2/SKILL.md
+---
+name: escalate-to-tier-2
+description: Escalates a ticket to tier-2 support with a structured handoff. Use when the user says "escalate", "transfer to tier 2", "I need help with this", or when the issue is beyond first-level support.
+---
+
+# Escalate to tier 2
+
+When this skill activates:
+
+1. Get the current ticket details via `get_ticket`.
+2. Compose an escalation note with:
+   - Ticket ID and customer info
+   - Summary of the issue
+   - What's been tried so far
+   - Why escalation is needed (technical complexity, policy exception, etc.)
+3. Update ticket status to `in_progress` via `update_ticket_status`.
+4. Write the escalation note to `tmp/escalation-{ticket_id}.md` for the tier-2 team.
+5. Confirm to the user: "Escalated ticket {id} to tier-2 support."
+
+Keep the escalation note factual and concise. Tier-2 needs the story, not the frustration.
+```
+
+**Skill 4: find-similar-resolved**
+
+```yaml
+# .claude/skills/find-similar-resolved/SKILL.md
+---
+name: find-similar-resolved
+description: Finds similar resolved tickets using semantic search. Use when the user asks "have we seen this before", "find similar", "what was the resolution for", or when you need to check past solutions.
+---
+
+# Find similar resolved tickets
+
+When this skill activates:
+
+1. Extract the search query from the user's message — the issue description or key terms.
+2. Call `search_similar_tickets` with the query.
+3. Present the results as a list:
+   - Ticket ID and title
+   - Similarity score (distance)
+   - Resolution summary (first 500 chars of body)
+
+If no similar tickets are found, say so and suggest the user provide more details about the issue.
+```
+
+**Verify:** Claude Code ya OpenCode mein project kholo. Agent ko chaar skills discover karne chahiye. Test: "Summarize ticket TKT-1042" bolo — agent ko `summarize-ticket` skill activate karni chahiye.
+
+---
+
+### Decision 4: Message persistence — conversation aur message logging
+
+Ab agent ko conversations aur messages store karna sikhao. `cli.py` mein message logging add karo:
+
+```python
+# cli.py — Decision 4 addition: message persistence
+import json
+from uuid import uuid4, UUID
+import asyncpg
+from datetime import datetime, timezone
+
+async def log_message(pool, conversation_id: UUID, role: str, content: str,
+                      input_tokens: int = 0, output_tokens: int = 0):
+    """Write a message to the messages table and audit_log."""
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            await conn.execute(
+                """INSERT INTO messages
+                   (conversation_id, role, content, input_tokens, output_tokens)
+                   VALUES ($1, $2, $3, $4, $5)""",
+                conversation_id, role, content, input_tokens, output_tokens,
+            )
+            await conn.execute(
+                """INSERT INTO audit_log
+                   (conversation_id, actor, action, target, payload)
+                   VALUES ($1, $2, $3, $4, $5::jsonb)""",
+                conversation_id, "system",
+                f"message_{role}", None,
+                json.dumps({"length": len(content)}),
+            )
+```
+
+Har user message aur har agent reply ab `messages` table mein jaati hai, aur `audit_log` mein ek row bhi.
+
+---
+
+### Decision 5: Document aur embedding pipeline — reference library
+
+Ab reference library set karo. Knowledge base articles, policy documents, aur past resolved tickets ko `documents` table mein store karo aur embed karo:
+
+```python
+# src/chat_agent/embedding/pipeline.py
+import os
+from openai import AsyncOpenAI
+import asyncpg
+from pgvector.asyncpg import register_vector
+
+EMBEDDING_MODEL = "text-embedding-3-small"
+
+async def embed_and_store(
+    pool: asyncpg.Pool,
+    source: str,
+    title: str,
+    body: str,
+    metadata: dict = None,
+):
+    """Embed a document and store it with its vector."""
+    client = AsyncOpenAI(api_key=os.environ["OPENAI_API_KEY"])
+
+    async with pool.acquire() as conn:
+        async with conn.transaction():
+            # Insert document
+            doc_id = await conn.fetchval(
+                """INSERT INTO documents (source, title, body, metadata)
+                   VALUES ($1, $2, $3, $4::jsonb) RETURNING id""",
+                source, title, body, json.dumps(metadata or {}),
+            )
+
+            # Embed (single chunk for short documents)
+            response = await client.embeddings.create(
+                model=EMBEDDING_MODEL, input=[body]
+            )
+            embedding = response.data[0].embedding
+
+            # Register pgvector and store embedding
+            await register_vector(conn)
+            await conn.execute(
+                """INSERT INTO embeddings
+                   (document_id, chunk_text, chunk_index, embedding, model)
+                   VALUES ($1, $2, $3, $4, $5)""",
+                doc_id, body, 0, embedding, EMBEDDING_MODEL,
+            )
+
+            return doc_id
+```
+
+Resolved tickets, policy documents, aur knowledge base articles ko is function se embed karo. Woh phir `search_similar_tickets` MCP tool ke zariye searchable ho jaate hain.
+
+---
+
+### Decision 6: Customer-data MCP server ko cli.py se wire karna
+
+Ab MCP server ko agent se connect karo. `cli.py` mein `MCPServerStdio` ke zariye:
+
+```python
+# cli.py — Decision 6: wire customer-data MCP server
+from agents.mcp import MCPServerStdio
+
+async def main():
+    # ... client aur model setup (same as Quick Win) ...
+
+    async with MCPServerStdio(
+        name="customer-data",
+        params={
+            "command": "python",
+            "args": ["-m", "chat_agent.mcp.customer_data"],
+            "env": {**os.environ},
+        },
+        client_session_timeout_seconds=30,
+    ) as customer_data:
+        agent = Agent(
+            name="CustomerSupportWorker",
+            model=model,
+            mcp_servers=[customer_data],
+            instructions="""You are a customer support worker.
+            Use the tools available to help customers.
+            Always check customer history before responding.
+            Log all actions you take.""",
+        )
+        # Run the agent
+        result = await Runner.run(agent, user_message)
+        print(result.final_output)
+```
+
+---
+
+### Decision 7: Audit trail integration
+
+Audit trail already MCP server ke andar built-in hai (Decision 2 mein `update_ticket_status` audit row likhta hai). Ab agent-level audit add karo — har skill invocation aur har model call log karo:
+
+```python
+# cli.py — Decision 7: agent-level audit logging
+import time
+
+async def run_with_audit(pool, agent, message, conversation_id):
+    """Run the agent with full audit logging."""
+    started_at = time.monotonic()
+
+    # Log user message
+    await log_message(pool, conversation_id, "user", message)
+
+    # Run agent
+    result = await Runner.run(agent, message)
+
+    # Log agent response
+    await log_message(pool, conversation_id, "assistant", result.final_output)
+
+    # Log the run as a capability invocation
+    async with pool.acquire() as conn:
+        await conn.execute(
+            """INSERT INTO capability_invocations
+               (conversation_id, capability, arguments, result, status, latency_ms)
+               VALUES ($1, $2, $3::jsonb, $4::jsonb, $5, $6)""",
+            conversation_id, "agent:run",
+            json.dumps({"message": message[:500]}),
+            json.dumps({"output_length": len(result.final_output)}),
+            "ok",
+            int((time.monotonic() - started_at) * 1000),
+        )
+
+    return result
+```
+
+Ab har action ka trace hai: user message, agent response, aur capability invocation — sab ek conversation_id se linked.
+
+---
+
+### Decision 8: End-to-end verify karo test scenario se
+
+Sab kuch wire ho gaya hai. Ab end-to-end test karo:
+
+```bash
+# Environment set karo
+export DATABASE_URL='postgresql://…/your_db?sslmode=require'
+export OPENAI_API_KEY='sk-…'
+export MODEL_NAME='gpt-4o'
+
+# Test scenario run karo
+uv run python cli.py
+```
+
+Test prompt: "Can you bring me up to speed on ticket TKT-1042? Also, have we seen similar issues before?"
+
+Agent ko yeh karna chahiye:
+1. `summarize-ticket` skill activate karna
+2. `get_ticket` MCP tool call karna
+3. `lookup_customer` MCP tool call karna
+4. `search_similar_tickets` MCP tool call karna
+5. Paanch-section summary present karna
+
+**Verify:**
+
+```sql
+-- Kya messages store hue?
+SELECT role, content, created_at FROM messages
+WHERE conversation_id = (SELECT id FROM conversations ORDER BY started_at DESC LIMIT 1)
+ORDER BY created_at;
+
+-- Kya audit trail complete hai?
+SELECT action, target, created_at FROM audit_log
+WHERE conversation_id = (SELECT id FROM conversations ORDER BY started_at DESC LIMIT 1)
+ORDER BY created_at;
+
+-- Kya capability invocations record hue?
+SELECT capability, status, latency_ms FROM capability_invocations
+WHERE conversation_id = (SELECT id FROM conversations ORDER BY started_at DESC LIMIT 1);
+```
+
+Agar teeno queries results dikhayein — messages, audit rows, aur capability invocations — toh **Worker kaam kar raha hai.** Ek system of record jo truth hold karta hai. Skills jo demand par activate hoti hain. MCP boundary jo agent ko stores se jodta hai. Audit trail jo har action record karta hai.
+
+---
+
+## Part 5: Yeh course kahan chodhta hai
+
+Aapke paas ab ek working Worker hai: Skills, Postgres system of record, MCP wire, aur audit trail ke saath. Yeh section batata hai ke aage kya hai.
+
+### Worker ki cost shape — operate karne mein asli kharcha kya hai
+
+Ek Worker ko operate karne ka kharcha teen cheezon se aata hai:
+
+| Kharcha ka source | Range | Notes |
+|-------------------|-------|-------|
+| LLM inference | $20–150/month | Model choice sab se bada lever. GPT-4o vs GPT-5.5 ka 5× farq ho sakta hai. |
+| Database (Neon Postgres) | $0–25/month | Free tier 50 conversations/day ke liye sufficient. Paid tier scaling ke liye. |
+| Embedding (OpenAI) | $0.02–1/month | 50K chunks embed karna = $0.30. Sirf naye documents ke liye. |
+| **Total (single Worker)** | **$20–180/month** | Moderate use par $60–80 typical. |
+
+50 Workers ki workforce ke liye:
+*   Inference: $1K–7.5K/month (volume discounts milte hain)
+*   Database: $25–200/month (shared Postgres, Neon paid tier)
+*   Embeddings: $1–10/month
+*   **Total: $3K–12K/month**
+
+Key insight: inference hamesha dominant cost hai. Database aur embeddings negligible hain. Isliye model routing (saste model triage ke liye, mehenga model complex decisions ke liye) sab se bada cost lever hai.
+
+### Swap guide — architecture invariant hai, products nahi
+
+Yeh course specific products use karta hai, lekin architecture product-agnostic hai. Har cheez swap ho sakti hai:
+
+| Component | Yeh course mein | Alternatives | Swap difficulty |
+|-----------|----------------|-------------|-----------------|
+| Agent SDK | OpenAI Agents SDK | LangGraph, AutoGen, CrewAI, Mastra | Medium — patterns transfer hote hain, API alag hai |
+| Database | Neon Postgres | AWS RDS, Supabase, Azure, self-hosted Postgres | Easy — SQL standard hai |
+| Vector search | pgvector | Pinecone, Weaviate, Qdrant, Milvus | Medium — API alag hai, architecture same |
+| MCP server | Custom stdio | Remote HTTP, managed MCP services | Easy — transport change, protocol same |
+| Embeddings | OpenAI text-embedding-3-small | Cohere, Voyage, local models | Easy — sirf model name aur dimension change |
+| Sandbox | UnixLocalSandboxClient | Docker, Cloudflare, E2B, Modal | Easy — one-line change |
+
+Architecture swap nahi hota: Skills + System of Record + MCP wire yeh teen moves hamesha rehte hain. Sirf products badalte hain.
+
+### Yeh course kya cover nahi karta
+
+*   **Always-on deployment.** Worker ko 24/7 chalana, health checks, auto-restart. Yeh [Deploy Your Agent Harness to the Cloud](/docs/deploying-agents-crash-course) course hai.
+*   **Multi-channel.** Worker ko Slack, email, WhatsApp par expose karna. Yeh baad ke moves hain.
+*   **Proactive behavior.** Worker ko khud se tasks start karne dena (scheduled checks, alerts). Yeh bhi baad ka hai.
+*   **Multi-agent orchestration.** Kayi Workers ko saath mein coordinate karna. Yeh Workforce course hai.
+*   **Production evals.** Worker ki accuracy systematically measure karna. Yeh Eval-Driven Development course hai.
+
+---
+
+## Asli mein kaise ache bano
+
+Yeh course aapko architecture dikhata hai. Ache hone ke liye aapko yeh karna padega:
+
+1.  **Quick Win khud run karo.** Padhna aur samajhna alag cheezein hain. Code chalanai aapko woh intuition deti hai jo reading nahi deti.
+2.  **Ek real skill likho.** Apne domain ke liye ek skill banao. Description iterate karo jab tak reliably fire na kare. Yeh sab se zyada valuable practice hai.
+3.  **Audit trail se ek real sawaal jawab karo.** "Agent ne pichle hafte kya kiya?" ka jawab SQL se dhundho. Agar nahi dhundh sakte, audit trail mein kuch missing hai.
+4.  **Ek MCP tool likho jo kuch real kare.** `@function_tool` se MCP server par move karna woh transition hai jo Worker ko Worker banata hai.
+5.  **Part 4 ka worked example khud build karo.** Aath decisions ek ke baad ek. Har decision ke baad verify karo ke kuch naya kaam karta hai.
+
+---
+
+## Quick Reference
+
+### 15 concepts ek-liner mein
+
+| # | Concept | Ek-liner |
+|---|---------|----------|
+| 1 | Agent Skill | Folder + `SKILL.md`; agent discover karta hai, load karta hai, execute karta hai. |
+| 2 | Progressive disclosure | Sirf metadata hamesha loaded; body demand par; references sirf jab reach karo. |
+| 3 | SKILL.md likhna | Frontmatter (name + description) contract hai; body operational instructions hai. |
+| 4 | Skill packaging | `.claude/skills/` dono Claude Code aur OpenCode mein kaam karta hai. |
+| 5 | Skills compose | Choti skills filesystem handoff se chain hoti hain; isolation usually orchestration se zyada valuable hai. |
+| 6 | Managed Postgres | Neon: serverless, scale-to-zero, branching, first-class MCP. |
+| 7 | Worker schema | Chhe tables: conversations, messages, documents, embeddings, audit_log, capability_invocations. |
+| 8 | pgvector | `VECTOR(1536)` column + HNSW index + cosine distance = semantic search. |
+| 9 | Embedding pipeline | Chunk → embed → store → query. Model dimension contract hai. |
+| 10 | Audit trail | Har meaningful action ek row; replayable, queryable, trustworthy. |
+| 11 | MCP | Protocol for tools/resources/prompts; na framework, na service. |
+| 12 | Neon MCP server | Development ke liye powerful; production ke liye nahi. |
+| 13 | SDK + MCP | `mcp_servers=[...]` agent mein; model automatically tools dekhta hai. |
+| 14 | Custom MCP server | Scoped access + business logic + audit trail = trust boundary. |
+| 15 | MCP under load | stdio local ke liye, HTTP remote ke liye; pool size barhao pehle. |
+
+### Decision tree — kab kya karo
+
+```
+Agent ko naye capability chahiye?
+├── Sirf ek agent ke liye, simple logic → @function_tool
+├── Multiple agents ke liye, ya trust boundary chahiye → Custom MCP server
+└── Reusable across projects, version-controlled → Skill folder
+
+State kahan store karein?
+├── Temporary, session-scoped → SDK sessions
+├── Durable, queryable → Postgres (system of record)
+└── Semantic search chahiye → Postgres + pgvector
+
+MCP kab use karein?
+├── External database ya service access → Custom MCP server
+├── Development workflow speed up → Neon MCP server
+└── Agent ki process mein kaam hota hai → @function_tool
+```
+
+### File location quick-ref
+
+| File | Kahan hai | Kya karta hai |
+|------|-----------|---------------|
+| `AGENTS.md` | Project root | Coding agent ke liye architectural rules |
+| `cli.py` | Project root | Agent entry point, MCP wiring, message logging |
+| `SKILL.md` | `.claude/skills/<name>/SKILL.md` | Skill definition (frontmatter + body) |
+| `customer_data.py` | `src/chat_agent/mcp/` | Custom MCP server |
+| `chunker.py` | `src/chat_agent/embedding/` | Text chunking |
+| `embedder.py` | `src/chat_agent/embedding/` | Embedding generation |
+| `audit.py` | `src/chat_agent/` | Audit trail helper |
+| `.env` | Project root | Environment variables (DB URL, API keys) |
+
+### Jab kuch galat lage
+
+| Symptom | Likely cause | Kahan dekhein |
+|---------|-------------|---------------|
+| Agent skill discover nahi karta | Description vague hai | Concept 3 — description quality |
+| Skill baar baar galat trigger hoti hai | Description bohot broad hai | Concept 3 — good vs poor descriptions |
+| MCP tool call timeout | Database connection slow hai | Concept 15 — `client_session_timeout_seconds` |
+| Embeddings nonsense results de rahe hain | Model mismatch | Concept 9 — dimension contract |
+| `expected vector, got list[float]` error | pgvector register nahi kiya | Concept 9 — pgvector asyncpg registration |
+| Duplicate rows after one prompt | SDK retry on timeout | Quick Win Step 3 — timeout fix |
+| Agent `DELETE` ya `DROP` chala raha hai | MCP server mein scoped access nahi hai | Concept 14 — custom MCP server design |
+| Audit trail mein gaps hain | Half-written transactions | Concept 10 — two writes in one transaction |
+
+---
+
+## Appendix
+
+### A.1: Audience aur prerequisites
+
+Yeh course intermediate level hai. Aapke paas hona chahiye:
+
+1.  **Python reading ability.** Type hints, function signatures, async/await, Pydantic models, decorators, basic class syntax. Agar aap typed Python comfortably nahi padh sakte, pehle [Programming in the AI Era](https://agentfactory.panaversity.org/docs/Programming-in-the-AI-Era) complete karo.
+2.  **[Agentic Coding Crash Course](/docs/agentic-coding-crash-course) complete kiya ho.** Plan mode, rules files, context discipline.
+3.  **Ek PRIMM-AI+ cycle complete kiya ho.** Predict → Run → Investigate → Modify → Make rhythm.
+4.  **Postgres ka working mental model.** Tables, rows, basic SQL.
+
+Agar [Build AI Agents](/docs/build-agents-crash-course) pehle kiya hai toh helpful hai lekin zaruri nahi — starter zip uski end state reproduce karta hai.
+
+### A.2: Previous course recap
+
+Pichle course ([Build AI Agents](/docs/build-agents-crash-course)) ne yeh banaya tha:
+
+*   **Agent loop**: model → tool calls → tool results → model → final answer
+*   **`@function_tool`**: Python functions ko agent-callable tools banaya
+*   **Sessions**: conversation history persist ki
+*   **Streaming events**: real-time output dikhaha
+*   **Guardrails**: input/output safety checks
+*   **`SandboxAgent`**: isolated compute environment
+*   **Tracing**: agent behavior ka record
+
+Yeh course un sab ko rakhta hai aur teen naye cheezein add karta hai: Skills (capabilities portable folders mein), Postgres (system of record), aur MCP (wire between them).
+
+### A.3: Postgres essentials
+
+Agar aapka Postgres rusty hai, yeh quick refresher hai:
+
+```sql
+-- Table banao
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT UNIQUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Data insert karo
+INSERT INTO users (name, email) VALUES ('Ali', 'ali@example.com');
+
+-- Query karo
+SELECT * FROM users WHERE name = 'Ali';
+
+-- Join karo
+SELECT u.name, t.subject
+FROM users u
+JOIN tickets t ON t.customer_id = u.id;
+
+-- Index banao (performance ke liye)
+CREATE INDEX idx_users_email ON users(email);
+```
+
+Postgres ki JSONB support bhi important hai:
+
+```sql
+-- JSONB column
+CREATE TABLE events (data JSONB);
+INSERT INTO events VALUES ('{"type": "click", "page": "home"}');
+
+-- JSONB query
+SELECT * FROM events WHERE data->>'type' = 'click';
+```
+
+### A.4: Kaise parhein
+
+Yeh document layered depth hai. Pehle reading mein:
+
+1.  Introduction aur architecture overview parho.
+2.  Quick Win karo (ya kam se kam parho).
+3.  Har concept ka first paragraph aur PRIMM Predict parho.
+4.  "Try with AI" blocks skip karo agar abhi tools nahi hain.
+5.  Part 4 ka narrative parho, code blocks skim karo.
+
+Doosri reading mein (haath keyboard par):
+
+1.  Quick Win run karo.
+2.  Har concept ke "Try with AI" karo.
+3.  Part 4 ka worked example build karo, decision by decision.
+
+### A.5: Glossary
+
+| Term | Matlab |
+|------|--------|
+| **Agent** | Model + tools + loop; SDK chalata hai jab tak kaam ho. |
+| **Worker** | Agent + Skills + system of record + MCP. Production-ready AI employee. |
+| **Skill** | Folder + `SKILL.md`; portable, discoverable capability. |
+| **System of record** | Durable store jo company ki truth hold karta hai. |
+| **MCP** | Model Context Protocol; agent-to-external-state wire. |
+| **pgvector** | Postgres extension for vector search. |
+| **Embedding** | Text ka vector representation; semantic search enable karta hai. |
+| **Audit trail** | Har action ka record; replayable, queryable, trustworthy. |
+| **Harness** | Agent ka runtime; SDK loop khud. |
+| **Compute** | Sandbox jahan agent ka code execute hota hai. |
+| **Progressive disclosure** | Skills teen stages mein load hoti hain: discovery, activation, execution. |
+| **Frontmatter** | YAML metadata `SKILL.md` ke top par; name + description. |
+| **HNSW** | Graph-based vector index; fast queries, slow builds. |
+| **IVFFlat** | Partition-based vector index; fast builds, slow queries. |
+| **Cosine distance** | Vectors ke beech angle; text embeddings ke liye default. |
+| **stdio** | Local MCP transport; subprocess stdin/stdout. |
+| **Streamable HTTP** | Remote MCP transport; HTTP + optional SSE. |
+| **CHECK constraint** | Database rule jo data validity ensure karta hai. |
+| **JSONB** | Postgres ka binary JSON type; flexible schema ke liye. |
+| **BIGSERIAL** | Auto-incrementing 64-bit integer; audit logs ke liye. |
+
+### A.6: Yeh appendix kya replace nahi karta
+
+Yeh appendix quick reference hai, comprehensive guide nahi. Yeh replace nahi karta:
+
+*   **[Postgres documentation](https://www.postgresql.org/docs/)** — SQL syntax, advanced features, performance tuning.
+*   **[pgvector GitHub](https://github.com/pgvector/pgvector)** — Complete API reference, index types, tuning.
+*   **[MCP specification](https://modelcontextprotocol.io/)** — Protocol details, transport specs, security model.
+*   **[agentskills.io](https://agentskills.io/)** — Skill format specification, compatibility claims.
+*   **[OpenAI Agents SDK docs](https://openai.github.io/openai-agents-python/)** — API reference, advanced patterns.
+*   **[Neon docs](https://neon.com/docs/)** — Database management, branching, MCP server.
+
+Yeh un sab ke saath use karna hai, unki jagah nahi.
