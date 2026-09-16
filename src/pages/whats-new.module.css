@@ -1,0 +1,133 @@
+.page {
+  padding: 4rem 2rem;
+}
+
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--ifm-color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.7;
+  margin-bottom: 3rem;
+}
+
+.timeline {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--ifm-color-emphasis-200);
+}
+
+.entry {
+  position: relative;
+  padding-bottom: 2rem;
+}
+
+.entry:last-child {
+  padding-bottom: 0;
+}
+
+.dot {
+  position: absolute;
+  left: -2rem;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ifm-color-emphasis-300);
+  border: 3px solid var(--ifm-background-surface-color);
+}
+
+.dot[data-type='major'] {
+  background: var(--ifm-color-primary);
+}
+
+.dot[data-type='feature'] {
+  background: #6366f1;
+}
+
+.dot[data-type='improvement'] {
+  background: #f59e0b;
+}
+
+.content {
+  padding: 1rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-background-surface-color);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.date {
+  font-size: 12px;
+  color: var(--ifm-color-emphasis-500);
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-color-emphasis-600);
+}
+
+.badge[data-type='major'] {
+  background: rgba(37, 194, 160, 0.1);
+  color: var(--ifm-color-primary);
+}
+
+.badge[data-type='feature'] {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.badge[data-type='improvement'] {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+
+.content h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.content p {
+  font-size: 14px;
+  color: var(--ifm-color-emphasis-600);
+  line-height: 1.6;
+}

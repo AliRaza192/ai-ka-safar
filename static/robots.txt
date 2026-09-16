@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ai-ka-safar.vercel.app/sitemap.xml

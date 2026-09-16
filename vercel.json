@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npx docusaurus build",
+  "outputDirectory": "build",
+  "framework": "docusaurus",
+  "installCommand": "pnpm install"
+}

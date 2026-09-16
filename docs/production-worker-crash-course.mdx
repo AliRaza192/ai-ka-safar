@@ -1,6 +1,7 @@
 ---
 sidebar_position: 13
 title: "Digital FTE se Production Worker: 90-Minute ka Crash Course"
+sidebar_label: "Production Worker"
 description: "Durable Execution, Triggers, aur Flow Control ke saath Production Workers banana"
 ---
 
@@ -1916,3 +1917,31 @@ inngest.fast_api.serve(app, client, [my_fn, my_cron, controlled_fn, batched_fn])
 | **Concurrency** | Ek saath chalne wale runs ki max tadaad |
 | **Throttle** | Ek time window mein shuru hone wale runs ki max tadaad |
 | **Priority** | Queue mein runs ka order (Enterprise > Pro > Free) |
+
+---
+
+## Flashcards — Yaad Rakho
+
+<Flashcard question="Production Worker kya hai?" answer="Worker jo production environment mein chalta hai — tested, monitored, logged, aur scalable. Digital FTE ka next level." />
+
+<Flashcard question="Durable Execution kya hai?" answer="Kaam tab bhi continue ho jab server restart ho. State persist hota hai. Inngest jaise frameworks yeh provide karte hain." />
+
+<Flashcard question="Trigger kya hai?" answer="Event jo worker ko start kare. HTTP request, cron job, database change, ya queue message. Trigger = starting signal." />
+
+<Flashcard question="Step Function kya hai?" answer="Worker ka kaam chhote steps mein divided hai. Har step independent hai. Ek step fail ho toh baqi受影响 nahi hote." />
+
+<Flashcard question="Retry Strategy kya hai?" answer="Fail hone pe dobara try karna — exponential backoff, max retries, aur dead letter queue. Har failure ka plan hona chahiye." />
+
+<Flashcard question="Dead Letter Queue kya hai?" answer="Failed messages jo baad mein process ho sakte hain. Debugging ke liye useful — dekho ke kyun fail hua." />
+
+<Flashcard question="Concurrency Control kya hai?" answer="Ek saath kitne workers chal sakte hain. Limit lagao taake server overload na ho. Queue se manage hota hai." />
+
+<Flashcard question="Monitoring Dashboard kya hai?" answer="Real-time view ke worker kya kar raha hai — runs, errors, latency, throughput. Production mein zaroori hai." />
+
+<Flashcard question="Alerting kyun zaroori hai?" answer="Jab kuch galat ho toh turant pata chale. Error rate badha, latency barhi, worker down — alert aana chahiye." />
+
+<Flashcard question="Scaling Strategy kya hai?" answer="Load badhe toh workers ko clone karo. Horizontal scaling (zyada instances) ya vertical scaling (zyada power)." />
+
+<Flashcard question="Idempotency kya hai?" answer="Ek operation ko kitni baar bhi karo, result same rahe. Retry pe duplicate actions se bachao." />
+
+<Flashcard question="Graceful Shutdown kya hai?" answer="Worker ko band karte waqt ongoing kaam pehle complete karo. Jaldi mat band karo — data loss ho sakta hai." />

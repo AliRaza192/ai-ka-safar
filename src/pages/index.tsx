@@ -179,6 +179,106 @@ export default function Home(): ReactNode {
         </div>
       </section>
 
+      {/* Our Mission Section */}
+      <section className={styles.missionSection}>
+        <div className={styles.sectionInner}>
+          <p className={styles.sectionLabel}>Hamara Maqsad</p>
+          <h2 className={styles.sectionTitle}>Teen Advantages</h2>
+          <p className={styles.sectionSubtitle}>Yeh kitaab sirf technology nahi sikhati — yeh tumhein ek naya professional banati hai.</p>
+          <div className={styles.threeCards}>
+            {[
+              {icon:'🎯', title:'Speed to Deploy', desc:'Ek hafte mein pehla agent banao. Mahiney lagane ki zaroorat nahi. Hands-on projects se fori confidence aata hai.'},
+              {icon:'🧠', title:'Deep Understanding', desc:'Sirf tool use karna nahi — architecture samjho. Kab konsa pattern use karna hai, yeh decision-making seekho.'},
+              {icon:'💼', title:'Career Leverage', desc:'AI-Native skills 2026 mein sabse zyada demand mein hain. Domain experts jo AI bhi samajhte hain — yeh next generation hai.'},
+            ].map((c) => (
+              <div key={c.title} className={styles.card}>
+                <div className={styles.cardEmoji}>{c.icon}</div>
+                <h3>{c.title}</h3>
+                <p>{c.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* AI Maturity Levels */}
+      <section className={styles.maturitySection}>
+        <div className={styles.sectionInner}>
+          <p className={styles.sectionLabel}>AI Maturity</p>
+          <h2 className={styles.sectionTitle}>Paanch Levels ka Safar</h2>
+          <p className={styles.sectionSubtitle}>Har company apni jagah hai. Tum kahan ho?</p>
+          <div className={styles.maturityTrack}>
+            {[
+              {level:'L1', title:'Explorer', desc:'Individual AI tools use karte hain', color:'#94a3b8'},
+              {level:'L2', title:'Adopter', desc:'Teams AI workflows follow karti hain', color:'#60a5fa'},
+              {level:'L3', title:'Builder', desc:'Custom AI agents banaye ja rahe hain', color:'#34d399'},
+              {level:'L4', title:'Manufacturer', desc:'AI Workers produce ho rahe hain', color:'#25c2a0'},
+              {level:'L5', title:'AI-Native', desc:'Company AI par chalti hai', color:'#f59e0b'},
+            ].map((l, i) => (
+              <div key={l.level} className={styles.maturityStep}>
+                <div className={styles.maturityLevel} style={{background: l.color}}>{l.level}</div>
+                <h4>{l.title}</h4>
+                <p>{l.desc}</p>
+                {i < 4 && <div className={styles.maturityArrow}>→</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Traditional vs AI-Native */}
+      <section className={styles.comparisonSection}>
+        <div className={styles.sectionInner}>
+          <p className={styles.sectionLabel}>Farq Dekhein</p>
+          <h2 className={styles.sectionTitle}>Traditional vs AI-Native Company</h2>
+          <div className={styles.compareGrid}>
+            <div className={styles.compareCol}>
+              <h3 className={styles.compareHeader}>Traditional Company</h3>
+              <ul className={styles.compareList}>
+                <li>Software bechte hain</li>
+                <li>Insaan kaam karte hain</li>
+                <li>Scale karne ke liye hiring chahiye</li>
+                <li>Revenue linear hai</li>
+                <li>Competitors easily copy kar sakte hain</li>
+              </ul>
+            </div>
+            <div className={`${styles.compareCol} ${styles.compareColHighlight}`}>
+              <h3 className={styles.compareHeader}>AI-Native Company</h3>
+              <ul className={styles.compareList}>
+                <li>✓ AI Employees bechte hain</li>
+                <li>✓ Agents kaam karte hain</li>
+                <li>✓ Scale ek button se hota hai</li>
+                <li>✓ Revenue exponential hai</li>
+                <li>✓ Moat domain data hai</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Monetize Expertise */}
+      <section className={styles.monetizeSection}>
+        <div className={styles.sectionInner}>
+          <p className={styles.sectionLabel}>Paisa Kamaao</p>
+          <h2 className={styles.sectionTitle}>Apni Expertise Monetize Karo</h2>
+          <p className={styles.sectionSubtitle}>Char tareeqe hain jo tum apne domain knowledge ko revenue mein badal sakte ho.</p>
+          <div className={styles.threeCards}>
+            {[
+              {title:'Managed Subscription', desc:'Monthly fee par apna AI agent managed karo. Client sirf result dekhta hai.', price:'$500–$5K/mo'},
+              {title:'Success Fee', desc:'Outcome-based pricing. Jab agent kaam kare, tab paisa.', price:'10–20% of value'},
+              {title:'Enterprise License', desc:'Badi companies ko annual license do. Custom integrations, dedicated support.', price:'$50K–$500K/yr'},
+              {title:'Vertical SaaS', desc:'Ek specific industry ke liye complete AI solution banao.', price:'$100–$1K/seat'},
+            ].map((c) => (
+              <div key={c.title} className={styles.card}>
+                <h3>{c.title}</h3>
+                <p>{c.desc}</p>
+                <div className={styles.cardPrice}>{c.price}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className={styles.ctaSection}>
         <div className={styles.sectionInner}>

@@ -1,6 +1,7 @@
 ---
 sidebar_position: 12
 title: "Digital FTE Banana: 4-Ghante ka Crash Course"
+sidebar_label: "Digital FTE"
 description: "Skills, System of Record, aur MCP ke saath AI Worker banana seekhein"
 ---
 
@@ -2282,3 +2283,37 @@ Yeh appendix quick reference hai, comprehensive guide nahi. Yeh replace nahi kar
 *   **[Neon docs](https://neon.com/docs/)** — Database management, branching, MCP server.
 
 Yeh un sab ke saath use karna hai, unki jagah nahi.
+
+---
+
+## Flashcards — Yaad Rakho
+
+<Flashcard question="Digital FTE kya hai?" answer="Functional Digital Employee — ek AI worker jo specific role play karta hai, tools use karta hai, aur production mein kaam karta hai. Insaan jaisa lekin 24/7." />
+
+<Flashcard question="System of Record kya hai?" answer="Woh database jo track karta hai ke worker ne kya kiya, kab kiya, aur kaise kiya. Governance ka foundation hai." />
+
+<Flashcard question="MCP kya hai?" answer="Model Context Protocol — standard way jo agents ko tools se jodta hai. Ek baar tool banao, har agent use kar sakta hai." />
+
+<Flashcard question="Skills kaise banayein?" answer="SKILL.md file likho jismein frontmatter (name, description) aur instructions hon. Phir use agent ko do — agent samajh jayega." />
+
+<Flashcard question="Trigger kya hai?" answer="Event jo worker ko chalu kare. Jaise: email aaya, form submit hua, schedule aaya. Trigger = starting point." />
+
+<Flashcard question="Action kya hai?" answer="Worker ka koi kaam — email bhejo, data update karo, report banao. Action = worker ka output." />
+
+<Flashcard question="Guard kya hai?" answer="Safety check jo worker ke action pe lagta hai. Pehle check karo ke action sahi hai, phir execute karo. Human approval bhi guard ho sakta hai." />
+
+<Flashcard question="Flow kya hai?" answer="Worker ka complete journey — trigger se action tak. Jaise: email aaya → parse kiya → reply kiya → logged. Flow = end-to-end process." />
+
+<Flashcard question="Worker vs Agent mein kya farq hai?" answer="Worker = specific role, specific tools, production-ready. Agent = general purpose, flexible. Worker ek specialized agent hai." />
+
+<Flashcard question="Production Ready kya matlab hai?" answer="Worker tested, monitored, logged, aur scalable hai. Error handling hai, fallback hai, aur human escalation hai." />
+
+<Flashcard question="Deployment kaise karein?" answer="Cloud ya on-premise. Docker container mein pack karo, environment variables set karo, aur deploy karo. Monitoring laga do." />
+
+<Flashcard question="Cost Structure kya hai?" answer="Worker ki cost = compute + API calls + storage. Har action pe cost aata hai. Optimize karna zaroori hai." />
+
+<Flashcard question="Governance kyun zaroori hai?" answer="Worker kya kar sakta hai, kya nahi — yeh define karna. Bina governance ke worker galti kar sakta hai." />
+
+<Flashcard question="Human-in-the-Loop kya hai?" answer="Critical decisions pe insaan ka approval zaroori hai. Worker suggest karta hai, insaan approve karta hai." />
+
+<Flashcard question="Scaling kaise karein?" answer="Workers ko clone karo — same worker, different instances. Load balancing, queuing, aur parallel processing se scale karo." />

@@ -78,10 +78,43 @@
 .pillarCard h3 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; color: var(--ifm-font-color-base); }
 .pillarCard p { font-size: 13px; color: var(--ifm-color-emphasis-600); }
 
-.ctaSection { padding: 5rem 2rem; }
+/* Mission Section */
+.missionSection { padding: 5rem 2rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); background: var(--ifm-color-emphasis-50); }
+[data-theme='dark'] .missionSection { background: rgba(255,255,255,0.02); }
+
+/* Maturity Section */
+.maturitySection { padding: 5rem 2rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); }
+.maturityTrack { display: flex; align-items: flex-start; justify-content: center; gap: 0; margin-top: 2rem; }
+.maturityStep { text-align: center; flex: 1; max-width: 180px; position: relative; }
+.maturityLevel { width: 48px; height: 48px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; margin: 0 auto 0.75rem; }
+.maturityStep h4 { font-size: 14px; font-weight: 700; margin-bottom: 0.25rem; }
+.maturityStep p { font-size: 12px; color: var(--ifm-color-emphasis-600); }
+.maturityArrow { position: absolute; right: -12px; top: 12px; font-size: 1.5rem; color: var(--ifm-color-emphasis-400); }
+
+/* Comparison Section */
+.comparisonSection { padding: 5rem 2rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); background: var(--ifm-color-emphasis-50); }
+[data-theme='dark'] .comparisonSection { background: rgba(255,255,255,0.02); }
+.compareGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; max-width: 800px; margin: 0 auto; }
+.compareCol { padding: 2rem; border: 1px solid var(--ifm-color-emphasis-200); background: var(--ifm-background-surface-color); }
+.compareColHighlight { border: 2px solid var(--ifm-color-primary); background: rgba(37, 194, 160, 0.03); }
+.compareHeader { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); }
+.compareList { list-style: none; padding: 0; margin: 0; }
+.compareList li { padding: 0.5rem 0; font-size: 14px; color: var(--ifm-color-emphasis-700); border-bottom: 1px solid var(--ifm-color-emphasis-100); }
+.compareList li:last-child { border-bottom: none; }
+
+/* Monetize Section */
+.monetizeSection { padding: 5rem 2rem; border-bottom: 1px solid var(--ifm-color-emphasis-200); }
+.cardPrice { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--ifm-color-emphasis-200); font-size: 16px; font-weight: 800; color: var(--ifm-color-primary); }
+
+/* CTA Section */
+.ctaSection { padding: 5rem 2rem; background: linear-gradient(135deg, var(--ifm-color-primary-darkest), var(--ifm-color-primary-dark)); color: white; }
 .ctaGrid { max-width: 700px; }
-.ctaTitle { font-size: 2.5rem; font-weight: 800; color: var(--ifm-font-color-base); margin-bottom: 1rem; }
-.ctaDesc { font-size: 1rem; color: var(--ifm-color-emphasis-600); margin-bottom: 2rem; line-height: 1.7; }
+.ctaTitle { font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 1rem; }
+.ctaDesc { font-size: 1rem; color: rgba(255,255,255,0.85); margin-bottom: 2rem; line-height: 1.7; }
+.ctaSection .btnPrimary { background: white; color: var(--ifm-color-primary-dark); }
+.ctaSection .btnPrimary:hover { background: rgba(255,255,255,0.9); color: var(--ifm-color-primary-dark); }
+.ctaSection .btnSecondary { border-color: rgba(255,255,255,0.4); color: white; }
+.ctaSection .btnSecondary:hover { background: rgba(255,255,255,0.1); color: white; }
 
 @media (max-width: 768px) {
   .heroBanner { grid-template-columns: 1fr; min-height: auto; }
@@ -90,4 +123,7 @@
   .heroTitle { font-size: 3rem; }
   .threeCards, .statsCards, .sixGrid { grid-template-columns: 1fr; }
   .tableRow { grid-template-columns: 1fr; }
+  .maturityTrack { flex-direction: column; align-items: center; gap: 1.5rem; }
+  .maturityArrow { display: none; }
+  .compareGrid { grid-template-columns: 1fr; }
 }

@@ -1,3 +1,10 @@
+---
+id: build-agents-crash-course
+title: "OpenAI Agents SDK se AI Agents Banao"
+sidebar_label: "Build Agents (OpenAI SDK)"
+description: "16 Concepts, 80% Real Use — Hello-Agent se Cloudflare Deployment tak"
+---
+
 # OpenAI Agents SDK se AI Agents Banao: 90 Minute ka Crash Course
 
 *16 Concepts, 80% Real Use — Hello-Agent se Cloudflare Deployment tak, Human Approval aur Model Routing ke saath*
@@ -3206,7 +3213,7 @@ DeepSeek + structured output "json_schema not allowed" deta hai?
 → Provider strict JSON schema support nahi karta. `response_format=
   {"type": "json_object"}` + Pydantic validation par fall back karo.
 
-Cache hit rate <10% gir gayi?
+Cache hit rate under 10% gir gayi?
 → Context ki shuruat mein kuch structure badla. Rules file ya instruction
   edit. Roll back karo, recovery confirm karo, phir deliberately re-apply karo.
 
@@ -3392,3 +3399,47 @@ SDK ka term paragraph rok de toh yahaan dekho. Poora glossary [yahaan](/docs/glo
 | **`run_in_parallel`** | Guardrail execution mode — `True` = latency-low parallel; `False` = blocking (pehle guardrail, phir agent). |
 | **`SandboxRunConfig`** | Config jo sandbox session, client, aur options ko Runner ke saath wire karti hai. |
 | **Manifest** | Declares karta hai sandbox mein kaunse files, folders, mounts, aur env vars hone chahiye. |
+
+---
+
+## Flashcards — Yaad Rakho
+
+<Flashcard question="OpenAI Agents SDK kya hai?" answer="OpenAI ka framework jo agents banane ke liye use hota hai. Tools, guardrails, aur multi-step workflows support karta hai." />
+
+<Flashcard question="Agent kya hota hai?" answer="Ek AI model jo tools use kar sakta hai, decisions le sakta hai, aur multi-step tasks complete kar sakta hai. Sirf chatbot nahi — worker hai." />
+
+<Flashcard question="Runner kya hai?" answer="Woh system jo agent ko chalata hai. Agent ko loop mein rakhta hai, tools call karta hai, aur tab tak chalta hai jab tak kaam na ho jaye." />
+
+<Flashcard question="Tool kya hai?" answer="Function jo agent call kar sakta hai — API call, database query, file read/write. Agent decide karta hai kab konsa tool use karna hai." />
+
+<Flashcard question="Guardrail kya hai?" answer="Safety check jo agent ke output pe lagta hai. Pehle check karo ke output sahi hai, phir user tak bhejo. Hallucination aur errors rokta hai." />
+
+<Flashcard question="Handoff kya hai?" answer="Jab ek agent doosre agent ko kaam transfer kare. Jaise customer support mein pehle agent tumhe billing department mein bheje." />
+
+<Flashcard question="Human Approval kyun zaroori hai?" answer="Critical actions pe insaan ka permission zaroori hai — payment, deletion, deployment. Agent galti kar sakta hai, isliye checkpoint rakho." />
+
+<Flashcard question="Model Routing kya hai?" answer="Alag kaam ke liye alag model use karna. Simple tasks = sasta model, complex tasks = powerful model. Cost optimize hoti hai." />
+
+<Flashcard question="Sandbox kya hai?" answer="Isolated environment jahan agent kaam karta hai. Agent ki galtiyon se asli system safe rahe. Cloudflare Workers pe chalta hai." />
+
+<Flashcard question="Context Window kya hai?" answer="Model kitna text ek saath dekh sakta hai. Jaise 128K tokens. Agar context zyada ho jaye toh purani info ghut jati hai." />
+
+<Flashcard question="Structured Output kya hai?" answer="Jab agent se specific format mein jawab mangte ho — JSON schema. Output predictable aur usable banta hai." />
+
+<Flashcard question="Error Handling kaise karein?" answer="Try-catch blocks, fallback models, retry logic, aur human escalation. Har tool call pe error handle karo." />
+
+<Flashcard question="Cost Control kaise karein?" answer="Model routing (sasta + expensive), max_tokens limit, caching, aur usage monitoring. Har request pe cost track karo." />
+
+<Flashcard question="Deployment kaise karein?" answer="Cloudflare Workers pe deploy karo. Sandbox environment, file persistence, aur scaling automatic hai." />
+
+<Flashcard question="Testing kaise karein?" answer="Unit tests for tools, integration tests for agent flows, aur end-to-end tests for complete workflows. Har level pe verify karo." />
+
+<Flashcard question="Logging kyun zaroori hai?" answer="Har agent action log karo — kya kiya, kab kiya, kyun kiya. Debugging, auditing, aur monitoring ke liye zaroori hai." />
+
+<Flashcard question="Multi-Agent System kya hai?" answer="Jab kayi agents mil ke kaam karein. Har agent ka apna role hai. Coordinated teamwork se better results milte hain." />
+
+<Flashcard question="State Management kya hai?" answer="Agent ki memory — kya hua hai, kya decide hua hai, kya baaki hai. State files mein persist karo taake kal phir se shuru kar sako." />
+
+<Flashcard question="Observability kya hai?" answer="Agent kaam kaise kar raha hai yeh dekhna — logs, metrics, traces. Production mein critical hai." />
+
+<Flashcard question="Iterative Development kyun zaroori hai?" answer="Ek saath perfect mat banao. Pehle basic banao, test karo, improve karo. Small wins se momentum banta hai." />

@@ -1,30 +1,320 @@
 /**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
+ * AI ka Safar — Custom CSS
+ * Typography: Inter + JetBrains Mono
+ * Colors: Green primary (matching original site)
  */
 
-/* You can override the default Infima variables here. */
-:root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
-}
+/* Google Fonts import - with font-display: swap for performance */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
-[data-theme='dark'] {
+/* ===== Root Variables (Light Mode) ===== */
+:root {
+  /* Primary palette — vibrant green */
   --ifm-color-primary: #25c2a0;
   --ifm-color-primary-dark: #21af90;
   --ifm-color-primary-darker: #1fa588;
   --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-light: #29d7b0;
   --ifm-color-primary-lighter: #32d8b4;
   --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+
+  /* Typography */
+  --ifm-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ifm-font-family-monospace: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  /* Code blocks */
+  --ifm-code-font-size: 90%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.08);
+
+  /* Spacing */
+  --ifm-navbar-height: 60px;
+  --ifm-container-width-xl: 1200px;
+
+  /* Shadows */
+  --ifm-global-shadow-lw: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --ifm-global-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Dark Mode ===== */
+[data-theme='dark'] {
+  --ifm-color-primary: #4fddbf;
+  --ifm-color-primary-dark: #3dd4b0;
+  --ifm-color-primary-darker: #35cfaa;
+  --ifm-color-primary-darkest: #25c2a0;
+  --ifm-color-primary-light: #61e6ca;
+  --ifm-color-primary-lighter: #6ae9cf;
+  --ifm-color-primary-lightest: #8befd9;
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.1);
+}
+
+/* ===== Global Styles ===== */
+body {
+  font-weight: 400;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+}
+
+h2 {
+  font-size: 1.6rem;
+  margin-top: 2.5rem;
+}
+
+h3 {
+  font-size: 1.25rem;
+}
+
+/* Links */
+a {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--ifm-color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Code */
+code {
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.875em;
+  padding: 0.15em 0.4em;
+  background: rgba(37, 194, 160, 0.1);
+  border-radius: 4px;
+}
+
+[data-theme='dark'] code {
+  background: rgba(79, 221, 191, 0.15);
+}
+
+pre code {
+  padding: 0;
+  background: none;
+  font-size: 0.875rem;
+}
+
+/* Navbar */
+.navbar {
+  box-shadow: var(--ifm-global-shadow-lw);
+}
+
+.navbar__title {
+  font-weight: 700;
+  font-size: 1.15rem;
+}
+
+.navbar__link {
+  font-weight: 500;
+}
+
+/* Sidebar */
+.menu__link {
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  background: rgba(37, 194, 160, 0.1);
+  font-weight: 600;
+}
+
+/* Admonitions */
+.admonition {
+  border-radius: 8px;
+  border-left-width: 4px;
+}
+
+/* Tables */
+table {
+  display: table;
+  width: 100%;
+}
+
+table th {
+  font-weight: 600;
+  background: rgba(37, 194, 160, 0.05);
+}
+
+[data-theme='dark'] table th {
+  background: rgba(79, 221, 191, 0.1);
+}
+
+/* Footer */
+.footer {
+  background: #1a1a2e;
+}
+
+.footer__title {
+  font-weight: 700;
+}
+
+/* Pagination */
+.pagination-nav__link {
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* Details/Summary */
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+  padding: 0.5rem 0;
+}
+
+details[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+/* Flashcard grid */
+.flashcard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* Focus Mode */
+body.focus-mode .navbar,
+body.focus-mode .footer,
+body.focus-mode .aside,
+body.focus-mode .toc,
+body.focus-mode .breadcrumbs,
+body.focus-mode .pagination-nav,
+body.focus-mode .theme-doc-toc-desktop {
+  display: none !important;
+}
+
+body.focus-mode .main-wrapper {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+body.focus-mode .markdown {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  h2 {
+    font-size: 1.35rem;
+  }
+
+  .flashcard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Mobile: Smaller navbar */
+  .navbar__title {
+    font-size: 1rem;
+  }
+
+  /* Mobile: Better tables */
+  table {
+    font-size: 12px;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* Mobile: Better code blocks */
+  pre {
+    font-size: 12px;
+    overflow-x: auto;
+  }
+
+  code {
+    font-size: 0.8em;
+  }
+
+  /* Mobile: Stack buttons */
+  .heroButtons {
+    flex-direction: column;
+  }
+
+  .btnPrimary,
+  .btnSecondary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Performance: Lazy load images */
+img[loading='lazy'] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+img[loading='lazy'].loaded,
+img[loading='lazy']:not([data-src]) {
+  opacity: 1;
+}
+
+/* Performance: Reduce animations for users who prefer */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Accessibility: Skip to content link */
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--ifm-color-primary);
+  color: white;
+  padding: 8px 16px;
+  z-index: 10000;
+  font-weight: 600;
+  text-decoration: none;
+  transition: top 0.2s ease;
+}
+
+.skip-to-content:focus {
+  top: 0;
+}
+
+/* Accessibility: Focus visible styles */
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* Accessibility: High contrast for screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
