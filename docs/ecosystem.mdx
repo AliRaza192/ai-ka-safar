@@ -2,13 +2,147 @@
 id: ecosystem
 title: "The Ecosystem"
 sidebar_label: "Ecosystem"
-description: "AI ka Safar ecosystem kya hai"
+description: "AI ka Safar ecosystem kya hai — ek System of Record, teen gateways, aur paanch layers ka business model"
 ---
 
-# The Ecosystem
+# The Agent Factory Ecosystem
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**Ek System of Record. Products jo seekhate hain aur banate hain.**
 
-AI ka Safar ek complete ecosystem hai — Zia Tutor AI (seekhne ke liye), Zia Developer AI (banane ke liye), System of Record (track karne ke liye), aur System of Context (samajhne ke liye).
+Humne kitab ko ek source of truth mein badal diya, phir us par banana shuru kar diya. Jo products us par bane hain woh **seekhate hain** Agent Factory ko aur **banate hain** tumhare saath — aur zyada products usi source se ugenge, ek blueprint follow karte hue: [the FDE AF Model](/docs/ecosystem/fde-af-model). Yeh thesis hai, ship ho gayi.
+
+![Ek System of Record center mein, teen darwaze us par bane — Zia Tutor AI learners ke liye, Zia Developer AI builders ke liye, aur publishing authors ke liye — professional verticals aur AI workers tak phailte hue. Ek source, kai products, ek barhne wala ecosystem.](/img/ecosystem/agent-factory-ecosystem-hero.png)
+
+**THE SOURCE** · **System of Record** · **Zia Tutor AI** · **TEACHES** · **Zia Developer AI** · **BUILDS** · **Publishing** · **COMING SOON**
+
+*read over MCP · stays in sync*
+
+---
+
+## 🗃️ Beta 1 — The source · shared foundation
+
+### Agent Factory System of Record
+
+Agent Factory ka content ek System of Record ke roop mein, MCP par serve hota hai. Koi bhi AI agent ya worker connect karo (Claude, ChatGPT, Claude Code, Cowork, ya apna) aur usse kitab mein ground karo.
+
+[Connect it now →](/docs/ecosystem/system-of-record)
+
+---
+
+## 🎓 Beta 1 — Teaching lane · inside Claude
+
+### Zia Tutor AI
+
+Ek personal learning agent, Zia Khan ka digital twin banaya gaya, jo Agent Factory seekhata hai, tumhara progress yaad rakhta hai, aur jahan chhodo wahan se dobara shuru karta hai.
+
+[Connect it now →](/docs/ecosystem/zia-tutor-ai)
+
+---
+
+## 🛠️ In development — Construction lane · your coding agent
+
+### Zia Developer AI
+
+Tumhara AI build partner Claude Code aur OpenCode ke andar. Problem describe karo; yeh kitab se sahi architecture chunta hai, spec likhta hai, aur agent build karta hai.
+
+[Request early access →](/docs/ecosystem/zia-developer-ai)
+
+---
+
+## 📐 Published — The blueprint · how it all stacks
+
+### The FDE AF Model
+
+Paanch-layer blueprint jo in products ko platform aur business model mein arrange karta hai: foundation, SoR kernel, yeh ecosystem, vertical ecosystems, customer deployments. Foundation se upar har layer woh jagah hai jahan graduates kama sakte hain.
+
+[Read the model →](/docs/ecosystem/fde-af-model)
+
+---
+
+## Kaise juda hai: ek source, teen gateways
+
+Diagram upar se neeche padha jaata hai: system kaun use karta hai, kya connect karta hai, woh connections kis cheez se bane hain, aur sach kahan rehta hai. Chaar layers, ek flow.
+
+![Agent Factory ecosystem architecture: Learners, Builders, aur Authors Zia Tutor AI, Zia Developer AI, aur Publishing gateways ke through connect harte hain; har ek component MCP packages (content, learning, pedagogy, builder) mount karta hai jo ek Postgres se padhte hain, canonical Git/MDX repository se projected.](/img/ecosystem/architecture.png)
+
+---
+
+### Layer 1 — Teen audiences, teen darwaze
+
+- **Learners** apne free Claude par aate hain. Ek connector add karo, ek baar authorize karo, aur seekhna shuru karo. Kuch install nahi, kuch pay nahi karna.
+- **Builders** apne coding agent ke andar aate hain — Claude Code ya OpenCode. Unka darwaza ek plugin hai, kyunki construction work wahi hota hai.
+- **Authors** woh agents hain jo derivative books produce karte hain, topic, age, aur profession ke hisaab se rewrite hoti hain. Unka darwaza ek publishing pipeline hai.
+
+Har audience se wahi milo jahan woh already kaam karta hai. Koi naya app adopt nahi, koi naya habit nahi.
+
+---
+
+### Layer 2 — Patle gateways, har audience ke liye ek
+
+- **Zia Tutor AI gateway** teaching lane: learner ka Claude kis se baat karta hai jab Zia greet karta hai, samajh check karta hai, aur progress record karta hai.
+- **Zia Developer AI gateway** construction lane: coding agent kis se baat karta hai jab Zia architecture chunta hai, spec likhta hai, aur build karta hai.
+- **Publishing gateway** derivative-book pipeline, author agents ko canonical material deta hai jo woh specialize aur rewrite karte hain.
+
+Gateways jaan bujhkar patle hain: yeh decide karte hain unki audience kya dekh sake aur usse shape dete hain. Saari asli functionality ek layer neeche rehti hai.
+
+---
+
+### Layer 3 — Component MCP packages, har gateway par mounted
+
+- **content** — kitab as System of Record. Har lane verified chapters, definitions, aur patterns padhta hai, training data se guess karne ki jagah.
+- **learning** — learner state. Progress, history, jahan chhoda. Yeh woh hai jo Zia Tutor AI ko din baad conversation resume karne deta hai.
+- **pedagogy** — teaching moves. Kaise samjhana hai, kab quiz lena hai, kaise correct karna hai — tools mein encode, model ki improvisation par chhoda nahi.
+- **builder** — build patterns. Specs, `SKILL.md` templates, aur recipes jo Zia Developer AI working agents mein assemble karta hai.
+
+Composition hai, duplication nahi. Har gateway sirf woh mount karta hai jo use chahiye, toh content package ek baar fix karo aur teeno lanes ko fix mil jaata hai.
+
+---
+
+### Layer 4 — Ek source of truth, ek database
+
+- **Git repo (canonical)** — kitab as MDX. Har chapter, figure, aur definition ka master copy. Yahan se book change karo, upar sab inherit karega.
+- **One Postgres** — baaki sab: relational data, vector embeddings, aur full-text search ek hi database mein. Canonical MDX isme ingest hota hai taake packages query fast karein.
+
+Kitab ki apni thesis apne upar apply: default par consolidate, jaan bujhkar specialize.
+
+---
+
+### Yeh shape kyun?
+
+Sach ek baar define hota hai (Git), ek baar store hota hai (Postgres), reusable capabilities (packages) ke through expose hota hai, aur patle, audience-shaped darwazon (gateways) ke through deliver hota hai. Baad mein naya product add karna (naya audience, naya lane) — bas ek aur patla gateway usi packages par. Source kabhi nahi badalta. Isliye yeh ecosystem hai, teen alag apps nahi.
+
+---
+
+## Economics — Naye qisam ka app, aur cost qareeb zero kyun hai
+
+Connector-native apps aur plugins tools late hain; user model laata hai. Yeh economics ko ulta karta hai: value logon tak unke free tier AI apps mein pahunchti hai, jisse hum LLM bill ke bina hazaaron tak scale kar sakte hain — ghar aur bahar. Yeh khud banana bhi seekh sakte ho:
+
+[Connector-Native Apps](/docs/connector-native-apps) · [Plugins for AI Agents](/docs/plugins-crash-course) · [AI Identity (auth)](//docs/ai-identity-crash-course) · [RAG on Postgres](/docs/postgres-ai-crash-course)
+
+---
+
+## Business model — Ek base, paanch layers: foundation se upar har layer kamaata hai
+
+Tumne jo ecosystem abhi dekha woh ek repeatable pattern ka instance hai: **FDE AF Model**. Wohi base vertical, AI-native businesses mein badalta hai, aur foundation se upar har layer woh jagah hai jahan hamare graduates build karte hain aur kamaate hain.
+
+| Layer | Naam | Status |
+|-------|------|--------|
+| 0 | **Foundation framework** | BASE — MCP, Markdown, pgvector, Better Auth. Ek baar built; sab kuch isi par khara hai |
+| 1 | **Content System of Record** | EARNS — Reusable SoR components banao aur license karo, solo ya ecosystem contributions ke saath |
+| 2 | **Teaching & development ecosystem** | EARNS — Scale par education, near-zero inference cost, kyunki user model laata hai |
+| 3 | **Vertical ecosystems** | EARNS — Domain partnerships: expert twin aur rights-cleared material license karo |
+| 4 | **Customer instances** | EARNS — FDE engagements: ek company mein deploy karo, phir recurring revenue ke liye chalao |
+
+![FDE AF earning map: paanch-layer stack foundation framework se lekar content System of Record, teaching aur development ecosystem, vertical ecosystems, aur customer instances tak, jahan graduates har foundation se upar layer par kama sakte hain.](/img/ecosystem/fde-af-earning-map.png)
+
+[Full five-layer model dekho, aur har layer kahan kamaata hai →](/docs/ecosystem/fde-af-model)
+
+Model par convinced ho? [Choosing Your Vertical](/docs/ecosystem/choosing-your-vertical) method hai: screen, aath tests, aur launch gates. Phir [Designing the Vertical System of Record](/docs/ecosystem/designing-the-vertical-sor) woh hai jo pehli cheez ke andar jaata hai jo tum banaoge.
+
+---
+
+## Sabse zaroori seat
+
+AI workforce jitna barhta hai, utna us insaan par depend karta hai jo精确 bataye ke kya banana chahiye — **Outcome Architect**, woh role jo intent own karta hai. Yeh products woh role kis ke saath build karta hai, aur ecosystem isliye bana hai ke [vertical businesses us role ko chala sakein](/docs/ecosystem/fde-af-model).
+
+[Roles ke baare mein padho jo yeh kitab train karta hai](/docs/roles-this-book-trains), ya [ecosystem ki full story se shuru karo](/docs/ecosystem/ecosystem-concept).

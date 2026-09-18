@@ -1,14 +1,317 @@
 ---
 id: choosing-your-vertical
 title: "Choosing Your Vertical"
-sidebar_label: "Choosing Vertical"
-description: "Apna vertical kaise chunein"
+sidebar_label: "Choosing Your Vertical"
+description: "Kaun si vertical chunni hai — method, tests, aur rules"
 ---
 
 # Choosing Your Vertical
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**[FDE AF Model](/docs/ecosystem/fde-af-model) explain karta hai vertical kya hai aur kaise kamata hai. Yeh page agla question solve karta hai: kaun si vertical *tumhe* banani chahiye? Guess mat karo. Method follow karo. Yeh page tumhe woh method deta hai: paanch steps, aath tests, aur teen rules jo kabhi nahi todne.**
 
-Vertical chunna sab se pehla step hai. Apna domain expertise dekho, market size dekho, aur competition dekho. Jo vertical tumhe sab se zyada pata hai, usse shuru karo.
+![Kai darwaze line mein khade hain: zyada band hain, ek par parked likha hai, aur ek gold darwaza khula hai aur roshni aa rahi hai. Ek ghoomti hui sadak khule darwaze ki taraf jaati hai. Vertical choose karna matlab wohi ek darwaza dhundhna hai jo tests pass kare, aur uski taraf chalna](/img/choosing-your-vertical-hero.webp)
+
+---
+
+## Seedhi baat — poori page ka khulasa
+
+Sabse bada market mat chuno. Sabse aasan honest sale chuno. Achhi vertical mein teen cheezein hoti hain. Shuru karne se pehle success measure kar sakte ho. Ek real expert knowledge ke peeche khara hai. Ek shared builder har customer ko serve kar sakta hai. Yeh page tumhe checklist deta hai us vertical ko dhundhne ke liye. Yeh do safe exits bhi deta hai jab candidate checklist fail kare. Aur yeh kaam ka order batata hai: tum customer se number maangne se pehle profession ke knowledge ka ek chhota piece banate ho.
+
+---
+
+## 📚 Teaching Aid
+
+**[View Full Presentation](https://docs.google.com/presentation/d/1kKpT-scPpRVGk1nFqR4D_lyh3Fue2b8OiSKxJNIqFJk/edit?usp=sharing)** — Choosing Your Vertical
+
+---
+
+Pehle, [model se teen rules](/docs/ecosystem/fde-af-model#where-the-model-does-not-apply) yaad karo.
+
+**Launch rule.** Vertical bina committed domain expert ke launch nahi hota. Expert twin vertical ka product hai. Bina expert ke vertical sirf corpus hai (documents ka collection).
+
+**First-job test.** Digital FTE ka pehla kaam chaar properties rakhta hai. Kaam daily ya weekly repeat hota hai. Output measure ho sakta hai. Supervisor aaj bhi is kaam ko review karta hai. Mistakes fix ho sakti hain.
+
+**Order rule.** Build first, sell second. Vertical business mein kuch bhi shuru nahi hota jab tak [System of Record ka ek slice exist nahi karta](/docs/ecosystem/fde-af-model#layer-4-customer-instances): ek professional outcome, poora covered. Bina governed kuch ke graduate buyer ke paas kuch lene jaata hai, aur buyer jo kuch nahi dekha woh apna starting number nahi batata.
+
+Is page par sab kuch in teen rules ko protect karne ke liye hai. Abhi check karna ek saal baad problem dhundhne se bahut sasta hai.
+
+Ek aur baat poori page ko shape karti hai: **galat beachhead tumhe teen mahine ka kharcha deta hai, galat vertical tumhe saal ka.** Beachhead vertical ke andar woh ek segment hai jahan pehle build karte ho. Beachhead badal sakte ho, kyunki sab kuch same vertical ke andar rehta hai. Lekin vertical khud aasani se nahi badalta. Corpus, builder rules, aur customer relationships sab uske andar hain. Toh: vertical bahut carefully chuno, aur beachhead jaldi se chuno.
+
+![Vertical choose karna: paanch steps ek body of work ka naam dene se lekar 60-90 din ke validation tak, do honest exits ke saath](/img/choosing-your-vertical-pipeline.webp)
+
+---
+
+## Step 1: Ek body of professional work ka naam do, industry nahi
+
+"Banking" vertical nahi hai. "Healthcare" vertical nahi hai. Yeh industries hain. Industry mein kai qisam ka kaam hota hai. Poore industry ke liye System of Record library hogi, corpus nahi. Koi ek expert uske peeche nahi khara ho sakta.
+
+Vertical ek narrow body of professional work hai: shared knowledge, recognizable experts, repeatable Workers, common buyer needs, aur ek reusable builder. Ek recognized profession, jaise accounting, aksar best starting point hota hai. Lekin body of work full profession se narrow ho sakti hai: corporate credit, recruitment, tax practice.
+
+Simple test: kya tum ek insaan ki soch sakte ho jiski poori career yeh kaam hai? Agar haan, toh narrow enough hai. Agar jawab hai "well, kai alag qisam ke log," toh tumne industry naam li hai. Chhota karo aage badhne se pehle.
+
+Ab opposite error, jo 2026 mein zyada common hai. Narrow, single-purpose agent bhi vertical nahi hai. Market "vertical AI agent" ko do alag matlabon mein use karta hai. Kuch logon ka matlab hai ek agent jiska kaam deliberately narrow hai: sirf prospects dhundhta hai ya sirf ek qisam ka message draft karta hai. Doosron ka matlab hai ek system jo ek industry ke liye bana hai, us industry ke knowledge aur compliance rules se preloaded. Yeh kitab hamesha doosre ka matlab hai.
+
+![Ise chhota karo: teen examples — healthcare se revenue-cycle management se medical coding review; customer support se technical support se Tier 1 incident resolution; banking se trade finance se document checking](/img/fig-cut-it-smaller.webp)
+
+---
+
+## Step 2: Selling ease ke liye screen karo
+
+Sabse bada market goal nahi hai. Sabse aasan sale goal hai. Kisi bhi gehre kaam se pehle, candidate ko chhe questions par score karo. Har question ko 0 se 10 points do. Phir average lo.
+
+1. **Kya tum success ko ek main number se define kar sakte ho?** [Contract of success](/docs/ecosystem/fde-af-model#layer-4-customer-instances) ko starting number aur target number chahiye. Dono taraf measure kar sakein. Jaise: hours per file, tickets per day, days per filing. Phir do-teen guardrail numbers add karo: numbers jo main number improve hone par kharab nahi hone chahiye.
+2. **Kya buyer pehle se is problem par paise kharch raha hai?** Tum buyer ke existing spending ko redirect karna chahte ho. Naya budget create nahi karna. Naya budget ko kai meetings chahiye. Existing spending ko kam chahiye.
+3. **First deployment ka kitna clear hai raasta?** Bina regulator wala domain score high deta hai. Har regulatory gate score kam karta hai.
+4. **Kya tum knowledge legally le sakte ho?** Public laws aur government documents aksar sabse aasan hain. Licensed standards kaam kar sakte hain, lekin written license chahiye. Private platform policies jo mahine mein badlein sabse mushkil hain.
+5. **Kya tumhare network mein expert probably hai?** Abhi confirm nahi. Probably. Tumhari aunt, tumhara purana boss, tumhara professor, ya kisi colleague jo bees saal se practice karta hai.
+6. **Kya ek builder har customer ko serve kar sakta hai?** Model ka strict rule hai: [har domain ke liye ek builder, har customer ke liye alag copy kabhi nahi](/docs/ecosystem/fde-af-model#layer-3-vertical-ecosystems).
+
+### Score kaise dena hai
+
+| Score | Matlab |
+|-------|--------|
+| 0 se 2 | Koi evidence nahi, ya bahut bari rukawat |
+| 3 se 4 | Kamzor evidence, aur bade unsolved problems |
+| 5 se 6 | Mumkin hai, lekin uncertain |
+| 7 se 8 | Mazboot evidence, aur problems solvable lagti hain |
+| 9 se 10 | Confirmed evidence aur unusual clear raasta |
+
+**Score 6/10 ya zyada: continue. 6 se neeche: exit lo.**
+
+Do exits hain. Dono honest outcomes hain. Koi failure nahi hai.
+
+- Agar candidate questions 1 aur 2 par high score kare lekin baaki fail kare, toh yeh **service domain** hai. Layer 1 System of Record builds aur Layer 4 engagements ke through serve karo. Is se paise kamao. Iske liye trio mat banao.
+- Agar candidate broadly fail kare, toh **park karo**. Likho ke kya badalna chahiye taake dobara dekh sakein.
+
+---
+
+## Kyun method written evidence maangta hai
+
+Page ke rules sakht lag sakte hain: har score ke saath evidence ki sentence, invented numbers nahi, honest exits likhe hue. Yeh style preferences nahi hain. Decision-making science har ek ko support karta hai.
+
+![Confidence aur metacognitive sensitivity alag skills hain: gauge high confidence par point kar sakta hai aur phir bhi galat ho sakta hai. Written sentence of evidence ke saath score card confidence tested hai, felt nahi](/img/fig-confidence-vs-sensitivity.webp)
+
+**Confidence aur accuracy alag skills hain.** Steve Fleming ki lab UCL mein dikhata hai ke kuch log jaante hain jab woh galat ho sakte hain, aur kuch nahi jaante. Jaanne ki skill metacognitive sensitivity kehti hai. Har score ke saath evidence ki sentence likhna tumhari confidence test karne ka tarika hai.
+
+**Overconfidence learning block karta hai.** PNAS mein study milti hai ke sabse dogmatic log sabse kam extra information dhundhte hain decision se pehle, chahe unhe sabse zyada chahiye. Screen tumhe majboor karta hai information dhundhne par.
+
+**Humility intelligence se behtar predict karti hai.** Igor Grossmann ki research suggest karti hai ke intellectually humble experts long-term trends behtar predict karte hain, kyunki woh apne views zyada update karte hain.
+
+---
+
+## Step 3: Aath tests chalao
+
+Screen poochta hai: kya yeh domain bikta hai? Aath tests poochte hain: kya yeh domain trio carry kar sakta hai?
+
+Har test书面 answer karo, evidence ke saath. Har test score karo: Pass = 1 point, Partial = 0.5 points, Fail = 0 points. **6.5 out of 8** chahiye continue karne ke liye.
+
+Ek rule points se upar hai: **agar Test 3 fail ho, toh vertical evaluation khatam.** Total score matter nahi karta, kyunki launch rule nahi toda ja sakta.
+
+![Aath tests ek row of cards ke roop mein, Test 3 alag color mein marked: Test 3 par fail evaluation khatam karta hai. Scoring: Pass ek point, Partial adha point, Fail zero, 8 mein se 6.5 chahiye](/img/fig-eight-tests.webp)
+
+**Test 1: Corpus shape.** Domain knowledge [teen forms](/docs/ecosystem/fde-af-model#layer-3-vertical-ecosystems) mein fit hota hai: corpus jo agent cite karta hai, map jo hamesha loaded rehta hai, aur reflexes (procedures jo agent step by step follow karta hai)?
+
+**Test 2: First Workers.** Kya tum teen ya zyada Digital FTEs naam de sakte ho jo first-job test pass karein?
+
+**Test 3: Expert availability.** Kya koi named person hai jo apna persona aur written material tumhare startup ko license karega? Material rights-cleared hona chahiye: ya toh woh uska hai, ya uske paas written permission hai. **Agar Test 3 fail, toh evaluation khatam.** Bina committed expert ke slice bhi nahi hota.
+
+**Test 4: Governing rules.** Kya rules is kaam ko govern karte hain, aur kya tum unhe naam de sakte ho? Jurisdictional work ke liye country, regulator, aur versioned public rules batao. Non-jurisdictional work ke liye professional frameworks, operating standards, ya policies batao.
+
+**Test 5: Market aur economics.** Kaun khareedta hai? Kitne buyers hain? Kharidna kitna mushkil hai? Revenue recurring hai? **Paise ke numbers mat invent karo.** License cost fact hai jo tum pooch sakte ho. Engagement price tab tak guess hai jab tak tumhara pehla buyer conversation use test na kare.
+
+**Test 6: Governance feasibility.** Kya corpus ke paas owner, versions, reviews, aur access control mahinon mein ho sakta hai, saalon mein nahi? [Sirf retrieval System of Record nahi hai](/docs/ecosystem/fde-af-model#layer-1-the-content-system-of-record-component-the-sor-kernel). Governance product hai.
+
+**Test 7: Competitive position.** Kaun pehle se is profession ko serve karta hai? Companions ka naam do. Phir ek sentence likho: jab customer pooche "kyun tum, aur hamare current vendor kyun nahi?" toh tumhara jawab kya hoga? Aksar jeetne wala jawab: *hum tumhara current system replace nahi karte; hum use extend karte hain, aur profession ki judgment layer uske saath rakhte hain.*
+
+**Test 8: Regulatory gate.** Agar regulator buyer ko govern karta hai, toh uske kaun se rules tumhare kaam ko chhu sakte hain? Kya tum engagement design kar sakte ho ke woh clearly rules ki manaahi cheezon ke bahar rahe? Regulated buyers ke liye safe default boundary **preparation aur recommendation** hai. Worker prepare aur recommend karta hai. Ek named human approve aur act karta hai.
+
+---
+
+## Step 4: Beachhead chuno, aur expert se decide karao
+
+Profession-sized vertical mein abhi bhi kai bodies of knowledge aur kai Worker families hain. Sab ek saath mat banao. Ek beachhead chuno: sabse clear knowledge, sabse checkable first-worker, aur sabse chhota signed contract of success ka raasta.
+
+![Galat choice ka kya kharcha hai: galat beachhead ek quarter ka hai (reversible), galat vertical saal ka hai (hard to reverse)](/img/fig-reversibility.webp)
+
+Agar do beachheads buyers, numbers, aur licensing mein equally achhe lag rahe hain? **Expert decide karta hai.** Launch rule expert commitment ko deciding factor banata hai.
+
+Validation se pehle ek aur rule. **Kitab ka malik hona us kitab ko system ke through serve karne ka license nahi hai.** Standards handbook khareedne se tumhe System of Record ke through serve karne ka haq nahi milta. Validation se pehle, corpus ke har source ko documented rights basis do.
+
+---
+
+## Step 5: 60 se 90 din mein chaar gates ke against validate karo
+
+Validation ka fixed period hai 60 se 9in din ka, ek purpose ke saath: apne guesses ko facts se badlo. Yeh poora vertical banane ka time nahi hai. Yeh prove karne ka time hai ke vertical banane layak hai.
+
+Chaar gates. Rule simple hai: chaaron gates, ya koi launch nahi.
+
+![Validation chaar gates ke roop mein launch door ki taraf, ek build unke beech: gate one — expert signed; gate two — rights basis written; phir slice; gate three — named sponsor with drafted contract; gate four — real quotes. Chaaron gates ya koi launch nahi](/img/fig-four-gates.webp)
+
+### Do gates jo kisi building se pehle aate hain
+
+1. **Expert signed hai.** "In principle agree" nahi. Signed. Partnership agreement persona license, rights-cleared material, revenue share, aur platform terms cover karta hai.
+2. **Rights basis confirmed hai written mein.** Har third-party source ke paas documented rights basis hai.
+
+### Phir ek slice banao
+
+Ek professional outcome, poora covered. Outcome contract, invariants, decision map, exception list, ek derived procedure, checker, aur evaluation set ke saath.
+
+Yahan do words important hain aur breadth ke baare hain, care ke nahi. Ek outcome wala System of Record **thin** hai. Kai outcomes wala **thick** hai. Dono har outcome ko poora cover karte hain.
+
+Jab tak customer nahi hai, material kahan se aata hai? Expert se. Uske paas bees saal ke real files hain, jismein woh bhi hai jo review fail hua aur escalation hua.
+
+### Do gates jo slice possible banata hai
+
+3. **Ek named sponsor hai drafted contract of success ke saath.** Ek real company. Ek named executive sponsor. Ek drafted (abhi signed nahi) contract of success tumhare pehle Worker ke liye. Sponsor jo starting number discuss nahi karta woh sponsor nahi hai.
+4. **Paise ke numbers real quotes hain, guesses nahi.** Quoted license costs. Sponsor ki real purchasing timeline. Tumhari staffing plan.
+
+---
+
+## Launch ke baad: System of Record pehle aata rehta hai
+
+Gates pass ho gaye. Ab trio banao. Trio ke teen parts hain, aur model building ka order fix karta hai: **domain System of Record pehle aata hai. Hamesha.**
+
+Kyun pehle? Kyunki doosre do parts us par khare hain. Expert twin us se *padhata hai*. Domain builder Workers ko skills deta hai jo uski taraf *point* karte hain.
+
+Ek source, do readers. Yeh woh part hai jo beginners miss karte hain, toh do baar padho.
+
+![Ek source, do readers: governed Markdown corpus center mein, owner, review, versions, aur access ke governance ring ke saath. Ek arrow publish browser window ki taraf jahan insaan padhte hain. Ek arrow index aur serve gold panel ki taraf jahan agents MCP par padhte hain](/img/fig-one-source-two-readers.webp)
+
+---
+
+## Ayesha checklist chalati hai
+
+Poori page ek chhoti kahani ban jaati hai.
+
+Ayesha, [model page](/docs/ecosystem/fde-af-model) ki graduate, teen candidates consider karti hai.
+
+Customer support screen par sabse high score karta hai. Har company khareedta hai. Contract of success aasan hai likhna. Lekin Test 3 fail hota hai. Knowledge mostly har client ke apne documents hai, aur usse koi support expert nahi milta jiske paas written material ho. Toh yeh uski service domain ban jaati hai. Woh client Systems of Record banati hai aur Layer 4 engagements chalati hai. Yeh search karte waqt kamata hai, aur iske liye slice ki zaroorat nahi.
+
+E-commerce operations Test 4 fail karta hai. "Rules" marketplace policies hain jo bina notice ke badalti hain. Woh corpus govern nahi ho sakta. Parked.
+
+Accounting screen aur aath mein se 7.5 tests pass karta hai. Test 3 jeetta hai: uski aunt, bees saal practice, apne written material ke saath. Expert decide karta hai. Audit working papers beachhead hain.
+
+Phir window order mein chalti hai. Aunt signed karti hai, corpus ke har source ko licensing answer milta hai: do gates, aur abhi tak koi code nahi. Ab woh ek slice banati hai, apni aunt ke apne files par. Outcome: complete working paper, evidence-backed, reviewer approval ke liye ready. Paanch real files aunt ke saath. Invariants jo aunt nahi chhodegi. Ek derived procedure, ek checker, aur evaluation set. Launch. Pehli engagement wohi working-paper file, 40 minute mein delivered.
+
+![Ayesha ke teen candidates aur unke teen honest outcomes: customer support service domain ban jaata hai, e-commerce operations parked hai, aur accounting audit working papers ke saath launch hota hai](/img/fig-ayesha-lanes.webp)
+
+---
+
+## Shuru karne ke liye longlist, example scores ke saath
+
+Yeh possible domains ki lambi list hai, selling ease ke liye scored. Ise apne screen ke starting point ke roop mein use karo, final answer ke roop mein nahi.
+
+| Domain | Score | Reason | Trap |
+|--------|-------|--------|------|
+| **Sales** | 9 | Success revenue numbers barabar. Buyers sabse tez paise dete hain jo paise kamata hai. | Crowded market. tumhara SoR difference hona chahiye |
+| **Accounting aur finance** | 8 | Clear numbers, mazboot written rules, real experts hain. | Standards (IFRS) ko licenses chahiye |
+| **Tax practice** | 8 | Public laws, fixed deadlines, checkable output. | Seasonal income |
+| **Bookkeeping outsourcing** | 8 | Codified, repeat, recurring revenue. | Price pressure |
+| **Customer support** | 9.5 | Har company khareedta hai. Success measure karna aasan hai. | Fails Test 3 — koi shared corpus nahi, koi author-expert nahi |
+| **E-commerce operations** | 8 | Tez moving buyers. Clear numbers. | Fails Test 4 — rules mahine mein badalte hain |
+| **Recruitment agencies** | 7.5 | Screening speed money hai. Ek builder kai agencies ko serve karta hai. | Test 3 — practitioners hain, authors rare hain |
+| **HR management** | 7 | Onboarding aur policy questions measure ho sakte hain. | HR budgets defensive hain. Buyers dheere chalte hain |
+| **Marketing aur content** | 7 | Bechne mein aasan hai. | Results prove karna mushkil. Bahut crowded |
+| **Medical billing aur coding** | 7.5 | Fully codified. Bada outsourcing market hai. | Patient-data rules |
+| **Trade documentation** | 7 | Document checking agents par perfect fit hai. | Purane bank aur customs systems integration slow karte hain |
+| **Immigration services** | 7 | Public rules, document-heavy, measurable outcomes. | Rules tezi se badalte hain |
+| **Islamic finance** | 6.5 | Kam competitors. Trust product hai. | Buyers banks aur funds hain — slow purchasing |
+| **Translation** | 6 | Measurable, text-based, bada demand. | General model core kaam already karta hai. Prices har saal girti hain |
+
+---
+
+## Hamare apne choices, open mein
+
+Hum yeh method sikhate hain, toh apne results bhi dikhate hain. Yeh [model apne upar apply](/docs/ecosystem/fde-af-model#the-ecosystem-is-the-first-proof) hai: wohi discipline jo hum tumse maangte hain, hum khud par chalate hain, public mein.
+
+Portfolio mein teen seats hain ek waqt mein. **Prover** — sabse aasan sale wali vertical: market mein model prove karti hai. **Moat** — sabse gehri expert advantage wali vertical: copy karna mushkil hai. **Option** — candidate jo open expert search aur deadline se zinda rakha jaata hai.
+
+![Portfolio teen seats, ek floor, aur ek shelf ke roop mein: prover seat sabse aasan sale ke liye, moat seat sabse gehri expert advantage ke liye, option seat expert search se zinda; neeche service domains ki floor; bagal mein parked candidates ki shelf](/img/fig-three-seats.webp)
+
+| Candidate | Screen | Tests | Status | Beachhead |
+|-----------|--------|-------|--------|-----------|
+| Sales | 9/10 | Passed | **Launched.** Prover seat. | Deal execution |
+| Accounting | 8/10 | 7.5/8 | **In validation.** Moat seat. | Tax practice |
+| HR | 7/10 | ~6.5/8 | **Conditional.** Option seat. | Recruitment |
+| Customer support | 9.5/10 | Fails Test 3 | **Service domain.** | None |
+| E-commerce | 8/10 | Fails 1,4,6 | **Service domain.** | None |
+| Corporate banking | 4/10 | Strong on 1,2,4,8 | **Parked, with conditions.** | Trade finance |
+
+---
+
+## Kahan se jaana hai
+
+Do raaste khulte hain is page se.
+
+**Raasta 1: idea sasta test karo, kuch build karne se pehle.** Is page ke zyada questions ke answers ek shaam mein mil sakte hain. Is raasta mein sab kuch **probe** hai: evidence deta hai scores ke liye, aur kuch nahi. Probe slice nahi hai. Iske paas koi owner, versions, review, ya evaluation set nahi hai.
+
+- Real sample do profession ke kaam ka general agent ko browser mein. Dekho first-job idea kaam karta hai.
+- Chhota sa candidate corpus pgvector mein load karo. Check karo search aur citation kaam karta hai.
+- Contract of success as real spec likho.
+- Acceptance criteria checking question hai: customer ke reviewers Worker ka output kaise verify karenge?
+
+**Raasta 2: build karo, fixed order mein.** Pehle slice, validation window ke andar, gates 1 aur 2 ke baad. Phir, chaaron gates pass hone ke baad, baaki trio: System of Record mota hota hai, phir expert twin jo us se padhata hai, phir domain builder jo Workers manufacture karta hai.
+
+Agar tumhara honest answer aaj hai "Mere paas abhi committed expert nahi hai," toh tumhara raasta blocked nahi hai, aur order rule tum par aim nahi hai. Yeh sirf vertical ladder ko govern karta hai. Model tumhe bata raha hai kahan se shuru karna hai: [pehle Layers 1 aur 4 par earn karo](/docs/ecosystem/fde-af-model#the-fde-af-business-model-where-each-layer-earns), service ladder par, jo client se shuru hota hai aur slice ki zaroorat nahi rakhta. Engagements tumhe expert tak le jaayein.
+
+---
+
+## Flashcards — Study Aid
+
+<Flashcard question="Vertical ke liye launch rule kya hai?" answer="Vertical bina committed domain expert ke launch nahi hota. Expert twin vertical ka product hai." />
+
+<Flashcard question="Beachhead kya hai?" answer="Vertical ke andar woh ek segment jahan pehle build karte ho — sabse clear knowledge, sabse checkable first-worker." />
+
+<Flashcard question="Galat beachhead vs galat vertical mein kya fark hai?" answer="Galat beachhead 3 mahine ka hai (reversible), galat vertical saal ka hai (hard to reverse)." />
+
+<Flashcard question="Screen mein kitne questions hain?" answer="Chhe: success define, buyer already pays, path to deployment, knowledge legally, expert in network, one builder serves all." />
+
+<Flashcard question="Score 6 se neeche hone ka matlab kya hai?" answer="Exit lo — service domain banao ya park karo." />
+
+<Flashcard question="Service domain kya hai?" answer="Domain jo bikta hai lekin vertical ke liye fit nahi — Layer 1 aur Layer 4 par earn hota hai, slice ki zaroorat nahi." />
+
+<Flashcard question="Aath tests mein se kitne chahiye?" answer="6.5 out of 8. Lekin agar Test 3 fail ho toh evaluation khatam." />
+
+<Flashcard question="Test 3 kya hai?" answer="Expert availability — kya koi named person hai jo persona aur material license karega?" />
+
+<Flashcard question="Agar Test 3 fail ho?" answer="Evaluation khatam. Bina committed expert ke vertical nahi ban sakta aur slice nahi ban sakta." />
+
+<Flashcard question="Validation ke kitne gates hain?" answer="Chaar: expert signed, rights basis written, named sponsor with contract, real quotes." />
+
+<Flashcard question="Slice kya hai?" answer="Ek professional outcome, poora covered — thin SoR ki building block." />
+
+<Flashcard question="Thin vs thick mein kya fark hai?" answer="Thin ek outcome cover karta hai. Thick kai outcomes. Dono poora cover karte hain." />
+
+<Flashcard question="Beachhead chunne mein expert ka kya role hai?" answer="Jab do beachheads equal hain, expert decide karta hai — launch rule expert commitment ko deciding factor banata hai." />
+
+<Flashcard question="Why not widen? — ek shape serve kyun nahi karta kai professions?" answer="Shape method hai aur method already shared hai. Narrowness woh condition hai jismein knowledge worth paying for aur reusable hoti hai." />
+
+<Flashcard question="Big Four verticals bana rahe hain — iska kya matlab hai?" answer="Model confirm ho raha hai. Lekin tumhara Test 7 answer ab Big Four ke against kaam karna chahiye." />
+
+<Flashcard question="Portfolio mein kitni seats hoti hain?" answer="Teen: prover (sabse aasan sale), moat (sabse gehri expert advantage), option (expert search se zinda)." />
+
+<Flashcard question="Prover seat kya hai?" answer="Vertical jo sabse aasan sale hai aur market mein model prove karti hai." />
+
+<Flashcard question="Moat seat kya hai?" answer="Vertical jo sabse gehri expert advantage rakhti hai — copy karna mushkil hai." />
+
+<Flashcard question="Option seat kya hai?" answer="Candidate jo open expert search aur deadline se zinda rakha jaata hai." />
+
+<Flashcard question="Service ladder kaise shuru hoti hai?" answer="Client se — bina vertical ke, Layer 1 aur Layer 4 par, slice ki zaroorat nahi." />
+
+<Flashcard question="Vertical ladder kaise shuru hoti hai?" answer="Slice se — bina client ke, expert ke saath derived." />
+
+<Flashcard question="Pehle kya banao — slice ya trio?" answer="Slice pehle. Slice validation ke liye chahiye aur sponsor conversation earn karta hai." />
+
+<Flashcard question="Domain System of Record pehle kyun banao?" answer="Kyunki doosre do parts us par khare hain — expert twin us se padhata hai, builder Workers ko uski taraf point karta hai." />
+
+<Flashcard question="Probe kya hai?" answer="Sasta evidence-gathering tool — System of Record ka part nahi, owner/version/review nahi." />
+
+<Flashcard question="Agar abhi committed expert nahi hai toh kya karna hai?" answer="Service ladder par earn karo — Layers 1 aur 4 par, client se shuru. Engagements expert tak le jaayengi." />
+
+<Flashcard question="Contract of success kya hai?" answer="Written agreement teen cheezon par: baseline, target, aur acceptance criteria." />
+
+<Flashcard question="Baseline kahan se aata hai?" answer="Customer ke workflow se measure hota hai — wohi number jo buyer verify kar sakta hai." />
+
+<Flashcard question="Agar candidate screening mein high hai lekin tests fail kare toh?" answer="Service domain banao ya park karo. Vertical nahi ban sakta." />
+
+<Flashcard question="Why written evidence zaroori hai?" answer="Metacognition — apni thinking check karna before acting. Overconfidence block karta hai learning." />

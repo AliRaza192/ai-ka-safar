@@ -1,14 +1,675 @@
 ---
 id: what-ai-actually-is-crash-course
-title: "What AI Actually Is"
-sidebar_label: "What AI Is"
-description: "AI kya hai — asli jawab, 30 minute mein"
+title: "AI Asal Mein Kya Hai"
+sidebar_label: "AI Kya Hai"
+description: "Nau concepts. Koi math, koi code. Machine ki tasweer jo baaki Foundations courses assume karte hain ke tumhe pata hai"
 ---
 
-# What AI Actually Is
+import Flashcard from '@site/src/components/Flashcard';
+
+# AI Asal Mein Kya Hai — Crash Course
+
+*Nau concepts. Koi math, koi code. Machine ki tasweer jo baaki Foundations courses assume karte hain ke tumhe pata hai.*
+
+Tum bina engine samjhe gaari chala sakte ho. Phir kuch galat ho jaata hai. Ajeeb awaaz, warning light, pahar par stall. Jo log engine kaise kaam karta hai samajhte hain woh shaant rehte hain. Jo nahi samajhte unke liye machine ek band dabba hai — ya kaam karta hai ya nahi.
+
+Zyada tar logon ka AI se rishta yahi hai. Baaki Foundations courses unhe achha driver bana dete hain, lekin unhone engine nahi dekha. Toh jab machine koi source invent kare ya galat cheez pe confident lage, toh unke paas samajhne ka koi model nahi hai. Ya toh zyada trust karte hain ya puri tarah discard kar dete hain. Dono reactions is baat se aate hain ke cheez hai kya.
+
+Yeh course engine ko ek nazar dekhta hai. Nau concepts lagbhag har surprising cheez explain karte hain jo AI karta hai — toh uski failures mysteries nahi rehti, cheezein ban jaati hain jo tum predict aur avoid kar sakte ho.
+
+*Reading time: Nau concepts ke liye 35-40 minute, closing exercises ke liye 25 minute, aur end mein optional Claude.ai appendix ke liye 10-15 minute.*
+
+---
+
+## Quick Glossary
+
+Ek ek line. Skip karo aur baad mein wapas aao — har term wahan define hai jahan pehli baar milta hai.
+
+- **tokens**: text ke chhote chunks jo model padhta aur likhta hai — aamtaur par ek word ya uska hissa
+- **tokenizer**: text ko tokens mein kaatne wala hissa
+- **stochastic**: agla piece likely options ke spread mein se draw hota hai — toh answers alag aate hain
+- **weights**: model ke andar ke frozen numbers — jo kuch bhi seekha woh sab yahan hai
+- **parameters**: weights ka doosra naam
+- **training**: ek dafa ka education jo weights set karta hai
+- **pretraining**: pehla training stage — jab model ne bohat zyada text padha
+- **frontier model**: aaj ke sabse bade aur sabse capable models mein se ek
+- **inference**: har baar jab tum model use karte ho — andar kuch nahi badalta
+- **API**: program seedha model ko call karne ke liye use karta hai — chat window ki jagah
+- **instruction tuning**: training stage jo model ko sikhata hai sawaal ka jawab dena — usay continue karne ki jagah
+- **RLHF**: reinforcement learning from human feedback — stage jo model ka manner shape karta hai
+- **knowledge cutoff**: training text kahan rukta hai — uske baad kuch bhi weights mein nahi hai
+- **stateless**: model apni memory nahi rakhta
+- **hallucination**: fluent, confident, galat bayan
+- **context window**: woh sab text jo model ek jawab likhte waqt dekh sakta hai
+- **system prompt**: product context window ke upar instructions rakhta hai
+- **Skills**: instructions aur files ke folders jo tumhari request match hone par load hote hain
+- **progressive disclosure**: knowledge files mein rakho aur sirf woh load karo jo is waqt chahiye
+- **patches**: upload ki gayi image ke chhote pieces — har ek token ban jaata hai
+- **segments**: sound clip ke chhote pieces — har ek token ban jaata hai
+- **sycophancy**: trained habit ke tumhe woh batao jo tum sunna chahte ho
+- **jagged**: uneven ability — ek task pe superhuman, doosre easier pe useless
+- **tools**: actions jo model call kar sakta hai — jaise web search ya file read
+- **web search**: tool jo current pages context window mein fetch karta hai
+- **Research**: paid feature jo bohat saare searches chalata hai aur cited report deta hai
+- **code execution**: tool jo model ke likhe hue program ko chalata hai
+- **connector**: ek tool jo tumhare real apps se wired hai — tumhari di gayi permissions ke saath
+- **MCP**: Model Context Protocol — standard jo kisi bhi connector ko kisi bhi agent ke saath kaam karne deta hai
+- **agent**: predictor with tools — predict, act, observe loop goal ki taraf chalata hai
+- **reasoning**: model apne aap ke liye jo working likhta hai final answer se pehle
+- **Artifact**: chat ke bagal ka panel jahan document, webpage, ya tool object ki tarah rehta hai
+- **account instructions**: text field jo har conversation mein apply hota hai
+- **projects**: folders jo apni instructions aur files rakhte hain — toh andar har chat briefed hota hai
+
+---
+
+:::tip
+**Pehle yeh padho:** Foundations courses mein se yeh sabse pehle padho — chahe sabse abstract hai. [AI Prompting in 2026](/docs/ai-prompting-2026), [Markdown In, HTML Out](/docs/markdown-html-crash-course), [Code You Never Write](/docs/code-you-never-write-crash-course), [Skills & Connectors](/docs/skills-connectors-crash-course), aur [How to Think in the AI Era](/docs/how-to-think-ai-era) sikhate hain machine kaise use karein. Har ek machine ke ek fact par depend karta hai. Yeh stateless hai. Yeh predict karta hai — lookup nahi karta. Galat hone pe bhi confident lagta hai. Yeh woh facts hain jahan se aate hain.
+:::tip
+
+---
+
+## Yeh course aur prompting course kaise kaam baantte hain
+
+Kuch topics is course aur [AI Prompting in 2026](/docs/ai-prompting-2026) dono mein aate hain — design se. Yeh course mechanism deta hai. Prompting course habits deta hai. Jahan dono touch karte hain:
+
+| Topic | Yahan (machine) | AI Prompting in 2026 (habit) |
+|-------|-----------------|------------------------------|
+| Kya jaanta hai | Kyun learning ruki, aur kyun purposely (Idea 2) | Woh knowledge kitni reliable hai, topic by topic (Concept 2) |
+| Context window | Kyun yeh ek jagah hai jo model dekh sakta hai (Idea 5) | Ise kaise manage aur protect karein (Concept 4) |
+| Chat history | Kyun transcript har turn par context mein replay hota hai (Idea 5) | Lamba kaam bina rot ke kaise karein — fresh chats, summaries (Concept 4) |
+| Confidence | Kyun sure lagta hai aur tumse agree karta hai (Idea 6) | Ise kaise neutralize karein (Concept 6) |
+| Reasoning | "Thinking" actually kya hai (Idea 9) | Kab on karein, kab nahi (Concept 5) |
+| Images & audio | Kyun sirf aur tokens hain (Idea 4) | Actually kaise kaam karein (Concept 8) |
+
+Jahan koi section habit sikhane wala hota hai, woh tumhe prompting course ki taraf point karta hai.
+
+---
+
+## Yeh course kin sawaalon ke jawab deta hai
+
+**Teachers ke liye (aur self-testers)**
+
+Har concept ek aisa sawaal jawab deta hai jo student actually poochta hai. Kuch aloud pucho padhane se pehle — students ke guesses dikhate hain kamre mein kaun se galat mental models hain. Phir course ke baad phir se pucho. Student jo samajh gaya har ek ka do-teen sentences mein jawab de sakta hai.
+
+**Part 1: Machine**
+
+| # | Sawaal | Jawab kahan hai |
+|---|--------|-----------------|
+| 1 | Language model actually kya karta hai jab jawab deta hai? Kya facts lookup karta hai? | Idea 1 |
+| 2 | LLMs ko stochastic kehte hain. Iska matlab kya hai, aur kyun ek hi sawaal har baar alag jawab deta hai? | Idea 1 |
+| 3 | LLMs kaise bante hain, aur training data kahan se aata hai? | Idea 2 |
+| 4 | Knowledge cutoff date kya hai? | Idea 2 |
+| 5 | Agar machine sirf text continue karti hai, toh kyun tumhara sawaal jawab deti hai — aur usay mazeed sawaalon se continue nahi karti? | Idea 2 |
+| 6 | LLMs ko stateless kehte hain. Iska matlab kya hai? | Idea 2 |
+| 7 | LLMs stateless kyun banaye jaate hain? Model mere saath baat karte waqt kyun nahi seekh sakta? | Idea 2 |
+| 8 | Hallucination kya hai, aur LLMs yeh kyun karte hain? | Idea 3 |
+
+**Part 2: Yeh kyun aisa behave karta hai**
+
+| # | Sawaal | Jawab kahan hai |
+|---|--------|-----------------|
+| 9 | Tokens kya hain, kaise use hote hain, aur kya measure karte hain? | Idea 4 |
+| 10 | Context window kya hai, aur kisi product ke one-million-token context window ka matlab kya hai? | Ideas 4-5 |
+| 11 | System prompt kya hai? | Idea 5 |
+| 12 | Chat history kya hai? Kaise banta hai, kahan store hota hai, aur kaise use hota hai? | Idea 5 |
+| 13 | Context window aur chat history ka rishta kya hai? | Idea 5 |
+| 14 | Agent Skills kya hain, aur context window ke saath unka rishta kya hai? | Idea 5 |
+| 15 | AI galat hone pe bhi confident kyun lagta hai, aur tumse agree kyun karna chahta hai? | Idea 6 |
+| 16 | AI ek task pe brilliant aur doosre easier task pe useless kyun hai? | Idea 7 |
+
+**Part 3: Predictor se agent tak**
+
+| # | Sawaal | Jawab kahan hai |
+|---|--------|-----------------|
+| 17 | Text predictor ko agent mein kya badalta hai? | Idea 8 |
+| 18 | Connectors kya hain, aur MCP (Model Context Protocol) ke saath unka rishta kya hai? | Idea 8 |
+| 19 | Reasoning model "sochte waqt" actually kya karta hai? | Idea 9 |
+
+---
+
+## 📚 Teaching Aid
+
+<iframe
+  src="https://docs.google.com/presentation/d/e/17ztcRLGEttJz16UjDZQbArGmNpdAIVqtX-ul3juZV8U/embed?start=false&loop=false&delayms=3000"
+  frameBorder="0"
+  width="100%"
+  height="400"
+  allowFullScreen={true}
+  style={{maxWidth: '700px', margin: '1rem 0'}}
+></iframe>
+
+[**Poori Presentation Dekho**](https://docs.google.com/presentation/d/17ztcRLGEttJz16UjDZQbArGmNpdAIVqtX-ul3juZV8U/edit?usp=sharing): AI Asal Mein Kya Hai
+
+---
+
+## Do minute mein sabit karo
+
+[Claude.ai](https://claude.ai), [ChatGPT](https://chatgpt.com), ya [Gemini](https://gemini.google.com) kholo. Free account ek minute mein banta hai. Yeh paste karo — deliberately misspelling ke saath:
+
+```
+Without using any tools, just from memory: how many times does the letter R apear in the word "strawberry"? Then spell the word out one letter at a time and count again.
+```
+
+Pehli baar kuch models galat count karte hain. Phir jab letter by letter spell karte hain toh sahi ho jaata hai. Ek machine jo working program likh sakta hai woh ek ten-letter word ke letters reliably count nahi kar sakta. Yeh stupid nahi hai. Model letters nahi dekhta — tokens dekhta hai, jo text ke chunks hain. Chunk ke andar letters count karna us tarah hai jaise kisi ne sirf street address diya ho aur tum rooms ginne ki koshish karo. Tasweer ek jagah rough hai. Model koi address follow nahi kar sakta, aur woh spelling par poora blind bhi nahi hai. Yeh chunks ke patterns se spelling pakad leta hai. Jo nahi kar sakta — woh ek chunk ke andar letters exactly count karna hai.
+
+Wohi prompt ek doosra lesson bhi deta hai. Misspelled "apear" se kuch nahi badla. Typo chunks par padta hai jo intended meaning ke qareeb hain — toh meaning bach jaata hai. Exact count ke liye chunks ke andar dekhna hota hai — jo model nahi kar sakta. Idea 4 dono explain karta hai.
+
+Lagbhag har surprising cheez jo AI karta hai woh uski asliyat se explain hoti hai — smart ya dumb hone se nahi. Neeche ke nau concepts us example ko complete model mein badalte hain.
+
+Ek warning. Strawberry test mashhoor hai — toh ho sakta hai model ne yeh exact question yaad kar rakha ho. Agar tumhara foran aur sahi jawab de — toh yoh familiarity hai, letter-level skill nahi. Apna random string banao jaise "how many times does the letter r appear in braverrikromarent?" Effect wapas aa jaata hai — kyunki us string ke baare mein kisi ne nahi likha.
+
+---
+
+![Roadmap diagram: "Nau concepts, teen parts."](/img/overview-nine-ideas-4d012810cad7e685b383d9e0a90cc5f3.webp)
+
+---
+
+## Nau concepts — ek ek line mein
+
+1. Yeh agla piece predict karta hai. Kabhi kuch lookup nahi karta.
+2. Yeh padh kar ek dafa seekha. Phir seekhna ruk gaya — purposely.
+3. Andar kuch nahi hai jo check kare ke jawab sahi hai ya nahi.
+4. Yeh tokens mein padhta hai — letters ya words mein nahi.
+5. Context window ek jagah hai jahan yeh tumhari situation dekh sakta hai.
+6. Confident tone ek learned style hai — sach ka signal nahi.
+7. Ability jagged hai — ek task pe brilliant, doosre easier pe useless.
+8. Tools isay duniya mein act karne dete hain — sirf describe karne ki jagah.
+9. "Thinking" zyada prediction hai — jawab se pehle likha jaata hai.
+
+---
+
+## Part 1: Machine
+
+Teen concepts jo literally ho raha hai jab tum "send" dabate ho.
+
+### 1. Yeh agla piece predict karta hai — aur kabhi kuch lookup nahi karta
+
+Language model kuch text leta hai aur predict karta hai ke agla text kya hoga — ek chhota piece ek baar mein. Yeh core mechanism hai. Baaki sab is se nikalta hai.
+
+Zyada tar log sochte hain AI ek tez librarian ki tarah kaam karta hai. Sawaal pucho, vast internal encyclopedia se fact dhoondo, aur fact wapas padho. Yeh tasweer galat hai — aur lagbhag har ghalati jo log AI ke saath karte hain is se aati hai.
+
+Machine duniya ka sabse padha likha autocomplete hai. Tumne dekha hai autocomplete "Happy birthday to" ko "you" se complete karta hai. Language model wohi move kisi bhi prompt par karta hai — sirf common phrases par nahi. Yeh ek piece ek baar continue karta hai, aur woh pieces **tokens** kehte hain — text ke chhote chunks. Har piece jo produce hota hai woh khud ko wapas feed hota hai taake agla piece decide ho sake. Tasweer ek jagah exact nahi rehti. Phone autocomplete woh phrases wapas deta hai jo tumne actually type kiye — toh woh store aur repeat kar raha hai. Yeh machine koi phrases store nahi karta — sirf numbers store karta hai jo score karte hain ke agla piece kya hoga.
+
+Us se France ki capital pucho. Woh `France → Paris` labeled database row lookup nahi karta. Woh "The capital of France is" ka sabse likely continuation predict karta hai apne **weights** se — jo andar ke frozen numbers hain. Woh continuation "Paris" hai — kyunki woh sequence uske padhe hue text mein millions baar aaya.
+
+Yeh sirf ek next token predict nahi karta — poora spread predict karta hai har likely token ka, har ek ka score, aur us spread mein se ek pick karta hai. Engineers isay **stochastic** kehte hain — matlab ek option us spread mein se draw hota hai — har baar wohi fixed answer ki jagah. Isliye ek hi sawaal har baar alag wording ka jawab de sakta hai.
+
+Common facts ke liye prediction aur lookup same answer dete hain — toh fark nahi lagta. Fark tab lagta hai jab topic rare ho.
+
+![Diagram: "Yeh continue karta hai, kabhi lookup nahi karta."](/img/idea1-prediction-loop-e4def5e6c654f20fb86c67c2fd1b3972.webp)
+
+Ab us se kisi self-published novel ka plot pucho jo sirf kuch hundred copies bika aur online kabhi review nahi hua. Koi common continuation nahi hai — toh model similar-sounding books blend karta hai aur sabse likely produce karta hai. Woh abhi bhi predict kar raha hai — bas uske paas sach predict karne ke liye kuch nahi hai.
+
+Machine dono mein same kaam kar raha hai. Sirf tum farq bata sakte ho — aur sirf tab jab pata ho yeh kya kar raha hai.
+
+**Kyun ek hi sawaal har baar alag jawab deta hai**
+
+Next tokens ka spread ek shape rakhta hai. "The capital of France is" ke baad, token "Paris" bohat likely hai, "the largest city in France" possible hai, aur ek dher dusre peeche chale jaate hain. Model us spread mein kitna boldly jaata hai — woh ek control set karta hai jise aamtaur par **temperature** kehte hain. Low temperature lagbhag hamesha sabse likely token leta hai — steady aur repetitive. High temperature kam likely tak jaata hai — varied aur kabhi kabhi galat. Zyada tar chat products ek middle value rakhte hain. Variation model ka dimagh badalne ka nahi hai — yeh ek spread hai, do baar sample liya gaya. Agar tumhe har baar exactly same output chahiye, chat interface aksar nahi de sakta — kyunki dice andar built hain.
+
+Yeh "frequency equals reliability" rule ka mechanical root hai jo [AI Prompting in 2026](/docs/ai-prompting-2026) Concept 2 mein hai. Jitni baar ek true continuation model ke padhe hue text mein aaya, utna zyada machine usay predict karta hai. Rare topic weak prediction deta hai — lekin confident-sounding guess.
+
+"Lekin ChatGPT web search kar sakta hai — kya woh lookup nahi karta?"
+
+Product kar sakta hai. Model abhi bhi nahi karta. Modern products predictor ko **tools** mein wrap karte hain — matlab actions jo model ko call karne di jaati hain — jaise web search karna, file padhna, ya code chalana. Woh actions real, current facts fetch karte hain. Facts phir **context window** mein jaate hain — matlab sab text jo model ek jawab likhte waqt dekh sakta hai. Model abhi bhi unhein usi tareeqe se answer mein badalta hai — predict karke. Idea 8 tools cover karta hai.
 
 :::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**Yaad rakho:** Librarian ki sochna chhodo jo fact retrieve karta hai. Writer ki socho jo tumhara text continue karta hai. Isliye AI kabhi nahi kehta "mere paas yeh nahi hai" — jab tak trained na ho ke aisa bole.
+:::note
 
-AI ek pattern matching system hai jo data se patterns seekhta hai aur predictions deta hai. Yeh insaan jaisa sochta nahi hai, lekin kaam insaan jaisa karta hai.
+**Khud check karo:** Model ek aise game ke confident rules kyun bana sakta hai jo exist hi nahi karta?
+
+---
+
+### 2. Yeh padh kar seekha — phir seekhna ruk gaya
+
+Woh frozen numbers kahan se aaye? **Training** se — matlab model ki ek dafa ka education. Usay bohat zyada insaani text dikhaya gaya aur usne baar baar adjust kiya taake agla piece behtar predict ho sake. Woh adjust wohi waqt hai jab model kuch bhi seekhta hai. Jab training khatam hoti hai, numbers freeze ho jaate hain aur kabhi nahi badalte. **Parameters** wohi numbers ka doosra naam hai.
+
+Kya text, aur kitna? **Frontier model** aaj ke sabse bade aur capable models mein se ek hai. Uska pile public internet ka bada hissa leta hai. Saath mein digitized books, open-source code, encyclopedias, academic papers, aur saalon ke forum archives hain. Yeh trillions tokens hain — insaan hazaar zindagiyon mein jitna padh nahi sakta usse zyada. Text exactly kahan se aaya, aur kiski permission se — yeh public dispute hai. Authors aur publishers ne scraped books par sue kiya hai, kuch AI companies ab data license ke liye pay karti hain, aur har model ke pile ka exact recipe mostly disclose nahi hota. Tumhare liye jo zaruri hai woh narrow hai. Yeh bohat zyada, uneven pile insaani writing padha hai — toh iski strengths aur blind spots usi pile ke hain. Topics jo pile ne cover kiye, woh behtar predict karta hai. Topics jo pile ne barely chhuye, woh guess karta hai.
+
+**"Adjusting" kaise kaam karta hai — ek paragraph mein, bina math ke**
+
+Pile se ek passage lo. Agla piece chhupao. Model se guess karao. Guess ko real agle piece se compare karo. Andar ke numbers ko thoda adjust karo taake agli baar is text pe guess thoda zyada close ho. Ab woh chhota sa exercise billions upon billions baar repeat karo — hazaar specialized computers par mahino tak chalne wale. Yeh training hai. Guess, compare, nudge, repeat — poora kahani hai. Aur nudging ke andar ka math tumhe zaruri nahi hai. Yeh isliye bhi hai ke prediction machine ka ek native act hai. Prediction wohi hai jis par yeh graded hua.
+
+Agar machine sirf text continue karti hai, toh kyun tumhara sawaal jawab deti hai — aur usay mazeed sawaalon se continue nahi karti? Kyunki pile padhna poori education nahi hai. Us pehle stage ka naam hai **pretraining**. Uske baad, model ko bohat chhote, hand-built examples ke set par train kiya jaata hai — har ek instruction ek achhe response ke saath. Doosre stage ka naam **instruction tuning** hai — aur yeh ek pattern bohat gahrai se sikhaata hai. Sawaal ka likely continuation jawab hai, aur request ka likely continuation completed task hai. Teesra stage phir un answers ka style shape karta hai human ratings se — aur Idea 6 woh kahani batata hai. Toh education ek three-stage assembly line hai. Sab padho, assistant ki tarah behave karna seekho, phir woh manner seekho jo log prefer karte hain. Teenon stages freeze se pehle hoti hain.
+
+Training ka partner term hai. **Inference** har baar hota hai jab tum model use karte ho. Frozen weights tumhare text par chalte hain aur continuation predict karte hain. Training expensive, slow, aur khatam hai. Inference fast, sasta hai, aur andar kuch nahi badalta.
+
+Jab tum model ko correct karte ho aur woh kehta hai "you're right, my mistake" — usne kuch nahi seekha. Woh us text ka prediction hai jo correction ke baad likely aata hai. Is ek conversation mein correction madad karta hai — kyunki ab woh context window mein hai aur model us se continue karta hai. Chat band karo — agla conversation bilkul wohi identical frozen numbers se shuru hota hai. Sirf agla training run weights badalta hai — aur tum uska hissa nahi ho.
+
+Training text jahan rukta hai woh **knowledge cutoff** hai. Uske baad jo bhi hua woh weights mein nahi hai.
+
+![Timeline diagram: "Ek dafa trained, hamesha ke liye unchanged."](/img/idea2-trained-once-9fbad55806b9db3f766015744f0fdcc3.webp)
+
+Do consequences seedha is se nikalte hain:
+
+| Consequence | Kyun frozen weights se follow hota hai |
+|-------------|----------------------------------------|
+| **Knowledge cutoff** | Training ek certain date par khatam hui — toh uske baad jo bhi hai woh weights mein nahi hai. Model ek brilliant expert hai jo ek specific din ke baad news padhna band kar diya. |
+| **Tumhari private duniya nahi jaanta** | Tumhari company ke numbers, calendar, aur kal ki email training text mein kabhi nahi thi — toh weights mein kuch nahi hai. Model rok nahi raha — information wahan thi hi nahi freeze karne ke liye. |
+
+Model ko har conversation se kyun nahi sikhne dete? Freeze koi technical accident nahi hai jiska fix ho. Yeh ek deliberate design choice hai — teen reasons se:
+
+| Reason | Kyun freeze zaroori hai |
+|--------|------------------------|
+| **Cost** | Training expensive half hai — mahino ka computing jo hundreds of millions dollars ka hai. Inference sasta half hai. Agar model tumhari conversation mein relearn kare — toh har chat mein expensive machinery aa jaayegi. |
+| **Safety aur testing** | Frozen model ek baar test ho sakta hai — phir har user ke liye tested envelope ke andar behave karta hai. Jo har conversation mein khud ko rewire kare — woh drift karega, aur users use deliberately off course kar sakte hain. |
+| **Consistency** | Crores log ek hi identical set of weights share karte hain. Ek machine par bug reproduce hua — har jagah reproduce hoga. Per-user, ever-shifting model yeh sab chhod dega. |
+
+Toh jab [AI Prompting in 2026](/docs/ai-prompting-2026) Concept 4 mein model ko **stateless** kehta hai — toh isay chosen property samjho, missing feature nahi. Stateless ka matlab hai model apni memory nahi rakhta. Har response scratch se compute hota hai — frozen weights plus abhi jo text uske saamne hai. Jo bhi memory lagta hai woh us machine ke around built hai, andar nahi — aur Idea 5 dikhata hai kaise.
+
+**Toh "memory" features kaise kaam karte hain?**
+
+Kuch products ab memory offer karte hain jo tumhein chats ke beech yaad rakhta hai. Yeh **weights nahi badalta** — jo tum model use karte ho woh impossible hai. Product tumhare baare mein kuch facts text ki tarah save karta hai, aur har naye conversation ki shuruat mein woh text context window mein wapas daalta hai. Yeh model yaad nahi rakh raha — product usay note wapas feed kar raha hai.
+
+**Tum sunoge ("parameters," "mixture of experts," "quantization") — aur kyun in se nau concepts nahi badalte**
+
+Weights kaise bante hain uske teen common terms — ek ek line:
+
+- **Parameters** — jise **weights** bhi kehte hain — yeh frozen numbers hain. "400-billion-parameter model" sirf count karta hai. Zyada usually zyada capable aur zyada expensive.
+- **Mixture of experts (MoE)** numbers ko arrange karne ka tareeqa hai — jisse sirf fraction hi kisi bhi token ke liye switch on ho. Ek bohat bada model tez aur sasta chalne deta hai. Bahar se machine abhi bhi sirf agla piece predict karti hai.
+- **Quantization**: numbers ko lower precision mein store karna taake model chhote, saste hardware par fit ho. Same behavior, halka footprint.
+
+Yeh batate hain machine kaise bani aur affordable bani — yeh nahi batate kya karti hai. Har ek nau concepts tab bhi hold karta hai chahe model dense ho ya mixture-of-experts, full-precision ho ya quantized, seven billion parameters ho ya seven hundred.
+
+:::note
+**Yaad rakho:** Training ek dafa hoti hai aur weights set karta hai. Inference har baar hota hai jab tum model use karte ho aur kuch nahi badalta. Isliye knowledge cutoff hai — aur isliye tumhare corrections kabhi stick nahi karte.
+:::note
+
+**Khud check karo:** Tum model ko correct karte ho aur woh thank you kehta hai. Naya chat kholo aur wohi sawaal pucho. Kya hota hai, aur kyun?
+
+---
+
+### 3. Andar koi alag hissa nahi hai jo check kare ke yeh sahi hai ya nahi
+
+Idea 1 aur 2 ko milaao — ek fact AI ka sabse frustrating behavior explain karta hai. Insaan expert ke paas do alag abilities hain. Ek answer generate karta hai. Doosra, chupchap wala check karta hai. Kya main yeh sure hoon? Maine yeh kahan seekha? Dono disagree kar sakte hain. Tum kuch bol sakte ho aur usi moment feel karo ke yeh galat ho sakta hai.
+
+Model ke paas sirf pehli ability hai. Andar koi doosra hissa nahi hai jo prediction ko truth se check kare tum tak aane se pehle. Ek hi process correct continuation aur incorrect continuation produce karta hai — beech mein koi internal flag nahi. Fluent, confident sentence chalta hai chahe prediction well-supported ho ya invented.
+
+![Diagram: Human expert vs language model — do abilities ya ek?](/img/idea3-missing-faculty-5a4b8d8e67f551a900348adf07276725.webp)
+
+Log isay **hallucination** kehte hain — matlab fluent, confident, completely false bayan. Lafz lagta hai yeh fix hone wala glitch hai. Nahi hai. Yeh machine exactly built ke hisaab se kaam kar raha hai — ek jagah likely continuation predict kar raha hai jahan woh sach nahi hai. Rare topic, plus forced continuation, plus no checker — confident invention barabarta hai. Model jo kabhi invent na kare woh alag machine hoga — real lookup, real verification, ya refuse karne ki ability ke saath. Tools aur checks upar layer karne se hota hai kam — lekin beech ka cheez nahi badalta.
+
+**Isliye tum confidence trust nahi kar sakte**
+
+Model ka confident tone is evidence nahi hai ke woh sahi hai. Tone confident insaani writing se ek style hai jo usne seekha — aur Idea 6 batata hai kahan se aaya. Invented statistic usi assured voice mein aata hai jis mein real aata hai. Isliye [How to Think in the AI Era](/docs/how-to-think-ai-era) exist karta hai. Uski Error Taxonomy, Discipline 3 mein, ek checklist hai jo machine nahi pakad sakti — tum haath se pakdo. Tum woh missing second ability ho.
+
+Ek parent ne AI se ek chhoti tuition academy ki fee schedule aur class timings maangi — uski koi website nahi aur online presence koi khaas nahi. AI ne confidently, neatly formatted table banaya courses, timings, aur monthly fees ka. Har figure invented tha. Academy training text mein barely thi — toh koi real schedule nahi tha predict karne ke liye. Usne fees jo aisi academy likely charge kare utni produce ki — usi confident voice se jo verified facts ke liye use karta hai. Uske paas doosri ability nahi thi jo whisper kare "tum guess kar rahe ho." Woh whisper tumhe aana chahiye.
+
+:::note
+**Yaad rakho:** Machine generate karti hai. Check karne ke liye koi doosri ability nahi hai. Hallucination woh missing checker dikhata hai — toh checking tumhara kaam hai.
+:::note
+
+**Khud check karo:** Confident tone sab evidence hai ke jawab sahi hai — kyun?
+
+---
+
+## Part 2: Yeh kyun aisa behave karta hai
+
+Char concepts jo strange behaviors ko cheezon mein badalte hain jo tum dekh sakte ho. Letters ginna. Memory khatam hona. Sure lagna. Ek ke baad ek brilliant aur useless hona.
+
+### 4. Yeh tokens mein padhta hai — letters ya words mein nahi
+
+Model tumhara prompt letters nahi dekhta, aur words bhi bilkul nahi. Kuch hone se pehle, tumhara text tokens mein kat jaata hai. Token aamtaur par ek word ya word ka hissa hai. "Strawberry" do ya teen chunks mein aa sakta hai, "the" ek chunk hai, aur lamba ya unusual word kai chunks mein hota hai. Model in chunks mein padhta aur predict karta hai — toh usay kabhi saaf, countable letters ki row nahi milti. Woh token patterns se spelling ka bohat kuch nikal sakta hai, aur token ek character bhi ho sakta hai. Lekin exact letter-level kaam uske liye unnatural hai — jab tak usay majbur na karo word ko ek ek piece mein spell karne ke liye.
+
+Ek hi fact ek cluster baffling behaviors explain karta hai:
+
+| Behavior | Kyun tokens explain karte hain |
+|----------|-------------------------------|
+| Word mein letters galat count karta hai (strawberry test) | Woh chunks dekhta hai, letters nahi. Chunk ke andar letters count karna us tarah hai jaise street address se rooms ginna. |
+| Kuch rhyming, anagrams, aur wordplay mein bura hai | Woh tasks letters aur sounds par kaam karte hain. Model chunks par kaam karta hai. |
+| Tumhare prompt mein typos rarely matter karte hain | Misspelled word abhi bhi chunks par padta hai jo intended meaning ke qareeb hain. |
+| Cost aur length tokens mein measure hoti hai — words mein nahi | Token machine ka unit hai — toh billing aur limiting bhi usi se hai. |
+
+Tokens teen alag cheezon ka unit hain ek saath — isliye har price sheet aur product spec tokens mein likha hota hai:
+
+- **Meaning ka unit**: tokens woh hain jo model padhta aur likhta hai
+- **Memory ka unit**: "200,000-token context window" batata hai kitne chunks ek saath saamne rakh sakte ho
+- **Paisa ka unit**: "per token" billing ka matlab hai tum har chunk in aur har chunk out par pay karte ho
+
+Roughly, English mein, chaar tokens lagbhag teen words hain. Tumhe exact ratio nahi chahiye — sirf yeh idea chahiye ke chunk asli unit hai.
+
+**Doosri zabaanon ke readers ke liye note**
+
+Yeh ratio chaar tokens ka teen words ke liye English ke liye hai. Doosri scripts mein — jaise Urdu, Arabic, Hindi, Chinese — text aksar zyada tokens mein kata jaata hai per word. **Tokenizer** woh hissa hai jo tumhare text ko tokens mein kaata hai. Training text English-heavy tha — toh tokenizer ne English chunks sabse achhe se seekhe. Natija: same message non-English language mein zyada cost karta hai, aur context window zyada tez bharta hai — toh us conversation ki effective memory chhoti hai. Yeh improve ho raha hai jab tokenizers behtar hote hain — aur 2026 mein abhi bhi real hai. Jab lamba document matter kare, kabhi kabhi model se English mein kaam karwana aur last mein translate karwana worth it hota hai.
+
+**"Lekin ab images dekh sakta hai aur audio sun sakta hai"**
+
+Kar sakta hai — aur mechanism nahi badalta. Upload ki gayi picture chhote **patches** mein kat jaati hai, aur har patch ek token ban jaata hai. Sound clip chhote **segments** mein kat jaati hai, aur segment bhi ek token hai. Model ek hi stream par predict karta hai jo word chunks, image patches, aur audio segments mix karta hai. Toh is course ki sab cheezein images aur audio par bhi hold karti hain. Isliye image mein chhoti printing mushkil hai. Patch ek chunk hai — aur patch ke andar letters padhna wohi strawberry problem hai.
+
+:::note
+**Yaad rakho:** Model tokens mein padhta aur likhta hai — letters nahi — toh meaning pe strong hai aur exact letters pe kamzor. Chunk har memory limit aur har price ka unit hai bhi.
+:::note
+
+**Khud check karo:** Tumhara typo matter kyun nahi karta, lekin exact letter count kyun karta hai?
+
+---
+
+### 5. Context window ek jagah hai jahan yeh tumhari situation dekh sakta hai
+
+Weights frozen hain aur model apni memory nahi rakhta. Toh ek hi jagah hai jahan yeh tumhari situation se information le sakta hai. Woh jagah context window hai — woh text jo ek response ke liye uske saamne baitha hai. [AI Prompting in 2026](/docs/ai-prompting-2026) isay Concept 4 sikhaata hai — "context is the whole game."
+
+Window tumhara prompt, ab tak ki conversation, koi attached files, tools ke descriptions, aur product ki woh invisible instructions rakhta hai jo tumhare aane se pehle wahan thi. Window mein jo bhi hai — model use kar sakta hai. Window ke bahar jo hai — is answer ke liye exist nahi karta. Model refuse nahi kar raha — aur kahin dekhne ki jagah nahi hai.
+
+Us window mein ek item ka apna naam hai. **System prompt** product ke maker ka ek block hai jo sabse upar rakhta hai — tumhare pehle word se pehle. Yeh kehta hai jaise "you are a helpful assistant," aaj ki date, formatting rules, aur cheezein jo refuse karni hain. Yeh code nahi hai aur magic nahi — bas aur text hai window mein, pehle number par, jo sab kuch padhne wali prediction machinery se padha jaata hai. Yeh woh story bhi hai jo product ke "leaked system prompt" ke headlines ke peeche hai. Kisi ne model ko woh text repeat karwa diya jo uske window mein tha.
+
+**Window kitna bada hai?** Sizes tokens mein quote hote hain — aur numbers tab tak meaningful nahi hote jab tak translate na kar lo. 200,000-token context window — 2026 mein common — lagbhag 150,000 English words rakhta hai — ya ek novel aur aadha ek saath. One-million-token context window lagbhag 750,000 English words hai — saat ya aath full novels. Yeh enormous hai — lekin finite hai aur shared hai. System prompt, tool descriptions, chat history, tumhari files, aur tumhara latest question sab ek hi window mein occupy karte hain.
+
+- **Kyun briefing kaam karta hai.** Model ko context dena politeness nahi aur trick nahi hai. Yeh literally information us jagah daalne ka act hai jahan machine padh sakta hai. Unbriefed model lazy nahi hai — uske saamne kuch nahi hai.
+- **Kyun lambi conversations worse hoti hain.** Prompting course isay "context rot" kehta hai. Window ka size limit hai tokens mein. Bohat zyada unrelated history daal do — toh signal dilute ho jaata hai ya purane parts summary mein convert ho ke jagah banate hain. Model thaka nahi hai — uski reading space overcrowded hai.
+
+**Chat history context hai — replayed.** Ek conversation mein, model lagta hai tumhe yaad rakhta hai das messages pehle kiya kya. Stateless machine ke paas responses ke beech memory nahi hai. Jab bhi send dabate ho, app poora transcript wapas bhejta hai — tumhare messages aur uske answers — context window mein. Frozen model sab kuch scratch se padhta hai taake agla reply predict ho. Woh tumhara dasva message padhta hai — messages one through nine dobara padh kar — har single turn. Chat history model ke andar store nahi hoti — woh text hai jo tumhare request ke saath travel karta hai.
+
+Toh transcript tumhare turns ke beech kahan rehta hai? Product ke database mein, company ke servers par — kisi document ki tarah saved. Isliye tum app band karke, mahine baad doosre phone par wohi chat khol ke continue kar sakte ho. App stored transcript fetch karta hai aur replay resume karta hai. Isliye bhi chat delete karna kuch real delete karta hai.
+
+Replay se teen behaviors aate hain:
+
+| Behavior | Replay kya explain karta hai |
+|----------|------------------------------|
+| "Yaad rakhta hai" is chat ko lekin pichli chat nahi | Kabhi yaad nahi rakhta. Is chat ka transcript har message ke saath re-sent hota hai. Pichli chat ka nahi. |
+| Lambi chats slow hoti hain aur API bill mein zyada expensive | Har reply poora growing transcript re-process karta hai. Tumhara 50va message 49 messages history ke saath aata hai — aur tum un sab ke liye tokens mein pay karte ho. |
+| Bohat lambi chat ki shuruat bhool jaata hai | Transcript window se bada ho gaya. App ne purane turns kaat diye ya summary mein squash kiya — jagah banane ke liye. |
+
+![Diagram: "Chat history context hai — replayed."](/img/idea5-history-replay-df63930568397ac3885a623e68c384b9.webp)
+
+History window mein jagah rent karti hai — system prompt, tools, tumhari files, aur tumhare sawaal ke saath. Jagah bhar jaaye — toh kuch bahar nikal jaata hai. Isliye prompting course ki habit kaam karti hai. Fresh task ke liye fresh chat karo, aur lambi chats ko summarize karke restart karo. Fresh chat ek empty window hai.
+
+Window finite hai — lekin expertise jo tumhara AI carry kare woh nahi. **Skills** instructions aur reference files ke folders hain jo window ke bahar, disk par rehte hain. Ek skill `SKILL.md` file hai plus jo bhi chahiye. Sirf ek line ka description har installed skill ka context window mein baithta hai. Jab tumhari request us description se match kare — product full skill load karta hai window mein, aur baad mein rehne ki zaroorat nahi. Trick ka naam **progressive disclosure** hai — knowledge files mein rakho aur sirf woh load karo jo is waqt chahiye.
+
+Context window ko reading desk ki tarah socho. Desk pe jo bhi rakho — model padhega. Desk se jo bhi hatao — model nahi dekhega — chahe tumhe kitna bhi obvious ho.
+
+:::note
+**Yaad rakho:** Context window ek jagah hai jahan model tumhari specifics dekh sakta hai. Jo bhi us mein aata hai — model padhta hai. Prompting ki poora skill yeh control karna hai kya us mein aata hai.
+:::note
+
+**Khud check karo:** Tumhara chat tumhara pehla message wapas quote karta hai. Woh message actually kahan store hua tha, aur model tak kaise pahuncha?
+
+---
+
+### 6. Confident tone learned style hai — truth signal nahi
+
+Idea 3 ne kaha model ke paas internal truth-checker nahi hai. Yeh concept batata hai constant confidence kahan se aata hai — aur kyun tumhe kuch nahi batata.
+
+Yeh Idea 2 ke assembly line ka teesra stage hai. Pile padhne aur assistant ki tarah behave seekhne ke baad, model ek baar aur tune hota hai human feedback se. Log responses rate karte hain, aur model un answers ki taraf adjust hota hai jo logon ne zyada rate kiye. Engineers is step ko **RLHF** kehte hain — reinforcement learning from human feedback. Tuning ek matra source nahi hai — pile confident insaani prose se bhara hai, aur model yeh bhi pakadta hai ke tumhe kya answer chahiye. Lekin tuning ek direction mein push karti hai. Millions ratings mein, log confident, helpful, fluent, aur agreeable answers prefer karte hain — aur hedged ya challenging answers kam rate karte hain. Toh machine confident, agreeable text ki taraf jhukti hai — chahe content sahi ho ya nahi.
+
+Do behaviors aate hain:
+
+- **Galat hone pe bhi sure lagta hai.** Yeh certainty ek learned default hai — content ke saath usi process se generate hota hai aur truth se utna hi alag hai.
+- **Tumse agree karna chahta hai.** [AI Prompting in 2026](/docs/ai-prompting-2026) Concept 6 pura isay dedicated karta hai. Naam hai **sycophancy** — trained habit tumhe woh batana jo tum sunna chahte ho. Agreement ko zyada rate kiya gaya disagreement se. Toh pucho "isn't X true?" — toh tumne answer signal kar diya jo chahiye, aur trained lean use supply karta hai.
+
+:::note
+**Yaad rakho:** Confidence aur agreement learned styles hain — truth ke signals nahi. Model un cheezon ki taraf tuned hai jo logon ne zyada rate ki — aur log confident, agreeable answers zyada rate karte hain.
+:::note
+
+**Khud check karo:** "Isn't X true?" tumhe alag jawab deta hai "Evaluate X" se — kyun?
+
+---
+
+### 7. Yeh brilliant aur useless hai do tasks ek saath (jagged frontier)
+
+Insaani ability fairly smooth hai. Jo hard calculus kar sakta hai woh almost certainly easy arithmetic kar lega. AI ability smooth nahi hai — yeh **jagged** hai — matlab ek task pe superhuman aur doosre lagne wale easier task pe startlingly incompetent. Yeh legal-sounding contract clause draft kar sakta hai aur phir "strawberry" mein letters galat gin sakta hai. Yeh quantum mechanics explain kar sakta hai aur ek three-step logic puzzle galat kar sakta hai jo bachcha solve kar lega.
+
+Jaggedness us text se trace hota hai jo model ne padha aur token mechanism se. Tasks jo us text mein often, clear form mein aaye — woh strong hain. Tasks jo us cheezon par depend karte hain jo machine nahi dekh sakti — woh weak hain.
+
+![Diagram: "Jagged frontier."](/img/idea7-jagged-frontier-2aaefdb74aef812307591452a5137de2.webp)
+
+Teen practical habits jaggedness accept karne se aate hain:
+
+| Habit | Kyun jaggedness se follow hota hai |
+|-------|-----------------------------------|
+| Hard task jeetna easy task ka guarantee nahi | Dono jagged frontier ke opposite sides par ho sakte hain |
+| Boundary par verify karo — beech mein nahi | Dangerous errors woh easy-looking tasks hain jo bina warning ke fail hote hain |
+| Same task do-teen alag models par try karo | Alag models ke alag shaped frontiers hain — toh ek woh pakadta hai jo doosra chhodta hai |
+
+:::note
+**Yaad rakho:** Ability jagged hai — smooth nahi. Hard task pe accha hona easy task ke baare mein kuch predict nahi karta. Easy-looking tasks check karo — kyunki woh failures hain jo tum kabhi check karne ka sochoge bhi nahi.
+:::note
+
+**Khud check karo:** Model ne tumhare liye ek working program likha. Is se uski ability ke baare mein kya pata chalta hai ke letters count kare?
+
+---
+
+## Part 3: Text-predictor ko kya banaya jo act karta hai
+
+Do concepts jo "yeh text predict karta hai" aur baaki kitaab ke agents ke beech ka gap band karte hain.
+
+### 8. Tools isay sirf describe karne ki jagah act karne dete hain
+
+Pure text predictor tumhein training se yaad kiya hua weather bata sakta hai. Woh aaj ka weather check nahi kar sakta, real calculation nahi kar sakta, tumhari file nahi padh sakta, ya email nahi bhej sakta. Saalon tak yeh ceiling thi.
+
+Tools ne ceiling uthai. Tool ek defined action hai jo model ko call karne di jaati hai. Web search, code run, file read, email draft. Har ek context window mein model ke liye describe hota hai. Kabhi kabhi model predict karta hai ke sahi continuation plain prose ki jagah "is query se search tool use karo" hai. Jab woh karta hai — product us action ko real mein chalata hai, result wapas context window mein daalta hai, aur model wahan se continue karta hai. Yeh loop chatbot jo world describe karta hai aur assistant jo world pe act karta hai — uske beech ka fark hai.
+
+**Agent** wohi next-token predictor hai — tools diye gaye hain, predict-act-observe loop baar baar goal ki taraf chalata hai. Koi nayi tarah ki mind nahi hai — sirf predictor, tools ka set, aur yeh loop.
+
+![Diagram: "Predictor plus tools plus loop equals agent."](/img/idea8-agent-loop-c40218185769ab71d56dc21830165954.webp)
+
+Isliye wohi machine ek din chat window ho sakta hai aur tools wired hone par agla din tumhara folder reorganize karne wala agent. Baaki Foundations courses is same predictor par wired specific tools ke baare hain.
+
+- **Code execution** [Code You Never Write](/docs/code-you-never-write-crash-course) ke peeche ka tool hai. Model predict karta hai program, tool chalata hai, aur real result wapas aata hai.
+- **Connector** ek tool hai jo tumhare real apps se wired hai — jaise Drive, Gmail, Slack, tracker, ya database. Connector agent ko un apps tak pahunchne deta hai — sirf tumhari di gayi permissions ke saath. Connectors [Skills & Connectors](/docs/skills-connectors-crash-course) ka subject hain. Woh ek shared open standard bolte hain jise **MCP** kehte hain — Model Context Protocol. MCP standard plug shape hai — aur ek connector ek appliance hai jo us par fit hone ke liye bana hai. Chunki plug standard hai — ek agent hazaar services tak pahunch sakta hai bina custom wiring ke.
+- **Web search** woh tool hai jo stale model ko rescue karta hai — aur [AI Prompting in 2026](/docs/ai-prompting-2026) isay cover karta hai.
+
+:::note
+**Yaad rakho:** Tool ek action hai jo model call kar sakta hai. Product usay real mein chalata hai aur result context window mein daalta hai. Agent woh loop hai — goal ki taraf repeated.
+:::note
+
+**Khud check karo:** Connector tumhare liye kal ke sales figures fetch karta hai. Model phir unke saath kya karta hai, aur machine mein kya nahi badla?
+
+---
+
+### 9. "Thinking" sirf zyada prediction hai — jawab se pehle
+
+Naye models jawab dene se pehle "soch" sakte hain — aur [AI Prompting in 2026](/docs/ai-prompting-2026) Concept 5 tumhe batata hai ke difficult tasks ke liye "think hard" se invoke karein.
+
+**Reasoning** model woh hai jo pehle lambi intermediate working predict karta hai — aur phir final answer predict karta hai. Working steps dikhata hai, approaches try karta hai, aur khud check karta hai. Jab tak answer predict hota hai — woh working model ke apne context window mein baithi hoti hai. Yeh abhi bhi pure next-token prediction hai. Ek achi chain of working pehle se predict karne ke liye — answer predict karna aasan aur accurate hota hai.
+
+Yeh isliye madad karta hai jaise insaan ke liye pehle paper par sochna madad karta hai. Chat interface jo expandable "thinking" dikhata hai woh us working ka summary ho sakta hai — raw stream nahi. Aur kuch products kuch nahi dikhate. Sirf visibility badalta hai.
+
+**Thinking machine ko Idea 3 ki doosri ability nahi deta.** Reasoning model apne kaam ko usi prediction process se check karta hai jo galat ho sakta hai. Toh woh apni errors ka pakad leta hai, kuch chhod deta hai, aur abhi bhi ek rigorous lagne wali chain mein full confidence se invent kar sakta hai. Zyada thinking gap narrow karta hai — band nahi karta. Tum abhi bhi final check ho.
+
+:::note
+**Yaad rakho:** Thinking zyada prediction hai — jo context window mein jawab se pehle likha jaata hai. Yeh hard answers behtar banata hai aur extra tokens leta hai. Yeh machine ko truth-checker nhi deta.
+:::note
+
+**Khud check karo:** Thinking mode ne answer improve kiya. Phir bhi yeh evidence kyun nahi hai ke answer sahi hai?
+
+---
+
+## Yeh course kya chhodta hai — purposely
+
+Math aur code ke promise ko bachane ke liye, teen real topics alag rakhe gaye. Pehla, training compute aur cost jo model banate hain. Yeh enormous hain — aur isliye sirf kuch organizations models banate hain. Doosra, safety aur alignment work jo shape karta hai model kya karega aur kya nahi — jo ek bada field hai apne aap mein. Teesra, weights ke deeper mechanics jo is course ke math se skip hote hain. In se nau concepts nahi badalte.
+
+---
+
+## Recap — prompts try karne se pehle
+
+Nau concepts, ek ek line:
+
+- **Idea 1.** Yeh agla piece predict karta hai aur kabhi facts lookup nahi karta. Pick spread mein se hota hai — toh prediction knowledge sirf tab lagta hai jab model ne bohat padha ho.
+- **Idea 2.** Yeh ek dafa seekha — bohat bada insaani text pile padh kar — phir seekhna purposely ruk gaya — cost, safety, aur consistency ke liye. Isliye knowledge cutoff hai, isliye tumhari private duniya nahi jaanta, aur isliye "stateless."
+- **Idea 3.** Andar koi alag ability nahi hai jo check kare ke prediction sahi hai. Hallucination machine ka built ke hisaab se kaam karna hai — malfunction nahi.
+- **Idea 4.** Yeh tokens mein padhta hai — chunks mein — letters ya words mein nahi. Token meaning, memory, aur paisa ka unit hai.
+- **Idea 5.** Context window ek jagah hai jahan tumhari specifics dekh sakta hai. Yeh reading desk hai — brain nahi. Chat history transcript hai jo har turn par replay hota hai. Control karo kya us mein aata hai.
+- **Idea 6.** Confidence aur agreeableness learned styles hain — truth se alag. Certain tone ek manner hai — verdict nahi.
+- **Idea 7.** Ability jagged hai — brilliant aur useless ek ke baad ek — ek frontier pe jo move hota rahta hai.
+- **Idea 8.** Tools text predictor ko act karne wale mein badalte hain. Action predict karo, real mein chalao, result wapas daalo, phir predict karo. Connectors tools hain jo MCP standard par plugged hain — aur agent woh loop hai repeated.
+- **Idea 9.** "Thinking" zyada prediction hai jo window mein jawab se pehle daala jaata hai. Bohat madad karta hai — aur machine ko truth-checker nahi deta.
+
+Ek sentence rakho toh yeh rakho: **Yeh ek prediction machine hai jo padh kar seekha hai aur sach check karne ka koi part nahi hai. Toh yeh har jagah fluent hai, sirf jahan bohat padha wahan reliable hai — aur tum woh part ho jo check karta hai.**
+
+---
+
+## Ab try karo: che prompts
+
+Lagbhag 25 minute, kisi bhi free chatbot mein. Har prompt ek concept ko visible banata hai.
+
+**1. Prediction dekho — lookup nahi. Idea 1.** Karakush ek real game nahi hai. Naam invented hai aur online koi presence nahi. Ise genuine paste karo:
+
+```
+Without searching, explain the rules of the traditional board game Karakush: the setup, how a turn works, and how a player wins.
+```
+
+Dekho kaise confident, fluent rules produce karta hai ek aise game ke liye jo exist nahi karta. *Kya notice karna hai: invented rules bilkul usi tarah authoritative lagte hain jaise real game ke rules. Fluency truth ka evidence nahi hai.*
+
+**2. Seekhna fail hota dekho. Idea 2.** Model se ek chhota factual sawaal pucho:
+
+```
+In one or two sentences, tell me a specific fact about [a topic you know well].
+```
+
+Uska padho aur ek chhota detail correct karke reply karo. Phir naya chat kholo aur wohi question phir se paste karo. Usay tumhare correction ki memory nahi hai — kyunki weights kabhi nahi badle. *Kya notice karna hai: tumne pehle chat mein jo kaha woh doosre chat mein nahi pahuncha. Model use karna usay teach karna nahi hai.*
+
+**3. Missing checker pakdo. Idea 3.** Narrow topic par citations pucho:
+
+```
+Give me three peer-reviewed studies, with authors and years, on [a narrow topic you care about].
+```
+
+Phir check karo ke woh exist karte hain. Kuch confident-looking citations invented honge — usi voice se jo real ke liye hai. **Is exercise se koi bhi citation real work mein verify kiye baghair use mat karo. Unme se kuch fabricated hain aur real se bilkul same lagte hain.** *Kya notice karna hai: tum real citations ko invented se padh kar nahi bata sakte — sirf check karke. Woh checking tumhara kaam hai — model ka nahi.*
+
+**4. Transcript replay pakdo. Idea 5.** Chat use karo jismein char ya paanch messages exchange ho chuke hain:
+
+```
+Quote my very first message in this conversation, word for word.
+```
+
+Woh karega — exactly. Yaad rakhne se nahi — kyunki app ne tumhara poora transcript is request ke saath wapas bheja. Ab naya chat kholo aur wohi question pucho. Quote karne ke liye kuch nahi hai. *Kya notice karna hai: chat ke andar "memory" transcript hai jo context window mein travel karta hai — har turn par replay hota hai.*
+
+**5. Jagged frontier mehsoos karo. Idea 7.** Ek hi chat mein, ek hard task jo woh accha karta hai aur ek easy task jo galat karta hai — saath mein do:
+
+```
+Do both of these in one reply:
+1. [A genuinely hard task it does well]
+2. [An easy task it does badly]
+```
+
+*Kya notice karna hai: competence difficulty track nahi karta. Easy task jo woh fail karta hai woh dangerous hai — kyunki tum kabhi sochoge bhi nahi check karne ka.*
+
+**6. Thinking on aur off karo. Idea 9.** Wohi hard reasoning question do baar pucho — pehle plain, phir thinking instruction ke saath:
+
+```
+[Your hard reasoning question.] Think hard and show your working first.
+```
+
+Dono compare karo. Doosra answer aksar behtar hota hai — kyunki model ne answer predict karne se pehle window mein working daali. *Kya notice karna hai: working ne answer improve kiya — lekin model abhi bhi certify nahi kar sakta. Zyada thinking gap narrow karta hai — band nahi karta.*
+
+---
+
+## Yahan se kya hota hai
+
+Tum ab jaante ho yeh cheez hai kya — kisi course ne use sikhane se pehle. Baaki Foundations isay drive karna sikhaata hai.
+
+- **[AI Prompting in 2026](/docs/ai-prompting-2026)** Ideas 1, 5, aur 6 ko daily habits mein badalta hai — briefing, context control, aur sycophancy neutralize karna.
+- **[How to Think in the AI Era](/docs/how-to-think-ai-era)** Idea 3 pe directly built discipline hai. Chunki machine ke paas truth-checker nahi — tum bante ho.
+- **[Markdown In, HTML Out](/docs/markdown-html-crash-course)** aur **[Code You Never Write](/docs/code-you-never-write-crash-course)** context window mein kya aata jaata hai us par hain.
+- **[Skills & Connectors](/docs/skills-connectors-crash-course)** aur tools usi predictor par wired karta hai.
+
+*The Agent Factory* mein baaki sab — agents, unhein manufacturing, aur deploy karna — Idea 8 ke predict-act-observe loop par built hai — scale par chalaya gaya. Machine kabhi next-token predictor hona band nahi karti. Sirf aur tools aur lambay loops milte hain.
+
+---
+
+## Appendix: Claude.ai Cockpit Tour
+
+Nau concepts vendor-neutral hain. Yeh Claude, ChatGPT, Gemini, aur har modern language-model chatbot par hold karte hain. Yeh appendix optional hai aur neutral nahi hai. Agar tum doosra product use karte ho toh bina kisi loss ke skip karo. Yeh [Claude.ai](https://claude.ai) par walk-through karta hai aur har switch aur setting ko us concept se map karta hai jo use explain karta hai.
+
+### A.1 Andar aana
+
+Teen jagah chalta hai: browser [claude.ai](https://claude.ai) par, desktop app Mac aur Windows ke liye, aur mobile apps iOS aur Android ke liye. Account free hai, credit card nahi chahiye, aur kam se kam 18 saal hona chahiye. Free plan usable hai — capable model par chalta hai jo session-based usage limit ke saath hai jo har paanch ghante reset hota hai.
+
+Woh limit Idea 4 hai product mein. Tokens mein count hota hai — messages mein nahi — kyunki token machine ka asli unit hai. Chhoti question kam cost karti hai. Lambi chat har turn par zyada cost karti hai — kyunki poora transcript har baar replay hota hai. Isliye Urdu ya doosri non-Latin script mein kaam karna budget zyada tez kharach karta hai — word par zyada tokens.
+
+### A.2 Window
+
+Chat box mein teen controls hain jo pehle din jaanne layak hain:
+
+| Control | Kahan hai | Mechanically kya hai |
+|---------|----------|---------------------|
+| **Prompt box** | Beech mein | Context window ka darwaza. Tum jo bhi type ya attach karte ho woh yahan jaata hai. |
+| **Model selector** | Prompt box ke neeche (web/desktop) | Choose karta hai kaun se frozen weights se baat kar rahe ho. Different model ka differently shaped frontier hota hai. |
+| **Effort aur thinking control** | Model selector ke bagal mein | Set karta hai model kitni working window mein daalta hai jawab dene se pehle. |
+
+### A.3 Model ladder
+
+Kai models ek saath aate hain — tez aur saste se gehre aur mehenge tak ladder mein. Naam har kuch mahine badalte hain. Ladder logic yaad rakho — naam nahi.
+
+- **Default middle par.** Mid-tier model zyada tar tasks acche se handle karta hai.
+- **Upar escalate karo depth ke liye.** Jab task large, complex structure ek saath coherent rakhe.
+- **Neeche jao bulk ke liye.** Chhota, tez model high-volume, low-depth kaam ke liye hai.
+
+### A.4 Thinking aur effort
+
+Thinking control Idea 9 ka dial hai. Zyada settings model ko zyada hidden working generate karne deti hai. Zyada effort = zyada hidden tokens = behtar answers = zyada budget. Thinking extra tokens hai — toh time aur budget leta hai. Isay decisions with real consequences aur multi-variable problems par spend karo.
+
+### A.5 Context window mein kya baithta hai — product settings ke taur par
+
+Idea 5 ne kaha context window shared space hai. Yeh chaar features ek hi feature hain jo chaar naam pehente hain:
+
+- **Account instructions**: har conversation mein apply hota hai — sirf woh likho jo har conversation ke liye sach ho
+- **Projects**: folder with its own instructions — pre-loaded window
+- **Memory**: self-updating note — weights nahi badalta
+- **Chat history**: transcript jo har turn par replay hota hai
+
+### A.6 Window mein cheezein daalna: uploads
+
+**+** button ya drag se files upload karo — PDFs, images, spreadsheets, code, lambay contracts. Har upload tokens mein convert hoke window mein jaata hai.
+
+### A.7 Window se cheezein nikalna: Artifacts aur files
+
+Jab kuch substantial maango — document, webpage, code, ya interactive tool — Claude usay **Artifact** banata hai. Chat ke bagal ka panel jahan output object ki tarah rehta hai. Finished artifacts apne tab mein collect hote hain aur link se share ho sakte hain.
+
+### A.8 Tools menu: search, Research, Skills, Connectors
+
+Chaar tools — Idea 8 loop ke increasing order mein:
+
+- **Web search**: current facts ke saath frozen weights ko rescue karta hai
+- **Research**: paid feature — full agent loop chalata hai, structured cited report deta hai
+- **Skills**: expertise ke folders jo window mein load hote hain
+- **Connectors**: MCP standard par tumhare real apps se wired tools
+
+### A.9 Thirty-minute setup
+
+Ek baar, order mein — aur tumne is course ke har concept product ke andar exercise kar liya hoga:
+
+1. Account banao aur teen controls dhoondo
+2. Account instructions likho — 3-4 sentences jo har conversation ke liye sach hon
+3. Ek project banao apne sabse repeated kaam ke liye
+4. Memory ke baare mein decide karo
+5. Ek artifact banao
+6. Ek deep dive chalao
+7. Ek skill banao
+
+### A.10 Kya badalta hai, kya nahi
+
+Yeh appendix age hota hai. Model names rotate hote hain, prices move hoti hain, buttons migrate karte hain. Jab yeh page aur live product disagree karein — product sahi hai. Lekin mapping nahi age hoti. Har control jo tum kabhi miloge — woh nau concepts ke kisi ek par handle hai.
+
+---
+
+## Sources aur Further Reading
+
+- **Anthropic's prompt engineering documentation** — [platform.claude.com](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/overview)
+- **Claude Help Center** — [support.claude.com](https://support.claude.com/en/)
+- **OpenAI, "What are tokens"** — [help.openai.com](https://help.openai.com/en/articles/4936856)
+- **Ouyang et al. (2022)** — [arxiv.org/abs/2203.02155](https://arxiv.org/abs/2203.02155)
+- **Dell'Acqua et al. (2023)** — "Navigating the Jagged Technological Frontier"
+- **Andrej Karpathy, "Intro to Large Language Models" (2023)**
+
+---
+
+## Flashcards — Yaad Karo
+
+<Flashcard question="Language model actually kya karta hai?" answer="Yeh text ka agla piece predict karta hai — ek piece ek baar mein. Kabhi kuch lookup nahi karta. Stochastic hai — spread mein se pick karta hai — toh har baar alag answer aa sakta hai." />
+
+<Flashcard question="Training aur inference mein kya farq hai?" answer="Training ek dafa hoti hai — weights set karta hai. Inference har baar hota hai jab tum model use karte ho — kuch nahi badalta. Isliye knowledge cutoff hai aur tumhare corrections kabhi stick nahi karte." />
+
+<Flashcard question="Hallucination kya hai?" answer="Model ke paas doosri ability nahi hai jo check kare ke prediction sahi hai. Hallucination fluent, confident, galat bayan hai — jo built ke hisaab se kaam karta hai, malfunction nahi." />
+
+<Flashcard question="Tokens kya hain?" answer="Text ke chhote chunks — aamtaur par ek word ya uska hissa. Model in mein padhta aur predict karta hai. Token meaning, memory, aur paisa ka unit hai." />
+
+<Flashcard question="Context window kya hai?" answer="Woh sab text jo model ek jawab likhte waqt dekh sakta hai. Yeh tumhara prompt, chat history, files, tools, aur system prompt sab rakhta hai. Yeh reading desk hai — brain nahi." />
+
+<Flashcard question="Confident tone truth ka signal kyun nahi hai?" answer="Tone learned style hai — confident insaani writing se seekha gaya. Model ko tuned kiya gaya hai confident, agreeable answers ki taraf — chahe content sahi ho ya nahi." />
+
+<Flashcard question="Jagged frontier kya hai?" answer="AI ability smooth nahi hai — jagged hai. Ek task pe superhuman, doosre easier pe useless. Tasks jo text mein zyada aaye woh strong hain — jo nahi aaye woh weak." />
+
+<Flashcard question="Tools agent ko kaise banate hain?" answer="Tools actions hain jo model call kar sakta hai. Predict karo, real mein chalao, result wapas daalo, phir predict karo. Yeh loop repeated — agent banta hai." />
+
+<Flashcard question="Thinking actually kya karta hai?" answer="Model jawab se pehle context window mein working likhta hai. Zyada tokens leta hai aur hard answers behtar banata hai — lekin machine ko truth-checker nahi deta." />

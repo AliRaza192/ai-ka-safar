@@ -2,13 +2,357 @@
 id: fde-af-model
 title: "The FDE AF Model"
 sidebar_label: "FDE AF Model"
-description: "FDE AF model kya hai"
+description: "Forward Deployed Engineer Agent Factory Model — platform aur business model ek mein"
 ---
 
-# The FDE AF Model
+# The Forward Deployed Engineer Agent Factory Model
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
+**Ek platform aur business model ek mein. Panaversity platform chalata hai. Hamare graduates is ke upar build karte hain aur kamaate hain: Layer 1 par clients ke liye Systems of Record, Layer 2 par manufacturing, aur Layers 3 aur 4 par apne domain startups.**
+
+![Ek baar built, professions ke liye fitted, companies tak deployed: ek platform kai professions tak roads ki tarah phailta hai, aur har profession kai customer instances tak deploy hota hai, neeche services aur upar ownership](/img/fde-af-hero.png)
+
+---
+
+## Seedhi baat — poori page ka khulasa
+
+Is model mein paanch layers hain. Neeche se upar padho:
+
+- **Layer 0** machinery hai: technical parts jin se upar sab kuch bana hai. Panaversity ise banata hai aur chalata hai.
+- **Layer 1** kisi bhi content (kitab, rulebook, manual) ko source of truth mein badalta hai jo log aur AI agents dono padh sakte hain aur trust kar sakte hain.
+- **Layer 2** tumhe poora method sikhata hai aur building tools deta hai: Zia Tutor AI seekhne ke liye, Zia Developer AI banane ke liye.
+- **Layer 3** sab kuch ek profession ke liye package karta hai, jaise accounting: us profession ka knowledge, apna AI teacher, aur apna AI builder.
+- **Layer 4** usse ek company ke liye kaam par lagata hai: AI Workers manufacture hote hain, aur improvement measure aur prove hoti hai.
+
+Ek line mein poori page: base ek baar banao, phir AI se har profession aur har customer ke liye fit karo. Agar is page par koi word naya hai, toh [glossary](/docs/glossary) define karta hai, aur [crash courses](/docs/getting-started) har skill sikhate hain jo yahan mention hai. Tumhe [Forward Deployed Engineers](/docs/roles-this-book-trains#the-forward-deployed-engineer-fde-the-vendor-neutral-version-the-market-cant-find) ke baare mein bhi padhna chahiye.
+
+Har customer ke liye same kaam karne wala software complex, AI-enabled work ke liye kam useful ho raha hai. Agli generation ka software aksar fixed product ki jagah flexible base se shuru hoga. AI har customer ke liye us base ko customize karne mein madad kar sakta hai. Koi ek baar framework banata hai. Phir engineer, AI agent ke saath kaam karte hue, usse ek company ke liye fit karta hai: uska data, rules, aur workflows.
+
+Hum is pattern ko **Forward Deployed Engineer Agent Factory Model** kehte hain, ya mukhtasar **FDE AF Model**. Ise do tarah se padh sakte ho. Architecture ke taur par, iske paanch layers hain foundation se customer tak. Business model ke taur par, Panaversity neeche ke layers par platform chalata hai, jabke graduates upar services aur businesses banate hain. Yeh page layers aur rule explain karta hai jo unhe jodata hai.
+
+![FDE AF Model do tarah se padha ja sakta hai: architecture ke taur par, paanch-layer stack foundation se customer tak; aur business model ke taur par, neeche services aur upar ownership wala pyramid](/img/fde-af-two-readings.png)
+
+Aage badhne se pehle, ek important baat note karo. Yeh model [ecosystem overview](/docs/ecosystem) mein introduce kiye gaye teen parts ko organize karta hai. [System of Record](/docs/ecosystem/system-of-record) trusted knowledge deta hai. [Zia Tutor AI](/docs/ecosystem/zia-tutor-ai) us knowledge se sikhata hai, aur [Zia Developer AI](/docs/ecosystem/zia-developer-ai) use karke solutions banata hai. Agar yeh teeno naye hain, pehle overview padho.
+
+---
+
+## 📚 Teaching Aid
+
+**[View Full Presentation](https://docs.google.com/presentation/d/1b9jihtGTXnFLkbhBYl2o6eX8yAbf4CKQUUyu_PyrXjo/edit?usp=sharing)** — The FDE AF Model
+
+---
+
+## Yeh model kahan se aaya
+
+Yeh model is kitab mein invent nahi hua. Teen sources usi future ki taraf ishara karte hain: ek company ne jo prove kiya, market abhi kya predict karta hai, aur yeh kitab kya add karta hai dono ko mila kar.
+
+### Palantir ne jo prove kiya
+
+Palantir ek badi US software company hai jo governments aur bade companies ke liye data systems banati hai. Bees saal pehle usse wohi problem aayi jo har software company ko aati hai. Agar ek finished product becho jo sabke liye same hai, toh woh kisi ke real work par fit nahi hota. Agar har customer ke liye custom software banao, toh sau alag systems maintain karte raho aur kaam kabhi asan nahi hota.
+
+Palantir ne teesra raasta dhoondha. Woh ek core platform banata hai. Phir engineers bhejta hai, jise **[Forward Deployed Engineers (FDEs)](/docs/roles-this-book-trains)** kehte hain, har customer ke organization ke andar kaam karne ke liye aur platform ko us customer ke real needs ke liye fit karne ke liye. Sabse important step agla hai. Jab kai customers ko same improvement chahiye, Palantir woh improvement shared platform mein add karta hai. Future customers usse bina rebuild kiye use kar sakte hain.
+
+Yeh approach kaam kiya, lekin bees saal tak rare raha kyunki customization mehnga tha. Aksar engineers ke teams saalon tak customer ke andar kaam karti rehti thin. Sirf governments aur bahut badi companies afford kar sakti thin.
+
+AI ne demand aur cost dono badal diye. Pehla, language model general capability hai, finished business solution nahi. Company ko abhi bhi kisi chahiye jo use apne data, rules, aur workflows se connect kare. Doosra, AI engineers ko customization tez karne mein madad karta hai. Ek engineer AI agents ke saath ab hafton mein woh kar sakta hai jo pehle team ko saalon lagte the.
+
+Isliye yeh role 2026 mein tezi se fail raha hai. OpenAI ka bada FDE team hai. Anthropic aur Google Cloud bhi is role ke liye hire kar rahe hain. a16z ne FDE ko startups mein sabse hottest job kaha hai.
+
+![Teesra raasta: ek finished product kisi par fit nahi hota, har customer ke liye custom kabhi scale nahi hota, aur Palantir ka jawab hai ek platform plus Forward Deployed Engineers with repeated fixes folded back; phir AI ne need universal aur fitting sasta bana diya](/img/fde-af-third-way.png)
+
+### Market jo predict karta hai
+
+Alex Becker, ad-tracking company HYROS ke founder, ne widely share kiya predict kiya ke software kahan ja raha hai. Aksar business software finished app ke roop mein bikta hai: subscribe karo, jaise aaya waise use karo. Becker kehta hai woh din khatam ho rahe hain. Iski jagah, companies open base ke liye pay karengi (software jo badal sakte ho), aur AI agent pieces connect karega aur simple prompt se missing features add karega.
+
+Uske mutabiq, ek software company teen positions mein se ek mein zinda rahegi:
+
+1. Woh base deta hai jis par doosre build kar sakte hain.
+2. Woh essential services deta hai, jaise payments, messaging, ya hosting.
+3. Uske paas product hai jiski value tab barhti hai jab zyada log use karein — isse network effect kehte hain.
+
+Woh ek aur predict karta hai jo is kitab ke liye sabse zaroori hai: winning bases AI ko day one se padhne aur samajhne ke liye ready aayengi, ya uske alfaaz mein, "LLM optimized with the correct context built into them already."
+
+### Yeh kitab kya add karta hai
+
+Har source mein kuch missing hai. Becker demand describe karta hai, lekin uski tasveer mein har service team profession ka knowledge (accounting rules, medical protocols, banking regulations) har client ke liye scratch se rebuild karta hai. Palantir ne delivery model prove kiya, lekin poora pattern ek company ke andar lock rehta hai, toh tum seekh kar khud nahi chala sakte.
+
+FDE AF Model dono ideas combine karta hai aur do cheezein badalta hai. Pehla, har profession ke knowledge ko vertical layer mein permanent home deta hai. Knowledge ek baar likhi ja sakti hai aur reuse ho sakti hai, har client ke liye rebuild kiye baghair. Doosra, poora pattern teachable banata hai, toh graduates seekh kar chala sakte hain, ek company ke andar chhodne ki jagah.
+
+---
+
+## Paanch layers
+
+Har layer do questions se define hota hai: yeh kya produce karta hai, aur kaun consume karta hai?
+
+### Layer 0: Foundation framework
+
+**Seedhi baat:** yeh technical machinery hai jis se upar sab kuch bana hai. Yeh pehara the the the the the` the the.
+
+..
+
+..`</think> it the the the the ` the ``` the the the the```` the the the width```` the`..` the` the````` the the```` the column div div the ` ` the` the```` min min flex`` a... the the` to the0%````0 the the the the to.
+
+ the reduce the..
+
+.. the the to is to the the the` ...::: } }}}
+
+**Produces:** Systems of Record banane ke liye reusable machinery. Iske chaar parts hain:
+
+- **Writing aur publishing:** content Markdown mein likha jaata hai aur Docusaurus se publish hota hai, toh wohi source website bhi hai jo insaan seedha padhte hain.
+- **Meaning se dhoondna:** [pgvector on Postgres](/docs/postgres-ai-crash-course) content ko index karta hai, toh sirf keywords se nahi, balki meaning se search ho sakta hai.
+- **Agents ko content serve karna:** MCP (Model Context Protocol) AI agents ko tools call karne aur wohi content padhne deta hai. Yeh open standard hai.
+- **Poochne wala kaun hai check karna:** [Better Auth](/docs/ai-identity-crash-course) ek single authorization server hai. JWT/JWKS verification har network boundary par confirm karta hai ke har request ke peeche kaun hai aur kya permission hai.
+
+**Consumed by:** MCP component builders. Layer 0 ko kisi subject ke baare mein kuch nahi pata. Yeh pure infrastructure hai.
+
+![Layer 0 as a pipeline: tum Markdown mein Docusaurus kitab likhte ho, insaan seedha website padhte hain, Postgres aur pgvector index karte hain, Content SoR MCP server agents ko serve karta hai, aur Better Auth har request ko authenticate karta hai](/img/fde-af-layer0.png)
+
+---
+
+### Layer 1: Content System of Record component (SoR kernel)
+
+**Seedhi baat:** yeh kisi bhi content (kitab, rulebook, manual) ko source of truth mein badalta hai jo log aur AI agents dono padh sakte hain aur trust kar sakte hain.
+
+**Produces:** SoR kernel do forms mein:
+
+Pehla, kernel pehle se ek service ke roop mein chalta hai: [Agent Factory System of Record](/docs/ecosystem/system-of-record). Yeh kitab logon aur AI agents dono ko serve karta hai.
+
+Doosra, tum apne content se kernel chala sakte ho. Tum Markdown corpus load karte ho (book, rulebook, ya product manual jaisa content body) aur apna governed System of Record paate ho. Jaise tum Accounting System of Record ya Core Banking System of Record bana sakte ho.
+
+Dono forms mein, kernel [semantic retrieval](/docs/postgres-ai-crash-course) MCP par deta hai. Semantic retrieval meaning se content dhundhta hai, sirf exact keywords se nahi. Agents aur software clients directly use karte hain. Log websites, tutors, aur doosre applications ke through pahunchte hain.
+
+:::info
+**Sirf retrieval System of Record nahi hai.** Content ko ek named owner, version control, review aur approval, access control, aur citations support ki zaroorat hai. Kernel governance ke liye technical features deta hai, lekin har instance ka owner governance process define aur operate karna hota hai.
 :::
 
-FDE AF model — Functional Digital Employee at Agent Factory — yeh framework hai jo batata hai ke digital employees kaise design karein aur deploy karein.
+**Consumed by:** Layer 2 par ecosystem builders, Layer 3 par vertical builders, aur koi bhi jiske paas apna source of truth chahiye. Clients ke liye in instances ko build aur govern karna graduate earning ladder ki pehli seedhi hai.
+
+![Layer 1: ek SoR kernel kai instances produce karta hai, deployed Agent Factory System of Record plus tumhare apne instances jaise Accounting ya Core Banking System of Record, aur instances MCP par pair hote hain: ek method sikhata hai, ek domain sikhata hai](/img/fde-af-layer1.png)
+
+---
+
+### Layer 2: Teaching aur development ecosystem
+
+**Seedhi baat:** yeh layer tumhe poora method sikhata hai aur building tools deti hai. Tum Zia Tutor AI ke saath seekhte ho aur Zia Developer AI ke saath banate ho.
+
+**Produces:** reusable components aur standard tarika unhe combine karne ka.
+
+Components mein shamil hain:
+
+- **learning component**, jo progress aur memory rakhta hai;
+- **pedagogy component**, jo control karta hai system kaise sikhata hai; aur
+- **builder component**, jo users ko agents aur solutions banane mein madad karta hai.
+
+Har component MCP tools aur agent skills deta hai. Chhote connectors, jise **MCP gateways** kehte hain, kai components ko ek product mein combine karte hain.
+
+Jaise Layer 1, Layer 2 bhi pehle se deployed hai. Agent Factory do reference products chalata hai: [Zia Tutor AI](/docs/ecosystem/zia-tutor-ai) teaching ke liye aur [Zia Developer AI](/docs/ecosystem/zia-developer-ai) development ke liye.
+
+**Consumed by:** learners aaj, aur Layer 3 kal, jo Layer 2 ko apna component library treat karta hai.
+
+![Layer 2: chaar generic components, Layer 1 se Content SoR plus learning, pedagogy, aur builder components, thin MCP gateways se composed do deployed products mein: Zia Tutor AI teaching ke liye aur Zia Developer AI development ke liye](/img/fde-af-layer2.png)
+
+---
+
+### Layer 3: Vertical ecosystems
+
+**Seedhi baat:** yeh layer sab kuch ek profession ke liye package karta hai. Package mein us profession ka knowledge, apna AI teacher, aur apna AI builder hai.
+
+**Produces:** domain trio, har vertical ke liye ek (vertical ek industry ya profession hai, jaise accounting ya healthcare). Trio ke teen parts hain:
+
+1. **Domain System of Record:** regulations, procedures, catalogs, ya protocols ka authoritative corpus, Layer 1 kernel ke through serve.
+2. **Domain expert twin:** Zia Tutor AI pattern mein ek gateway, wohi Layer 2 components se composed, us domain ke expert ki awaaz mein sikhata hua.
+3. **Domain builder:** Zia Developer AI pattern mein ek gateway, us domain ke architectures aur compliance constraints se preloaded. Yeh vertical ka [Mode 2](/docs/mode-2-manufacturing) manufacturing tool hai.
+
+:::info
+**Domain knowledge kaise organize hoti hai? Teen forms, ek governed home.**
+
+Jab tum vertical banate ho, tumhe decide karna hota hai agent ko har tarah ka domain knowledge kaise milega.
+
+Knowledge mein teen forms hain:
+
+**1. Corpus evidence deta hai** — corpus bade, organized trusted source material ka collection hai. Regulations, standards, manuals, policies, procedures shamil ho sakte hain. Agent ko yeh knowledge *cite* karni hoti hai.
+
+**2. Map agent ko batata hai kya hai** — map chhota agent skill hai jo corpus ka overview deta hai. Agent ko batata hai kya information hai aur kab retrieve karni hai.
+
+**3. Reflexes agent ko batati hain kya karna hai** — reflexes procedural skills hain jo agent ko sahi waqt par load karni hoti hain. Checklists, required forms, checker scripts, step-by-step procedures.
+:::
+
+**Consumed by:** us domain ke professionals aur FDEs jo unke liye solutions deploy karte hain.
+
+Hamari pehli vertical sales hai, aur iska founding corpus (FISTA Sales Book) complete hai. Doosra, abhi validation mein, accountants ke liye banaya ja raha hai. Healthcare, Core Banking, Islamic finance, aur government services possible future verticals hain.
+
+![Same trio, naya domain: vertical apna trio usi pattern mein compose karta hai, domain System of Record ko domain expert twin aur domain builder ke saath pair karta hua](/img/fde-af-trio.png)
+
+---
+
+### Layer 4: Customer instances
+
+**Seedhi baat:** yeh layer sab kuch ek company ke liye kaam par lagata hai. AI Workers uske liye manufacture hote hain, aur improvement measure aur prove hoti hai.
+
+**Produces:** ek deployment jo ek company ke liye defined aur measured business outcome achieve karta hai.
+
+**Customer kahan se aata hai.** Neeche ka sab kuch us customer se shuru hota hai jo pehle se ek number par agree kar chuka hai. Contract se pehle, **sponsor** hota hai: ek real company ke andar ek named person jo starting number discuss karne ka authority rakhta hai. Company sponsor nahi hai. Bina authority wala job title sponsor nahi hai.
+
+**Woh conversation kya earn karta hai — System of Record, pitch nahi.** [Choosing Your Vertical](/docs/ecosystem/choosing-your-vertical) profession select karta hai. [Designing the Vertical System of Record](/docs/ecosystem/designing-the-vertical-sor) pehla **slice** derive karta hai: ek professional outcome, poora covered, outcome contract, invariants, decision map, exceptions, derived reflex, checker, aur evaluation set ke saath. Ek slice wala System of Record **thin** kehlata hai, aur kai slices wala **thick**.
+
+Toh vertical business ka ek order hai:
+
+**expert → thin slice → sponsor → baseline → contract of success → engagement → thicker System of Record**
+
+![Kaam ka order, do ladders ke roop mein draw kiya gaya. Upar vertical ladder, slice se shuru hota hai: saat numbered steps. Neeche service ladder, client se shuru hota hai](/img/fde-af-order.png)
+
+Ek arrow strictly sab kuch commercial se pehle aata hai, aur woh hai slice. Mid-size firm mein jao apne profession ki ek governed page lekar, buyer pitch nahi sun raha. Woh apna kaam padh raha hai, tumne usse behtar likha, aur agla question uski side se aata hai.
+
+**Do numbers, do sources, do moments.** Slice expert ke apne files se derive hota hai. Baseline customer ke workflow mein measure hota hai, kyunki wohi ek number hai jo buyer verify kar sakta hai.
+
+**Do ladders, har ek ka ek rule.** Build first, sell second vertical ladder ko govern karta hai. Service ladder ko nahi. Graduate jo abhi tak committed expert nahi rakhta woh Layer 1 aur Layer 4 par method System of Record se earn karta hai.
+
+**Do numbers, do sources, do moments.** Har engagement ke liye do fixed points chahiye:
+
+1. **Agreed starting point:** dono taraf current performance aur target define karte hain.
+2. **Proven finishing point:** team dikhata hai ke target pahunch gaya.
+
+**Start contract of success hai.** Building shuru hone se pehle, graduate aur customer teen cheezon par书面 agree karte hain: baseline (aaj kaam kaise perform karta hai), target (kya success hoga), aur acceptance criteria (kaam kab hua).
+
+**Finish proof in production hai.** Success company ke real daily work mein demonstrate hona chahiye, real data aur real users ke saath. Teen qisam ke evidence chahiye: Business KPI measurement, Adoption, aur [Agent evaluations](/docs/eval-driven-development-crash-course).
+
+![Layer 4, engagement arc: baseline, target, aur acceptance criteria se shuru; vertical ko company ke saath fit karo; production mein prove karo KPIs, adoption, aur agent evaluations ke saath](/img/fde-af-layer4.png)
+
+---
+
+## Ecosystem pehla proof hai
+
+Ek baat note karo ecosystem ke baare mein: yeh model apne upar apply ho raha hai (recursion). Layer 2 FDE AF Model sikhata hai, aur Layer 2 khud FDE AF Model se bana hai.
+
+---
+
+## Model ka ek law: repeated work neeche jaata hai
+
+FDE literature mein sabse upar ek warning hai. Kevin Bai kehta hai: agar har engineer scratch se banata hai, tumhare paas FDE function nahi hai. Tumhare paas dev shop hai. FDE function banane ke liye shared primitives pehle se honi chahiye aur engineer unhe us ek customer ke liye valuable cheez mein assemble karta hai.
+
+**Jo kuch bhi ek layer par repeat hota hai, usse neeche wale layer mein promote karne ke liye evaluate karna zaroori hai.**
+
+Promotion ka matlab hai reusable capability ko neeche, shared layer mein move karna taake zyada log use kar sakein.
+
+- Layer 4 ki customization jo teen ya zyada customers use karte hain woh Layer 3 vertical ke liye candidate hai.
+- Layer 3 component jo kisi bhi profession mein useful hai woh Layer 2 library ke liye candidate hai.
+- Infrastructure pattern jo kai components ko chahiye woh Layer 1 ya Layer 0 ke liye candidate hai.
+
+Promotion ke liye conditions puri honi chahiye:
+
+1. Ismein koi confidential customer data nahi hai.
+2. Isse ek customer ke unique process se alag kiya ja sakta hai.
+3. Yeh platform strategy par fit hota hai.
+4. Yeh security aur compliance review pass karta hai.
+5. Ismein tests aur agent evaluations shamil hain.
+6. Iska ek named long-term owner hai.
+
+![Improvement loop: ek base kai professions tak roads ki tarah phailta hai, har road kai companies tak pahunchta hai, aur wapas ek base par flow karta hai, kyunki har trip agle liye road improve karta hai](/img/fde-af-improvement.png)
+
+---
+
+## Base agent-readable hona chahiye
+
+Ek aur requirement model ke liye central hai: base AI agents ke liye samajhna aur use karna aasaan hona chahiye.
+
+Open-source repository akeli kaafi nahi hai. Bina clear context ke code AI agent ko assumptions par chalta hai. Governed System of Record code se zyada deta hai. Yeh agent ko versioned aur citable source material deta hai. MCP agents ko standard way deta hai us material tak pahunchne ka, aur pgvector passages dhundhne mein madad karta hai meaning se.
+
+- **Versioned Markdown with stable identifiers** passages ko predictable rakhta hai. System har baar text ko same tareeke se split karta hai, toh update ke baad bhi citation sahi passage par point karta hai.
+- **MCP** agents ko defined tools deta hai call karne ke liye, website scrape karne ki jagah.
+- **Better Auth, JWKS verification ke saath**, confirm karta hai ke kaun tool call kar raha hai aur usse permission hai.
+- **Vector index aur governed corpus same Postgres system use karte hain.** Retrieval same version aur approval status follow karta hai.
+
+---
+
+## FDE AF Business Model: har layer kahan kamaata hai
+
+Layers model ko clean commercial map dete hain. Do maps ek mein padhte hain: platform kya kamaata hai, aur graduate kahan kamaata hai.
+
+Platform layers Panaversity ke hain. Layers 0 aur 1 owned aur operated hain ecosystem ke foundation ke roop mein. Layer 1 Systems of Record as a service se kamaata hai. Layer 2 education bhi revenue kamata hai — connector-native apps users ko apne AI model subscriptions laane dete hain.
+
+Graduate ka earning Layer 1 se shuru hota hai aur chadhta hai.
+
+**Layer 1 par**, graduate client ke liye customized content System of Record banata hai. Kernel Panaversity ka rehta hai; service aur fee graduate ki hoti hai.
+
+**Layer 2 par**, graduate Zia Developer AI use karta hai, Mode 2 mein, clients ke liye AI Workers aur AI-native solutions manufacture karne ke liye.
+
+**Layer 3 par**, graduate apna domain startup banata hai. Domain expert ke saath partner, vertical launch, aur teen tareeqon se kamana:
+
+1. **Partnership.** Expert apna approved persona aur rights-cleared material startup ko license karta hai. Startup expert twin bechta hai aur revenue share karta hai.
+2. **Domain education.** Domain SoR us domain ke crash courses carry karta hai.
+3. **Domain products.** Domain builder se startup ready-made, domain-specific AI Workers manufacture karta hai aur kai companies ko bechta hai: ek baar built, kai baar sold.
+
+**Layer 4 par**, startup FDE engagements chalata hai: discovery aur outcome design, deployment, aur recurring revenue managed operation, governance, aur continuous improvement ke through.
+
+![Tumhara domain startup kaise kamaata hai: teen revenue streams — partnership licensing, domain education, aur domain products, Layer 4 engagements ke saath](/img/fde-af-startup.png)
+
+### Kya charge karna hai, aur kis basis par
+
+Market ne hamare unit of sale ka naam de diya hai. Agent-based pricing ek agent ko full-time employee ke replacement ke roop mein price karti hai — yeh Digital FTE hai. Market ne hamare contract ka naam de diya hai — outcome-based pricing result ke liye charge karti hai, activity ke liye nahi. Market ne hamare structure ka naam de diya hai — hybrid pricing ab sabse common arrangement hai.
+
+![Graduates kahan kamaate hain: Layer 1 par clients ke liye Systems of Record build karo, Layer 2 par manufacture karo, Layers 3 aur 4 par domain startup own karo](/img/fde-af-earning.png)
+
+### Kahan start karna hai
+
+Paanch layers, ek ek karke chadho.
+
+Agar naye ho, [crash courses](/docs/getting-started) se shuru karo. Yeh tumhe foundations se Digital FTEs tak le jaate hain, ek layer ek baar. [Roles](/docs/roles-this-book-trains) padho ke tum is model mein kya role nibha sakte ho. Jab foundation par build karne ke liye ready ho, apne agent ko [System of Record](/docs/ecosystem/system-of-record) se connect karo.
+
+---
+
+## Flashcards — Study Aid
+
+<Flashcard question="FDE AF Model ko do tarah se kaise padha ja sakta hai?" answer="Architecture ke taur par (paanch-layer stack foundation se customer tak) aur business model ke taur par (neeche services aur upar ownership wala pyramid)." />
+
+<Flashcard question="Layer 0 kya hai?" answer="Foundation framework — technical machinery jis se upar sab kuch bana hai: MCP, Markdown, pgvector, Better Auth." />
+
+<Flashcard question="Layer 1 kya hai?" answer="SoR kernel — kisi bhi content ko source of truth mein badalta hai jo log aur AI agents dono padh sakte hain." />
+
+<Flashcard question="Layer 2 kya hai?" answer="Teaching aur development ecosystem — Zia Tutor AI seekhne ke liye, Zia Developer AI banane ke liye." />
+
+<Flashcard question="Layer 3 kya hai?" answer="Vertical ecosystems — domain System of Record, domain expert twin, aur domain builder." />
+
+<Flashcard question="Layer 4 kya hai?" answer="Customer instances — AI Workers manufacture hote hain, aur improvement measure aur prove hoti hai." />
+
+<Flashcard question="Model ka ek law kya hai?" answer="Jo kuch bhi ek layer par repeat hota hai, usse neeche wale layer mein promote karne ke liye evaluate karna zaroori hai." />
+
+<Flashcard question="Domain System of Record mein kitni forms hoti hain?" answer="Teen: corpus (evidence), map (kya hai), aur reflexes (kya karna hai)." />
+
+<Flashcard question="Thin System of Record kya hai?" answer="Ek slice wala System of Record — ek professional outcome, poora covered." />
+
+<Flashcard question="Thick System of Record kya hai?" answer="Kai slices wala System of Record — kai outcomes, har ek complete." />
+
+<Flashcard question="Contract of success kya hai?" answer="Likh kar agree kiya gaya teen cheezon par: baseline, target, aur acceptance criteria." />
+
+<Flashcard question="Outcome-based pricing kaise kaam karti hai?" answer="Result ke liye charge karti hai, activity ke liye nahi — jaise per resolved conversation." />
+
+<Flashcard question="Hybrid pricing kya hai?" answer="Base fee plus variable component — ab sabse common arrangement hai." />
+
+<Flashcard question="Domain builder kya hai?" answer="Zia Developer AI pattern mein ek gateway, domain ke architectures aur compliance constraints se preloaded." />
+
+<Flashcard question="Domain expert twin kya hai?" answer="Expert ki awaaz aur likeness mein bana AI teacher, documented consent ke saath." />
+
+<Flashcard question="Promotion ke liye kitni conditions chahiye?" answer="Chhe: koi confidential data nahi, alag kiya ja sake, platform strategy par fit, security/compliance pass, tests/evaluation shamil, named owner." />
+
+<Flashcard question="Base agent-readable kyun chahiye?" answer="Taake AI agent samajh sake ke content kya hai, rules kya hain, aur available tools kya hain." />
+
+<Flashcard question="Graduate Layer 3 par kaise kamaata hai?" answer="Teen tareeqon se: partnership (expert twin), domain education (crash courses), aur domain products (ready-made Workers)." />
+
+<Flashcard question="Graduate Layer 4 par kaise kamaata hai?" answer="FDE engagements se: discovery, deployment, aur recurring revenue managed operation ke through." />
+
+<Flashcard question="Build first, sell second ka matlab kya hai?" answer="Pehle thin slice banao (expert ke saath), phir becho — vertical ladder ka rule hai." />
+
+<Flashcard question="Service ladder kaise kaam karti hai?" answer="Client se shuru hoti hai (bina vertical ke), Layer 1 aur Layer 4 par method System of Record se." />
+
+<Flashcard question="Vertical ladder kaise kaam karti hai?" answer="Slice se shuru hoti hai (bina client ke), phir sponsor, baseline, contract, engagement, aur thicker SoR." />
+
+<Flashcard question="Sponsor kya hai?" answer="Ek real company ke andar ek named person jo starting number discuss karne ka authority rakhta hai." />
+
+<Flashcard question="Baseline kahan se aata hai?" answer="Customer ke workflow se measure hota hai — wohi ek number jo buyer verify kar sakta hai." />
+
+<Flashcard question="Proof in production mein kya chahiye?" answer="Teen cheezein: Business KPI measurement, Adoption (log use karein), aur Agent evaluations." />
+
+<Flashcard question="Ecosystem apne upar kaise apply hota hai?" answer="Layer 2 FDE AF Model sikhata hai, aur Layer 2 khud FDE AF Model se bana hai — recursion." />
+
+<Flashcard question="Customer ka SoR corpus kiska hota hai?" answer="Customer ka content customer ka rehta hai; kernel Panaversity ka rehta hai." />
+
+<Flashcard question="FDE function dev shop se kaise alag hai?" answer="FDE function mein shared primitives pehle se hoti hain, engineer unhe assemble karta hai. Dev shop scratch se banata hai." />

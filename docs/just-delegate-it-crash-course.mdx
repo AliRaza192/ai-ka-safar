@@ -1,14 +1,991 @@
 ---
 id: just-delegate-it-crash-course
-title: "Just Delegate It"
+title: "Just Delegate It: Crash Course"
 sidebar_label: "Just Delegate It"
-description: "Delegate karna seekhein — 30 minute crash course"
+description: "11 concepts. 1 loop. 1 brief. AI ko kaam do. Usse kaam karte dekho."
 ---
 
-# Just Delegate It
+# Just Delegate It: Crash Course
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+*11 concepts. 1 loop. 1 brief. AI ko kaam do. Usse kaam karte dekho.*
 
-Sab se pehla concept: delegate karo, query mat karo. Agent ko kaam do, result lo. Yeh AI era ka fundamental shift hai.
+Zyada tar log jo kehte hain ke woh AI use karte hain, woh sirf sawal pooch rahe hain. Jawab aksar achhe hote hain, lekin kaam wahi ka wahi rehta hai: aapke paas.
+
+Yeh course ulta shuru hota hai. Aap AI ko ek kaam dete hain, usse kaam karte dekhte hain, result check karte hain, aur faisla karte hain ke qubool karein ya na. Yeh aap gyarah baar karte hain, har baar thora behtar, browser mein ek free account ke saath. Aapke paas AI shuru karne ke liye kaafi hai. Yeh page aapko aadat deta hai.
+
+## 📚 Teaching Aid
+
+<iframe src="https://docs.google.com/presentation/d/1SPWFDt9GMc1dYxEoI-nUSsmqd5kXqXmPKNyrLE5kedg/embed?start=false&loop=false&delayms=3000" frameBorder="0" width="100%" height="400" allowFullScreen style={{maxWidth: '800px'}}></iframe>
+
+**[Poori Presentation Dekhein](https://docs.google.com/presentation/d/1SPWFDt9GMc1dYxEoI-nUSsmqd5kXqXmPKNyrLE5kedg/edit?usp=sharing)** — Just Delegate
+
+---
+
+---
+
+## Do minute mein dekho
+
+Browser mein ek free AI kholo: Claude ya ChatGPT, ya koi doosra free assistant jaise Gemini. Jo bhi aapke paas hai woh sahi hai. Naya chat shuru karo aur yeh likho:
+
+```
+Find three free online courses for learning AI agents, using current
+information, and put them in a table with the provider, the language,
+the time needed, and a link to each.
+```
+
+Jo wapas aaye usko padho. Phir un mein se ek link kholo aur page par do cheezein check karo: kya course waqai free hai, aur kya woh us zaban mein hai jo table kehti hai.
+
+Teen mein se ek hota hai. Page table se agree karta hai. Page kisi detail par disagree karta hai, aksar zaban ya qeemat par. Ya link course tak le ke nahi jaata. Teeno normal hain, aur table mein kuch nahi tha jo batata aapko kaun sa hone wala hai.
+
+Yeh poora course ek chhote se moment mein hai. AI ne ek ghante ka kaam ek minute mein kar diya, aur ek cheez jo woh nahi kar sakta tha woh tha yeh batana ke result par bharosa karein ya na. Baaki yeh page us moment ko ek rhythm aur ek likhi hui shakal deta hai, phir aapko us mein mahir banata hai.
+
+*Takreeban teen ghante ka time lagao, do ya teen baithakon mein. Padhai: takreeban 65 minute kul. Gyarah concepts takreeban 40 minute lete hain: Part 1 takreeban 10 minute, Part 2 takreeban 11, Part 3 takreeban 13, Part 4 takreeban 6. Kaam: takreeban 90 minute. Khatma: takreeban 30 minute, zyada agar aap chheon kaam karein. Agar aap ahista padhte hain, adha ghanta aur badhao.*
+
+### Poora course ek minute mein
+
+Ek rhythm, **Delegation Loop**: define, delegate, observe, intervene, verify, accept. AI beech ka kaam karta hai. Aap dono kinaray apne hain.
+
+Ek likhi hui shakal, **Delegation Brief**: chhe sawal jo aap AI ke shuru hone se pehle poochte hain. Outcome, context, constraints, authority, deliverable, verification.
+
+Buttons ka ek rule: **pehle zaroorat, phir tool**. Aap file isliye attach karte hain ke kaam ko source chahiye. Search isliye on karte hain ke kaam ko current information chahiye. Screen par kuch bhi us waqt tak explain nahi hota jab tak kaam uski zaroorat na bataye.
+
+### Yeh Foundations mein kahan aata hai
+
+Yeh pehla Foundations course hai. Yeh browser mein ek free AI account ke ilawa kuch nahi maangta. Iske baad ke courses woh explain karte hain jo aapne yahan kiya hoga.
+
+| Topic | Kahan padhaya gaya | Is course mein |
+|-------|-------------------|----------------|
+| Machine kya hai, aur yeh kyun sure lagta hai jab galat hota hai | [What AI Actually Is](/docs/what-ai-actually-is-crash-course) | Guzarte waqt istemal |
+| Char insani kompetensi: Delegation, Description, Discernment, Diligence | [AI Fluency](/docs/ai-fluency-crash-course) | Un kaam ke orders jo woh bharte hain |
+| Prompting technique: context, examples, formats, iteration | [AI Prompting in 2026](/docs/ai-prompting-2026) | Ek brief ki shakal, koi technique nahi |
+| Kaam jo aapke jaane ke baad chalta hai: plans, permission modes, schedules | [General Agents on the Web](/docs/general-agents-web-crash-course) | Sirf recordings |
+| Claude aur ChatGPT mein har control kahan hai | [The ChatGPT and Claude Quick Reference](/docs/claude-chatgpt-101-crash-course) | Control ka naam sirf tab jab kaam ho |
+| AI ko kaam dena aur result qubool karna ya na karna | Yeh course | Seedha padhaya gaya |
+
+Yani: **pehle kaam, phir machine, phir saath ka kaam, phir techniques.**
+
+### Yeh page products ko ek waqt mein dikhata hai
+
+Control kahan baithta hai, free plan kya allow karta hai, aur model ka naam kya hai — yeh sab bina notice ke badalta hai. Is page har aisi baat 8 September 2026 ko vendors ki khud ki help pages se check ki gayi hai. Jab yeh page aur live product disagree karein, product sahi hai.
+
+Yahan har zaroori exercise free plan par chalti hai. Agar aapko roz free plan ki limit mil jaaye, har assistant ke liye raasta ek hai. Pehle free, phir sasta paid plan roz zyada capacity ke liye, phir advanced plan. Uske baad aagaya woh agentic environment kaam ke liye jo aapke jaane ke baad chalta hai. Yeh course koi qeemat nahi batata aur in kadam ki zaroorat nahi. Paid access upgrade hai, shart nahi.
+
+## Yeh course kin sawalon ke jawab deta hai
+
+Chodah sawal. **Jawab diya gaya** mein har entry us jagah par jump karti hai jahan woh banta hai, isliye yeh table naqsha bhi hai.
+
+| # | Sawaal | Jawab diya gaya |
+|---|--------|-----------------|
+| 1 | AI se kuch poochne aur AI ko kaam dene mein kya fark hai? | [Concept 1](#1-poochna-vs-kaam-denaa) |
+| 2 | Delegation Loop ke chhe kadam kaun se hain, aur kaun se aapke rehte hain? | [Part 2 opener](#part-2-ai-ko-asli-kaam-do) |
+| 3 | Result batana, steps batane se kyun behtar kaam karta hai? | [Concept 2](#2-nateeja-na-clicks) |
+| 4 | Chhe sawal kaun se hain jo Delegation Brief banate hain, aur brief prompt se kaise alag hai? | [Concept 3](#3-delegation-brief) |
+| 5 | AI ko kab web search karna chahiye, aur main kaise pata lagaon ke usne kiya? | [Concept 4](#4-kuch-research-ke-liye) |
+| 6 | Main AI ko source kaise doon, usko usi ke andar rakhoon, aur private cheezein bahar rakhoon? | [Concept 5](#5-source) |
+| 7 | Jawab aur deliverable mein kya fark hai? | [Concept 6](#6-deliverable) |
+| 8 | AI ko kaam ka kitna hissa decide karna chahiye, aur main ek boundary kaise banao jo woh rakhe? | [Concept 7](#7-authority) |
+| 9 | Jab wohi kaam agle hafte wapas aaye, toh kya karoon, aur Project mein kya jaana chahiye? | [Concept 8](#8-kaam-dobara) |
+| 10 | AI galat ho jaaye toh mere moves kaun se hain, aur kab rokna chahiye? | [Concept 9](#9-intervene) |
+| 11 | Kya verify karne ke qabil hai, aur main waqai claim kaise check karta hoon? | [Concept 10](#10-qubool-se-pehle-verify) |
+| 12 | AI kaam kare toh jawabdaari ka kya banta hai? | [Concept 10](#10-qubool-se-pehle-verify) |
+| 13 | Wohi brief doosre AI mein kyun chalayein, aur us se kya nateeja nikal sakta hai? | [Concept 11](#11-wohi-kaam-alag-ai) |
+| 14 | Mukammal delegation record kaisa dikhta hai? | [Aapka Delegation Record](#aapka-delegation-record) |
+
+### Quick glossary
+
+-   **Delegation Loop**: AI ko kaam dene ka chhe kaadam ka rhythm. Define, delegate, observe, intervene, verify, accept.
+-   **Define**: pehla kadam. Aap batate hain ke kya result chahiye.
+-   **Delegate**: doosra kadam. Aap AI ko result paida karne ki zimmedari dete hain.
+-   **Observe**: teesra kadam. Aap AI ko aam kaam karne dete hain bharpoor har kadam par control kiye.
+-   **Intervene**: chautha kadam. Aap theek karte hain, rokte hain, constraint lagate hain, ya saaf karte hain jab AI bhatak jaaye.
+-   **Verify**: panchwa kadam. Aap ahem claims, numbers, aur actions check karte hain.
+-   **Accept**: chhata kadam. Aap faisla karte hain ke result kaam ke layak hai, ya wapas bhejte hain.
+-   **Delegation Brief**: chhe sawal jo aap AI ke shuru hone se pehle poochte hain. Outcome, context, constraints, authority, deliverable, verification. Kaam ka order hai, form nahi.
+-   **Outcome**: kaam mukammal hone par kya hona chahiye.
+-   **Context**: woh jo AI ko pata hona chahiye jo usko khud nahi pata, jo bhi source aap dete hain.
+-   **Constraints**: woh requirements aur limits jo kaam par lagti hain.
+-   **Authority**: woh jo AI akele decide kar sakta hai bina aapke poochhe. Chat mein, faisla. Baad mein, permissions.
+-   **Deliverable**: result ki woh shakal jis mein koi use kar sake. Table, document, file.
+-   **Verification**: jo aap qubool karne se pehle check karenge, kaam shuru hone se pehle likha hua.
+-   **Fresh chat**: naya chat, taake pichli conversation se kuch na aaye.
+-   **Running job**: woh ek kaam jo aap is course mein le ke chalte hain, har concept par ek aur line bhar ke dobara delegate karte hain.
+-   **Pehle zaroorat, phir tool**: screen par har control ka rule. Control tab seekho jab kaam uski zaroorat bataye, pehle nahi.
+-   **Plan-first**: AI se uske steps list karne aur aapke go-ahead ka intezaar karne ko kehna.
+-   **Project**: assistant mein ek jagah jo aapki files aur standing instructions rakhti hai, taake andar ka har chat pehle se informed ho.
+-   **Knowledge**: Project ki files. Jo AI har chat mein padh sakta hai.
+-   **Standing instruction**: ek rule jo Project mein ek baar likha jaaye, AI har chat mein usay follow karta hai.
+-   **Temporary chat**: chat jo aapki history mein save nahi hota aur memory mein nahi jata. ChatGPT ka naam hai. Claude ise incognito chat kehta hai.
+-   **Identify, Trace, Challenge, Decide**: Verify ke andar ke chaar kadam.
+-   **Accept, Correct, Investigate, Reject**: verification khatma hone ke chaar faislay.
+-   **Delegation Record**: kaam ka ek page ka record. Brief, run, check, decision.
+
+## Gyarah ideas ek ek line mein
+
+Poora course, har concept ke liye ek jumla. Aap ise apne concept ke end mein aur recap mein dobara dekhenge.
+
+1.  AI se poochne se jawab milta hai, AI ko kaam dene se result milta hai jo aap check kar sakte hain.
+2.  Woh result batao jo aap chahte hain, aur steps AI par chhod do.
+3.  Delegation Brief AI ke shuru hone se pehle chhe sawalon ke jawab deta hai, taake result check karne ke liye kuch ho.
+4.  Jab kaam ko current facts chahiye, AI se khojo, aur check karo ke usne kiya.
+5.  Jab kaam ko sirf aapke paas source chahiye, usay do, AI se kaho usi ke andar rahe, aur check karo ke usne kiya.
+6.  Mukaammal cheez maango, table ya document, aur check karo ke har "unverified" nishan baaqi hai.
+7.  Batao AI akele kya decide kar sakta hai aur kya poochna chahiye, aur kaam shuru hone se pehle plan padho.
+8.  Jab kaam dobara aaye, woh bachao jo nahi badalta, aur usay wahan rakho jo AI khud padhe.
+9.  AI bhatak jaaye toh sabse chhote se message se theek karo, phir seekh ko brief mein likh do.
+10.  Verification ke chaar kadam hain, aur result ki jawabdaari aapke paas rehti hai.
+11.  Achha brief doosre AI mein bina rewrite ke chalta hai, kyunke woh kaam batata hai, tool nahi.
+
+## Part 1: Poochna Chhodo. Kaam Dena Shuru Karo.
+
+Jo aapne do minute pehle kiya uska naam hai. Part 1 usay naam deta hai, woh ek faisla dikhata hai jo ise poochna se alag karta hai, aur ek likhi hui shakal deta hai jo aap baaki kitab mein istemal karenge.
+
+### 1. AI se Poochna se AI ko Kaam Dene Tak
+
+Zyada tar log AI se shuru karte hain sawal pooch kar.
+
+> Kya koi achhe courses hain AI agents seekhne ke liye?
+
+Opener mein aapne AI ko kaam diya. Dono ke saath dekho.
+
+#### Abhi Karo
+
+Ek **fresh chat** kholo, jo naya chat hai jismein opener se kuch nahi aata. (Memory on wala assistant aapke baare mein kuch yaad rakh sakta hai. Yahan theek hai.) Sawaal likho:
+
+```
+What are some good courses for learning AI agents?
+```
+
+Yeh jawab opener ki table ke bagal rakho.
+
+#### Kya Badla?
+
+Sawaal se aapko list mili, aur agle kadam aapke hain: har course kholo, unki tulna karo, check karo kya current hai, faisla karo.
+
+Kaam se aapko links wali table mili. AI ne pehla pass kiya. Aapke liye bacha hai check karna.
+
+Agar sawal ne bhi table di, toh AI ne andaza lagaya ke aap kya chahte hain. Kaam ne andaza khatam kar diya.
+
+Kaam sawal se lamba jumla hai, lekin zyada nahi, aur lambai fark nahi hai. Fark yeh hai ke usne ek cheez hone ka kaha: teen courses, table mein, links ke saath. Yeh delegation hai. **Delegate** ka matlab hai AI ko result paida karne ki zimmedari dena. Yeh paid plan ya khaas model par depend nahi karta. Yeh is par depend karta hai ke aap kis tarah ka jumla likhte hain.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kaun sa jawab woh cheez hai jo aap kisi ko de sakte hain, aur kaun sa advice hai jo abhi bhi aapko khud karna hai?
+-   Kya usne facts jo dhoonde alag kiye aur jo advice di alag?
+-   Dono jawabon mein se kaun sa aapke paas kuch tha jo aap check kar sakte the?
+
+#### Qubool Se Pehle Verify Karo
+
+Aapne opener mein ek link khola. Ek line mein likho, teeno outcomes mein se kaun sa mila: page agree karta hai, page kisi detail par disagree karta hai, ya link course tak nahi jaata.
+
+Woh line rakh lo. Har concept par yeh karoge, aur Concept 10 tak aapko exact pata hoga ke kya check karna hai aur kaise.
+
+#### Aapki Baari
+
+"AI agents" ko us cheez se badlo jo aap seekhna chahte hain, us zaban mein jo aapko behtar lagti hai: accounting, Excel, graphic design, projects manage karna, spoken English, public speaking, Python. Opener ka kaam apne subject se badal kar dobara likho. Pehle khud research mat karo. AI ko kaam do.
+
+Yeh chat rakho. Yeh aapka **running job** hai: woh ek kaam jo aap poore course mein le ke chalte hain. Har concept par wapas aakar ek aur cheez add karenge. Concept 10 tak aapne ek mukammal brief likh diya hoga bina form bhare. Agar aapke subject mein clear pages wale courses nahi hain, toh "learning Python from zero" ko running job ke taur par use karo. Us mein bohat saare free courses hain clear pages ke saath, aur aap apna subject khatma par wapas la sakte hain.
+
+#### Apna Kaam Check Karo
+
+-   Kya maine ek cheez hone ka kaha, advice ke bajaye?
+-   Kya AI ne woh kaam kiya jo main khud karta?
+-   Kya maine kam se kam ek link khola aur page ko table se compare kiya?
+
+Agar koi jawab na hai, toh message badlo aur dobara chalao, aage badhne se pehle.
+
+Yaad rakho
+
+Poochne se jawab milta hai aur kaam aapke paas rehta hai. AI ko kaam dene se result milta hai aur check aapke paas rehta hai.
+
+**Khud check karo:** Sawaal se kya milta hai, aur kaam dene se kya milta hai?
+
+### 2. AI ko Nateeja Do, Clicks Nahi
+
+Wohi kaam do tareeqon se de sakte hain. Aapne ek istemal kiya. Doosra try karo.
+
+#### Abhi Karo
+
+Ek **fresh chat** mein, apne running job ko recipe ke taur par do. Concept 1 table se do providers ka naam lo aur AI ko batao har ke saath kya kare:
+
+```
+Look only at [provider one] and [provider two]. Find the three
+highest-rated courses on each for learning [your subject]. For each
+course copy the name, the price, and the length into a table. Then
+tell me which is best.
+```
+
+Agar AI kehta hai ke woh us sites par browse nahi kar sakta, toh usay kaho unhe search kare aur jaari rakho. Chahe ho, notice karo ne sources kaun chuna.
+
+Result Concept 1 ki table ke bagal rakho.
+
+#### Kya Badla?
+
+Recipe ne har step bataya. Agar usne follow kiya, toh har step par kiya, chaahe kamzor ho, kyunke plan aapka tha. Agar mana kar diya, toh aapko khud method dena pada. Ya toh, aapka plan hi limit tha. Agar aapne jo do sites naam li un par behtareen free courses nahi hain, toh table saaf hai, recommendation kamzor hai, aur result mein kuch nahi batata.
+
+Ek jumle ka kaam ne **outcome** bataya: kaam mukammal hone par kya hona chahiye. AI ne dhoondne ke liye jagah chuni. Aapne result ko outcome se judge kiya, na ke us plan se jo aapne us waqt banaya.
+
+Steps ki abhi bhi jagah hai. Jab source ya kaam ka order zaroori ho, woh kaam ki limit hai, aur Concept 3 limits ke liye alag line deta hai. Jo nahi karna woh yeh ke steps isliye likho ke aap ghabra rahe hain. Woh feeling end mein aati hai, jab check karte hain, shuru mein nahi.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Recipe wala version aapne jo sites naam unke andar raha, chaahe kahin behtar options ho?
+-   "Highest-rated" kahan se aaya? Agar course page par koi rating nahi hai, AI ne khud banayi.
+-   Ek jumle wale version ne woh sources use kiye jo aapne nahi naam liye?
+-   Kaun sa result aapne apne plan par bharosa kiye bagair judge kar sakte the?
+
+#### Qubool Se Pehle Verify Karo
+
+Dono results mein se ek jagah dhoondo jahan disagree karein: qeemat, lambai, ya "free" jo ek kehta hai aur doosra nahi. Course page kholo aur usay tay karo. Agar dono tables mein koi course common nahi hai, toh yeh finding hai: recipe ne woh nahi dekha jo kaam ne dhoonda. Har table se ek qeemat check karo. Chahe ho, notice karo ke sahi hona kis message ke lamba hone se juda nahi tha.
+
+#### Aapki Baari
+
+Apne running job ka outcome ek jumle mein likho jo "jab yeh ho jayega, mere paas hoga…" se shuru ho. Do limits add karo jo aapke liye ahem hain, har ek ek line mein, jaise "is hafte shuru ho sakna chahiye" aur "hafte mein paanch ghante se zyada na ho." Fresh chat mein chalao.
+
+#### Apna Kaam Check Karo
+
+-   Kya mera jumla result batata hai, action nahi?
+-   Kya kisi doosre ko padhkar pata chale ke kaam kab mukammal hua?
+-   Kya maine method AI par chhod diya?
+
+Agar koi jawab na hai, toh jumla dobara likho, aage badhne se pehle.
+
+Yaad rakho
+
+Woh batao jo kaam mukammal hone par hona chahiye. Clicks machine par chhod do, aur faisla apne paas rakho.
+
+**Khud check karo:** Aapka message result batana chahiye ya steps, aur kyun?
+
+### 3. Delegation Brief Likho
+
+Aap bina jaane brief likh rahe the. Yahan opener ka ek jumle wala kaam chhe labelled lines mein badla hua hai.
+
+#### AI Ko Yeh Do
+
+```
+Outcome: three free online courses for learning AI agents, compared,
+with one recommended for a complete beginner.
+Context: I have never built or used an AI agent, and I do not know how
+to program. I can study about five hours a week.
+Constraints: only courses that can be started for free, and only
+courses that do not expect programming knowledge. Search for current
+information rather than answering from what you already know.
+Authority: choose the sources yourself. If two courses are equal, pick
+the shorter one without asking me. Say clearly if a course is paid, or
+if it expects me to know how to program.
+Deliverable: a short table with provider, language, time needed,
+whether a certificate costs money, and a link. Then a two-sentence
+recommendation.
+Verification: mark anything you could not confirm as "unverified"
+instead of guessing.
+```
+
+#### Abhi Karo
+
+Apne **running job** ko usi chhe lines mein dobara likho. Fresh chat mein chalao. Result apni Concept 1 table ke bagal rakho.
+
+#### Kya Badla?
+
+Yeh **Delegation Brief** hai: chhe sawal jo aap AI ke shuru hone se pehle poochte hain, taake jab khatma ho toh check karne ke liye kuch ho. Aapne bina labels ke teen ka diye the. Outcome woh jumla hai jo aapne Concept 2 mein likha. "Free" ek **constraint** tha, jo requirements aur limits hain jo kaam par lagti hain. Links wali table **deliverable** tha: result ki woh shakal jis mein koi use kar sake, kisi ne banayi ho.
+
+Teen lines naye hain. **Context** aasaan hai: AI ko aapke baare mein ya kaam ke baare mein woh jo nahi pata jab tak aap na bataaye. Baaki do woh hain log chhor dete hain.
+
+**Authority** woh faislon ka set hai jo aap AI ko akele karne dete hain. Yeh chat window mein bhi hai, jab AI kuch bhej nahi sakta ya khareed nahi sakta. "Barabar hon par chhota chuno bina poochhe" authority hai. "Saaf batao ke course paid hai" us par limit hai. Us line ke bina AI aapke liye chupke se faisla karta hai, aur aapko pata nahi chalta ke faisla hua.
+
+**Verification** woh hai jo aap qubool karne se pehle check karenge, kaam shuru hone se pehle likha hua. Pehle likhna result ko padhna bana deta hai check karna. Aap woh cheez ka naam lete hain jo source kholne ke layak hai, jab aapko abhi bhi pata hai kyun layak hai.
+
+![Delegation Brief ek kaam ke order ke taur par: ek card mein chhe labelled rows. Har row mein us sawal hai baayein aur AI-agents courses ka example daayein. Outcome: kaam mukammal hone par kya hona chahiye, "teen courses compare kiye, ek recommend kiya." Context: AI ko kya pata hona chahiye, "AI agents naya hai, coding nahi aati, hafte mein paanch ghante." Constraints: kya limits hain, "free shuru ho, coding ki zaroorat na ho." Authority: AI akele kya decide kar sakta hai, "sources khud chune, batao ke course paid hai ya coding chahiye." Deliverable: result ki kya shakal hai, "chhoti table zaban aur links ke saath, phir do jumlon ki recommendation." Verification: qubool karne se pehle kya check hoga, "jo confirm na ho woh unverified likho." Authority aur Verification rows par baayein edge par patli terracotta line hai. Chhote se gold stamp par likha hai "sochne ka tool, form nahi."](/img/fig-02-delegation-brief.webp)
+
+Yeh sochne ka tool hai, form nahi. Koi do jumle ke kaam ke liye chhe box nahi bharta. Lekin jab bhi result aapko失望 kare, in chhe sawalon mein se ek ka jawab nahi tha, aur ab aap keh sakte hain kaun sa.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya AI ne deliverable line par qaim raha, column by column?
+-   Kya usne kuch "unverified" mark kiya? Agar kuch nahi mark kiya, toh kyunke sab confirm hua ya line nazar andaaz hui? Ek link kholo aur pata lagao.
+-   Kya usne bataya ke recommend kiya gaya course paid hai, ya coding chahiye jo aapke paas nahi?
+
+#### Qubool Se Pehle Verify Karo
+
+Result se ek item lo jo "unverified" mark hua hai aur khud check karo. Agar kuch mark nahi hua, toh recommend kiya gaya course kholo aur page par uski qeemat aur kya expectation hai check karo. Ek line mein likho: brief ne kya check karne ko kaha, aapne kya check kiya, aur kya mila.
+
+#### Aapki Baari
+
+Apne running job ke liye ek brief likho jo waqai is hafte karna hai aur seekhna nahi hai: do phones jo aap choose kar rahe hain, lambi message thread jise summarize karna hai, khat jo likhna hai. Chhe lines, har sawal ek. Agar sawal applicable na ho, toh line delete karne ke bajaye "none" likho, taake aap dekh sakein ke aapne faisla kiya ke applicable nahi hai. Kuch bhi real paste karne se pehle, names aur private cheezein hata do. Concept 5 mein aur batata hai. Phir chalao.
+
+#### Apna Kaam Check Karo
+
+Kya aapka brief yeh saaf karta hai?
+
+-   Kya outcome hona chahiye?
+-   AI ko kya context chahiye jo usko khud nahi pata?
+-   Kaun si constraints ahem hain?
+-   AI akele kya decide kar sakta hai aur kya poochna chahiye?
+-   Deliverable kya hona chahiye, kis shakal mein?
+-   Qubool karne se pehle kya check hoga?
+
+Agar is kaam ke liye sawal ahem hai aur brief ka jawab nahi deta, toh brief theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Brief chhe sawal hain jo aap AI ke shuru hone se pehle poochte hain, taake jab khatma ho toh check karne ke liye kuch ho.
+
+**Khud check karo:** Delegation Brief ki chhe lines kaun si hain?
+
+#### Zia Tutor Se Poocho
+
+Optional. [Zia Tutor AI](/docs/ecosystem/zia-tutor-ai) ek connector hai, free plan par maujood. Agar aapne Claude mein add kiya hai, toh apna chhe-line brief, result, aur apne Check Your Work ke jawab paste karo aur poocho:
+
+```
+Judge my brief against its six questions. Name the one question my
+brief answers worst for this particular job, tell me why it matters
+here, and wait for my revision before you say anything else. When
+the revision is good enough, say so in one line and tell me what
+Concept 4, Give AI Something to Research, will ask of this brief.
+```
+
+Upar ka self-check zaroori raasta hai. Tutor aapke kaam ko coach karta hai. Woh exercise aapke liye nahi karta.
+
+Chhe lines kaam ke order hain, nayi theory nahi. [AI Fluency](/docs/ai-fluency-crash-course), yahan se do courses, un char insani kompetensi ke peechhe sikhata hai: Delegation, Description, Discernment, Diligence. Brief paanchwa nahi hai. [AI Prompting in 2026](/docs/ai-prompting-2026) sikhata hai ke har line kaise likhein taake behtar kaam kare. Yeh course woh artifact sikhata hai.
+
+## Part 2: AI ko Asli Kaam Do
+
+Part 1 ne wohi rhythm teen baar chalaya aur naam nahi diya. Yeh **Delegation Loop** hai: AI ko kaam dene ka chhe kaadam ka rhythm.
+
+-   **Define** pehla kadam hai: batao kya result chahiye. Part 1 mein woh Concept 2 mein likha ek jumle wala outcome tha.
+-   **Delegate** doosra kadam hai: AI ko result paida karne ki zimmedari do. Woh har message tha jo Part 1 mein cheez hone ka kaha.
+-   **Observe** teesra kadam hai: AI ko aam kaam karne do bharpoor har kadam par control kiye. Woh table padhna tha banana nahi.
+-   **Intervene** chautha kadam hai: theek karo, roko, constrain lagao, ya saaf karo jab AI bhatak jaaye. Agar AI ne Concept 2 mein recipe se mana kar diya aur aapne usay search karne ko kaha, toh aapne yeh ek baar kiya. Concept 9 woh moves sikhata hai.
+-   **Verify** panchwa kadam hai: ahem claims, numbers, aur actions check karo. Woh har link khola tha.
+-   **Accept** chhata kadam hai: faisla karo ke result kaam ke layak hai, ya wapas bhejo. Woh faisla har concept ke end mein aap le rahe the.
+
+![Delegation Loop chhe steps ke taur par ek horizontal band par, baayein se daayein: Define, Delegate, Observe, Intervene, Verify, Accept. Dono kinaray ke steps, Define aur Delegate baayein aur Verify aur Accept daayein, slate background par hain jismein likha hai "aapke". Dono beech ke steps, Observe aur Intervene, chauddai gold background par hain jismein likha hai "AI kaam karta hai, aap dekhte hain aur qadam rakhte hain." Dashed terracotta arrow Intervene se Delegate par wapas aata hai, jismein likha hai "redirect." Doosra dashed arrow Accept se Define par wapas aata hai, jismein likha hai "wapas bhejo." Footer line padhi hai: AI beech ka kaam karta hai. Aap dono kinaray apne hain.](/img/fig-01-delegation-loop.webp)
+
+AI beech ka kaam karta hai. Aap dono kinaray apne hain: Define aur Delegate shuru mein, Verify aur Accept end mein. AI aapki madad charon mein kar sakta hai. Woh unhein le nahi sakta, kyunke kaam kya hai aur result kaam ke layak hai ya nahi — yeh woh faislay hain jinke aap jawab hain.
+
+Part 2 aapke running job ko asli material deta hai. Har concept ek cheez add karta hai jo kaam ko chahiye, aur uske saath screen par ek control jo zaroorat ka jawab deta hai. Yeh har button ka rule hai is course mein, **pehle zaroorat, phir tool**: control tab seekho jab kaam uski zaroorat bataye, pehle nahi.
+
+Naqsha neche do names istemal karta hai jo Concept 8 sikhata hai, isliye ek line. **Project** assistant mein ek jagah hai jo aapki files aur standing instructions rakhti hai, taake andar ka har chat pehle se informed ho. **Knowledge** woh files hain jo Project rakhta hai, jo AI har chat mein padh sakta hai.
+
+![Do column ka table: Zaroorat Pehle, Phir Tool. Baayein column heading hai "Kaam ko chahiye" aur daayein "Toh aap." Row ek: current information, toh aap poochte hain aur web search on karte hain agar switch dekhein, Concept 4. Row do: sirf aapke paas source, toh paste karte hain ya file attach karte hain, Concept 5. Row teen: kaam mein kuch private, toh private parts nikaalte hain aur temporary ya incognito chat istemal karte hain, Concept 5. Row chaar: jawab ke bajaya mukaammal cheez, toh document, table, ya file khud maangte hain, Concept 6. Row paanch: apna method choose karne ki jagah, toh batate hain akele kya decide kar sakta hai aur kya poochna chahiye, Concept 7. Row chhe: har baar wohi context, toh sources Project mein knowledge rakhte hain aur rules standing instructions, Concept 7. Row saat, optional: ghadi par wohi kaam, toh scheduled task istemal karte hain jahan plan mein ho, Concept 8. Row aath: zyada capability jo dikhayi, toh thinking on karte hain, ya mazboot model agar plan mein ho, Concept 9. Row nau, halka slate: result rakhne ki jagah, ya doosre app mein source, toh connector istemal karte hain, Concept 7 mein try hua aur Course 7 mein padhaya gaya. Footer padha hai: screen par kuch bhi us waqt tak explain nahi hota jab tak kaam uski zaroorat na bataye.](/img/fig-03-need-then-tool.webp)
+
+| Kaam ko chahiye | Toh aap | Kahan |
+|-----------------|---------|-------|
+| Current information | Poocho, aur web search on karo agar switch dekho | Concept 4 |
+| Sirf aapke paas source | Paste karo, ya file attach karo | Concept 5 |
+| Kaam mein kuch private | Private parts nikalo, aur temporary ya incognito chat istemal karo | Concept 5 |
+| Jawab ke bajaya mukaammal cheez | Document, table, ya file khud maango | Concept 6 |
+| Apna method choose karne ki jagah | Batao akele kya decide kar sakta hai aur kya poochna chahiye | Concept 7 |
+| Har baar wohi context | Sources Project mein knowledge rakho, rules standing instructions | Concept 8 |
+| Ghadi par wohi kaam | Scheduled task, jahan plan mein ho | Concept 8, optional |
+| Zyada capability jo dikhayi | Thinking on karo, ya mazboot model agar plan mein ho | Concept 9 |
+| Result rakhne ki jagah, ya doosre app mein source | Connector, Concept 7 mein try hua aur [Skills & Connectors](/docs/skills-connectors-crash-course) mein padhaya gaya | Concept 7, optional, aur Course 7 |
+
+### 4. AI ko Kuch Research Karne Do
+
+Opener ne current information maangi. Yeh concept us line ke baare mein hai, aur kaise pata lagaye ke AI ne follow kiya.
+
+#### Abhi Karo
+
+Ek **fresh chat** mein, apna chhe-line brief ek line add karke chalao:
+
+```
+For each course, say whether you found it by searching just now or
+already knew about it, and give the date of the page you used.
+```
+
+Jawab do lafzon ke liye padho jo ahem hain: "searched" aur "knew." Lafz hint hai. Source aur uski date saboot hai.
+
+#### Kya Badla?
+
+AI assistant do tareeqon se cheezein jaanta hai. Woh yaad rakhta hai jo padha build hone waqt, jo bada hai aur purana. Ya ab dekhta hai, jo search hai. Qeemat, start date, link, ke course abhi bhi hai — sirf dekhne se milta hai. Jab aapne opener mein likha "using current information," toh aap bata rahe the ke dono mein se kaun sa istemal kare.
+
+Aam tor par pata chal jaata hai kisne kiya. Jo fact dekhne se aaya woh uske saath source laya hai jo aap khol sakte hain. Jo fact yaad se aaya woh akela aata hai, aur utna hi sure lagta hai. Do cautions hain. Agar current claim ke saath source nahi hai, toh AI ne khoja ya na, jawab jo bhi keh raha ho, yeh mat samjho. Aur source date nahi hai: pages purane ho jaate hain, isliye jab current hona zaroori ho, page par date khud dhoondo. Agar opener link purana tha, yeh wajah hai: kaam ko current information chahiye thi aur AI ne yaad se ya huye hue page se jawab diya.
+
+Kuch assistants web search switch dikhate hain. Jab kaam ko aaj ke facts chahiye, on karo. Kuch mein gehra research mode bhi hai jo minute leta hai aur bohat saare pages padhta hai report likhne se pehle. Woh mode us kaam ke liye hai jiska deliverable report hai, na ke us fact ke liye jo ek search tay karta hai. Har plan mein kya shamil hai badalta rehta hai, isliye plans page dekho, yeh course nahi.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya har course ke saath source tha jo aap khol sake? Kya koi current claim bina source ke aaya?
+-   Kya usne kisi cheez ke liye "knew" kaha? Woh fact pehle check karo.
+-   Kya jawab Concept 3 ke run se badla? Agar badla, toh duniya badli ya search?
+
+#### Qubool Se Pehle Verify Karo
+
+Ek fact lo jo page ke saath aaya. Page kholo. Woh jumla dhoondo jo us fact ko support karta hai. Page par date check karo. Agar jumla wahan nahi hai, ya date purani hai, toh link sirf decoration tha.
+
+Citation verification nahi hai. Citation check karna verification hai.
+
+#### Aapki Baari
+
+Apne running brief mein ek constraint add karo jo sirf current information satisfy kar sake, jaise "sirf courses jo pichle saal mein start date ya open enrollment rakhte hain." Fresh chat mein dobara chalao.
+
+#### Apna Kaam Check Karo
+
+-   Kya mere brief ne kaha ke kaam ko current information chahiye?
+-   Kya mujhe pata tha kaun se facts source ke saath aaye aur kaun se akela?
+-   Kya maine ek page khola, us fact ko support karne wala jumla dhoonda, aur uski date dhoondi?
+
+Agar koi jawab na hai, toh line add karo, dobara chalao, aur page kholo.
+
+Yaad rakho
+
+Jab aaj ki sachai chahiye, AI se khojao, aur check karo ke usne khoja.
+
+**Khud check karo:** Kaise pata lagaye ke AI ne khoja ya yaad se jawab diya?
+
+### 5. AI ko Source Do
+
+Kuch kaamon ko AI ki zaroorat hai woh cheez nahi jo woh dhoond sake: aapke course ka syllabus, office ka notice, message thread, policy page. Aapke paas hai. AI ke paas nahi. Aap dete hain.
+
+#### Jo paste karein
+
+Assistant mein kuch bhi real paste karne se pehle, names, phone numbers, account numbers, aur woh sab hata jo aap public board par nahi latke. Free assistant aapki filing cabinet nahi hai.
+
+Agar kaam mein kuch aap nahi chahte save ho, toh Claude aur ChatGPT dono chat dete hain jo history mein save nahi hota aur memory mein nahi jata. ChatGPT ka naam **temporary chat** hai. Claude ka naam incognito chat hai. Koi bhi paste ko ghayab nahi karta, kyunke provider waqt ke liye copy rakhta hai, isliye pehla rule qaim hai. Switch kahan hai woh [Quick Reference](/docs/claude-chatgpt-101-crash-course) mein hai.
+
+Ke koi kaam ya data bilkul AI mein ja bhi sakta hai ya nahi — yeh bada sawal hai. [Governance, Risk & Responsible Use](/docs/governance-risk-responsible-use-crash-course), Foundations ka aakhri course, iska sahi jawab deta hai. Abhi ke liye, private cheezein nikalo aur jaari rakho.
+
+#### Abhi Karo
+
+AI ne jo course recommend kiya uska page kholo. Jo text usay describe karta hai copy karo, zyada se zyada do pages. Ek **fresh chat** mein, is ke baad paste karo:
+
+```
+Using only the text below, answer three questions: what will I be able
+to do at the end, how many hours a week does it expect, and is any
+previous knowledge required? For each answer, quote the sentence you
+used. If the text does not say, write "not in the source".
+[paste the text here]
+```
+
+#### Kya Badla?
+
+Brief ki Context line barh gayi hai. Ab us mein source hai, aur kaam usi ke andar rehna hai.
+
+"Using only the text below" aur "quote the sentence you used" — yeh do instructions hain jo source ko source banate hain. Unke bina AI aapke diye ko apne yaad ke saath mix karta hai, aur aap alag nahi kar sakte. Unke saath, har jawab us jumla par lautta hai jo aap dhoond sakte hain, aur "not in the source" gap ki bajaya ek sahi jawab ban jaata hai.
+
+Do pages ke liye paste karo. Lambi document ke liye file attach karo: control message box ke bagal ka plus ya paperclip hai, aur ek file is course ke liye kaafi hai. Chahe ho, kaam wohi hai: AI ko source do, usay andar rehne ko kaho, aur check karo ke usne kiya.
+
+Jab lamba chat purana ho jaaye
+
+Ek ghanta chalne wala chat shuru mein decide kiye gayon ko bhool jaata hai. Jab jawab pichlon se contradict karne lagein, chat se argue mat karo. AI se kaho ek chhoti summary likhe ke aapne abhi tak kya decide kiya aur kya baaki hai, copy karo, fresh chat kholo, aur pehle message ke taur par paste karo. Summary bhi source hai.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya har jawab quote kiye hue jumle ke saath aaya, ya kuch bina ke?
+-   Kya usne kahin "not in the source" likha, ya sab ka jawab de diya?
+-   Kya usne kuch add kiya jo text mein nahi tha?
+
+#### Qubool Se Pehle Verify Karo
+
+Ek quoted jumla lo aur paste kiye gaye text mein dhoondo. Agar word for word hai, toh achha hai. Agar qareeb lekin bilkul nahi hai, toh AI ne para-phrase kiya aur quote keh diya. Agar bilkul nahi hai, toh AI ne invent kiya. Likho kaun sa.
+
+#### Aapki Baari
+
+Apne running brief mein ek Context line add karo jo source ka naam de: "Use the course description I paste below as the source for the recommended course." Poora brief text attach ya paste karke dobara chalao.
+
+#### Apna Kaam Check Karo
+
+-   Kya maine names aur private cheezein paste karne se pehle hata diye?
+-   Kya mere brief ne AI ko kaha ke sirf source istemal kare aur use quote kare?
+-   Kya maine ek quoted jumla asal mein dhoonda, word for word?
+
+Agar koi jawab na hai, toh brief theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+AI ko source do, usay andar rehne ko kaho, aur check karo ke usne kiya.
+
+**Khud check karo:** Kaun se do instructions paste kiye gaye text ko source banate hain?
+
+### 6. Jawab Nahi, Deliverable Maango
+
+Ab tak har kaam chat message mein khatma hua. Asli kaam us cheez mein khatma hota hai jo koi use kar sake.
+
+#### Abhi Karo
+
+Apne latest running-job result wale chat mein likho:
+
+```
+Turn this into a one-page document I could send to a friend who asked
+me the same question: a two-sentence introduction, the comparison
+table, the recommendation, and the sources. Make it a file I can
+download if you can. Keep every "unverified" mark exactly where it is.
+```
+
+#### Kya Badla?
+
+Brief ki Deliverable line ne apna kaam kar diya. Jawab aapko reply karta hai. Deliverable aisi shakal mein hota hai ke koi use kar sake, save kare, aage de, ya us par amal kare: table jis mein columns aapne naam liye, document, spreadsheet, file. Opener ki table pehle se chhoti deliverable thi. Zyada deliverables ko chat se nikalna padta hai survive karne ke liye, isliye yeh concept khud document maangta hai. Jab aap form ka naam dete hain, AI form banata hai, aur aap result column by column check karte hain.
+
+Deliverable kahan dikhta hai woh assistant par depend karta hai. Kuch chat ke bagal alag panel kholte hain. Kuch file banate hain jo download karein. Dono ek hi move hain: kaam ka product conversation se alag ho jaata hai, taake use kiya ja sake aur aage diya ja sake. Jab data ho, table ya spreadsheet maango, paragraphs nahi.
+
+Aakhri line zyada ahem hai jitni dikhti hai. Deliverables caveats chhor dete hain. Teen chat replies mein "unverified" mark jo bacha tha, woh document mein ghayab ho sakta hai, kyunke document saaf hone ke liye bana hai. Baad ke do courses aapko form par zyaba control dete hain. [Markdown In, HTML Out](/docs/markdown-html-crash-course) woh document languages sikhata hai jo har assistant bolti hai. [Code You Never Write](/docs/code-you-never-write-crash-course) us din ke liye hai jab deliverable chhota program ya chart ho.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya document deliverable line se column by column milta hai?
+-   Kya chat ke har "unverified" mark abhi bhi document mein hai?
+-   Kya kisi ne document padha bina chat dekhe?
+
+#### Qubool Se Pehle Verify Karo
+
+Chat answer mein caveats ginlo: har "unverified," har "may," har "check." Document mein ginlo. Agar doosra number chhota hai, toh jo drop hua hai dhoondo aur wapas dalo.
+
+#### Aapki Baari
+
+Apne running brief ki Deliverable line bilkul saaf likho: form, sections, lambai, aur jumla "keep every unverified mark." Fresh chat mein poora brief chalao aur Concept 3 ke deliverable se compare karo.
+
+#### Apna Kaam Check Karo
+
+-   Kya maine result ka form bataya, sirf content nahi?
+-   Kya result ne woh form banaya jo maine kaha?
+-   Kya har caveat chat se document mein survive kiya?
+
+Agar koi jawab na hai, toh Deliverable line theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Woh cheez ka naam lo jo aap hath mein rakhna chahte hain. Phir check karo ke caveats safar mein baaqi rahe.
+
+**Khud check karo:** Jawab aur deliverable mein kya fark hai?
+
+## Part 3: AI ko Zyada Zimmedari Do
+
+Zimmedari ke do chehre hain: AI kaise kaam karta hai, aur kya chhu sakta hai. Dono aapke checked runs ke record ke saath barhte hain. Part 3 AI ka zyada kholta hai, dikhata hai jab kaam dobara aaye, aur phir kaam ko jaan bujh ke todta hai taake theek karne wala move practice kar sakein.
+
+### 7. Faisla Karo AI ko Kaam ka Kitna Hisaa Mile
+
+Authority Concept 3 mein ek line thi. Yahan yeh poora concept hai, kyunke yeh do chehre rakhta hai aur log aksar ek hi dekhte hain.
+
+#### Abhi Karo
+
+Ek **fresh chat** mein, apna running brief ek instruction add karke chalao jo upar ho:
+
+```
+Before you start, list the steps you plan to take, in order, and wait
+for my go-ahead. Do not begin until I say go.
+```
+
+AI jab plan bheje, use padho. Agar sahi hai, "go" bolo. Agar koi step galat hai ya aap kuch boundary chahte hain, usay ek jumle mein theek karo aur phir "go" bolo.
+
+#### Kya Badla?
+
+Aapne sabse sasta moment istemal kiya: kaam shuru hone se pehle. Plan-first ka matlab hai AI se uske steps list karne aur aapke go-ahead ka intezaar karne ko kehna. Plan padhne mein minute lagta hai aur theek karne mein ek jumla. Wohi galti run ke baad mili toh poora run barbad. Plan maangna woh hai jo aap Observe karte hain jab aap dekh nahi sakte, aur redirect karna Intervene ka sabse sasta hai.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya plan ne woh steps bataye jo AI karne wala tha?
+-   Kya maine kisi step ko redirect kiya ya boundary lagayi?
+-   Kya maine go diya uske baad?
+
+#### Qubool Se Pehle Verify Karo
+
+Apna running brief ek fresh chat mein chalao. Jab result aaye, pahli cheez check karo: kya AI ne unhi limits par kaam kiya jo aapne rakhi thin? Agar nahi, toh boundary kahan tooti.
+
+#### Aapki Baari
+
+Apne running brief mein ek aur line add karo jo authority define kare, jaise "Agar do courses barabar hain, toh chhota chuno bina poochhe." Fresh chat mein chalao aur dekho kya badla.
+
+#### Apna Kaam Check Karo
+
+-   Kya brief ne bataya AI akele kya decide kar sakta hai?
+-   Kya AI ne wohi kiya jo authority line ne kaha?
+-   Kya maine plan padha kaam shuru hone se pehle?
+
+Agar koi jawab na hai, toh authority line theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Authority batati hai AI akele kya decide kar sakta hai. Plan dikhata hai AI kya karne wala hai. Dono zaroori hain.
+
+**Khud check karo:** Authority line ke liye do cheezein kaun si chahiye?
+
+### 8. AI ko Wohi Kaam Dobara Do
+
+Jab kaam agle hafte dobara aaye, woh cheezein jo nahi badli unhein wahan rakho jo AI khud padhe.
+
+#### Abhi Karo
+
+Apna mukammal brief note mein copy karo, chat ke bahar. Phir ek fresh chat mein, use bilkul waisa hi dobara chalao. Naya result pichle ke bagal rakho aur har fark mark karo.
+
+#### Kya Badla?
+
+Jo cheezein badli woh wahi thin jo aapne dobara type ki. Jo nahi badli — aur nahi badni chahiye — woh ab Project mein honi chahiye. **Project** assistant mein ek jagah hai jo aapki files aur standing instructions rakhti hai, taake andar ka har chat pehle se informed ho.
+
+Aapki **standing instruction** woh rules hain jo AI har chat mein follow kare. Kaam ka brief, schedule, deliverable ka form — jo bhi har baar same ho, woh Project mein jaata hai. Aap phir se type nahi karte. AI phir se poochta nahi.
+
+Kya Project mein jaana chahiye? Woh jo baar baar aata hai: source, context, constraints, deliverable ka form. Kya nahi jaana? Woh jo us kaam ke liye khaas hai: aaj ka specific outcome, aaj ki specific date.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya maine woh cheezein Project mein daali jo baar baar repeat hoti thin?
+-   Kya fresh chat ne automatically woh context padha bina mujhe dobara bataye?
+-   Kya maine kuch cheezein jo sirf us kaam ke liye thin Project mein nahi daali?
+
+#### Qubool Se Pehle Verify Karo
+
+Ek aur fresh chat kholo aur wohi brief chalao. Check karo: kya AI ne pehle se context samjha bina mujhe bataye? Agar haan, toh Project kaam kar raha hai.
+
+#### Aapki Baari
+
+Apne running job ke liye standing instructions likho: woh rules jo har baar apply ho. Fresh chat mein Project ke andar un instructions ke saath brief chalao.
+
+#### Apna Kaam Check Karo
+
+-   Kya baar baar aane wali cheezein Project mein hain?
+-   Kya fresh chat ne automatically context padha?
+-   Kya sirf us kaam ki cheezein bahar hain?
+
+Agar koi jawab na hai, toh Project theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Jo baar baar same hai woh Project mein jaata hai. Jo us kaam ke liye khaas hai woh chat mein rehta hai.
+
+**Khud check karo:** Jab kaam teesri baar aaye, toh aap jo baar baar type karte hain woh kahan jaana chahiye?
+
+### 9. AI Galat Ho Jaaye Toh Intervene Karo
+
+Intervene ka move woh hai jo log bhool jaate hain. Jab kaam mein kuch galat ho, sabse chhota message jo kaam kare woh best hai.
+
+#### Abhi Karo
+
+Ek **fresh chat** mein, apna running brief Constraints aur Authority lines delete karke chalao. Dekho kahan bhatakta hai. Phir sabse chhote se message se theek karo.
+
+#### Kya Badla?
+
+Constraints aur Authority ke bina AI ne woh kiya jo socha ke sahi hai. Shayad form badal diya. Shayad zyada decide kar liya. Shayad kuch chhor diya. Aapne dekha kyunki aapne check kiya. Yeh Intervene hai: AI ke kaam mein waqt par dakhal dena.
+
+Sabse chhota fix woh hai jo kaam kare. Ek jumla. Ek boundary. Ek correction. Lamba message dene ki zaroorat nahi. AI ko fix chahiye, thesis nahi.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kahan bhataka AI?
+-   Kya mera fix sabse chhota tha jo kaam karta tha?
+-   Kya maine woh fix apne brief mein likha taake dobara na ho?
+
+#### Qubool Se Pehle Verify Karo
+
+Wohi brief dobara chalao jo aapne fix kiya. Kya AI ne ab us boundary par qaim raha? Agar haan, toh fix kaam kiya.
+
+#### Aapki Baari
+
+Ek job dhoondo jismein AI ne form ya structure galat kiya. Brief mein uski boundary add karo aur fresh chat mein dobara chalao.
+
+#### Apna Kaam Check Karo
+
+-   Kya mera fix sabse chhota tha?
+-   Kya fix ne boundary tay kar di?
+-   Kya maine fix brief mein likha?
+
+Agar koi jawab na hai, toh fix theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Sabse chhota fix jo kaam kare woh best hai. Fix ko brief mein likho taake dobara na ho.
+
+**Khud check karo:** Ek wrong figure fix karne kaun sa move karta hai, aur message kitna lamba hona chahiye?
+
+#### Zia Tutor Se Poocho
+
+Optional:
+
+```
+Was my correction the smallest move that would have worked, and did
+the line I added to the brief actually prevent the drift? Name one
+better move if there was one, and wait for my reply. When we agree,
+say in one line what I have shown I can do, and tell me what Concept
+10, Verify Before You Accept, will ask me to check.
+```
+
+## Part 4: Supervisor Ban Jao
+
+Loop wahan khatma hota hai jahan shuru hua, aapke saath. Verify aur Accept end ke hain, aur chaahe machine kitna bhi capable ho, kya check karna hai aur qubool karna hai ya nahi — yeh aapke rehte hain. Part 4 pehle ko method deta hai aur doosre ko test.
+
+### 10. Qubool Karne Se Pehle Verify Karo
+
+Verification Verify step ke andar ke chaar kadam hain. Chaar kadam hain Identify, Trace, Challenge, Decide. Seedhi zubaan mein: ahem claims ka naam lo, har ek ko uske source tak follow karo, pucho galat kaise ho sakta hai, aur kya karna hai faisla karo. Aakhri kadam chaar faislon mein se ek par khatma hota hai: Accept, Correct, Investigate, Reject.
+
+#### Abhi Karo
+
+Apna latest running-job result lo. Kuch khole se pehle, do claims likho jo sabse ahem hain. Phir ek ke liye chaar kadam karo aur chaar faislon mein se ek par khatma karo.
+
+#### Kya Badla?
+
+Ab aapke paas method hai. Pehle aap "result padha" kehte the. Ab aap keh sakte hain: Identify kiya ke kya matter karta hai, Trace kiya source tak, Challenge kiya ke galat kaise ho sakta hai, aur Decide kiya kya karna hai. Yeh verification hai.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya maine sabse ahem claim check kiya?
+-   Kya mera trace source tak pahuncha?
+-   Kya mera challenge socha ke galat kaise ho sakta hai?
+-   Kya mera decide sahi tha — Accept, Correct, Investigate, ya Reject?
+
+#### Qubool Se Pehle Verify Karo
+
+Doosre claim ke liye wohi chaar kadam karo. Dekho kya dono ke nateeje same hain.
+
+#### Aapki Baari
+
+Apne running job ke result par chaar kadam karo. Ek claim ke liye Accept, Correct, Investigate, ya Reject mein se faisla karo.
+
+#### Apna Kaam Check Karo
+
+-   Kya maine sabse ahem claim check kiya?
+-   Kya mera trace source tak pahuncha?
+-   Kya mera challenge socha ke galat kaise ho sakta hai?
+-   Kya mera decide sahi tha?
+
+Agar koi jawab na hai, toh verification theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Verification ke chaar kadam hain: Identify, Trace, Challenge, Decide. Aur jawabdaari aapke paas rehti hai.
+
+**Khud check karo:** Verification ke chaar kadam kaun se hain, aur result ki jawabdaari kiske paas hai?
+
+#### Zia Tutor Se Poocho
+
+Optional:
+
+```
+Judge my verification: did I check the claim that mattered most, did
+my trace reach the sentence that supports it, and was my decision the
+right one of accept, correct, investigate, or reject? Wait for my
+reply before you continue. When we agree, say in one line what I have
+shown I can do, and tell me what Concept 11, Same Job, Different AI,
+will ask me to record.
+```
+
+### 11. Wohi Kaam, Alag AI
+
+Wohi brief doosre assistant mein bina rewrite ke chalta hai, kyunke woh kaam batata hai, tool nahi.
+
+#### Abhi Karo
+
+Doosra free assistant kholo. Apna mukammal brief, bina badle, paste karo. Record karo: kya kaam mukammal hua, kitne messages lage, kya authority line qaim rahi, kuch "unverified" mark hua ya nahi, aur deliverable mein kya fark tha.
+
+#### Kya Badla?
+
+Nateeja alag ho sakta hai, lekin brief wohi hai. Agar brief ne kaam ko saaf describe kiya, toh koi bhi assistant use samajh sakta hai. Agar nateeja alag hai, toh fark model mein hai, brief mein nahi. Yeh sikhata hai: achha brief tool-independent hai.
+
+#### Kya Notice Karo
+
+Poocho:
+
+-   Kya doosre assistant ne kaam mukammal kiya?
+-   Kitne messages lage?
+-   Kya authority line qaim rahi?
+-   Kya deliverable waisa hi tha?
+
+#### Qubool Se Pehle Verify Karo
+
+Doosre assistant ke result se ek claim lo aur pehle wale se compare karo. Kya dono sahi hain? Agar nahi, toh kis ki galat hai?
+
+#### Aapki Baari
+
+Apne running brief ko doosre assistant mein paste karo aur compare karo.
+
+#### Apna Kaam Check Karo
+
+-   Kya brief bina badle chala?
+-   Kya nateeja milta julta tha?
+-   Kya koi fark model ka tha, brief ka nahi?
+
+Agar koi jawab na hai, toh brief theek karo, aage badhne se pehle.
+
+Yaad rakho
+
+Achha brief doosre assistant mein bina badle chalta hai, kyunke woh kaam batata hai, tool nahi.
+
+**Khud check karo:** Wohi brief doosre assistant mein bina rewrite ke kyun chalta hai?
+
+## Ab recap karo practice se pehle
+
+Gyarah concepts, ek ek line mein:
+
+1.  AI se poochne se jawab milta hai, AI ko kaam dene se result milta hai jo aap check kar sakte hain.
+2.  Woh result batao jo aap chahte hain, aur steps AI par chhod do.
+3.  Delegation Brief AI ke shuru hone se pehle chhe sawalon ke jawab deta hai, taake result check karne ke liye kuch ho.
+4.  Jab kaam ko current facts chahiye, AI se khojo, aur check karo ke usne kiya.
+5.  Jab kaam ko sirf aapke paas source chahiye, usay do, AI se kaho usi ke andar rahe, aur check karo ke usne kiya.
+6.  Mukaammal cheez maango, table ya document, aur check karo ke har "unverified" nishan baaqi hai.
+7.  Batao AI akele kya decide kar sakta hai aur kya poochna chahiye, aur kaam shuru hone se pehle plan padho.
+8.  Jab kaam dobara aaye, woh bachao jo nahi badalta, aur usay wahan rakho jo AI khud padhe.
+9.  AI bhatak jaaye toh sabse chhote se message se theek karo, phir seekh ko brief mein likh do.
+10.  Verification ke chaar kadam hain, aur result ki jawabdaari aapke paas rehti hai.
+11.  Achha brief doosre AI mein bina rewrite ke chalta hai, kyunke woh kaam batata hai, tool nahi.
+
+## Aapka Delegation Record: yeh copy karo
+
+```
+DELEGATION RECORD
+Job: ______________________________________  Date: __________
+THE BRIEF
+Outcome:
+Context:
+Constraints:
+Authority:
+Deliverable:
+Verification:
+THE RUN
+Assistant used:                       Messages needed:
+Plan asked for first?  yes / no       Plan changed by me?  yes / no
+Where it drifted, and the move that fixed it:
+THE CHECK
+Claim 1 that mattered:            Source opened:         Finding:
+Claim 2 that mattered:            Source opened:         Finding:
+Anything AI marked "unverified":
+THE DECISION
+Accept / Correct / Investigate / Reject, and the one sentence behind it:
+THE SECOND RUN (Concept 11)
+Assistant:            Finished?    Brief changed?    Where the results differed:
+WHAT I WILL SAVE FOR NEXT TIME (Concept 8)
+Lines that did not change:
+```
+
+## Abhi try karo: is hafte delegate karne ke chhe kaam
+
+### 1. Ek khareed jo aap waqai karne wale hain
+
+Ek product choose karo jo aap khareedne wale hain — phone, laptop, course, kitab. Brief likho: outcome, context, constraints, authority, deliverable, verification. AI ko kaam do. Check karo. Faisla karo.
+
+### 2. Kuch cheezon ka hafte ka summary jo aap follow karte hain
+
+Trend, news, market, kuch bhi. AI ko kaho har hafte summary banaye. Brief mein outcome aur deliverable define karo. Pehla run check karo.
+
+### 3. Ek document jiska jawab dena hai
+
+Email, proposal, kuch bhi. Document paste karo. AI se kaho jawab banaye. Brief mein authority batao ke kya change kar sakta hai aur kya nahi.
+
+### 4. Ek khat ya message jo bhejna hai
+
+Friend, colleague, client. Kya kehna hai batayein. AI draft banaye. Check karo. Bhejo.
+
+### 5. Ek hafte ka plan
+
+Kya karna hai, kab, kitna waqt. AI plan banaye. Check karo ke realistically hai. Approve karo ya theek karo.
+
+### 6. Apna subject, sahi tareeqe se
+
+Jo bhi aap seekh rahe hain — cooking, fitness, coding, kuch bhi. Brief likho. AI se courses, plans, ya summaries banwaye. Pehla run check karo.
+
+## Quick self-check
+
+1.  AI se poochne aur AI ko kaam dene mein kya fark hai?
+2.  Delegation Loop ke chhe kadam kaun se hain?
+3.  Delegation Brief ki chhe lines kaun si hain?
+4.  Result aur deliverable mein kya fark hai?
+5.  Jab AI bhatak jaaye toh kya karein?
+6.  Verification ke chaar kadam kaun se hain?
+7.  Authority kya hai aur kyun zaroori hai?
+8.  Project kya hai aur kab use karein?
+9.  Achha brief kyun tool-independent hai?
+10. Jawabdaari kiske paas rehti hai?
+11. Brief doosre AI mein bina rewrite ke kyun chalta hai?
+
+## Yeh course jaan bujh ke kya chhodta hai
+
+Yeh course basic delegation sikhata hai: brief likho, AI ko do, check karo, decide karo. Yeh nahi sikhata:
+
+-   **Advanced prompting techniques** — yeh [AI Prompting in 2026](/docs/ai-prompting-2026) mein hai.
+-   **Agent frameworks** — yeh baad ke courses mein hai.
+-   **Coding** — yeh [Code You Never Write](/docs/code-you-never-write-crash-course) mein hai.
+-   **Connectors aur Skills** — yeh [Skills & Connectors](/docs/skills-connectors-crash-course) mein hai.
+-   **Governance** — yeh [Governance & Responsible Use](/docs/governance-risk-responsible-use-crash-course) mein hai.
+
+## Yeh course jo terms add karta hai
+
+-   **Delegation Loop** — AI ko kaam dene ka chhe kaadam ka rhythm.
+-   **Delegation Brief** — Chhe sawal jo AI ke shuru hone se pehle poochte hain.
+-   **Running Job** — Woh ek kaam jo poore course mein le ke chalte hain.
+-   **Need First, Then Tool** — Pehle zaroorat, phir tool.
+-   **Plan-First** — AI se plan maango, phir go do.
+-   **Project** — Files aur instructions rakhne ki jagah.
+-   **Standing Instruction** — Har chat mein follow hone wala rule.
+-   **Delegation Record** — Kaam ka ek page ka record.
+
+## Yahan se kahan jaata hai
+
+Yeh pehla Foundations course hai. Agla [What AI Actually Is](/docs/what-ai-actually-is-crash-course) hai — machine kya hai aur galat kyun hoti hai. Uske baad [AI Fluency](/docs/ai-fluency-crash-course) — chaar insani kompetensi. Phir [AI Prompting in 2026](/docs/ai-prompting-2026) — har line behtar kaise likhein.
+
+Sab ke baad, aap ek path choose karte hain: **Mode 1** (ek baar kaam karo) ya **Mode 2** (AI Worker banao jo baar baar kaam kare). Dono paths is course par khade hain.
+
+---
+
+<Flashcard question="Delegation Loop ke chhe kadam kaun se hain?" answer="Define, Delegate, Observe, Intervene, Verify, Accept." />
+
+<Flashcard question="Delegation Brief ki chhe lines kaun si hain?" answer="Outcome, Context, Constraints, Authority, Deliverable, Verification." />
+
+<Flashcard question="Delegate ka matlab kya hai?" answer="AI ko result paida karne ki zimmedari dena." />
+
+<Flashcard question="'Pehle zaroorat, phir tool' ka kya matlab hai?" answer="Control tab seekho jab kaam uski zaroorat bataye, pehle nahi." />
+
+<Flashcard question="Outcome kya hai?" answer="Kaam mukammal hone par kya hona chahiye." />
+
+<Flashcard question="Deliverable kya hai?" answer="Result ki woh shakal jis mein koi use kar sake — table, document, file." />
+
+<Flashcard question="Authority kya hai?" answer="Woh faislay jo AI akele kar sakta hai bina aapke poochhe." />
+
+<Flashcard question="Verify ke andar ke chaar kadam kaun se hain?" answer="Identify, Trace, Challenge, Decide." />
+
+<Flashcard question="Verify ke baad chaar faislay kaun se hain?" answer="Accept, Correct, Investigate, Reject." />
+
+<Flashcard question="Plan-first ka matlab kya hai?" answer="AI se uske steps list karne aur aapke go-ahead ka intezaar karne ko kehna." />
+
+<Flashcard question="Project kya hai?" answer="Assistant mein ek jagah jo files aur standing instructions rakhti hai." />
+
+<Flashcard question="Standing instruction kya hai?" answer="Ek rule jo Project mein ek baar likha jaaye, AI har chat mein follow kare." />
+
+<Flashcard question="Fresh chat kya hai?" answer="Naya chat, taake pichli conversation se kuch na aaye." />
+
+<Flashcard question="Running job kya hai?" answer="Woh ek kaam jo poore course mein le ke chalte hain, har concept par ek aur line bhar ke dobara delegate karte hain." />
+
+<Flashcard question="Achha brief kyun tool-independent hai?" answer="Kyunke woh kaam batata hai, tool nahi — koi bhi assistant use samajh sakta hai." />
+
+<Flashcard question="Jab kaam dobara aaye, woh cheezein jo baar baar repeat hoti hain woh kahan jaani chahiye?" answer="Project mein standing instructions ke taur par." />
+
+<Flashcard question="AI galat ho jaaye toh kya karein?" answer="Sabse chhota fix jo kaam kare — ek jumla, ek boundary, ek correction." />
+
+<Flashcard question="Jawabdaari kiske paas rehti hai?" answer="Aapke paas — verify karna aur qubool karna ya na karna aapke faislay hain." />
+
+<Flashcard question="Citation aur verification mein kya fark hai?" answer="Citation dikhana hai, citation check karna verification hai." />
+
+<Flashcard question="Temporary chat kya hai?" answer="Chat jo history mein save nahi hota — ChatGPT mein temporary, Claude mein incognito." />
+
+## Test Your Understanding
+
+| # | Sawaal | Jawab diya gaya |
+|---|--------|-----------------|
+| 1 | AI se kuch poochne aur AI ko kaam dene mein kya fark hai? | Concept 1 |
+| 2 | Delegation Loop ke chhe kadam kaun se hain, aur kaun se aapke rehte hain? | Part 2 opener |
+| 3 | Result batana, steps batane se kyun behtar kaam karta hai? | Concept 2 |
+| 4 | Chhe sawal kaun se hain jo Delegation Brief banate hain, aur brief prompt se kaise alag hai? | Concept 3 |
+| 5 | AI ko kab web search karna chahiye, aur main kaise pata lagaon ke usne kiya? | Concept 4 |
+| 6 | Main AI ko source kaise doon, usko usi ke andar rakhoon, aur private cheezein bahar rakhoon? | Concept 5 |
+| 7 | Jawab aur deliverable mein kya fark hai? | Concept 6 |
+| 8 | AI ko kaam ka kitna hissa decide karna chahiye, aur main ek boundary kaise banao jo woh rakhe? | Concept 7 |
+| 9 | Jab wohi kaam agle hafte wapas aaye, toh kya karoon, aur Project mein kya jaana chahiye? | Concept 8 |
+| 10 | AI galat ho jaaye toh mere moves kaun se hain, aur kab rokna chahiye? | Concept 9 |
+| 11 | Kya verify karne ke qabil hai, aur main waqai claim kaise check karta hoon? | Concept 10 |
+| 12 | AI kaam kare toh jawabdaari ka kya banta hai? | Concept 10 |
+| 13 | Wohi brief doosre AI mein kyun chalayein, aur us se kya nateeja nikal sakta hai? | Concept 11 |
+| 14 | Mukammal delegation record kaisa dikhta hai? | Delegation Record |

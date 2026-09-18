@@ -1,14 +1,308 @@
 ---
 id: designing-the-vertical-sor
 title: "Designing the Vertical SoR"
-sidebar_label: "Designing Vertical SoR"
-description: "Vertical System of Record kaise design karein"
+sidebar_label: "Designing the Vertical SoR"
+description: "First principles se Vertical System of Record design karna"
 ---
 
-# Designing the Vertical SoR
+# Designing the Vertical System of Record from First Principles
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**Tumne [selection method](/docs/ecosystem/choosing-your-vertical) se apni vertical chun li. Tumhara expert signed hai aur har source ke paas written rights basis hai: yeh [gates 1 aur 2](/docs/ecosystem/choosing-your-vertical#step-5-validate-against-four-gates-in-60-to-90-days) hain, aur abhi tak kuch becha nahi gaya. Yeh point hai. [System of Record pehle aata hai](/docs/ecosystem/choosing-your-vertical#after-launch-the-system-of-record-keeps-coming-first), aur iska pehla slice woh hai jo baad mein sponsor conversation earn karta hai. Toh yeh page real kaam ki tayyari nahi hai. Yeh woh kaam hai jo sale ko mumkin banata hai. Ab woh question aata hai: andar kya jaata hai? Galat jawab tempting hai. Profession ke current workflows mat collect karo, unhe searchable mat banao, aur use System of Record mat bolo. Woh workflows agentic AI era se pehle design kiye gaye the. Woh insaan ki limits aur purane technology ke gird banaye gaye the. Is page ka method hai: first-principles, legacy-informed redesign. Purane kaam ko samjho ke uski truths kya hain. Phir un truths se kaam dobara banao, AI Workers ke liye.**
 
-Har vertical ka apna System of Record hota hai. Law ke liye case tracker, healthcare ke liye patient records, finance ke liye transactions. Yeh design karna critical hai.
+![Designing the Vertical System of Record: legacy workflows se governed System of Record tak, first principles se built. Left par, purane org charts aur forms: legacy workflows. Ek dashed golden path method se guzarta hai. Pehle, examine: kaam ko samjho jaise woh hai. Phir teen sort bins: keep (law aur trust obligations ke liye), redesign (human limits aur workarounds ke liye), delete (purani technology aur obsolete kaam ke liye). Ek insaan aur chhota robot saath mein Governed System of Record tak chalte hain. Path rising chart par khatam hota hai](/img/designing-the-vertical-sor-hero.webp)
+
+---
+
+## Seedhi baat — poori page ka khulasa
+
+Shuru mat karo is se poochh kar: log yeh kaam aaj kaise karte hain? Shuru karo is se poochh kar: kya result produce hona chahiye, kya evidence usse prove karta hai, kya rules govern karte hain, aur kya galat ho sakta hai? Purana workflow tumhe un questions ke jawab dene mein madad karta hai. Woh jawab tumhare liye decide nahi karna chahiye. Woh rakho jo law aur customer ki trust maangti hai. Baaki sab Worker ke liye dobara banao jo thakta nahi, steps skip nahi karta, aur har task ko chahiye woh knowledge seconds mein dhundh sakta hai. Woh delete karo jo sirf isliye tha ke purane computers ek doosre se baat nahi kar sakte the.
+
+---
+
+## 📚 Teaching Aid
+
+**[View Full Presentation](https://docs.google.com/presentation/d/1CVLpyAAblqFLMEzUU4ZCWJyhqgm9pdJkwgWDP_LUPww/edit?usp=sharing)** — Designing the Vertical SoR
+
+---
+
+## Kyun purana workflow galat blueprint hai
+
+Kisi bhi profession ke current workflow ko gaur se dekho. Har piece ke baare mein pucho yeh asal mein kya karta hai. Zyada pieces profession nahi hain. Yeh accommodations hain: extra steps jo kaam karne wale logon aur machines ki limits ke gird bane hain.
+
+Paanch limits ne lagbhag har pre-agentic workflow ko shape diya. Pehla, insaani attention scarce thi. Log hamesha sab nahi dekh sakte the. Toh profession ne weekly reports, review queues, aur month-end batches invent kiye. Doosra, information systems mein bikhri hui thi. Toh logon ne use copy kiya aur dobara type kiya. Teesra, software kaam samajh nahi sakta tha. Toh jo kuch bhi interpretation chahiye woh insaan ke paas gaya. Chautha, organizations departments mein banti thi. Toh kaam handoffs se guzara jo customer ne maanga hi nahi. Paanchva, managers dekh nahi sakte the kaam kaise ho raha hai. Toh unhone blanket approvals add kiye apni blindness ko cover karne ke liye.
+
+![SaaS application do eras mein decomposed. Human-only era mein, insaan workflow UI chalata hai. Agentic era mein, workflow UI cross out hai kyunki uska maqsad insaan tha, aur agent directly capabilities aur governed record ke saath kaam karta hai](/img/fig-workflow-ui-dies.webp)
+
+Profession ke workflow ke saath bhi yehi sach hai. Knowledge, evidence, aur judgment record hai. Unke gird kadam aur screens human-only era ka workflow UI hain. Jab tum vertical System of Record design karte ho, tum decide karte ho kya aage le jaana hai. Truths le jao. Museum chhod do: purane steps ka collection jo sirf dikhata hai kaam pehle kaise hota tha.
+
+Ek question design ko concrete banata hai. Yeh woh question hai jo abhi poora market pooch raha hai: *agar yeh profession aaj shuru hota, yeh jaante hue ke AI Workers kya kar sakte hain, toh insaani time asal mein kahan jaata?*
+
+---
+
+## Pehle outcome se shuru karo, workflow se nahi
+
+Purane process ko chhune se pehle, professional outcome likh do. Yeh woh completed result hai jo customer, regulator, ya reviewer pehchaan sakta hai aur judge kar sakta hai.
+
+Kamzor outcome: *process audit working papers.* Behtar outcome: *ek complete, evidence-backed working paper produce karo jo apne conclusion ko support karta hai, applicable standards follow karta hai, unresolved exceptions list karta hai, aur reviewer approval ke liye ready hai.*
+
+Pehle outcome ke liye outcome contract likho:
+
+| Field | Question |
+|-------|----------|
+| Outcome | Kya completed result hona chahiye? |
+| Trigger | Kya event kaam shuru karta hai? |
+| Inputs | Kya information chahiye? |
+| Evidence | Result ko kya support karna chahiye? |
+| Acceptance criteria | Reviewer kaise decide karega ke result complete hai? |
+| Main number aur guardrails | Kya improve hona chahiye, aur kya kharab nahi hona chahiye? |
+| Forbidden actions | Worker ko kabhi kya nahi karna chahiye? |
+| Final authority | Kaun sa named human final decision ke liye accountable hai? |
+| Record | Complete hone ke baad kya retain karna chahiye? |
+
+---
+
+## Workflow archaeology
+
+Purane kaam ke tareeke ko badalne se pehle, seekho ke har step kyun hai. Woh log pucho jo kaam karte hain, sirf documents nahi. Sabse important knowledge unke dimagh mein hai, manual mein nahi.
+
+Ab, aur sirf ab, existing workflow ka study karo. Copy karne ke liye nahi. Kholne ke liye. Purana workflow profession ke baare mein evidence hai, aur tumhara expert tumhara guide hai.
+
+Box aur arrows draw karne se mat shuru karo. Real cases se shuru karo. Apne expert se pucho ke woh paanch files walk through kare: ek normal case, ek difficult case, ek jo fail hua, ek jo escalate hua, aur ek jahan experienced professional ne woh pakda jo beginner ne miss kiya.
+
+![Workflow archaeology as an iceberg. Waterline ke upar written procedure hai: forms, templates, checklists, sign-offs. Waterline ke neeche, bahut bada, tacit layer hai: experienced log kya check karte hain, steps kyun silently skip hote hain, kaun si approval real problems pakadti hai, spreadsheet jo essential ban gaya, insaan jise sab call karte hain, aur failure ne habit sikhayi](/img/fig-archaeology-iceberg.webp)
+
+Written sources tumhe formal knowledge dete hain. Cases aur yeh questions tumhe unwritten judgment dete hain. Yahan se expert twin shuru hota hai. Answers, tumhare expert ki awaaz mein likhe gaye, licensed material ban jaate hain jo kahin aur nahi milta.
+
+---
+
+## Teen-bin sort
+
+Purane workflow ka har element lo aur pucho: yeh kyun hai? Agar law ya trust require karta hai, rakho. Agar yeh isliye hai ke insaan bhool jaate hain ya thak jaate hain, toh Worker ke liye redesign karo. Agar yeh isliye hai ke purane computers baat nahi kar sakte the, toh delete karo.
+
+![Teen-bin sort: purane workflow ke har element ke liye pucho yeh kyun hai. Bin 1: law aur trust — regulator ya profession require karta hai, toh rakho. Bin 2: human limits — insaan bhool jaate hain, thak jaate hain, toh Worker ke liye redesign karo. Bin 3: purani technology — delete karo](/img/fig-three-bin-sort.webp)
+
+**Bin 1: law aur trust require karta hai. Rakho.** Partner ki signature. Paise hilne se pehle insaani approval. Regulator dwara naam diya gaya separation of duties. Standard jo evidence maangta hai. Yeh overhead nahi hain, aur inhe delete karna innovation nahi hai. Trust bechne wale profession mein, named human judgment *product* hai. Bin 1 profession ke first principles rakhta hai. Har naya reflex is bin ke gird banta hai, aur kuch bhi is ke khilaf reflex mein nahi jaata.
+
+**Bin 2: human limits require karta hai. Redesign karo.** Tick-and-tie checklist isliye hai ke thaka hua insaan items chhod jaata hai. Toh Worker sab check karta hai aur exception report deta hai. File teen juniors mein isliye banti hai ke koi poora hold nahi kar sakta. Worker poora hold karta hai, toh handoffs khatam. Friday batch isliye hai ke insaani aankhein continuously nahi dekh sakti. Worker tab act kar sakta hai jab document aata hai, threshold cross hota hai, ya deadline paas aati hai.
+
+Ek refinement sort ko aur tez banata hai: **control ka purpose Bin 1 hai; uska mechanism aksar Bin 2 hai.** Jaise: "har transaction ko manager review karta hai." Yeh isliye hai ke purana system normal transactions ko unusual se alag nahi kar sakta tha. Purpose (risk controlled rahe) invariant hai. Rakho. Mechanism (sab review karo) human-limits workaround hai. Redesign karo: routine cases automated checks se guzarte hain, aur manager ka attention exceptions par jaata hai.
+
+**Bin 3: purani technology require karti hai. Delete karo.** Ek system se doosre mein figures dobara type karna. Files rename karna. Wohi numbers teen different reports ke liye format karna. Status emails aur tracking spreadsheets jo sirf information visible banane ke liye hain.
+
+---
+
+## Source hierarchy: kaun sa authority jeetata hai
+
+Corpus mein kai rule books honge, aur kabhi kabhi yeh disagree karte hain. Agents padhna shuru karne se pehle order likh do: kaun sa source jeetata hai, kis question par.
+
+Ek typical hierarchy:
+
+1. Current law aur regulation
+2. Binding professional standards
+3. Official regulator interpretations
+4. Approved domain policy
+5. Tumhare expert ke authored procedures
+6. Customer-specific policy
+7. Historical examples
+
+![Source hierarchy saat rungs ke roop mein, sabse zyada authority upar: current law, binding standards, regulator interpretations, domain policy, expert procedures (licensed heart), customer-specific policy, historical examples. Jab do sources disagree karein, oopar wala jeetata hai](/img/fig-source-hierarchy.webp)
+
+Har source ko register entry do: publisher, authority class aur scope, jurisdiction, version, effective period, rights basis, owner, aur stable ID. Register governance hai, paperwork nahi.
+
+---
+
+## Do qisam ka content: authority aur orientation
+
+System of Record ke do readers hain. Insaan ise kitab ki tarah padhta hai. Worker ise rulebook ki tarah cite karta hai. Toh har page do tarah ka content rakhta hai.
+
+**Authority** citable part hai: law, standards, is saal ke numbers, tumhara expert ka method. **Orientation** chhoti plain introduction hai jo insaan ko samajhne deti hai ke authority kya keh raha hai.
+
+![Ek governed home, do readers, do content classes. Corpus ek kitab hai do panels ke saath: authority (law, standards, thresholds, expert method — Worker cite karta hai) aur orientation (chhoti plain introductions — insaan padhte hain, Worker kabhi cite nahi karta)](/img/fig-corpus-floor.webp)
+
+Ek source, do readers. Yeh beginners miss karte hain, toh do baar padho.
+
+---
+
+## Map decisions, departments nahi
+
+Aam galti: builder paanch departments dekhta hai aur paanch agents design karta hai. Yeh org chart copy karta hai bina kaam improve kiye. Customer ne kabhi handoffs ko value nahi diya.
+
+Toh *decisions* map karo jo outcome require karta hai, desks nahi jo kaam jaata tha. Invoice review ke liye decisions hain: supplier valid hai, purchase order hai, goods receive hue, quantities aur prices match, coding sahi hai, duplicate hai, approval threshold cross, aur evidence payment ke liye sufficient hai.
+
+---
+
+## Rules, judgment, aur permissions teen alag cheezein hain
+
+**Rules** mein clear condition aur clear result hota hai. Limit se upar approval chahiye. Missing document ka matlab case incomplete hai.
+
+**Judgment** interpretation maangta hai. Kya evidence sufficient hai? Explanation commercially reasonable hai? Yeh exception material hai? Judgment support hota hai, kabhi fake nahi. Authoritative sources, expert ki guidance, examples aur counterexamples, stated uncertainty, aur escalation boundary se support karo.
+
+**Permissions** decide karti hain Worker kya *kar sakta hai* conclusion ke baad. Read. Search. Calculate. Draft. Recommend. Execute action jo undo ho sake. Execute action jo na ho sake. Yeh alag grants hain.
+
+---
+
+## Exceptions pehle design karo, normal path se pehle
+
+Routine cases dikhane mein aasan hain. Exceptions decide karti hain kya Worker trustworthy hai. Toh standard reflex complete karne se pehle, failure shapes list karo: missing evidence, conflicting evidence, outdated sources, jurisdiction uncertainty, low-confidence conclusions, tool failures, deadlines jo meet nahi ho sakte, aur customer instructions jo professional rules se conflict karti hain.
+
+Har ke liye chaar cheezein define karo: kaise detect hota hai, Worker kya kar sakta hai aur nahi kar sakta, escalate kisko karna hai, aur escalation mein kya hona chahiye.
+
+![Escalation ka bar: useless escalation sirf kehta hai Worker continue nahi kar sakta. Useful escalation batata hai invoice kyun recommend nahi ho sakta, confirm karta hai PO aur supplier valid hain, open requirement name deta hai, aur supervisor approval maangta hai](/img/fig-escalation-bar.webp)
+
+---
+
+## Reflexes dobara banao
+
+Ab naye procedures likho. Purane ki saaf copy nahi: naye, outcome aur rules se banao. Har reflex chhota rakho taake Worker ek saath hold kar sake. Phir naye kaam ko purani duniya ke numbers se check karo.
+
+![Thin aur thick outcomes count karte hain, corners nahi. Thin ek gold tile hai, thickening teen, thick saat. Har tile ek professional outcome hai jo definition of done pass kar chuka hai](/img/fig-coverage.webp)
+
+**Thin kya khareedta hai — meeting.** Yehi slice tumhe sponsor conversation mein le jaata hai jo [gate 3](/docs/ecosystem/choosing-your-vertical#step-5-validate-against-four-gates-in-60-to-90-days) maangta hai.
+
+---
+
+## Ayesha apni aunt ki checklist sort karti hai
+
+Poori page ek real artifact par chalti hai. Ayesha ki aunt firm ki working-paper checklist deti hai: ikyaaleen items, bees saal mein refine hue. Ayesha ise as is Accounting System of Record mein load nahi karti.
+
+Pehle outcome, sort se pehle likha: *ek complete working paper produce karo jo applicable standards ke under apne conclusion ko support karta hai, har material conclusion ko sufficient evidence se link karta hai, unresolved exceptions list karta hai, aur reviewer approval ke liye ready hai.*
+
+Phir archaeology: paanch real files aunt ke saath, jismein woh bhi hai jo review fail hua. Aur question jo unwritten layer unlock karta hai: *tum kya check karti ho jo checklist nahi kehta?*
+
+Phir sort. "Supporting invoices photocopy karo file mein": Bin 3, deleted. Worker sources digitally attach karta hai, hash ke saath. "Tick aur tie every balance ledger se": Bin 2. Purpose (completeness) invariant ban jaata hai. Mechanism automated check ban jaata hai exception report ke saath. Reviewer char sau lines tick karne ki jagah paanch exceptions padhta hai.
+
+Ek last cheez. "Partner going-concern judgment par sign karta hai": Bin 1, untouched. Standards us judgment ko named human ko assign karte hain, aur firm ke clients woh signature khareed rahe hain. Worker ka kaam hai partner ko us judgment ke liye sabse behtar prepared evidence dena.
+
+Derived reflex, aunt ki awaaz mein: Worker period aur standard confirm karta hai, har balance gather aur tie karta hai, har source attach karta hai, checker chalata hai, aur humans ke liye do cheezein produce karta hai: exception report aur judgment file. Reviewer exceptions aur judgments review karta hai, arithmetic nahi. Char ghante minute mein badal jaate hain.
+
+---
+
+## Templates
+
+Method ko sab kuch ek jagah. Saat working templates:
+
+### Template 1: Outcome contract
+
+| Field | Tumhari entry |
+|-------|---------------|
+| Outcome | |
+| Trigger | |
+| Inputs | |
+| Evidence | |
+| Acceptance criteria | |
+| Main number | |
+| Guardrails | |
+| Forbidden actions | |
+| Final authority | |
+| Record | |
+
+### Template 2: Sort record
+
+| Purana element | Yeh kyun hai? | Bin | Decision | Reason | Sorted by | Date |
+|----------------|---------------|-----|----------|--------|-----------|------|
+
+### Template 3: Invariants list
+
+| # | Invariant | Source | Enforced by |
+|---|-----------|--------|-------------|
+
+### Template 4: Source register
+
+| Source name | Publisher | Authority class | Jurisdiction | Version | Effective period | Rights basis | Owner | Stable ID |
+|-------------|-----------|-----------------|--------------|---------|------------------|--------------|-------|-----------|
+
+### Template 5: Decision map
+
+| Decision | Evidence required | Governing source | Rule or judgment? | Permission | Escalation condition | Record retained |
+|----------|-------------------|------------------|-------------------|------------|----------------------|-----------------|
+
+### Template 6: Exception entry
+
+| Field | Tumhari entry |
+|-------|---------------|
+| Exception | |
+| Detection | |
+| The Worker may | |
+| The Worker must not | |
+| Escalates to | |
+| The escalation must contain | |
+| While waiting | |
+| Resolution enters as | |
+
+### Template 7: Coverage register
+
+| Outcome | Jurisdiction | State | Date passed | Expert approval | Next re-check |
+|---------|--------------|-------|-------------|-----------------|---------------|
+
+---
+
+## Failure modes
+
+Tareeke jisse yeh galat hota hai:
+
+1. **Document dump.** Sauon files plus semantic search, bina hierarchy, owners, ya versions. Solution: [source hierarchy](#the-source-hierarchy-which-authority-wins).
+2. **AI-readable SOP.** Purana procedure Markdown mein convert, purane duplication aur handoffs ke saath. Solution: [teen-bin sort](#the-three-bin-sort).
+3. **Technology first.** Vector database aur agent framework outcome aur invariants se pehle. Solution: [outcome se shuru karo](#start-from-the-outcome-not-the-workflow).
+4. **Rules prompts mein chhupi hain.** Important controls sirf system prompt ke sentences mein. Solution: [rules, judgment, aur permissions alag karo](#rules-judgment-and-permissions-are-three-different-things).
+5. **Authority se pehle evidence.** Worker ko submit, send, ya paise hilane se pehle permission. Solution: [thin slice aur proof](#build-one-thin-slice-and-prove-it).
+6. **Happy-path demo.** Ek clean example, missing evidence ya wrong jurisdiction test nahi hua. Solution: [pehle exceptions design karo](#design-the-exceptions-before-the-normal-path).
+7. **First-principles theater.** Bin 1 delete kar dena kyunki woh old habit lagta tha, phir customer ki compliance meeting mein pata chalta hai ke woh law tha. Solution: sort ka pehla warning — doubt mein, Bin 1.
+8. **Unmarked textbook.** Full lesson chapters citable authority ke roop mein load, ya orientation quietly course ban jaaye. Solution: [do content classes](#two-kinds-of-content-authority-and-orientation).
+
+---
+
+## Flashcards — Study Aid
+
+<Flashcard question="Vertical System of Record design karne ka method kya hai?" answer="First-principles, legacy-informed redesign — purane kaam ko samjho, phir un truths se AI Workers ke liye dobara banao." />
+
+<Flashcard question="Purana workflow galat blueprint kyun hai?" answer="Woh insaan ki limits aur purani technology ke gird bana tha — har step accommodation hai, profession nahi." />
+
+<Flashcard question="Outcome pehle kyun likho?" answer="Kyunki baaki sab us outcome ke against measure hota hai — kya result chahiye, kya evidence prove karta hai, kya rules govern karte hain." />
+
+<Flashcard question="Workflow archaeology kya hai?" answer="Purane kaam ko samajhne ke liye real cases study karna — written procedure ke neeche tacit layer dhundhna." />
+
+<Flashcard question="Teen-bin sort kya hai?" answer="Har element ko teeno mein se ek bin mein daalo: Bin 1 (law/trust — rakho), Bin 2 (human limits — redesign), Bin 3 (purani tech — delete)." />
+
+<Flashcard question="Bin 1 kya hai?" answer="Law aur trust jo require karte hain — partner ki signature, human approval, separation of duties. Yeh invariant hai." />
+
+<Flashcard question="Bin 2 kya hai?" answer="Human limits jo require karti hain — tick-and-tie checklist, file splitting, Friday batch. Inhe Worker capabilities mein redesign karo." />
+
+<Flashcard question="Bin 3 kya hai?" answer="Purani technology jo require karti hai — dobara type karna, file rename karna. Delete karo." />
+
+<Flashcard question="Control ka purpose vs mechanism kya hai?" answer="Purpose Bin 1 hai (invariant), mechanism aksar Bin 2 hai (redesign). Jaise: review ka purpose risk control hai, lekin sabko review karna mechanism hai." />
+
+<Flashcard question="Source hierarchy kya hai?" answer="Kaun sa source jeetata hai jab do sources disagree karein: current law > standards > interpretations > policy > expert procedures." />
+
+<Flashcard question="Authority aur orientation mein kya fark hai?" answer="Authority citable content hai (law, standards). Orientation chhoti plain introduction hai jo insaan ko samajhne deti hai." />
+
+<Flashcard question="Orientation Worker kabhi cite kyun nahi karta?" answer="Kyunki orientation context hai, authority nahi. Worker standard cite karta hai, introduction nahi." />
+
+<Flashcard question="Rules, judgment, aur permissions alag kyun hain?" answer="Rules clear if-then hain. Judgment interpretation maangta hai. Permissions decide karti hain Worker kya kar sakta hai." />
+
+<Flashcard question="Pehle exceptions kyun design karo?" answer="Kyunki Worker ki trustworthy-ness exceptions par depend karti hai, routine cases par nahi." />
+
+<Flashcard question="Escalation ka bar kya hai?" answer="Useful escalation problem batata hai, evidence confirm karta hai, open requirement name deta hai, aur decision ready deta hai." />
+
+<Flashcard question="Thin SoR kya hai?" answer="Ek outcome wala System of Record — ek professional outcome, poora covered." />
+
+<Flashcard question="Thick SoR kya hai?" answer="Kai outcomes wala System of Record — har outcome complete." />
+
+<Flashcard question="Outcomes count kya karte hain?" answer="Outcomes, corners nahi — har outcome ya toh complete hai ya nahi." />
+
+<Flashcard question="Coverage register kya hai?" answer="Har outcome ke liye ek row — outcome, jurisdiction, state, date passed, expert approval." />
+
+<Flashcard question="Definition of done mein kya chahiye?" answer="Outcome defined, archaeology done, sort record, invariants, source register, decision map, exceptions, reflex built, evaluation set, governance, expert approval." />
+
+<Flashcard question="Ayesha ne kya kiya?" answer="Aunt ki 41-item checklist sort ki: Bin 3 delete, Bin 2 redesign, Bin 1 rakha. Derived reflex 4 ghante ko 40 minute mein badalta hai." />
+
+<Flashcard question="Sales aur accounting mein kya fark hai?" answer="Sales trust-governed hai (shallow hierarchy, Worker khud send karta hai). Accounting law-governed hai (deep hierarchy, Worker sirf prepare karta hai)." />
+
+<Flashcard question="Customer contamination kya hai?" answer="Customer ka content shared vertical mein move karna — yeh galti hai. Customer data Layer 4 instance mein rehta hai." />
+
+<Flashcard question="First principles kya hai?" answer="Problem ko basic truths mein todo, phir un truths se solution banao — copying ki jagah." />
+
+<Flashcard question="Legacy-informed ka matlab kya hai?" answer="First principles mein purane kaam ka study add karna — basic truths purane workflow ke andar chhupi hain." />
+
+<Flashcard question="Corpus grow kaise hota hai?" answer="Authority decisions se pull hota hai. Orientation readers se pull hota hai. Syllabus se nahi." />
+
+<Flashcard question="Thin SoR ka size kitna hota hai?" answer="Size decisions se hota hai — ek outcome poora standard aur teen regulator interpretations pull kar sakta hai." />

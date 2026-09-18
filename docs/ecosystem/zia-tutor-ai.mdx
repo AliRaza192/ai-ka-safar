@@ -2,13 +2,154 @@
 id: zia-tutor-ai
 title: "Zia Tutor AI"
 sidebar_label: "Zia Tutor AI"
-description: "Zia Tutor AI — tumhara AI tutor"
+description: "Zia Tutor AI — personal AI teacher jo Agent Factory sikhata hai, tumhara progress yaad rakhta hai, aur jahan chhodo wahan se continue karta hai"
 ---
+
+![Zia Tutor AI logo](/img/ecosystem/zia-tutor-logo.webp)
+
+**Beta 1**
 
 # Zia Tutor AI
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
+Ek personal learning agent, [Zia Khan](https://www.linkedin.com/in/ziaukhan/) ka digital twin banaya gaya, jo Agent Factory sikhata hai, tumhara progress yaad rakhta hai, aur jahan chhodo wahan se continue karta hai.
+
+Zia Tutor AI char cheezein milata hai jo ordinary AI chatbot ke paas nahi hain:
+
+- [Agent Factory System of Record](/docs/ecosystem/system-of-record) ka governed knowledge
+- [Zia Khan](https://www.linkedin.com/in/ziaukhan/) ki teaching identity, method, aur personality
+- Tumhara persistent learning record: tumne kya padha, kya samjha, aur agla kya seekhna chahiye
+- Tumhara [profile](/profile): tumhare goals, tumhara background, aur tum kaise seekhna pasand karte ho. Har lesson iske gird bana hota hai, aur tumhara hai dekhne aur badalne ke liye.
+
+![Zia Khan, jinka digital twin Zia Tutor AI hai](/img/ecosystem/zia-avatar-circle.webp)
+
+[Zia Khan](https://www.linkedin.com/in/ziaukhan/) ne Panaversity co-founded kiya aur [*The AI Agent Factory*](https://agentfactory.panaversity.org) co-authored kiya — woh kitab jo is digital twin ke through sikhayi gayi methodology introduce karti hai. Agentic AI developer, software architect, aur educator, unhone Arizona State University se engineering, business administration, aur accounting information systems mein teen master's degrees ki hain. Woh ek U.S. Certified Public Accountant (CPA) aur Certified Management Accountant (CMA) bhi hain.
+
+Zia Tutor AI tumhare paas pehle se maujud AI agent ke andar rehta hai, Claude bhi shamil. Ek connector aur ek skill add karo, ek baar authorize karo, aur seekhna shuru karo. Alag tutoring app install nahi, doosra interface seekhne ki zaroorat nahi. **Tumhara AI agent runtime hai.**
+
+---
+
+## Personal AI ek purpose se shuru hota hai
+
+Zia Tutor AI ka ek defined purpose hai:
+
+*Tumhe woh expertise dilana jo AI Workers aur Digital FTEs banane ke liye chahiye, aur Forward Deployed Engineer banna.*
+
+Yeh focus ise ek **vertical personal AI agent for education** banata hai. Yeh tumhari poori life manage nahi karta. Yeh woh context rakhta hai jo ek important journey ko shuru se competence tak guide karne ke liye chahiye.
+
+Zia Tutor AI ke paas do complementary roles hain.
+
+### Learner ke liye — Personal learning agent
+
+Yeh tumhara learning context jaanta hai aur tumhe Agent Factory mein guide karta hai.
+
+### Agent Factory ke liye — Reference expert twin
+
+Zia Tutor AI [Zia Khan](https://www.linkedin.com/in/ziaukhan/) ka **digital twin** hai: unki teaching identity, method, judgment, aur governed knowledge, agent ke roop mein encode. Engineering mein digital twin physical asset ko represent karta hai. Yahan yeh kisi insaan ki expertise aur teaching method ko represent karta hai. [The FDE Agent Factory Model](/docs/ecosystem/fde-af-model) mein yeh Layer 2 reference-expert position rakhta hai, aur har vertical eventually apna equivalent bana sakta hai:
+
+- Accounting expert twin
+- Healthcare expert twin
+- Legal expert twin
+- Engineering expert twin
+- Sales expert twin
+
+Zia Tutor AI Agent Factory sikhata hai. Vertical expert twin apne profession ka kaam sikhata hai aur support karta hai.
+
+---
+
+## Ek connector, ek skill, char records
+
+Tutor ke peeche char governed records kaam kar rahe hain:
+
+| Record | Kya rakhta hai |
+|--------|---------------|
+| **Knowledge Record** | Agent Factory System of Record — kitab ke governed concepts, methods, terminology, aur learning material |
+| **Learner Record** | Tumhara goal, tum kya karte ho, kaise seekhte ho, plus material jo complete kiya, understanding jo demonstrate ki, aur agla learning step |
+| **Identity Record** | Zia kaise sikhata hai: unki awaaz, unke principles, unke explanations, unke standards, aur unka instructional method |
+
+Mil kar yeh records system prompt wale chatbot se zyada capable cheez produce karte hain. Yeh ek tutor banate hain jo grounded hai, recognizable hai, aur continuous hai.
+
+---
+
+## Kyun zaroori hai
+
+AI education tools ki pehli generation ne har learner ko answers tak pahunchaya. Agli generation har learner ko ek personal agent tak pahunchayega jo samjhta hai:
+
+- Woh kaun hai
+- Kya achieve karna chahte hain
+- Kya pehle se jaante hain
+- Kahan struggle kar rahe hain
+- Agla kya karna chahiye
+
+Zia Tutor AI us future ka Agent Factory implementation hai.
+
+---
+
+## Setup karo — Connector + Skill
+
+Tum [claude.ai](https://claude.ai/new?modal=add-custom-connector#settings/customize-connectors) mein do cheezein add karte ho, ek baar. **Connector** kitab, Zia ki teaching, aur tumhara progress lati hai. **Skill** woh hai jisse tum use bulate ho. Uske baad, ek command se lesson shuru. Lagbhag do minute mein sab ho jaata hai.
+
+**Beta 1** — Beta mein rough edges honge. Agar kuch toote, is page ke upar feedback button se batao.
+
+[Add the connector →](#add-the-connector) · [Add the skill →](#add-the-skill) · [Start learning →](#start-learning)
+
+---
+
+### Step 1 of 3 — Add the connector
+
+1. Apne [claude.ai](https://claude.ai/new?modal=add-custom-connector#settings/customize-connectors) sidebar mein **Connectors** kholo, Customize ke under.
+
+2. **Add custom connector** par click karo.
+
+3. Neeche diye gaye **Name** aur **MCP Server URL** paste karo. Copy karne ke liye row par click karo.
+
+4. **Advanced settings** kholo. Wahan **OAuth Client ID** paste karo.
+
+:::warning
+**Client Secret khaali chhodo.** Is connector ke paas koi nahi hai. Kuch bhi type karo toh connect nahi hoga.
 :::
 
-Zia Tutor AI ek AI assistant hai jo aapki AI learning mein madad karta hai. Yeh sawal jawab deta hai, concepts explain karta hai, aur practice karwata hai.
+5. **Add** par click karo connector save karne ke liye.
+
+![Claude mein Add custom connector dialog, Zia Tutor AI ka name, MCP server URL, aur OAuth Client ID bhara hua.](/img/ecosystem/zia-tutor-connect.png)
+
+6. Apne list mein dhoondho, **Connect** par click karo, Panaversity account se sign in karo, aur approve karo. Yeh tumhara apna learner record deta hai.
+
+7. Usi page par, **Tool permissions** ko **Always allow** set karo **dono** groups ke liye. Yeh skip karo toh Claude har reply par tumhari permission maangta hai.
+
+![Zia Tutor AI Tool permissions panel Claude mein, permissions menu khula hua aur Always allow highlighted.](/img/ecosystem/zia-tutor-always-allow.png)
+
+---
+
+### Step 2 of 3 — Add the skill
+
+Yeh skill woh hai jisse Claude jaanta hai kab Zia ko bulana hai.
+
+1. Skill zip file download karo.
+
+[zia-tutor-ai.zip — Agent Skill for claude.ai](/downloads/zia-tutor-ai.zip)
+
+2. Apne claude.ai sidebar mein [Skills](https://claude.ai/new#settings/customize-skills) kholo, Customize ke under.
+
+3. **Add** par click karo, phir **Upload a skill**.
+
+![Skills page claude.ai mein, Add menu khula hua, Create with Claude, Write skill instructions, aur Upload a skill dikha raha hai.](/img/ecosystem/zia-tutor-skill-add.webp)
+
+4. File drop karo, ya click karke chuno. Pehle unzip mat karo. Claude ko zip chahiye jaise tumne download kiya.
+
+![Upload skill dialog claude.ai mein, drag and drop area aur note ke .zip ya .skill file mein SKILL.md file honi chahiye.](/img/ecosystem/zia-tutor-skill-upload.webp)
+
+---
+
+### Step 3 of 3 — Start learning
+
+1. claude.ai mein naya chat kholo aur chat box ke neeche model picker mein **Opus 5** ya **Sonnet 5** chuno. Zia ko har reply par kitab aur tumhara learner record check karna hota hai, aur yeh dono reliably karte hain. Chhote models checks chhod dete hain aur improvising shuru kar dete hain.
+
+2. Yeh type karo:
+
+`/start-zia`
+
+Zia naam se hello bolta hai aur jahan chhodo wahan se pick karta hai. Woh sirf jab tum bulao tab aata hai, toh tumhare doosre chats normal rehte hain.
+
+---
+
+[🗃️ Agent Factory System of Record →](/docs/ecosystem/system-of-record) · [🛠️ Zia Developer AI →](/docs/ecosystem/zia-developer-ai) · [📐 The FDE AF Model →](/docs/ecosystem/fde-af-model)

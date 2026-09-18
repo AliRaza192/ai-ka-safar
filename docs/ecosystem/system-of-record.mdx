@@ -2,13 +2,73 @@
 id: system-of-record
 title: "System of Record"
 sidebar_label: "System of Record"
-description: "System of Record kya hai"
+description: "Agent Factory ka content as System of Record — MCP par serve, kisi bhi AI agent se connect karo"
 ---
 
-# System of Record
+# Agent Factory System of Record
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
+Agent Factory ka content ek queryable **Content System of Record** ke roop mein, MCP par serve hota hai. Koi bhi AI agent ya worker connect karo (Claude, ChatGPT, Claude Code, Cowork, ya apna) aur usse kitab mein ground karo.
+
+Agent Factory kitab, ek queryable **Content System of Record** mein badli gayi: uske courses chunked, embedded, aur MCP par serve hote hain. Kisi bhi AI agent ya worker se connect karo — claude.ai, ChatGPT, Claude Code, Cowork, ya apne agents kisi SDK par bhi — aur yeh book se jawab deta hai, guess karne ki jagah. Wohi source hai jo Zia Tutor AI aur Zia Developer AI padhte hain, kitab khud par dogfooded.
+
+[The FDE AF Model](/docs/ecosystem/fde-af-model) mein yeh record Layer 1 ka pehla instance hai: SoR kernel. Wohi component jo yeh kitab serve karta hai woh har vertical ka corpus serve karega — accounting standards, clinical protocols, regulations. Ek component, kai corpora.
+
+---
+
+## Abhi connect karo
+
+Read-only Content System of Record MCP par live hai. Ise custom connector ke roop mein Claude mein add karo aur tumhara AI agent ya worker Agent Factory se grounded jawab dega. Connection details neeche hain. Abhi beta mein hai, toh expect karo ke yeh improve hota rahega.
+
+### Koi bhi agent ya worker connect karo
+
+Claude, ChatGPT, Claude Code, Cowork, ya kisi SDK par custom agent: kuch bhi jo MCP bol sake connect ho sakta hai aur Agent Factory ka content padh sakta hai. Ek source, koi bhi host.
+
+### Grounded, guess nahi
+
+Tumhara agent kitab se jawab deta hai aur exact section cite karta hai, training se yaad kiya improvisation ki jagah. Jab source unreachable ho, yeh fail closed hota hai: kehta hai jawab nahi de sakta rather than kuch bhi bana de.
+
+### Kitab ke saath live rehta hai
+
+Record nayi version publish hone par kitab dobara padhta hai, toh kabhi source se drift nahi karta. Kitab single source of truth bani rehti hai. Record bas wohi kitab hai, retrievable bana diya gaya.
+
+### Kitab ka apna stack
+
+Postgres aur pgvector, read-only MCP tools par serve: wohi pattern jo kitab systems of record aur RAG ke liye sikhata hai, kitab ke upar palat kar apply. Humne wohi method se banaya jo sikhate hain.
+
+---
+
+## Connect the System of Record
+
+Ise custom connector ke roop mein [claude.ai](https://claude.ai/new?modal=add-custom-connector#settings/customize-connectors) mein add karo aur tumhara agent Agent Factory se grounded jawab dega. Teen fields copy karo, phir steps follow karo.
+
+**Beta 1** — Yeh [claude.ai](https://claude.ai/new?modal=add-custom-connector#settings/customize-connectors) ke through connect hota hai aur kitab ka core content serve karta hai: About se Glossary tak, woh ~80% path jahan zyada value hai.
+
+1. Apne [claude.ai](https://claude.ai/new?modal=add-custom-connector#settings/customize-connectors) sidebar mein **Connectors** kholo, Customize ke under.
+
+2. **Add custom connector** par click karo.
+
+3. Neeche diye gaye **Name** aur **MCP Server URL** paste karo. Copy karne ke liye row par click karo.
+
+4. **Advanced settings** kholo. Wahan **OAuth Client ID** paste karo.
+
+:::warning
+**Client Secret khaali chhodo.** Is connector ke paas koi nahi hai. Kuch bhi type karo toh connect nahi hoga.
 :::
 
-System of Record woh system hai jo track karta hai ke workers ne kya kiya, kab kiya, aur kaise kiya. Yeh governance ka foundation hai.
+5. **Add** par click karo connector save karne ke liye.
+
+6. Apne connectors list mein dhoondho, **Connect** par click karo, aur jab Claude pooche toh access approve karo.
+
+7. Ab Claude se kuch pucho aur dekho woh kitab se kaise jawab deta hai: *"Use the Agent Factory System of Record and explain what AI actually is."*
+
+[Open Claude Connectors →](https://claude.ai/new?modal=add-custom-connector#settings/customize-connectors)
+
+![Claude mein Add custom connector dialog, Agent Factory System of Record ka name, MCP URL, aur OAuth Client ID bhara hua.](/img/ecosystem/system-of-record-connector.png)
+
+---
+
+:::info
+Read-only. Connect par authorization maangta hai.
+:::
+
+[🎓 Zia Tutor AI →](/docs/ecosystem/zia-tutor-ai) · [🛠️ Zia Developer AI →](/docs/ecosystem/zia-developer-ai) · [📐 The FDE AF Model →](/docs/ecosystem/fde-af-model)

@@ -2,13 +2,307 @@
 id: concept
 title: "Ecosystem Concept"
 sidebar_label: "Ecosystem Concept"
-description: "AI ka Safar ecosystem ka concept"
+description: "AI ka Safar ecosystem ka concept — ek textbook, do qisam ke readers, aur har profession ke liye ek pattern"
 ---
 
-# Ecosystem Concept
+# The Ecosystem Concept
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**Ek textbook. Do qisam ke readers. Har profession ke liye ek repeatable pattern.**
 
-AI ka Safar sirf kitaab nahi hai — yeh ek complete ecosystem hai jismein tools, platforms, aur community shamil hain.
+*The AI Agent Factory* ab sirf woh kitab nahi hai jo tum padh rahe ho. Ab uske gird ek tutor hai jo sikhata hai, ek developer agent jo us se banata hai, ek publishing pipeline jo naye audiences ke liye rewrite karegi, aur ek business model jo us par kamata hai. Mil kar yeh ek **ecosystem** banate hain: ek set of parts jo ek shared source par rehte hain aur barhte hain. Aur ismein sab kuch ek decision par khara hai, jo bolna asan hai: humne textbook ko document treat karna band kiya aur usse **System of Record** treat karna shuru kiya — ek governed source of truth jo log aur AI agents dono padhte hain.
+
+Yeh page us decision ki kahani beginning se batata hai: jab textbooks raaj karti thi tab learning kaise kaam karti thi, AI chat teacher ke taur par kyun fail hota hai, aur dono problems ko fix karna tumhare apne profession ke liye kaise ek pattern bana deta hai. Tumhe koi technical background ki zaroorat nahi. Agar tumne kabhi bhi textbook se kuch seekha hai, toh yahan sab samajh sakte ho. Koi bhi word pehli baar jahan aata hai wahi explain hota hai, aur [glossary](/docs/glossary) baaki sab rakhta hai.
+
+![Ek kitab center mein, do taraf se padhi ja rahi hai: insaan ek taraf se seekhte hain, doosri taraf AI agents, aur neeche uski professions arrayed hain.](/img/ecosystem-concept-hero.webp)
+
+---
+
+## Seedhi baat — poori page ka khulasa
+
+**System of record** woh ek jagah hai jahan kisi cheez ka official version rehta hai: jab ledger aur spreadsheet disagree karein, ledger jeetata hai. Businesses ke paas decades se hain. Kitabon ke paas kabhi nahi tha.
+
+Humne is kitab ko ek bana diya. Toh wohi source ab logon tak pahunchta hai (website padhte hain) aur AI agents tak (connector ke through padhte hain).
+
+Jab source trustworthy ho jaata hai, behtar readers us par khade ho sakte hain: ek tutor jo kitab ke author ki awaaz mein sikhata hai aur yaad rakhta hai tum kahan ruke, aur ek developer agent jo us se banata hai.
+
+Phir wohi teen cheezein — ek governed source, ek tutor, ek builder — kisi bhi profession ke liye banayi ja sakti hain. Woh repeat ecosystem hai, aur yeh page usi ke baare mein hai.
+
+---
+
+## 📚 Teaching Aid
+
+**[View Full Presentation](https://docs.google.com/presentation/d/19XyIgJmYRWmF905Mxnm2Gzj26oOeGg3yvc0Vwm82C3k/edit?usp=sharing)** — The Ecosystem Concept
+
+---
+
+## 2022 se pehle, knowledge ki ek shakal thi
+
+Database seekhne ke liye tum utha lete ho ek textbook. Yeh relational model ko normalization se pehle sikhata hai, first normal form ko second se pehle, theory ko tuning se pehle. Tum sequence negotiate nahi karte. Sequence *khud* teaching tha.
+
+Aur ek kitab teen logon ke liye kaam karti thi. **Student** us se seekhta tha. **Teacher** us se padhata tha. **Developer** usse desk par rakhta tha aur us se banata tha. Jab student developer ban jaata tha, toh system kaam kar raha tha: ek source, sab usi definitions par, usi order mein aligned.
+
+Developer kya banata tha? Real businesses ke liye vertical systems: ek ERP, general ledger, inventory system. Odoo, SAP, ya Oracle socho. Inmein se har ek business ka official data store karta hai, aur enterprise software mein inhe ek jaana pehchana naam hai: **systems of record**. System of record woh ek jagah hai jahan kisi cheez ka authoritative version rehta hai. Jab Odoo aur spreadsheet disagree karein, Odoo jeetata hai, kyunki Odoo system of record hai.
+
+Toh purana pipeline aisa tha:
+
+**Textbook → insaan seekhta hai → insaan developer ban jaata hai → developer businesses ke liye systems of record banata hai.**
+
+Har step insaanon ne kiya, insaanon ke liye.
+
+---
+
+## Phir AI ne har kitab padh li
+
+ChatGPT aur Claude aa gaye: products jinka dimagh, ek **large language model**, duniya ke published writing ka bada hissa padh ke train hua tha, textbooks bhi shamil. Model ne sau database kitabein padhi hain: har normal form, har index strategy, har worked example. OpenAI ne Study Mode ship kiya, aur Google ne apna Guided Learning le aaya.
+
+Jo humari apni kitab ke baare mein ek honest question khada karta hai:
+
+> Agar model ne pehle se sau database textbooks padh li hain, toh kisi ko ek aur ki zaroorat kyun hai?
+
+Humne question seriously liya. Agar honest jawab "koi zaroorat nahi" tha, toh hum pehle jaanna chahte the.
+
+---
+
+## Usse padhao, aur gaur se dekho
+
+Naked model se bolo *"mujhe database management systems sikhaao"*, aur dekho kya hota hai. Char failures aate hain, ek ek karke:
+
+1. **Har baar jawab badal jaata hai.** Kahan se shuru karta hai? Kabhi files vs databases se, kabhi seedha first normal form se. Kitna gehra jaata hai? Woh decide karta hai, har baar alag. Yeh patch ka intezaar nahi kar raha. Yeh [machine *kya hai*](/docs/what-ai-actually-is-crash-course): har jawab possibilities ke spread se sample hota hai. Kitab ka apna crash course seedha bolta hai: machine har token par weighted dice roll karti hai. Do baar puchho, do alag courses milo. Tees logon ka class lagao, tees alag.
+2. **Koi shuruaat nahi, koi end nahi.** Textbook mein chapter one hai aur last chapter hai. Generic AI chat mein koi nahi. Mahina baat karo aur pata bhi na chale ke subject cover hua ya sirf ek chhota hissa repeat hua.
+3. **Koi learner record nahi rakhta.** Track nahi karta tumne kya complete kiya, kahan struggle kiya, ya kahan chhoda. Koi progress report nahi, kyunki tumhari learning kahin record hi nahi hoti.
+4. **Koi method nahi.** Iski **pedagogy** wahi hai jo training data se absorb hua, kuch direct nahi karta: koi method nahi decide karta kab puchho, kab correct karo, kab aage badho. Achha teacher padhane se pehle sawaal poochta hai, tumhara level jaanne ke liye. Model teaching improvise karta hai usi tarah jaise content.
+
+Labs yeh sab jaanti hain. Study Mode, guided learning, aur memory yahi hain: machine ke gird serious product engineering. Lekin kisi field ko seekhna ek safar hai. Course mein sau decisions hote hain ke agla kya aaye: kaun si gap bharo, kaun sa concept ready hai, kaun sa ruko. Memory tumhe yaad rakhti hai, tumhara naam, tumhare projects, tumhare preferences. Learner record nahi rakhti: tumne kya demonstrate kiya, kahan struggle kiya, tumhara agla kya ready hai. Toh woh saare decisions abhi bhi tum par hain.
+
+Ab doosri taraf bhi dekho, kyunki wohi test hum par bhi kataata hai. Purane textbook mein governed sequence tha, naamshuda author ne chuna aur reviewers ne verify kiya, lekin kitab ne tumse kabhi sawaal nahi poocha, tumhe struggle karte kabhi nahi dekha, tum kahan ruke yaad nahi rakha. Woh kaam hamesha logon ke paas tha: teacher line rakhta tha, gradebook record rakhta tha. Aur sabne hamesha jaana us arrangement ka best version kya hai: ek teacher, ek learner, lesson tumhare gird banaya. Jo afford kar sake wohi exactly yeh karta tha. Classrooms aur cohorts isliye hain kyunki best se one-on-one kabhi scale nahi hua. Textbook ideal nahi tha. Yeh woh copy thi teacher ki jo hum print kar sakte the.
+
+Dono halves yaad rakho. Model mein governed source aur record dono missing hain. Textbook mein teacher missing tha. Baaki page dono fix karta hai.
+
+---
+
+## Mod: textbook System of Record ban jaata hai
+
+Business software ne source wala hissa decades pehle solve kar diya. Company har app ko apni customer list ki apni version rakhne nahi deti. Woh **system of record** chalati hai, ek jagah jahan sach rehta hai, jo doosre systems padhte hain aur trust karte hain.
+
+Humne wohi pattern knowledge par apply kiya, agents ko first-class readers bana kar. *The AI Agent Factory* [agentic AI education aur construction ke liye ek system of record](/docs/about) hai, aur yeh ek mein ship hota hai. Ise knowledge base bolo, source of truth bolo, ya Intelligence Bible bolo, jaise team bolti hai. Naam se zyada property matter karti hai: sach ek baar define hota hai, baaki sab us se padhta hai.
+
+Ab ek source do tarah ke readers tak pahunchta hai:
+
+| Reader | Door | Kya milta hai |
+|--------|------|---------------|
+| **Humans** | Kitab as website | Authored sequence mein chapters, figures, exercises. Textbook experience, free |
+| **AI agents** | [Agent Factory System of Record](/docs/ecosystem/system-of-record), MCP par | Wohi canonical content, queryable. Verified chapters aur definitions training-data guesses ki jagah |
+
+![Ek governed source do darwazon se: insaan Docusaurus kitab padhte hain, agents MCP connector se search karte hain.](/img/fig-one-source-two-doors.webp)
+
+Agar tum technical nahi ho, agla paragraph uski shape ke liye padho, parts ke liye nahi. Shape simple hai: kitab ki ek canonical copy, aur baaki sab us se generate hota hai.
+
+Dono darwazon ke neeche ek stack hai. Canonical kitab Git mein MDX (Markdown extended with components) ke roop mein rehti hai aur ek Postgres mein ingest hoti hai: vector search meaning ke liye, keyword aur full-text precision ke liye. Sab canonical copy se generate hota hai aur jab book change hoti hai tab re-sync hota hai, toh kuch source se drift nahi karta. [Default par consolidate, jaan bujhkar specialize](/docs/thesis#postgres-as-the-operational-center-of-gravity): kitab ki apni thesis, apne upar apply.
+
+Naya pipeline aisa hai:
+
+**Markdown textbook (System of Record) → insaan aur agents dono us se seekhte hain → us par bane agents sikhate hain aur banate hain → woh agents businesses ke liye vertical AI workers produce karte hain.**
+
+Purane pipeline ki shape abhi bhi hai. Jo badla woh hai ke kitab kaun padh sakta hai, aur kaam kaun kar sakta hai.
+
+![Purana pipeline aur naya pipeline side by side. Shape bachi hai, readers badal gaye.](/img/fig-two-pipelines.webp)
+
+---
+
+## Seedhi: ek kitab se chaar tarikh seekhne ke
+
+Source fix karo, toh behtar readers us par khade ho sakte hain. Har seedhi neeche wali sab kuch rakhta hai, aur jo missing tha woh add karta hai.
+
+![Chaar seedhiyaan: URL paste karo, System of Record connect karo, Zia Tutor AI, Zia Developer AI.](/img/fig-the-ladder.webp)
+
+**Seedhi 1: kitab ka URL paste karo.** Kisi bhi chatbot ko kitab ka address do aur poochho. Raw training data se behtar hai, lekin skim karta hai, kuch verify nahi, kuch yaad nahi rakhta.
+
+**Seedhi 2: System of Record connect karo.** [Ek connector](/docs/ecosystem/system-of-record) add karo aur har jawab verified chapters par grounded hota hai. Jo abhi bhi missing hai woh teacher ka kaam hai: koi tumhara sequence nahi chunta, tumhari samajh check nahi karta, ya tum kahan the yaad nahi rakhta. Content teaching nahi hai.
+
+**Seedhi 3: [Zia Tutor AI](/docs/ecosystem/zia-tutor-ai).** SoR plus personal teacher. Zia Khan is kitab ke author hain aur yeh usi ki awaaz mein likhi gayi hai, aur Zia Tutor AI unka **digital twin** hai, ordinary AI teacher ke paas jo chaar cheezein nahi hain us se banaya gaya. **Knowledge Record** khud SoR hai: kya sikhana hai. **Identity Record** unki awaaz, unke principles, aur unka instructional method rakhta hai. Tumhara **Learner Record** tumhara goal, tumne kya demonstrate kiya, aur tumhara agla step rakhta hai. Tumhara **personal profile** tumhara background aur tum kaise seekhna pasand karte ho rakhta hai, tumhara hai dekhne aur badalne ke liye.
+
+![Char records jo digital twin banate hain: Knowledge, Identity, Learner, aur personal profile.](/img/fig-four-records.webp)
+
+Yeh padhane se pehle poochhta hai, samajh check karta hai aage badhne se pehle, aur jab tum din ya hafte baad wapas aate ho, *"jahan chhoda wahan se continue"* sach mein kaam karta hai. Yeh free Claude ke andar chalta hai: ek connector aur ek skill. Kuch install nahi, kuch pay nahi. Yeh woh seedhi hai jo puri duniya kabhi print nahi kar paayi: best teacher se one-on-one session, finally scale par.
+
+**Seedhi 4: [Zia Developer AI](/docs/ecosystem/zia-developer-ai).** Developer role, restore ho gaya. Wohi kitab jo tumhe sikhata hai ab tumhare saath banati hai.
+
+### Aaj seedhiyaan kahan hain
+
+System of Record aur Zia Tutor AI **Beta 1** mein live hain, aur tum dono abhi connect kar sakte ho. Zia Developer AI **in development** hai. Jo neeche hai woh uske liye build ho raha hai.
+
+---
+
+## Yeh LMS kyun nahi hai
+
+Har education era ka ek defining system hota hai. Pichhle era mein woh LMS tha. Moodle aur Blackboard woh software the jo learning *manage* karte the: tumhe enroll karte, assignments collect karte, grades store karte, lekin kabhi ek bhi lesson nahi padhate. Teaching scarce bachi, classroom ek ek karke.
+
+Zia Tutor AI ko product se zyada samjho — yeh agle era ka defining system hai: **Personal AI Teacher**. Ek system governed content rakhta hai, real teacher ki awaaz aur method mein sikhata hai, aur tumhara record rakhta hai jab tum seekhte ho. Yeh teen kaam jo textbook, teacher, aur LMS mein bante hue the unheEk mein laata hai, aur har learner ko personally deta hai. Aur yeh template hai, one-off nahi: har vertical expert twin jo yeh kitab tumhe sikhata hai banane ka woh apne profession ke liye wohi shape hai.
+
+---
+
+## Zia Developer AI: wohi kitab, construction lane
+
+Purani duniya mein developer usi textbook se banata tha jisse student seekhta tha. Zia Developer AI us loop ko agent era ke liye restore karta hai: tumhare coding agent ke upar ek layer, pehle Claude Code plugin, OpenCode aur doosre baad mein, jo wohi System of Record padhta hai.
+
+Tum outcome describe karo. Yeh kitab se sahi architecture chunta hai, spec likhta hai, agent build karta hai, test karta hai, aur install karta hai.
+
+Yeh jaan bujhkar chhota shuru karta hai, baby steps mein, kitab ke do slices par: [Agentic Coding Crash Course](/docs/agentic-coding-crash-course) aur [Loop Engineering](/docs/loop-engineering-crash-course). Yeh commands shape dikhate hain:
+
+- **`/vloop`**: *"Mujhe ek loop banao jo har 10 minute mein Pakistani national anthem bajaye."* Yeh loop design karta hai (trigger, body, memory), build karta hai, test karta hai, aur install karta hai, jaise [Loop Engineering](/docs/loop-engineering-crash-course) sikhata hai.
+- **`/vsor`**: *"Mashoor Pakistani dishes ka ek System of Record banao."* Yeh vertical SoR ka working frame build karta hai: schema, ingestion, vector search wala Postgres, aur uske upar MCP server, wohi shape jo [kitab ka apna hai](/docs/ecosystem/system-of-record).
+- **`/vtutor`**: *"Us System of Record par ek tutor banao."* Kisi bhi domain ke liye Zia-style tutor: persona, pedagogy, learner record.
+
+`/vsor` command yeh bhi dikhata hai kaise kaam hota hai. Yeh khaali folder se shuru nahi karta. System of Record ke saath **sample repositories** aate hain: SoR kernel ke working copies, schema, ingestion pipeline, aur MCP server pehle se maujud aur tested. Agent ek leta hai aur apne domain ke liye adapt karta hai: tumhara schema, tumhara content, tumhara connector. Proven copy se banana description se tez hota hai, aur result kernel ke har fix ko inherit karta hai. Jab kernel improve hota hai, agla vertical us se bana pehle se behtar shuru hota hai.
+
+Commands training wheels hain. Manzil ek agent hai jo khud decide karta hai tumhari problem ko kaun sa loop ya component chahiye: tum requirement bolo, yeh pattern chunta hai. Jo bhi banata hai uska zyada hissa loop-shaped hoga, kyunki [real problems bhi wahi hain](/docs/loop-engineering-crash-course).
+
+---
+
+## Wohi move, har domain ke liye
+
+Dekho `/vsor` kya imply karta hai. Agent Factory ka SoR one-off nahi hai. Yeh ek **repeatable kernel ka pehla instance** hai. Wohi component kai alag knowledge collections rakh sakta hai: accounting body of knowledge, bank ki policy manual, ek cuisine, ek curriculum. Kernel ek baar fix karo, har instance usse inherit karta hai.
+
+Yahan combination powerful banta hai. Agent Factory SoR sikhata hai agents kaise banayein. Vertical SoR sikhata hai profession kya jaanta hai. Dono milao aur poore ecosystem ka general equation milta hai:
+
+**Agent Factory SoR + Vertical SoR = poora governed knowledge jo us vertical ke AI workers ko sikhaye aur banaye.**
+
+Sales ko pehla instance lelo:
+
+**Agent Factory SoR + Sales SoR = sales AI workers aur sales Digital FTEs samajhne, sikhane, aur banane ke liye sab kuch, AI employees jo full role carry karte hain.**
+
+![Vertical equation: Agent Factory SoR plus vertical SoR = us vertical ke liye complete knowledge base.](/img/fig-vertical-equation.webp)
+
+Wohi equation har domain ke liye kaam karta hai, aur har vertical ko wohi teen cheezein milti hain jo Agent Factory ke paas hain: ek System of Record, ek tutor twin, aur ek developer agent. Sales SoR ko Accounting SoR se badlo toh accounting AI workers mil jaate hain. Equation ka Agent Factory wala hissa kabhi nahi badalta. Sirf vertical wala badalta hai.
+
+Build list ke pehle verticals har company ke beech se guzarte hain: sales, marketing, human resources, supply chain, aur un se aage, koi bhi profession jismein governed karne layak knowledge ho.
+
+---
+
+## Kit hai, sealed product nahi
+
+Toh kaise banao? Yeh kitab ka agla section hai, abhi under development: **Building the Vertical FDE Harness**, woh working framework jo tum apna System of Record banane ke liye use karte ho. Method already likha hai aur live hai: [apna vertical chuno](/docs/ecosystem/choosing-your-vertical), phir [uska System of Record first principles se design karo](/docs/ecosystem/designing-the-vertical-sor). Harness woh hai jo us method ko running system mein badalta hai.
+
+Aur harness clearly karta hai jo poore ecosystem ke liye sach hai: yeh atomic, open-source components se bana hai jo sirf use nahi, built on karne ke liye hain. Vertical SoR framework, harness templates, sample repositories jo developer agent se banata hai, kitab ke apne SoR ke kernel patterns: har ek tumhara starting point hai jo le sakte ho, adapt kar sakte ho, apna bana sakte ho. Stack mein kuch bhi sealed product nahi hai. Yeh kit hai. Is se apna vertical assemble karo, aur jo assemble karo woh tumhara hai.
+
+---
+
+## Platform as a plugin, aur cost qareeb zero kyun hai
+
+Poore shape ko team ke andar ek naam hai: **platform as a plugin**. Vertical naye app ke roop mein ship nahi hota logon ke adopt karne ke liye. Yeh plugins aur connectors ke roop mein aata hai un AI apps aur coding agents par jo users pehle se chalate hain, apna System of Record saath laya. Yeh woh bhi hai jo economics ko kahin se bhi kaam karta hai: plugins tools late hain, aur **user model laata hai**. Intelligence unke free tier AI app se aati hai. Tumhari cost chhota server aur database hai, toh value LLM bill ke bina hazaaron tak scale hoti hai jo aamtaur par reach cap karta hai. Kitab tumhe har piece banana sikhata hai: [Connector-Native Apps](/docs/connector-native-apps), [Plugins for AI Agents](/docs/plugins-crash-course), [RAG on Postgres](/docs/postgres-ai-crash-course).
+
+---
+
+## Chaar rules jo saath chalte hain
+
+Concept sirf technical nahi hai. Chaar business rules poore shape ke saath chalte hain, seedha kitab ki spine se:
+
+1. **Kabhi woh mat banao jo lock kare.** Bade labs ke forward-deployed engineers har client ko ek vendor ke platform mein lock karte hain. Yeh kitab [vendor-neutral vertical FDE](/docs/how-to-get-paid-agentic-ai-era) train karta hai.
+2. **Proof pitch ki jagah leta hai.** Tumhe salesforce nahi hogi, aur zaroorat bhi nahi hogi: agentic era mein [deployment *hi* sales motion hai](/docs/how-to-sell-agentic-ai-era). Working proof, buyer ke apne data par bana, convince karta hai.
+3. **Apna suitcase khud le jao.** Tumhara method aur tumhara governed knowledge [tumhara suitcase hai](//docs/what-you-carry-in): assets jo tumhare hain, kisi ka diya hua access nahi.
+4. **Vertical chuno, phir gehre jao.** Ek profession, ek expert partnership, ek System of Record jismein baaki sab khara hai.
+
+Yeh working business kaise bante hain, layer by layer, [The FDE AF Model](/docs/ecosystem/fde-af-model) ka kaam hai: woh page business model own karta hai, yeh sirf rules ka naam leta hai.
+
+---
+
+## Aakhri step: 80 percent built, 20 percent customized
+
+Pipeline mein ek aur step hai, aur yeh woh jagah hai jahan ecosystem real customers aur real careers se milta hai.
+
+Vertical developer agents general market ke liye finished products nahi banate. Woh vertical agents banate hain jo lagbhag **80 percent complete** hote hain. Baaki **20 percent customization** hai ek specific customer ke liye: unka data, unke rules, unke integrations, aur sirf unke paas jo unusual cases hain.
+
+Concrete banalo. Sales SoR sales agent ko uska 80 percent deta hai: qualification method, discovery questions, objection answers, follow-up rhythm. FDE ka 20 percent woh hai jo sirf is customer ke paas hai: unke CRM fields, unke pricing limits, unka approval chain, aur sirf unki legal team enforce karti hai ek rule.
+
+Yahan naya dekho, kyunki software industry pehle is combination ko afford nahi kar paayi thi. SaaS era mein jab software online subscription ke roop mein bikta tha, ek product har customer ke liye kaam karta tha, aur customization matlab settings aur checkboxes, kyunki human developers real customization ko scale par deliver karna mehnga banate the. Fully custom software tha, lekin sirf un customers ke liye jo zyada pay kar sakein, aur har custom build delivery par freeze ho jaata tha: ship hone ke din se improvements inherit karna band. AI dono taraf arithmetic badalta hai. Agents 20 percent real customization ko itna sasta banate hain ke har customer tak deliver ho sake. Aur 80 percent base un sab mein common rehta hai, continuously Systems of Record se update hota, toh har deployment ship hone ke baad bhi fixes aur improvements inherit karta rehta hai. Custom jaise hand-built software, hamesha current jaise SaaS: agentic era pehli baar hai jab ek product dono ho sakta hai.
+
+80 percent repeatable core hai. Yeh dono Systems of Record se aata hai, toh grounded hai, tested hai, aur har deployment mein shared hai. 20 percent woh hissa hai jo sirf samajhdaar insaan direct kar sakta hai. Woh insaan **Vertical FDE** hai, yeh kitab jo forward-deployed engineer train karta hai, do suitcases carry karta hua: technical suitcase jo yeh kitab pack karti hai, aur domain suitcase jo tumhare paas pehle se hai, tumhari vertical ke SoR se gehra hua. Customization ka kaam woh jagah hai jahan FDE kamaata hai, aur shared 80 percent isliye hai ke woh tez deliver kar sakta hai.
+
+Doosri reason split kaam karta hai woh coding agents ke behavior se aati hai. Coding agent ko bina spec ke problem par point karo, woh log jise [**vibe coding**](/docs/spec-driven-development-crash-course) kehte hain, toh yeh koi bhi library, koi bhi framework, koi bhi workflow chun lega jo use achha lage. Do baar chalao toh do alag systems milenge. Known cure detailed specification hai, lekin har project ke liye full spec likhna woh time kha jaata hai jo agent bachane wala tha. Systems of Record us trade ko tod dete hain. Agent Factory SoR aur vertical SoR mil kar ek spec hain jo pehle se likha hai: architecture, patterns, aur profession ke workflows ek baar decide aur govern ho chuke. Toh FDE poora spec nahi likhta. FDE sirf woh thin spec likhta hai jo is customer ke liye customize karta hai, aur record baaki sab deta hai.
+
+Is 80/20 split ko [10-80-10 rule](/docs/thesis#the-10-80-10-rule-the-operating-rhythm-of-the-ai-workforce) se mat milao jo is kitab mein hai. Yeh alag cheezein divide karte hain. 10-80-10 rule ek task ko kiske kaam se divide karta hai: insaan intent se open karte hain, AI beech execute karta hai, insaan judgment se close karte hain. 80/20 split product ko share kiye gaye hisse se divide karta hai: core jo har customer ko milta hai, aur customization jo ek customer ko chahiye. Dono rules nest hote hain. Jab FDE 20 percent deliver karta hai, woh us par 10-80-10 chalata hai. FDE spec likhta hai, agents customization banate hain, aur FDE verify karta hai customer se pehle. FDE ka kaam, ek line mein, customer ke twenty pehle ten aur aakhri ten dena hai.
+
+![80/20 split product ko divide karta hai. 10-80-10 rule task ko divide karta hai. Dono splits nest hote hain, aur FDE dono tens deta hai.](/img/fig-two-splits-nest.webp)
+
+Toh poora pipeline, end to end, aisa padha jaata hai:
+
+**System of Record → us par tutor aur developer agents → uske paas vertical SoR → 80 percent complete vertical agent → insaan FDE last 20 percent deliver karta hai.**
+
+---
+
+## Yeh page kahan le jaata hai
+
+Jo kahani abhi padhi woh ship ho chuki hai, aur har piece ke paas ek door hai:
+
+- **Source connect karo**: [Agent Factory System of Record](/docs/ecosystem/system-of-record). Aaj hi koi bhi agent ko kitab mein ground karo.
+- **Teacher se milo**: [Zia Tutor AI](/docs/ecosystem/zia-tutor-ai). Bolo *"Mujhe Agent Factory sikhaao."*
+- **Builder ko dekho**: [Zia Developer AI](/docs/ecosystem/zia-developer-ai). Construction lane, in development.
+- **Business seekho**: [The FDE AF Model](/docs/ecosystem/fde-af-model). Paanch layers, aur har layer kahan kamaata hai.
+- **Khud banao**: [apna vertical chuno](/docs/ecosystem/choosing-your-vertical), phir [uska System of Record design karo](/docs/ecosystem/designing-the-vertical-sor), phir [records ko real work se jodo](/docs/ecosystem/system-of-context).
+- **Seekhna shuru karo**: [Getting Started: Crash Courses](/docs/getting-started), ya [is kitab se kaise seekhein](/docs/how-to-learn-from-this-book) guide.
+
+Purana textbook us student ko sikhata tha jo developer ban jaata tha. Yeh zyada karta hai. Yeh tumhe sikhata hai, tumhare agents ko sikhata hai, phir tumhe apne open components deta hai, toh agla System of Record, agla expert twin, agla vertical woh hai jo tum banao aur apna banao. Is page ki kahani wahin khatam hoti hai jahan tumhari shuru hoti hai.
+
+---
+
+## Flashcards — Study Aid
+
+<Flashcard question="System of record kya hai?" answer="Woh ek jagah jahan kisi cheez ka official version rehta hai — jab ledger aur spreadsheet disagree karein, ledger jeetata hai." />
+
+<Flashcard question="Kitab ko System of Record kyun banaya gaya?" answer="Taake woh sirf insaanon ke liye nahi, balki AI agents ke liye bhi ek governed source of truth ho." />
+
+<Flashcard question="Kitab ke paas do tarah ke kaun se readers hain?" answer="Humans (website padhte hain) aur AI agents (MCP ke through padhte hain)." />
+
+<Flashcard question="Purana pipeline kaisa tha?" answer="Textbook → insaan seekhta hai → developer ban jaata hai → businesses ke liye systems of record banata hai." />
+
+<Flashcard question="Naya pipeline kaisa hai?" answer="Markdown textbook (System of Record) → insaan aur agents dono seekhte hain → agents sikhate hain aur banate hain → vertical AI workers produce karte hain." />
+
+<Flashcard question="AI chat teacher ke taur par kyun fail hota hai?" answer="Char reasons: jawab har baar badalta hai, koi starting/ending point nahi, koi learner record nahi, koi method nahi." />
+
+<Flashcard question="Zia Tutor AI kya hai?" answer="Zia Khan ka digital twin, jo kitab ke author ki awaaz mein sikhata hai, progress yaad rakhta hai, aur jahan chhodo wahan se continue karta hai." />
+
+<Flashcard question="Zia Tutor AI ke paas kitni records hain?" answer="Chaar: Knowledge Record (SoR), Identity Record (author ki awaaz), Learner Record (tumhara progress), Personal Profile (tumhara background)." />
+
+<Flashcard question="Zia Developer AI kya karta hai?" answer="Tumhara AI build partner — problem describe karo, yeh architecture chunta hai, spec likhta hai, agent build karta hai, test karta hai, install karta hai." />
+
+<Flashcard question="LMS kya tha aur kyun fail hua?" answer="LMS (Moodle, Blackboard) learning manage karta tha lekin kabhi padhata nahi tha. Teaching scarce bachi." />
+
+<Flashcard question="Zia Tutor AI LMS se kaise alag hai?" answer="Yeh product nahi, defining system hai — governed content, real teacher ki awaaz, aur learner record, sab ek mein." />
+
+<Flashcard question="Seedhi 1 kya hai?" answer="Kitab ka URL paste karo kisi bhi chatbot mein. Raw training data se behtar lekin skim karta hai, kuch verify nahi." />
+
+<Flashcard question="Seedhi 2 kya hai?" answer="System of Record connect karo — har jawab verified chapters par grounded hota hai." />
+
+<Flashcard question="Seedhi 3 kya hai?" answer="Zia Tutor AI — SoR plus personal teacher, progress track karta hai, continue karta hai jahan chhoda." />
+
+<Flashcard question="Seedhi 4 kya hai?" answer="Zia Developer AI — developer role restore, wohi kitab jo sikhata hai woh banati bhi hai." />
+
+<Flashcard question="'Platform as a plugin' ka matlab kya hai?" answer="Vertical naye app ke roop mein nahi aata — plugins aur connectors ke roop mein aata hai jo users pehle se chalate hain." />
+
+<Flashcard question="Economics kyun kaam karti hai?" answer="Plugins tools late hain, user model laata hai — free tier AI apps se, toh LLM bill ke bina scale hota hai." />
+
+<Flashcard question="Char business rules kaun se hain?" answer="1) Lock mat karo, 2) Proof pitch ki jagah leta hai, 3) Apna suitcase khud le jao, 4) Vertical chuno gehre jao." />
+
+<Flashcard question="80/20 split kya hai?" answer="80 percent — shared core jo har customer ko milta hai. 20 percent — customer-specific customization." />
+
+<Flashcard question="10-80-10 rule kya hai?" answer="Ek task: insaan intent se open karta hai, AI beech execute karta hai, insaan judgment se close karta hai." />
+
+<Flashcard question="80/20 aur 10-80-10 alag kya divide karte hain?" answer="80/20 product ko divide karta hai (shared vs custom). 10-80-10 task ko divide karta hai (kaun kya karta hai)." />
+
+<Flashcard question="Vertical equation kya hai?" answer="Agent Factory SoR + Vertical SoR = poora governed knowledge jo us vertical ke AI workers ko sikhaye aur banaye." />
+
+<Flashcard question="Kernel kyun repeatable hai?" answer="Wohi component kai alag knowledge collections rakh sakta hai — accounting, banking, cuisine, curriculum. Kernel ek baar fix, har instance inherit." />
+
+<Flashcard question="80 percent kahan se aata hai?" answer="Dono Systems of Record se — grounded, tested, aur har deployment mein shared." />
+
+<Flashcard question="20 percent kaun direct karta hai?" answer="Vertical FDE — samajhdaar insaan jo customer ko jaanta hai." />
+
+<Flashcard question="FDE ke paas kitne suitcases hain?" answer="Do: technical suitcase (yeh kitab) aur domain suitcase (tumhari vertical ke SoR se gehra hua)." />
+
+<Flashcard question="Vibe coding kya hai?" answer="Bina spec ke coding agent ko problem dena — woh koi bhi library/framework chun lega, do baar do alag systems." />
+
+<Flashcard question="Systems of Record vibe coding ka problem kaise solve karte hain?" answer="Architecture, patterns, aur workflows pehle se governed hain — FDE sirf thin customization spec likhta hai." />
+
+<Flashcard question="FDE ka aakhri kaam kya hai?" answer="Customer ke 20 percent customization mein pehle 10 (spec) aur aakhri 10 (verify) dena." />
+
+<Flashcard question="Kitab ka final message kya hai?" answer="Purana textbook student ko sikhata tha jo developer banta tha. Yeh tumhe sikhata hai, tumhare agents ko sikhata hai, aur phir tumhe open components deta hai." />
