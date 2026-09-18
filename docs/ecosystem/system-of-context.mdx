@@ -2,13 +2,1358 @@
 id: system-of-context
 title: "System of Context"
 sidebar_label: "System of Context"
-description: "System of Context kya hai"
+description: "System of Context — Records ko real kaam se jodna"
 ---
 
-# System of Context
+# System of Context: Records ko Real Kaam se Jodna
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**Agent Factory System of Record, customer ke har Vertical System of Record, aur customer ke apne applications ko aik sath jod — taake insaan aur agents ko sahi waqt pe sahi context mile.**
 
-System of Context woh hai jo agents ko batata hai ke kya matter karta hai — business rules, domain knowledge, aur organizational policies.
+**Tum ne Vertical System of Record ko first principles se design kiya hai, aur Agent Factory SoR Framework pe uska pehla governed slice build kiya hai. Nateeja ek governed source hai jise do log padhte hain: insaan browser mein padhte hain, aur Workers MCP over cite karte hain. Lekin professional kaam kabhi sirf us source ke andar nahi hota. Woh customer ki company ke andar hota hai. Woh company tumhare record mein kabhi na aane wali maloomat se bhari hai: sign kiya gaya contract, aaj subah ki delivery, running balance, pichle saal ka working paper, aur woh message jismein kisi manager ne koi decision explain kiya jo kisi ne likha nahi. Tumhara Worker kaam khatam karne ke liye us sab ki zaroorat hai. Usse kabhi yeh ghalat nahi samajhna chahiye ke woh sab qanoon hai. Agla architectural masla yeh nahi hai ke ek aur source of truth kaise banaye. Yeh hai ke sahi truth aur sahi supporting context ek task ke liye kaise laye jayen, baghair unhein aik ungoverned dher mein milaye.**
+
+![System of Context: bohat saari domains, aik context layer. Upar, aik chaura panel insaanon aur AI Workers ko sath rakhta hai: woh permission ke andar sochte hain, faisla karte hain, aur kaam karte hain. Unke neeche, poori chaudai pe, aik dark slate patta SYSTEM OF CONTEXT likha hai, sone ke hub-and-spoke symbol aur is lake ke sath: yeh route karta hai, retrieve karta hai, filter karta hai, rank karta hai, cite karta hai, aur assemble karta hai. Sone ke teer panel se upar ki taraf jaate hain. Patti ke neeche chaar alag source classes hain, aur unka farq diagram ka point hai. Pehla, sone mein band, Agent Factory System of Record, jismein architecture, standards, aur governance hai, jo shared method hai. Doosra, bhi band, Vertical Systems of Record ka chaura panel, har profession ke liye aik — Sales, Accounting, Legal, HR, Tax, aur mazeed — har profession ke liye aik, aur list barhti hai. Teesra, bhi band, customer ke operational records, jismein ERP, CRM, contracts, aur ledger hai: apne state pe authoritative. Chautha, khula aur dashed terra border mein, customer ka working context, jismein email, chat, files, aur projects hain: kuch bhi govern nahi karta. Har chaar aik gold ya terra teer layer mein upar bhejte hain. Aik alag gold return path neeche readers se, layer se hokar, operational record mein jaata hai: evidence aur outcome us record mein laut-ta hai jiske paas result hai. Neeche, do sone ke rules ke beech, doctrine padha: BOHAT SAARI DOMAINS. AIK CONTEXT LAYER.](/img/system-of-context-hero.webp)
+
+**Sukhun mein**
+
+System of Record decide karta hai kya sach hai. System of Context decide karta hai kya pahunchta hai.
+
+Tumhare records Worker ko batate hain ke profession ko kya chahiye. Customer ke applications Worker ko batate hain ke abhi kya ho raha hai. System of Context dono ko jodta hai, current task ke liye zaroori cheezein dhundhta hai, check karta hai ke kaun dekh sakta hai, har source ko label rakhta hai, aur cite kiya gaya bundle de deta hai jis pe soch sakti hai. Yeh apna koi sach nahi jodta. Yeh kabhi naya source of truth nahi ban-ta. Iska poora kaam delivery hai, aur imandari se delivery karna us se mushkil hai jo lagta hai.
+
+## 📚 Teaching Aid
+
+[Full Presentation dekho](https://docs.google.com/presentation/d/1LWkx4BNNQMMBhVaHP_Y-JwofoM-P2F0pwJrs6XOk50Q/edit?usp=sharing) — System of Context
+
+---
+
+## Yeh kyun zaroori hai: Vertical System of Record zaroori hai lekin kaafi nahi
+
+**Sukhun mein**
+
+Tumhara record profession jaanta hai. Yeh is customer ke current contract, aaj subah ki delivery, taaza approval, ya us message ko nahi jaanta jo kisi exception ko explain karta hai. Worker ko dono chahiye.
+
+Ab tumhare paas do Systems of Record hain, aur [ownership argument](/docs/what-you-carry-in) ne dono ka naam liya.
+
+[Agent Factory System of Record](/docs/ecosystem/system-of-record) shared method ka maalik hai: architecture, FDE AF Model, manufacturing discipline, aur woh standards jin pe har Worker ko rakha jaata hai. Yeh har customer pe identical hai.
+
+Tumhara [Vertical System of Record](/docs/ecosystem/designing-the-vertical-sor) profession ka maalik hai: corpus, map, reflexes, invariants, source hierarchy, permissions, checkers, aur evaluations. Yeh batata hai ke kis contract type pe kaun sa rule lagta hai, candidate ko aage barhne ke liye kya evidence chahiye, kaun se clauses hamesha partner ke paas jaate hain, aur kaun sa approval kabhi delegate nahi ho sakta. Yeh sirf tumhara hai.
+
+Dono customer ki operating situation nahi jaante, aur dono ja nahi sakte.
+
+Revenue-recognition Worker ko tumhare record se professional method chahiye. Usse sign kiya gaya contract, har modification, delivery record, current billings, project progress, customer acceptance, aur is company ke approval limits bhi chahiye. Recruiting Worker lawful screening method bilkul jaanta ho sakta hai lekin phir bhi open role, approved description, candidate ki application, aur hiring manager ki authority chahiye. Ledger Worker standard jaanta ho sakta hai lekin phir bhi yeh jaanna chahiye ke is firm ne 2023 mein lease ko kyun waisa treat kiya jaisa kiya, jab decide karne wala chala gaya.
+
+Toh Worker ko ek sath do alag cheezein jaanni hote hain:
+
+> **Profession ko kya chahiye?**
+
+aur:
+
+> **Is case mein abhi kya sach hai?**
+
+Systems of Record pehle sawal ke jawab rakhte hain, aur doosre ke authoritative hisse. System of Context dono ka jawab dene ke liye zaroori cheezein assemble karta hai.
+
+Yeh layer chhod do toh sabak mushkil se milega. Tumhara Worker standard bilkul sahi cite karega aur contract dhoond sakega nahi. Yeh ek brilliant graduate hai apne pehle din pe, textbook haath mein, ek building mein jismein kisi ne filing cabinet dikhayi nahi.
+
+## Do tarah ke record, aur unke upar ki layer
+
+**Sukhun mein**
+
+"Record" ka lafz ab do alag cheezein cover karta hai. Customer ka ERP hai jo batata hai kya hua. Tumhara Vertical System of Record hai jo batata hai ke profession ko kya chahiye. Dono authoritative hain, aur dono ek doosre ka sawal ka jawab nahi de sakte. System of Context record bilkul nahi hai.
+
+Tumhare record ki appendices ne yeh farq pehle bhi do baar draw kiya hai, aur dono baar warning ke sath. [Sales appendix](/docs/ecosystem/designing-the-vertical-sor#appendix-a-a-sales-system-of-record-end-to-end) kehta hai CRM deals rakhta hai aur System of Record profession rakhta hai. [Ledger appendix](/docs/ecosystem/designing-the-vertical-sor#appendix-b-a-general-ledger-system-of-record-end-to-end) kehta hai accountants pehle se general ledger ko system of record kehte hain, aur woh sahi hain, aur finance buyer ke saamne kabhi dono ko mix mat karna kyunki woh pakar lega.
+
+Yeh page us farq ko aur tez karta hai, kyunki jab tum customer ke applications jodte ho toh teeno cheezein ek sath haath mein aa jaati hain.
+
+**Traditional System of Record**
+
+**Governed knowledge record**
+
+**System of Context**
+
+Yeh kya hai
+
+ERP, CRM, HRIS, general ledger, practice management system
+
+Agent Factory SoR, aur har profession ke liye Vertical SoR, FDE AF Model se banaya gaya
+
+Connecting layer
+
+Yeh kya rakhta hai
+
+**State:** kya hua, balance kya hai, kisne approve kiya, aur kab
+
+**Rules aur method:** profession ko kya chahiye, kya evidence count karta hai, kaun sa judgment escalate hota hai
+
+**Apna koi sach nahi.** Connectors, indexes, routing policy, permission mappings, packet schemas, aur logs
+
+Yeh kis cheez pe authoritative hai
+
+Apne scope ke andar ke facts
+
+Profession ke requirements aur build method
+
+Koi sawal bhi nahi
+
+Yeh kya decide karta hai
+
+Sach ke baare mein kuch nahi
+
+State ke baare mein kuch nahi
+
+Filtering, routing, ranking, assembly
+
+Yeh kya sawal ka jawab deta hai
+
+Number kya hai?
+
+Rule kya hai?
+
+Is task ke liye abhi kya relevant hai?
+
+Worker is tak kaise pahunchta hai
+
+MCP over typed query
+
+Authored, governed pages pe retrieval, cited
+
+Dono, plus ungoverned baaki
+
+Kisne banaya
+
+Customer, dashakon mein
+
+Tum, apne expert ke sath
+
+Tum, har customer pe
+
+Kya toot-ta hai bina iske
+
+Business ruk jaata hai
+
+Har Worker profession ko improvise karta hai
+
+Worker rules jaanta hai aur file dhoond nahi pata
+
+Teesre column ke baare mein bilkul sahi: **System of Context koi business fact, koi professional rule, aur koi authoritative record nahi rakhta. Yeh woh machinery rakhta hai jo locate, filter, route, aur assemble karti hai.** Yeh din bhar real operational decisions leta hai. Koi bhi decision sach ke baare mein nahi hai.
+
+**Pehle dono Systems of Record hain, aur dono authoritative hain. Woh alag tarah ke sach pe authoritative hain.** Aik state rakhta hai. Doosra rules rakhta hai. Ledger tumhein nahi bata sakta ke koi treatment sahi hai ya nahi. Standard tumhein nahi bata sakta balance kya hai. Dono mein se kisi se doosre ka sawal pucho toh confident, bekaar jawab milega.
+
+![Do tarah ke record, aur unke upar ki layer. Do band sone ke khambhe ek hi foundation line pe khade hain. Bayein khamba, traditional System of Record, ERP, CRM, aur general ledger dikhata hai: owns state, customer ne dashakon mein banaya, typed query se pahunchta hai, aur yeh sawal ka jawab deta hai number kya hai. Dayen khamba, governed knowledge record, Agent Factory System of Record aur Vertical System of Record dikhata hai: owns rules aur method, tumne apne expert ke sath banaya, cited retrieval se pahunchta hai, aur yeh sawal ka jawab deta hai rule kya hai. Dono khambhon ke beech ek dashed line hai: neither can answer the other's question. Dono ke upar, transparent aur khula, System of Context baithta hai: owns nothing, tumne har customer pe banaya, yeh jawab deta hai is task ke liye abhi kya relevant hai. Chautha input side se aata hai: customer ka ungoverned material, email, chat, aur shared drives: no record at all](/img/fig-two-kinds-of-record.webp)
+
+Darmiyani khamba nayi cheez hai, aur yeh ruk kar sochne laya hai ke yeh pehle kyun nahi tha. Insano ke daur mein professional knowledge logon ke dimagh mein, training courses mein, aur non-versioned procedure documents mein rehta tha. Yeh machine-citable kabhi nahi chahiye tha, kyunki koi machine kaam nahi kar rahi thi. Agentic era ne pehli baar yeh zaroorat paida ki, aur FDE AF Model uska jawab hai. Isi liye [design page](/docs/ecosystem/designing-the-vertical-sor) hai, aur isi liye tum jo asset client ke paas le jaate ho woh kisi ERP vendor ne kabhi nahi becha.
+
+### QuickBooks data rakhta hai. Profession nahi rakhta.
+
+Sabse familiar example accounting mein lo, kyunki oopar ka abstract table tab sahi lagta hai jab real product ka naam lo.
+
+QuickBooks ek traditional accounting System of Record hai. Yeh chart of records, har transaction, balances, invoices, reconciliation state, aur yeh record rakhta hai ke kisne kab kya post kiya. Pucho account 1200 mein aaj subah kya hai toh bilkul sahi jawab deta hai, aur sahi hai, aur building mein us sawal ka koi behtar jawab nahi deta. Yeh real controls bhi enforce karta hai: double-entry, period locking, user roles, aur audit trail. Yeh filing cabinet nahi hai.
+
+Ab pucho ke Henderson lease ko current standard ke tehat finance lease classify karna chahiye tha ya nahi.
+
+Iske paas koi jawab nahi hai. Yeh is liye nahi ke yeh kamzor product hai, balki is liye ke yeh uska kaam kabhi tha nahi. Classification rule standard mein hai. Firm ki threshold policy document mein hai. Is particular lease ke baare mein judgment partner ke dimagh mein hai, ya kisi memo mein jo kisi ne version nahi kiya. QuickBooks us judgment ka natija wafadari se record karta hai. Yeh judgment nahi rakhta, aur check nahi kar sakta.
+
+**QuickBooks jo record hua hai us pe authoritative hai. Tumhara record authoritative hai ke usay waisa record karna chahiye tha ya nahi.** Dono ki zaroorat hai ek working paper khatam karne ke liye, aur unhein jodne se na kisi ka authority badalta hai. Yeh gap, aur koi accounting software ki kami nahi, tumhare Vertical System of Record ke hone ki wajah hai.
+
+Yeh sentence har vertical pe kaam karta hai. Salesforce deals rakhta hai aur qualification method nahi. Workday employment records rakhta hai aur lawful screening standard nahi. Epic patient chart rakhta hai aur clinical guideline nahi. Har ek apne domain pe complete hai aur us profession ke baare mein chup hai jis se ghera hua hai, aur har ek purposely waisa banaya gaya.
+
+### Ek lafz ka khayal — kaise kehte hain
+
+Yeh farq tumhein vendor material mein milega. Yeh aksar ek lafz ke sath aata hai jo seller ki taraf jhuka hota hai: traditional record sirf data *store* karta hai, jabke context layer usay *interpret* karta hai.
+
+Neeche ka point sahi hai. Lekin yeh phrasing tumhari meeting le jayegi.
+
+ERP ya practice system sirf store nahi karta. Yeh transactional integrity, segregation of duties, approval limits, period control, aur audit trail enforce karta hai, aur woh controls hain jiski wajah se business chal sakta hai. Tumhare apne record ke invariants un pe depend karte hain. Finance director ne das saal se us system ko auditors ke saamne defend kiya hai, aur usay storage sun kar usay bilkul pata chal jaata hai ke tum uski duniya ke baare mein kitna samajhte ho.
+
+Toh sahi cheez bolo, kyunki woh zyada persuasive bhi hai. Traditional record apne domain pe authoritative aur complete hai, aur baaki sab pe chup hai. **Gap scope ka hai, serious ka nahi.** Buyer jo yeh sun-ta hai usay ab pata chalta hai ke tum us system ko replace karne nahi aaye jis pe woh bharosa karta hai.
+
+Yeh aadat ke taur pe sochne laya hai, sirf fact ke taur pe nahi. Vendor material vendor ke layer ko woh batata hai jahan intelligence hai, aur neeche ke har layer ko plumbing. Yeh [teesri survival skill](/docs/about#four-skills-to-survive-the-agent-era) ki sabse aam shakal hai. Architecture padho. Adjectives ko kam karo.
+
+## Teen layers, teen kaam
+
+**Sukhun mein**
+
+Ek layer se mat kaho ke teeno kaam kare. Records sach rakhte hain. Context layer jo relevant hai assemble karta hai. Worker sochta hai aur kaam karta hai.
+
+Layer
+
+Yeh kya sawal puchta hai
+
+Yeh kya kaam karta hai
+
+Yeh kabhi kya nahi ban sakta
+
+**Systems of Record**, dono tarah ke
+
+Officially kya sach hai?
+
+Facts, rules, versions, permissions, aur evidence govern karo
+
+Ek loose search index
+
+**System of Context**
+
+Is task ke liye abhi kya relevant hai?
+
+Jod, route, retrieve, filter, rank, label, cite, assemble
+
+Ek shadow source of truth
+
+**Human ya AI Worker**
+
+Kya conclude ya perform karna chahiye?
+
+Soch, authority ke andar faisla karo, tools se kaam karo, evidence banao
+
+Apna ungoverned policy maker
+
+Aik farq poore architecture ko jod ke rakhta hai, aur isay do baar padhna chahiye. **System of Context Systems of Record ke upar access mein hai. Authority mein nahi.** Yeh dekh sakta hai un pe. Un se upar nahi. Access upar ki taraf hai. Authority abhi bhi us source ki taraf hai jiske paas fact ya rule hai.
+
+![Teen layers, teen kaam, ek stack ke taur pe draw kiya gaya jismein do teer ek doosre ke opposite jaate hain. Upar, ek human professional aur ek AI Worker sath hain: reason, decide, act, explain. Unke neeche System of Context, transparent patta ke taur pe: connect, route, filter, retrieve, rank, cite. Unke neeche, teen foundations: Agent Factory System of Record jo shared method aur architecture rakhta hai, Vertical System of Record jo professional truth aur reflexes rakhta hai, aur customer ke systems jo contracts, ERP, CRM, files, aur messages rakhte hain. Halka teer access labeled hai jo foundations se upar context layer se hokar Worker tak jaata hai. Sone ka teer authority labeled hai jo uska opposite jaata hai, Worker ke citation se neeche context layer se hokar us source pe girta hai jiske paas fact hai. Caption: access upar points karta hai, authority neeche points karta hai](/img/fig-three-layers-three-jobs.webp)
+
+## Aik qanoon: authority kabhi nahi hoti
+
+**Sukhun mein**
+
+Delivery driver ke baare mein socho. Driver aapke darwaze pe parcel laata hai. Parcel bhejne wale ka hai, driver ka nahi.
+
+System of Context driver hai. Record bhejne wala hai. Jab Worker batata hai ke jawab kahan se aaya, usay record ka naam dena hota hai. Driver ka naam kabhi nahi dena.
+
+Is page ka har cheez ek jumle pe depend karti hai, aur isay deewar pe likhna chahiye.
+
+**System of Context authority le ke chalta hai. Kabhi rakhta nahi.**
+
+Jab Worker standard cite karta hai, citation tumhare Vertical System of Record ki register row pe point karta hai: publisher, class, jurisdiction, version, stable ID. Yeh context layer pe point nahi karta, aur na hi us copy pe point karta hai jo context layer ke paas hai. Copy finding aid hai. Record source hai.
+
+Yeh sab se zyada zaroori hai jab kuch badalta hai. Standard supersede hota hai, aur tumhara [impact record](/docs/ecosystem/designing-the-vertical-sor#build-one-thin-slice-and-prove-it) har map, reflex, aur evaluation case ko trace karta hai jo uske sath chalna chahiye. Yeh chain record se guzarti hai. Context layer ko doosra authority banao toh chain mein ek branch aa jaati hai jisko koi govern nahi karta. Tumhara corpus current hai, aur Worker pichle saal ka rule us index se quote karta hai jise message kabhi nahi mila.
+
+![System of Context ka aik qanoon, ek supply line ke taur pe draw kiya. Bayein, do governed records sone ki muhar ke sath, har ek mein owners, versions, jurisdictions, aur stable IDs. Darmiy mein, System of Context transparent pipe ke taur pe jo copies rakhta hai: finding aid, not source. Dayen, Worker jawab banata hai jiska citation arrow seedha pipe se guzarta hai aur record ki register row pe girta hai. Neeche, grey aur crossed out, alternative: citation context layer pe rukta hai: second record, yeh woh failure hai jo yeh qanoon rokta hai. Caption: yeh authority le ke chalta hai, kabhi rakhta nahi](/img/fig-authority-never-moves.webp)
+
+## Model bhi source nahi hai
+
+**Sukhun mein**
+
+Oopar ka qanoon kehta hai authority records mein hai, aur connecting layer mein kabhi nahi. Woh model mein bhi nahi hai. Model tumhein di gayi maloomat pe bohat achi tarah soch sakta hai. Lekin woh jagah nahi hai jahan se maloomat aati hai.
+
+Kisi frontier model se pucho ke current lease classification threshold kya hai toh shayad jawab de, fluently, aur shayad sahi bhi ho. Yehi cheez khatarnak hai. Toh jo missing hai usay sahi tarike se samajhna zaroori hai, kyunki gap accuracy nahi hai. Accuracy ke ird gird sab kuch hai.
+
+**Model ke paas koi source nahi.** Iske paas weights hain, aur weights training corpus ke compression hain, record nahi. Jawab ke peeche koi register row nahi: koi publisher, koi authority class, koi jurisdiction, koi version, koi effective period, koi owner, koi rights basis, aur jawab aane wale text tak koi rasta nahi. Tumhare record ki [source register](/docs/ecosystem/designing-the-vertical-sor#template-4-the-source-register) mein nau columns hain. Model ke jawab mein se koi bhi nahi hai, aur baad mein koi bhi add nahi ho sakta.
+
+**Plausibility provenance nahi hai.** Model sabse zyada likely continuation banata hai. Rule jo sunne mein rule lagta hai aur rule jo rule hai, dono ka shape same hai, toh fluency correctness ke baare mein koi information nahi deta. Tumhare record ne yeh failure pehle doosre domain mein naam diya: assumption jo confirmed fact ke taur pe likha gaya hai woh sales version hai invented citation ka. Model-supplied rule wohi error hai better grammar ke sath.
+
+**Model release ka naam aur date ho sakta hai. Uske andar ke propositions nahi.** Yeh woh argument hai jo settle karta hai. Jab standard badalta hai tum page edit karte ho, aur [impact record](/docs/ecosystem/designing-the-vertical-sor#build-one-thin-slice-and-prove-it) har map, reflex, aur evaluation case ko trace karta hai jo uske sath chalna chahiye. Tum weights ke andar ek statement edit nahi kar sakte. Wahan ka aik rule ke paas koi source lineage nahi, koi authority class nahi, koi jurisdiction nahi, koi effective period nahi, aur koi version nahi jisay tum akele correct kar sako. Model release ka naam dene se yeh theek nahi hota, kyunki release ek label hai millions of propositions ke upar. Source jiske individual claims correct ya date nahi ho sakte woh source nahi hai jis pe profession bharosa kar sake.
+
+**Model permission enforcement point nahi hona chahiye.** Identity uske ird ke system ko di ja sakti hai. Lekin jo kuch bhi model ke context mein rakha jaata hai woh uski reasoning ke liye available hai, jo bhi pooch raha ho. Yehi wajah hai ke [permission filtering context ke model tak pahunchne se pehle hoti hai](#permission-comes-before-the-model), aur baad mein kabhi nahi.
+
+**Aur uski knowledge ka cutoff hai, jabke profession ka nahi.** Rules regulator ke schedule pe badalte hain, laboratory ke nahi.
+
+![Model source nahi hai. Bayein, sone mein aur band, governed record jo nau register columns dikhata hai: publisher, authority class, scope, jurisdiction, version, effective period, rights basis, owner, aur stable ID, retrieval arrow us exact cited passage tak jaata hai, aur label: correctable, versioned, re-examinable. Dayen, grey mein, model weights ke block ke taur pe jiske neeche wohi nau column headings hain, har ek khaali aur struck through, aur toota hua arrow jo ruk jaata hai: no path back to the text. Model ke neeche, teen channels jo quiet leaks hain: gap fill jahan retrieval kuch nahi laaya aur model ne phir bhi jawab diya, drifting paraphrase jahan retrieved rule dubara likha jaata hai aur threshold kho jaata hai, aur persistent model memory jahan facts sessions mein rehte hain bina owner ya version. Neeche, test sone mein: kya reviewer is conclusion ko record se rebuild kar sakta hai, model se baghair pucho?](/img/fig-model-is-not-a-source.webp)
+
+### Teen jagah model chupke se source ban jaata hai
+
+In mein se koi bhi us waqt faisla nahi lagta. Isi liye in ka naam lena zaroori hai.
+
+**Gap fill.** Retrieval kuch useful nahi deta, aur model phir bhi jawab de deta hai jo usay lagta hai ke usay pata hai. Output form mein grounded se alag nahi dikhta, aur koi error message nahi aata. Ilaaj structural hai: missing evidence packet mein aik field hai, aur reflex jo apna governing source nahi dhoond pata escalate karta hai, aage nahi badhta.
+
+**Drifting paraphrase.** Model sahi passage retrieve karta hai aur usay apne lafzon mein likhta hai, aur dubara likhne mein chupke se koi threshold, condition, ya scope kho jaata hai. Tumhare record ne pehle corpus ke andar paraphrased authority ke baare mein warning di thi, jahan re-explained standard citable ho jaata hai aur phir tumhari muhar ke sath drift karta hai. Yehi drift jawab ke waqt hota hai, aur ilaaj wohi hai: governing text ko quote aur cite karo, dobara express mat karo.
+
+**Unmanaged persistent model memory.** Model jo facts sessions mein carry karta hai, jismein koi owner ya version nahi, woh unversioned aur unauditable store ban jaata hai. Yeh shadow record hai jo product feature se aata hai, design decision se nahi, isliye teeno mein se sab se mushkil pakarna hai.
+
+### Model asal mein kya hai
+
+Yeh sab model ko kam participant nahi banata. Yeh alag banata hai.
+
+Model execution layer hai, aur [10-80-10 rule](/docs/thesis#the-10-80-10-rule-the-operating-rhythm-of-the-ai-workforce) mein yeh darmiyan ke eighty rakhta hai. Isay governing rule, current facts, aur supporting context do. Yeh reflex lagaayega, calculation chalayega, missing evidence notice karega, do sources ke conflict ko dekhega, working paper draft karega, aur apni reasoning explain karega taake reviewer check kar sake.
+
+Yeh bohat zyada professional kaam hai. Iska koi bhi hissa model ko source banne ki zaroorat nahi.
+
+Poora architecture padho toh yeh us ke liye hai. Records pehle ten percent rakhte hain, jo governed intent hai. Model eighty carry karta hai. Named human aakhri ten percent karta hai. **System of Context is liye hai kyunki darmiyan ke eighty ko supply ki zaroorat hai, aur model khud supply nahi kar sakta.**
+
+Aik test kisi bhi borderline case ko settle karta hai, aur woh wohi test hai jo tumhare record working paper pe lagta hai. **Kya reviewer is conclusion ko record se rebuild kar sakta hai, model se baghair?** Agar haan, toh model ne socha. Agar nahi, toh model source tha, aur conclusion defensible nahi hai.
+
+## Authority bohat saari records mein scoped hai
+
+**Sukhun mein**
+
+Koi aik document har sawal jeet-ta nahi.
+
+Tumhara record professional kaam govern karta hai. Sign kiya gaya contract apne terms govern karta hai. ERP govern karta hai ke invoice post hua ya nahi. Aur ek company ek sath bohat saare governed records chalati hai: sales ke liye aik, accounting ke liye aik, law ke liye aik, aur mazeed.
+
+*Federated* ka matlab yahan sirf aik hai: bohat saare records, har ek apna authority rakhta hai, ek layer se jude jise koi mix nahi karta.
+
+Tumhare record ne refinement bhi de diya: hierarchy hamesha ek ladder nahi hoti, kyunki oopar ka source tab jeetta hai jab dono sources ek hi sawal pe baat karein. System of Context yeh unavoidable banata hai. Yeh aise sources jodta hai jo bilkul alag tarah ke sach pe authoritative hain, aur woh ek ladder pe fit hi nahi hote.
+
+Source
+
+Yeh kya govern kar sakta hai
+
+Yeh automatically kya govern nahi karta
+
+**Agent Factory System of Record**
+
+Shared architecture, manufacturing method, Worker standards, FDE practice
+
+Customer ke transaction facts, ya profession ka law
+
+**Vertical System of Record**, aur customer ek se zyada chala sakta hai
+
+Ek profession ke rules, source hierarchy, judgment guidance, reflexes, checkers
+
+Ke aaj subah delivery hui, ya kisi doosre profession se kuch bhi
+
+**Sign kiya gaya contract ya legal instrument**
+
+Parties ke obligations, prices, dates, rights, aur modifications
+
+Usay account karne ya manage karne ka professional method
+
+**Traditional System of Record**, jaise ERP, CRM, ya ledger
+
+Apne scope ke andar current state: invoice post hua, item deliver hua, user approve hua
+
+Woh state kya hai decide karne wala professional rule
+
+**Approved customer policy**
+
+Customer-specific thresholds, responsibilities, aur operating rules
+
+Law, ya binding professional standards
+
+**Working documents aur messages**
+
+Explanation, intent, clues, pending work, informal coordination
+
+Final authority, jab tak formally approve ya incorporate na ho
+
+Toh architecture ko **authority routing** chahiye, aur yeh settled hona chahiye pehle ke kisi bhi retrieved item pe as governing authority rely kiya jaaye. Discovery pehle chal sakta hai aur ambiguous request classify karne mein madad kar sake. Jo kabhi nahi hona chahiye woh hai ke routing ne decide kiye bina koi passage rule treat ho jaye. Aath questions request ka shape resolve karte hain:
+
+1.  **Kaun sa profession is sawal ka maalik hai?**
+2.  Kaun pooch raha hai?
+3.  Kiske liye customer, aur kis case ke liye?
+4.  Kya task perform ho raha hai?
+5.  Kaun si jurisdiction aur effective date lagti hai?
+6.  Har zaroori fact ya rule kis source ka hai?
+7.  Yeh human, aur yeh Worker, kya padh sakta hai?
+8.  Kya action, agar koi, ho sakti hai?
+
+Sawal aik pehle is liye hai, aur baaki is section ki wajah hai.
+
+Source bilkul relevant ho sakta hai lekin us sawal ko settle karne ka authority nahi ho sakta. Chat message jo kehta hai *isay approved treat karo* bata sakta hai ke kaam kyun ruka. Yeh approval nahi ban jaata.
+
+> **Relevance authority nahi hai. Retrieval candidates dhundhta hai. Governance decide karta hai kya count karta hai.**
+
+### Portfolio, pair nahi
+
+[Choosing Your Vertical](/docs/ecosystem/choosing-your-vertical) tumhe kehta hai ek banao: ek profession, ek country, ek expert. Yeh advice nahi badalti. Lekin jis customer mein deploy karte ho woh company hai, profession nahi, aur company ek sath kai chalati hai.
+
+Ek mid-sized firm ke paas accounting Vertical System of Record ho sakta hai, sales ka, aur HR ka, teeno alag logon ne teeno alag waqt pe banaye, aur koi bhi tumhara nahi. Uske Workers teeno se padhte hain. Uska System of Context teeno ko jodta hai, traditional records aur ungoverned material ke sath. Waqt ke sath list badhti hai: tax, legal, procurement, customer support, compliance. **Har addition routing map mein naya column hai, index mein naya dher nahi.**
+
+Teen rules follow karte hain:
+
+**Vertical ka methodology kabhi apni seam se paar nahi jaata.** Sales record ka qualification method kisi qualified deal pe real authority rakhta hai, aur revenue recognisable kab hai pe koi nahi. Phir bhi revenue question pe achi tarah retrieve karega, kyunki words overlap karte hain. Yeh relevance without authority ka sabse tez everyday case hai.
+
+**Kabhi do records ko aik corpus mein merge mat karo.** Yeh wohi warning hai jo tumhare record ne pehle jurisdictions ke baare mein di thi. Mixed page dono professions mein cite nahi ho sakta, accountant usey accounting nahi pehchane ga, aur dono hierarchies jo flatten hui thin baad mein recover nahi ho sakti. Alag records, alag ladders, unke upar aik layer.
+
+**Tumhari asset compose hoti hai, aur tumhare business ke liye yeh achi khabar hai.** Tumhein kabhi kisi company ka poora professional knowledge apne andar rakhne ki zaroorat nahi hai taake tum useful ho. Tum ek profession rakhte ho, gehra, aur layer usey baaki ke sath unmerged baithne deta hai. Isi liye ek vertical choose karna strategy hai, limitation nahi.
+
+Gehra notice karo ke kya multiply nahi hota. Bohat saare Vertical Systems of Record hain aur bilkul aik [Agent Factory System of Record](/docs/ecosystem/system-of-record) hai, kyunki unhein banane aur govern karne ka method har profession mein same hai. Yehi poora wajah hai ke yeh shared hai.
+
+![Aik customer, kai verticals. Neeche, aik chaura sone ka foundation: Agent Factory System of Record, shared method, aik, har jagah same. Us pe khade hain teen alag band sone ke khambhe sath sath: Accounting Vertical System of Record, Sales Vertical System of Record, aur HR Vertical System of Record, har ek ke andar apni source ladder, aur har ek labeled: alag insaan ne, alag waqt pe banaya. Accounting aur sales ke khambhon ke beech, seam pe do statements ek doosre se muh karte hain: sales kehta hai deal June mein band hua, accounting kehta hai revenue acceptance tak recognizable nahi hai, aur sone ka label: both correct, resolved by scope. Seam ke neeche, failure: aik mixed sentence, crossed out: a claim neither profession made. Teenon khambhon ke upar, aik transparent System of Context: do-step routing gate, step one: kaun sa profession is sawal ka maalik hai, step two: uske andar kaun sa source govern karta hai. Khambhon ke sath, do aur sources alag alag: customer ke operational records, band, apne state pe authoritative, aur customer ka working context, khula aur dashed, governed by nothing](/img/fig-several-verticals.webp)
+
+### Aik business event, kai governing records
+
+Customer twenty percent discount maangta hai aur revenue is quarter mein chahta hai. Yeh aik jumla hai ek buyer ka, aur yeh aik sawal nahi hai.
+
+Sawal kya hai
+
+Kaunsa record govern karta hai
+
+Kya yeh opportunity sahi tarike se qualified hai?
+
+Sales
+
+Kya twenty percent discount commercial authority ke andar hai?
+
+Sales
+
+Kya contract terms arrangement ko enforceable banate hain?
+
+Legal
+
+Kya customer zaroori checks se guzar chuka hai?
+
+Compliance
+
+Revenue kab recognizable hai?
+
+Accounting
+
+Tax treatment kya hai?
+
+Tax
+
+Parties ne asal mein kya discuss kiya?
+
+Koi record govern nahi karta. Supporting context, email, CRM notes, ya transcripts se
+
+Kya deliver aur accept hua?
+
+Delivery, contract, ya project record, live query
+
+Kya hum aaj invoice bhej sakte hain?
+
+Traditional record, live query
+
+Koi aik record us situation ka maalik nahi hai, aur koi puch bhi nahi sakta. Layer ke char kaam hain. Request ko uske hisson mein todo. Har hisse us record ko bhejo jo usay govern karta hai. Un hisson ke liye zaroori customer facts lao. Phir aik packet banao jismein har finding abhi bhi us record ka naam rakhe jo se aaya.
+
+Alternative woh hai jo zyada tar implementations karte hain: poora jumla aik search mein bhej do sab pe, aur top-ranked paragraph aathon sawalon ka ek sath jawab de. Yeh is architecture ka kamzor version nahi hai. Yeh doosra architecture hai, jismein kahin koi authority nahi.
+
+**Aur seams wahan hain jahan interesting disagreements rehte hain.** Sales kehta hai deal June mein band hua, aur sahi hai, kyunki closing sales event hai sales evidence ke sath. Accounting kehta hai revenue acceptance tak recognizable nahi hai, aur yeh bhi sahi hai. Yahan kuch toota nahi. Do professions do alag sawalon ka jawab de rahe hain, aur Worker jo blend kare woh aik claim banata hai jo kisi profession ne nahi kaha. Yeh sabse saaf *resolved by scope* ka case hai, isliye [yeh outcome](#conflict-is-a-result-not-a-retrieval-failure) *resolved by authority* se pehle hai.
+
+![Aik business event, kai governing records. Upar, aik request card: aik jumla ek buyer ka, customer twenty percent discount ke sath revenue is quarter mein recognizable maangta hai. Uske neeche gate: decompose, phir route by profession. Aath rows neeche fan out, har ek sawal ko us record ke sath jo usay govern karta hai. Opportunity qualified hai, aur twenty percent authority ke andar hai, dono sales record pe route. Terms enforceable hai legal pe. Customer checks se guzra hai compliance pe. Revenue recognizable hai accounting pe. Tax treatment tax pe. Parties ne kya discuss kiya supporting context pe. Kya deliver accept hua, aur kya invoice bhej sakte hain, dono operational record pe: queried live. Dayen, dashed panel aathon results ko aik packet mein gather karta hai jismein har finding apna record batata hai. Neeche, grey aur crossed out, failure: aik semantic search sab pe, top-ranked paragraph aathon sawalon ka ek sath jawab de: not a weaker version, a different one, no authority in it anywhere. Neeche, sone mein: bohat saari domains, bohat saare Vertical Systems of Record, aik System of Context jo unhein baghair flatten kiye jodta hai](/img/fig-federated-portfolio.webp)
+
+## Teen sawal, aur teen paths
+
+**Sukhun mein**
+
+Worker sirf teen tarah ke sawal puchta hai.
+
+Rule kya hai? Number kya hai? Is case ke baare mein logon ne kya kaha?
+
+Har sawal ka apna path hai apne source ki taraf. Teeno ko aik path se bhejo toh teeno alag tarike se galat jawab aayega.
+
+Routing abstrakt lagta hai jab tak dekh nahi lete ke real request kitne shapes mein aata hai. Professional kaam karne wala Worker teen tarah ke sawal puchta hai, aur har ek ka apna path hai.
+
+Sawal
+
+Source
+
+Path
+
+Kya wapas aata hai
+
+Rule kya hai?
+
+Vertical ya Agent Factory System of Record
+
+Governed, authored pages pe retrieval
+
+Governed truth, cited, class, jurisdiction, aur version ke sath
+
+Number kya hai?
+
+Jo system number rakhta hai
+
+MCP over typed query
+
+Exact current value, ya honest failure
+
+Is case ke baare mein kya kaha?
+
+Customer ke applications
+
+Ungoverned corpus pe retrieval
+
+Supporting context: evidence, governing rule kabhi nahi
+
+Teen sawal, teen paths, aik connecting layer. Notice karo ke pehle do paths pehle do tarah ke records ke paas jaate hain: rule governed knowledge record se aata hai, aur number traditional operational record se. Teesra path kahin authoritative nahi jaata, aur isliye sab se tight handling chahiye. Worker jo nahi bata sakta ke kya sawal pooch raha hai woh teeno ka same tarah jawab dega, aur teesra path chupke se pehle do ko nigal jayega.
+
+![Teen sawal aur teen paths, ek request ke taur pe jo teen lanes mein tootta hai. Bayein, Worker poochta hai, aur authority routing gate request ko todta hai. Lane ek, sone mein, governed records pe jaata hai aur cited passage wapas laata hai jismein class, jurisdiction, aur version hai. Lane do, slate mein, typed MCP query se system tak jo number rakhta hai aur exact current value wapas laata hai jismein read ka waqt stamp hai. Lane teen, terra mein, customer ke applications, email, chat, aur shared drives pe jaata hai aur attributed passage wapas laata hai: supporting context, evidence, governing rule kabhi nahi. Teeno lanes dayen mil kar aik bundle banate hain. Neeche, crossed out grey alternative: teeno sawal sirf lane teen mein bhej diye: similarity search sab ko nigal jaata hai](/img/fig-three-questions-three-paths.webp)
+
+## Layer kya assemble karta hai: context packet
+
+**Sukhun mein**
+
+System of Context har matching paragraph ko prompt mein nahi phenkta. Yeh ek task ke liye aik controlled package banata hai: governing rules, current facts, supporting context, conflicts, missing evidence, permissions, aur citations.
+
+Saat operations woh package banate hain. **Connect** har source se controlled interface ke zariye jo sirf content nahi balki source identity, synchronization state, access rules, aur provenance bhi carry karta hai. **Identify** actor, Worker, customer, case, jurisdiction, effective date, aur intended action, kyunki bina identity aur scope ke retrieval sirf guess hai. **Retrieve** task ko jo chahiye uske sources se, jo bhi method sahi ho: semantic, lexical, structured, relational, ya tool-based. **Filter** har wo cheez jo is reader ko nahi milni chahiye, aur jo customer, jurisdiction, version, effective period, ya case ke bahar hai. **Rank** sirf textual similarity se zyada, kyunki sabse similar sentence aksar sabse useful source nahi hota. **Assemble** packet. **Deliver** karo, aur record karo jo hota hai.
+
+Ranking ko apni aik line chahiye. Production ranking policy authority, applicability, freshness, case identity, source confidence, aur completeness ko retrieval relevance ke sath weigh karti hai. Jo layer sirf similarity pe rank karta hai woh chupke se model ki embedding function ko tumhari firm ki source hierarchy bana deta hai.
+
+Assembly ko bhi aik warning chahiye, usi wajah se. Packet budget ke against banta hai, kyunki model ki context window limited hai aur har token jo stale message pe kharch hota hai woh token hai jo governing rule pe kharch nahi hota. Toh layer select karta hai, compress karta hai, aur kabhi summarize karta hai. Yeh legitimate kaam hai, aur yeh wohi jagah hai jahan [invariant paanch](#the-eight-invariants-of-the-connecting-layer) sab se zyada tootta hai. Compression jo version stamp chhod de, do sources ko aik jumle mein merge kar de, ya authority class utaar de usne tokens nahi bachaye. Usne evidence ko text bana diya. Prose compress karo. Provenance kabhi compress mat karo.
+
+Packet khud output hai, aur yeh ek useful packet mein kya hota hai:
+
+Hissa
+
+Kya rakhta hai
+
+Request
+
+Task, actor, customer, case, jurisdiction, date, aur intended action
+
+Governing authority
+
+Woh exact rules, standards, policies, ya reflex steps jo lagte hain
+
+Current facts
+
+Un systems se live ya synchronized facts jo unhein rakhte hain
+
+Supporting context
+
+Messages, notes, drafts, prior cases, aur mazeed useful background
+
+Conflicts
+
+Sources jo disagree karte hain, authority, scope, aur dates preserved
+
+Missing evidence
+
+Jo reflex chahiye aur layer nahi dhoond saka
+
+Permission envelope
+
+Kya padha, recommend, prepare, ya perform ho sakta hai
+
+Citations
+
+Har material claim ke liye stable source references
+
+### Packet temporary hai, aur yeh design hai
+
+Context packet ek request, ek actor, ek case, aur ek waqt ke liye hota hai.
+
+Yeh boundary technical detail nahi hai. Packet current balance, contract clause, policy passage, manager ki note, aur pending approval rakh sakta hai. Dus minute baad un mein se koi fact badal chuka hota hai. Aik doosre colleague ko wohi set dekhne ki permission nahi. Aik doosre task ko doosri authority route chahiye.
+
+Toh layer company ke liye aik giant permanent prompt nahi banata. Jab task chalta hai relevant packet rebuild karta hai. Teen rules follow karte hain, aur yeh packet ka poora constitution hai:
+
+1.  **Packet authority inherit karta hai.** Kabhi create nahi karta.
+2.  **Packet permissions inherit karta hai.** Kabhi widen nahi karta.
+3.  **Packet expire hota hai.** Current facts tab refresh hote hain jab freshness jawab badal sakta hai.
+
+Jo durable hain woh source aur evidence hai jo task ke baad write back hota hai. Packet sirf working view hai.
+
+![Context packet, ek request ke taur pe jo layer se guzarta hai. Upar, request card jo batata hai kaun, kaun sa customer, kaun sa case, kaun sa task, kaun si jurisdiction, aur kaun sa intended action. Yeh chaar gates se sequence mein utarta hai: identity aur permission resolution, authority routing jo puchta hai kaunsa source har zaroori rule aur fact rakhta hai, retrieval jo indexed search aur live tools combine karta hai, aur filter, rank, aur conflict check. Aakhri gate se context packet nikalta hai, bundle ke taur pe jismein aath labeled compartments hain: request, governing authority, current facts, supporting context, conflicts, missing evidence, permission envelope, aur citations. Bundle pe expiry stamp hai. Yeh human aur Worker ko diya jaata hai jo permission ke andar sochte aur kaam karte hain, aur return arrow evidence aur outcome ko neeche System of Record tak le jaata hai jiske paas result hai. Side pe, teen rules sone mein: packet authority inherit karta hai, permissions inherit karta hai, aur expire hota hai](/img/fig-context-packet.webp)
+
+## Kya index ho sakta hai, aur kya poochna zaroori hai
+
+**Sukhun mein**
+
+Teen tarah ki maloomat Worker tak pahunchti hai, aur har ek aik alag route se aati hai.
+
+Customer ke emails, chat, aur files ko search index mein rakha ja sakta hai. Tumhare governed pages bhi index ho sakte hain, lekin record ko confirm karna chahiye pehle ke Worker un pe rely kare. Live numbers har baar poochne hote hain, unse jo numbers rakhta hai.
+
+Do ghalatein aasan aur mehengi hain. Live numbers ko index mein copy karna, jahan woh chupke se purane ho jaate hain. Aur customer ke emails ko qanoon jaisa treat karna.
+
+Lagbhag har real failure is layer mein in dono ghalaton mein se aik hai. Toh pehle poora rule, phir reasoning.
+
+Maloomat
+
+Kaise pahunchta hai
+
+Ordinary company working context
+
+Permission-aware indexing
+
+Record se stable governed knowledge
+
+Discovery index, record se confirm karne ke baad rely karo
+
+Current records, applicable versions, aur koi bhi action
+
+MCP ya API over live query
+
+> **Working context index karo. Governed knowledge discover karo. Current truth live poocho.**
+
+### Working context index hota hai
+
+Unki shared drive, unki chat, unki email, unke purane working papers. Usey freely search karo, permissions inherited. Iske liye layer hai, aur uska koi bhi authority nahi hai.
+
+### Governed knowledge discover hota hai, phir confirm
+
+Governed pages search index mein synchronize ho sakte hain, aur karna useful hai. Student jo accounting rule dhoond hi nahi pata woh us se bhi bad-haal hai jo copy dhoond leta hai. Jo kabhi nahi hona chahiye woh hai **copy pe rely karna**.
+
+Toh layer yahan do alag kaam karta hai, aur unhein mix karna sabse aam tarike hai jismein careful architecture chupke se careless ban jaata hai.
+
+**Discovery puchta hai: relevant maloomat kahan ho sakti hai?** Yeh recall, similarity, speed, aur reach pe optimize karta hai. Iska output pointer hai. Yeh kehta hai *yahan dekho*.
+
+**Confirmation puchta hai: kaun sa source is decision pe officially applicable hai?** Yeh check karta hai domain, authority class, jurisdiction, version, effective date, applicability, approval status, permission, aur canonical identity. Iska output jawab hai. Yeh kehta hai *yeh govern karta hai*.
+
+Sequence fixed hai. Search discover karta hai. Layer route karta hai. Applicable record confirm karta hai. Worker cite karta hai aur sochta hai. Checkers validate karte hain. Governed tools perform karte hain aur record karte hain.
+
+![Discovery aur confirmation, teen columns ke taur pe. Bayein, INDEXED FOR DISCOVERY ke neeche, paanch dashed terra cards customer ka working context: email, chat, files, projects, aur meeting notes, jaise aap freely search kar sakte hain permissions inherited. Dashed arrows paanchon se darmiy mein jaate hain, aur column ke neeche box: a pointer, look here. Darmiy mein, chaura dark slate panel: System of Context, sone ka orbit symbol aur line: Finds, Routes, Confirms, teen numbered jobs: request samajhna — kaun pooch raha hai, kaun sa case, kaun sa action. Right record pe route karna — kaun sa profession, phir uske andar kaun sa source. Record ke against confirm karna — class, jurisdiction, version, aur effective date check karna. Dayen, CONFIRMED AGAINST THE RECORD ke neeche, teen band sone ke cards governed sources: Agent Factory System of Record shared method ke liye, Vertical Systems of Record sales, accounting, legal, HR, aur tax ke liye, aur customer ke operational records ERP, CRM, ledger, aur contracts ke liye. Sone ka arrow darmiy ke panel se teenon mein jaata hai. Box: an answer, this is what governs, cited with class, jurisdiction, aur version, aur yeh final panel ko feed karta hai jismein humans aur AI Workers hain jo permission ke andar sochte aur kaam karte hain. Neeche, do sone ke rules ke beech: Working context index karo. Governed knowledge discover karo. Current truth live poocho.](/img/fig-discovery-vs-confirmation.webp)
+
+### Current state har baar poocha jaata hai
+
+Balances, transactions, reconciliation status, open items, approval state. In mein se koi bhi authored nahi, koi bhi stable nahi, aur sab exact hain. Index mein daal do toh tumne kuch rough, ageing copy bana liya jiski poori value current aur precise hone mein hai. Worker phir balance question ka jawab deta hai us chunk se jo last Tuesday sahi tha, aur confidently kehta hai.
+
+Aik jumla har borderline case decide karta hai, aur yeh har engagement ke design record mein hona chahiye:
+
+> **Agar stale value conclusion, permission, payment, filing, ya customer action badal sakta hai, toh live fetch karo.**
+
+Aik source ko aksar ek sath do modes chahiye. Contract document index hota hai taake uske clauses mil sakein, aur contract system live query hota hai taake confirm ho sake ke jo version mila hai woh abhi bhi active hai. Format aur length kuch decide nahi karte. Freshness risk sab kuch decide karta hai.
+
+### Aur ungoverned rehta hai
+
+Yahan aik line ka khayal rakhna hai, kyunki customer ki duniya uniformly ungoverned nahi hai. Unke sign kiye gaye contracts, approved policies, posted transactions, delivery records, aur authorizations governed hain, aur woh oopar ke operational records mein hain. Yeh section jo hai woh baaki sab ke baare mein hai: working material.
+
+Woh working corpus tumhara corpus nahi hai, aur tumhara corpus kabhi nahi banega.
+
+Unki ordinary working material sirf is liye governed nahi hai ke customer ne banaya. Kisi ne owner nahi assign kiya. Kisi ne version nahi record kiya. Kisi ne rights basis clear nahi kiya. Kuch galat hai, aur kuch teen saal pehle kisi memo se replace ho gaya jo kisi ne file nahi kiya. Yeh genuinely useful hai. Yeh authority nahi hai.
+
+Toh yeh **supporting context** ke taur pe aata hai, aur rehta hai supporting context. Yeh tumhare Vertical System of Record mein kabhi nahi jaata, kyunki yeh wohi contamination hai jise [promotion law](/docs/ecosystem/fde-af-model#the-one-law-of-the-model-repeated-work-moves-down) rokne ke liye hai. Customer material tab tak nahi hilta jab tak pattern teen ya zyada customers mein repeat na ho, de-identify na ho, promotion review na guzre, aur tumhare expert khud apni awaaz mein rewrite na kare. Yeh authorship hai, indexing nahi.
+
+![System of Context ki do boundaries, do gates ke taur pe. Gate ek, record ke andar: authored knowledge, standards, procedures, graded examples, aur judgment guidance index mein se guzarte hain jismein label: retrieval by meaning, tolerates delay. Operational state, balances, transactions, aur open items index se roke jaate hain aur typed query gate se route hote hain: exact, current, fetched live, jismein decision rule hai: agar stale value conclusion, permission, payment, filing, ya customer action badal sakta hai, toh live fetch karo. Gate do, record ke bahar: customer ke applications, email, chat, shared drives, aur purane working papers, context layer mein supporting context ke taur pe aate hain aur sealed wall pe rukte hain: never becomes the record, jismein aik side door hai: the promotion law, de-identified, reviewed, aur expert se rewritten](/img/fig-two-boundaries.webp)
+
+### Chunking kahan governance ghaib hota hai
+
+Aik mechanism ka naam lena zaroori hai, kyunki yeh invisible hai aur automatically hota hai.
+
+Vertical System of Record ki entry ke sath baarah cheezein hoti hain. Stable ID. Domain. Authority class. Jurisdiction. Version. Effective date. Approval status. Applicability conditions. Owner. Superseded-by link. Required checker. Permission boundary.
+
+Generic indexing pipeline jumle ko preserve karta hai:
+
+> Revenue tab recognize ho sakta hai jab control transfer hota hai.
+
+Words bach jaate hain. Baarah controls ghaib ho jaate hain, aur retrieved text mein unki absence announce nahi hoti. Worker cheh cheezein nahi bata sakta. Kaun sa standard statement pe govern karta hai. Kya yeh is contract type pe lagta hai. Kya yeh current hai. Kya yeh is country pe lagta hai. Kya yeh authority hai ya sirf orientation. Aur kaun se exceptions jawab badal dein.
+
+Yeh woh failure hai jo tumhare record ne corpus mein pehle naam diya tha, jahan paraphrased authority tumhari muhar ke sath drift karta hai. Yahan yeh ingestion pe hota hai authorship pe nahi, jo isay dekhna mushkil aur scale pe karna zyada aasan banata hai.
+
+Ilaaj indexing band karna nahi. Yeh hai ke har search hit ko pointer treat karo, kabhi answer nahi, aur yeh require karo ke har synchronized item apni canonical identity rakhe taake confirmation step ke paas check karne ke liye kuch ho.
+
+Aur ab shortcut jo refuse karna chahiye. Aik single vector database jo chat messages, purane contract draft, sales rule, accounting policy, legal note, aur historical example rakhta hai woh System of Context nahi hai. Yeh aik unsorted pool hai, aur char cheezein ek sath galt hoti hain:
+
+-   chat message standard se upar rank ho sakta hai
+-   pichle saal ki policy is saal ki se upar rank ho sakti hai
+-   sales rule accounting question ke liye use ho sakta hai
+-   ek country ka rule doosre country mein lagu ho sakta hai
+
+Yeh accidentally shadow System of Record ban gaya hai, aur kisi ne kabhi decide nahi kiya ke banaye.
+
+## Permission model se pehle aata hai
+
+**Sukhun mein**
+
+Sab kuch retrieve mat karo aur mana kiya gaya baad mein chhupao. Reader ko nahi dikhna chahiye woh maloomat model context mein kabhi aani nahi chahiye.
+
+Yeh woh invariant hai jise sab se zyada skip kiya jaata hai, kyunki skip karna cheezein kuch hafton ke liye aasan bana deta hai.
+
+Document ke access rules uske home system mein rehte hain. Private channel private hai. Restricted folder restricted hai. Partner ki file partner ki hai. Jab tumhara layer us document ko copy karta hai, toh access rules bhi saath copy karne hote hain, aur har query pe phir se check karne hote hain, us specific person ya Worker ke liye jo pooch raha hai. **Permission inherit hoti hai, invent nahi.**
+
+Teen alag permission questions hain, aur teeno ke teeno alag jawab hain:
+
+1.  Kya yeh human yeh source dekh sakta hai?
+2.  Kya yeh Worker yeh source dekh sakta hai, is task ke liye?
+3.  Kya yeh Worker woh action perform kar sakta hai jo follow ho sakta hai?
+
+Yeh lagatar badalte hain. Manager salary data padh sakta hai. Recruiting Worker ek narrow field padh sakta hai taake approved check chal sake. Dono permission Worker ko payroll change karne nahi deti. Padh, soch, recommend, prepare, aur execute alag grants hain, bilkul jaisa tumhare record ki [permissions section](/docs/ecosystem/designing-the-vertical-sor#rules-judgment-and-permissions-are-three-different-things) ne pehle establish kiya.
+
+Safe order hai: identity resolve karo, source permissions resolve karo, eligible records filter karo, retrieve aur rank karo, packet assemble karo, aur phir action permission tool boundary pe alag resolve karo. Unsafe order hai: sab kuch retrieve karo, model ko bhejo, aur model se pucho ke jo reader ko nahi dikhna chahiye usay mat batao.
+
+**Model context mein chhupa passage chhupa nahi hai.**
+
+Apna permission model banao kisi ka inherit karne ki jagah, aur tumne leak se bhi bura kuch bana diya. Junior poochta hai aur pehle rank pe, friendly summary ke sath, woh compensation milta hai jisey kabhi padhne ki permission nahi thi. Kisi ne attack nahi kiya. Layer ne sirf ghalat rules pe apna kaam kiya.
+
+![Permission model se pehle aata hai, do pipelines ke taur pe sath sath. Bayein, sone mein, safe order: identity resolve, source permissions resolve, eligible records filter, retrieve aur rank, packet assemble, phir tool boundary pe alag gate jo action permission resolve karta hai pehle ke kuch execute ho. Forbidden documents doosre stage pe ruk jaate hain, model tak nahi pahunchte. Dayen, grey aur crossed out, unsafe order: sab kuch retrieve, sab model ko bhejo, phir model ko instruct karo ke reader ko jo nahi dikhna chahiye usay mat batao, forbidden documents model context ke andar thin dotted line ke peeche baithe hain. Caption: model context mein chhupa passage chhupa nahi hai](/img/fig-permission-order.webp)
+
+### Yeh sirf privacy ka sawal nahi, control ka sawal hai
+
+Zyada tar domains mein permission failure privacy ka masla hai. Regulated profession mein yeh us se zyada door jaata hai. Lekin exact hona chahiye kaise, kyunki loose version ghalat hai, aur controller pakar lega.
+
+**Segregation of duties ability ke combinations ke baare mein hai, visibility ke nahi.** Classic conflicts hain: journal entry banana aur usay approve bhi karna, ya transaction originate karna aur reconcile bhi karna. Audit walkthrough user ko sample karta hai aur puchta hai ke uski entitlements ki combination documented rule tod-ti hai ya nahi. Read access akele aksar aisi combination nahi hota. Claim karo ke tumhara context layer "segregation of duties todta hai" toh room mein argument haar jaoge.
+
+Asal exposure ek layer neeche hai, aur woh segregation of duties se bhi zyada hai.
+
+Access control baaki control environment ka foundation hai. Data integrity assume karta hai ke sirf authorized log data tak pahunch sakte hain, toh jab access hi governed nahi, toh uske upar ka har control us kamzori ko inherit karta hai. Isi liye auditors weak IT general controls ko application controls pe doubt karne ki wajah maante hain: neeche ka environment trusted nahi.
+
+Ab us environment mein context layer daal do. Firm ki periodic access review certify karti hai ke named user ke paas specific set of entitlements hai. Tumhara layer phir us user ko woh content deta hai jo entitlements ne kabhi grant nahi kiya. Kuch chori nahi hua. Kisi documented rule ne formally break nahi kiya. Lekin ab access review ek picture certify kar rahi hai jo sahi nahi hai, aur access management pehle se hi sab se zyada reported control deficiencies mein hai.
+
+Toh argument yeh hona chahiye, aur yeh accurate bhi hai aur zyada strong bhi. **Context layer jo effective access entitlements ke model ke bahar deta hai woh ek control nahi todta. Yeh chupke se woh review invalidate karta hai jo sab ko certify karta hai.**
+
+Worker ke liye jo invariants tumne likhe hain unka koi matlab nahi agar unke neeche ka retrieval ke paas boundaries na ho. Isi liye permission fidelity feature nahi hai jo end mein add hota hai. Yeh decide karti hai ke tum konsa tool use kar sakte ho aur konsa deployment afford kar sakte ho, aur yeh pehle haftay mein pata lagana compliance officer ke saamne pata lagane se kai guna sasta hai.
+
+**Apne expert ke liye aik note.** Oopar framing IT general controls aur access-review language use karti hai, jo zyada tar regulated professions mein travel karti hai. Tumhari firm ko jo exact rule hai, aur tumhari jurisdiction kisi given access pattern ko reportable deficiency maanta hai ya nahi, yeh tumhare domain expert ka sawal hai. Jaldi pucho, kyunki jawab decide karta hai ke tumhara layer kya block karna chahiye sirf log karne ki jagah.
+
+## Provenance har item ke sath chalta hai
+
+**Sukhun mein**
+
+Useful jawab sirf jumla nahi dikhata. Yeh dikhata hai ke jumla kahan se aaya, kis version ka hai, kya govern karta hai, aur kya use kiye jaane pe current tha.
+
+Packet mein har material item kam se kam yeh fields rakhta hai:
+
+Field
+
+Kyun zaroori hai
+
+Source system
+
+Maloomat ke maalik ko identify karta hai
+
+Stable ID
+
+Reviewer ko dobara exact item retrieve karne deta hai
+
+Authority class
+
+Batata hai yeh law, standard, contract, policy, transaction, guidance, message, ya example hai
+
+Scope
+
+Batata hai kis sawal, customer, jurisdiction, aur case pe govern karta hai
+
+Version aur effective period
+
+Retired rules ko chupke se wapas ane se rokta hai
+
+Owner
+
+Batata hai content ya record ka kaun responsible hai
+
+Retrieved ya synchronized at
+
+Batata hai item kitna fresh tha
+
+Permission basis
+
+Batata hai is reader ko kyun dekhne diya gaya
+
+Citation
+
+Insan ko claim check karne deta hai
+
+Bina provenance ke packet text ka dher hai. Provenance ke sath, packet reviewable evidence hai.
+
+Isi liye layer ko reranking ya summarizing ke dauran source labels kabhi nahi utarne chahiye. Summary jo paanch sources ko aik smooth paragraph mein merge kare woh sign kiye gaye contract, approved policy, aur informal message ka farq mita deta hai. Fluency us nuksan ke qabil nahi hai.
+
+### Governed truth aur supporting context
+
+Tumhare record mein pehle se [do classes ke content](/docs/ecosystem/designing-the-vertical-sor#two-kinds-of-content-authority-and-orientation) hain: authority jo Worker cite karta hai, aur orientation jo Worker padhta hai lekin cite kabhi nahi karta. Context layer ko upar ek level pe, alag axis pe, wohi discipline chahiye.
+
+**Governed truth** System of Record ya kisi doosre authoritative instrument se aata hai. Yeh citable hai. Reviewer check kar sakta hai. **Supporting context** customer ke working material se aata hai. Yeh cite ya attribute ho sakta hai us evidence ke taur pe jo kaha gaya, observe kiya gaya, request kiya gaya, ya pehle kiya gaya. Email sabit kar sakta hai ke client ne kya maanga. Purana working paper sabit kar sakta hai ke firm ne pichle saal kis cheez ko kaise treat kiya. Jo yeh kabhi nahi ho sakta woh hai woh professional rule jo conclusion pe govern karta hai.
+
+Rule wohi hai jo tumhare record pehle se enforce karta hai. **Worker koi bhi permitted, task-relevant supporting context padh sakta hai. Lekin kabhi supporting context ko governing rule ke taur pe present nahi kar sakta.**
+
+Failure dekho, kyunki yeh subtle aur fatal hai. Worker se pucha jaata hai ke koi cost capitalise karna chahiye ya nahi. Sabse zyada matching passage aik internal email hai teen saal purana: *hum hamesha inhein capitalise karte hain.* Fluent, relevant, aur basis ke taur pe precisely galat. Sahi jawab requirement ko governed record ke standard pe route karta hai, email ko sirf past practice ke evidence ke taur pe use karta hai, aur agar disagree karein toh dono ke beech flag karta hai. Accounting error jo baarah mahine se repeat ho raha hai woh error hai, aur wohi baat aik hazaar indexed messages mein ek se hota hai.
+
+Content
+
+Class
+
+Worker isay kaise use kar sakta hai
+
+Applicable reporting standard
+
+Governed truth
+
+Cite karo, version aur jurisdiction ke sath
+
+Tumhare expert ka authored procedure
+
+Governed truth
+
+Expert methodology ke taur pe cite karo
+
+Sign kiya gaya contract aur uske modifications
+
+Governed truth, customer layer pe registered
+
+Contract ke taur pe cite karo
+
+Current ERP posting record
+
+Apne scope ke liye governed truth, live fetch
+
+Record ko cite karo aur read ka waqt
+
+Shared drive se purana working paper
+
+Supporting context
+
+Padho, attribute karo, requirement ke taur pe kabhi cite mat karo
+
+Salesperson ka message jo kehta hai customer ne accept kar liya
+
+Supporting context
+
+Clue ke taur pe padho, acceptance ke proof ke taur pe kabhi nahi
+
+Yeh reader jo channel nahi khol sakta uska message
+
+Kuch nahi
+
+Yeh kabhi nahi aata, kyunki permission inherit hui
+
+## Conflict result hai, retrieval failure nahi
+
+**Sukhun mein**
+
+Jab do sources disagree karein, unhein aik jumle mein mix mat karo jo kisi source ne nahi kaha. Disagreement ko visible rakho, pata karo kaunsa source govern karta hai, aur jab authority settle nahi kar sake escalate karo.
+
+Yeh woh section hai jo System of Context ko aik ache search tool se alag karta hai, kyunki search tool ka disagreement pe koi opinion nahi hota aur professional system ko hota hai.
+
+Contract-revenue case lo. Sign kiya gaya modification optional service add karta hai. Project system dikhata hai kaam pehle se shuru ho chuka hai. Salesperson chat mein likhta hai ke option "sirf extension" hai. Tumhari Vertical SoR kehti hai ke modification ko existing contract ke governing recognition criteria ke against evaluate karna chahiye pehle ke usay combine kiya jaaye.
+
+Chaar cheezein relevant hain. Lekin sab equally authoritative nahi hain. Toh layer charo ko alag rakhta hai. Har ek ko apni authority, scope, version, aur date se label karta hai. Sign kiya gaya modification aur record ko question ke alag alag parts pe governing mark karta hai. Chat message ko supporting context treat karta hai, contract ke taur pe nahi. Dikhata hai ke abhi bhi unresolved kya hai. Aur Worker ko rokta hai jaise disagreement hai hi nahi.
+
+Conflict ke bilkul teen outcomes hain:
+
+-   **Resolved by scope.** Sources alag sawalon ka jawab dete hain, aur dono apne pe sahi hain. Do verticals ki seam everyday case hai: sales ne deal June mein band kiya, accounting abhi revenue recognize nahi kar sakta, aur dono ghalat nahi.
+-   **Resolved by authority.** Ek applicable source govern karta hai, aur hierarchy batati hai kaun sa.
+-   **Unresolved.** Worker escalate karta hai, conflicting evidence organized hai.
+
+Escalation bar woh hai jo tumhare record ne pehle set kiya tha: yeh insan ka kaam kam karna chahiye. Toh yeh kabhi nahi kehta *sources conflict karte hain.* Yeh batata hai ke kaun se sources conflict karte hain, har ek kya kehta hai, kaun sa authority test lagaya gaya, kya khula hai, aur kaun named person settle kar sakta hai.
+
+> **Trustworthy System of Context disagreement ko ghaib nahi hone deta. Yeh disagreement ko reviewable banata hai.**
+
+![Conflict preserved versus conflict blended. Bayein, grey aur failure marked, char sources — sign kiya gaya modification, project system record, chat message, aur professional standard — aik smooth paragraph mein funnel: one fluent sentence no source actually said. Dayen, sone mein, wohi char sources alag alag aate hain, har ek apne label ke sath jo authority class, scope, version, aur date batata hai. Teen outcome branches: resolved by scope jahan sources alag sawalon ka jawab dete hain, resolved by authority jahan ek applicable source govern karta hai, aur unresolved jahan case escalate hota hai evidence organized hai aur named person identified hai. Caption: yeh disagreement ko ghaib nahi hone deta, yeh disagreement ko reviewable banata hai](/img/fig-conflict-preserved.webp)
+
+## Padho, socho, karo, aur record karo
+
+**Sukhun mein**
+
+Dhundhna aur karna alag cheezein hain.
+
+Layer dhundhta hai. Worker sochta hai. Governing record rules check karta hai. Tool action perform karta hai. Jo system result rakhta hai usay record karta hai.
+
+Paanch alag kaam, hamesha usi order mein.
+
+System of Context search screen nahi hai. Yeh woh information layer hai jis se insaan aur Workers organization ko samajhte hain. Lekin samajhna aur karna alag capabilities hain, aur sequence zaroori hai.
+
+Layer **find** aur **understand** support karta hai. Worker permitted reasoning aur decision perform karta hai. Governing Vertical System of Record rules, permissions, aur invariants validate karta hai. Tab governed tools action perform karte hain, aur jo system result rakhta hai usay record karta hai.
+
+Darmiyan ka step chhodna aasan hai aur khoona mehenga hai. Discount approval sales record ke against validate hota hai pehle ke CRM likhe. Journal entry accounting record ke against validate hota hai pehle ke ERP rakhe. Contract exception legal record se guzarta hai. Employee change HR record se guzarta hai. Har case mein Vertical System of Record sirf woh jagah nahi hai jahan rule padha gaya. Woh jagah hai jahan proposed action rule ke against check hota hai, jo invariants ko real banata hai, sirf advisory nahi.
+
+Context layer opportunity, price policy, buyer ke messages, aur qualification method retrieve karta hai. Sales Worker stage change recommend karta hai. Sales record confirm karta hai ke change is stage pe is evidence ke sath permitted hai. CRM tool perform karta hai aur record karta hai kisne change kiya. Ya: layer contract, delivery evidence, professional rule, aur customer policy retrieve karta hai. Accounting Worker journal entry prepare karta hai. Accounting record entry ko apne invariants ke against check karta hai, jismein shamil hai ke preparer approver nahi hai. ERP rakhta hai, aur named approver post karta hai.
+
+Aik rule sab ke neeche hai. **System of Context kabhi doosra transaction system nahi ban sakta, aur governed record ke around likhne ka tariqqa nahi ban sakta.**
+
+Toh: agar customer record badalta hai, toh yeh us tool se badalta hai jo usay rakhta hai, aur sirf governing record ke approve karne ke baad. Agar professional conclusion pahunchta hai, toh conclusion aur uska evidence governed case record mein jaata hai. Loop tab close hota hai jab result jahan sach hai wahan store hota hai.
+
+![Poora architecture aik diagram pe. Neeche chaar source classes hain: Agent Factory System of Record aur Vertical System of Record, dono band sone mein. Phir customer ke operational Systems of Record, bhi band, ERP, CRM, ledger, aur contracts rakhte hain aur authoritative over state marked. Phir customer ka working context, khula aur dashed terra mein, email, chat, drives, aur drafts rakhta hai aur governed by nothing marked. Unke upar chaura cream patta, System of Context, saat operations sequence mein: connect, identify, retrieve, filter, rank, assemble, deliver. Us se upar ek context packet jo authority, facts, support, conflicts, gaps, aur citations list karta hai, temporary, inherits permissions, expires stamped. Packet human professional aur AI Worker ko diya jaata hai jo sath sath hain. Sone ka arrow Worker se neeche dayen taraf aur wapas sources mein jaata hai: evidence aur outcome return. Neeche, doctrine: records sach rakhte hain, System of Context relevance assemble karta hai, Worker sochta hai aur permission ke andar kaam karta hai](/img/fig-whole-architecture.webp)
+
+Aik source aksar do surfaces expose karta hai, aur un pe bahut alag risk hota hai:
+
+Surface
+
+Aam operation
+
+Kya ghalat hota hai
+
+Retrieval
+
+Search, read, cite, compare
+
+Information exposure
+
+Calculation ya checking
+
+Validate, classify, calculate, test
+
+Ghalat conclusion
+
+Preparation
+
+Draft entry, form prepare, update stage karo
+
+Ghalat proposed record
+
+Execution
+
+Send, post, release, approve, pay
+
+Real-world consequence
+
+Worker retrieval pe excellent ho sakta hai aur koi execution authority nahi rakhta. **System of Context kabhi access ko permission mein nahi badal sakta.**
+
+## Connecting layer ke aath invariants
+
+**Sukhun mein**
+
+Yeh aath rules nahi badalte.
+
+Yeh har profession, har customer, aur har product pe sach hain jo tum use karo. Agar is page se kuch yaad rakhna hai toh inhein yaad rakho.
+
+Aath rules hamesha sach hain chahe tumhara tool koi bhi ho, profession koi bhi ho, aur customer ka stack kaisa bhi ho. Inhein apne build mein likho, aur har ek ko lafzon se zyada strong cheez se enforce karo.
+
+#
+
+Invariant
+
+Kyun sach hai
+
+1
+
+Authority kabhi nahi hoti. Layer citations le ke chalta hai record ki taraf, aur na layer aur na model kabhi cited source ban-ta hai.
+
+Warna impact chain mein ek branch aa jaati hai jisko koi govern nahi karta.
+
+2
+
+Relevance authority nahi hai. Routing retrieval se pehle hota hai.
+
+Warna sabse zyada ranked passage chupke se rule ban jaata hai.
+
+3
+
+Permission inherit hoti hai, invent nahi, aur model se pehle enforce hoti hai.
+
+Warna tumhara layer customer ne kabhi khareeda sabse helpful data breach ban jaata hai.
+
+4
+
+Har field ke liye freshness decide hota hai: working context index karo, governed knowledge discover karo, current truth live poocho.
+
+Warna Worker exact sawalon ke jawab stale approximations se deta hai, confidently.
+
+5
+
+Provenance har item ke sath chalta hai, aur summarizing kabhi utarta nahi.
+
+Warna contract, policy, aur rumour ek jaise dikh kar aate hain.
+
+6
+
+Preserve hota hai aur escalate hota hai, kabhi blend nahi.
+
+Warna system woh claim banata hai jo kisi source ne nahi kaha.
+
+7
+
+Ungoverned chupke se governed nahi ban-ta. Promotion authorship hai, reviewed aur recorded.
+
+Warna customer ki galtiyan tumhare profession ke record mein tumhari muhar ke sath enter hoti hain.
+
+8
+
+Discovery confirmation nahi hai. Search hit pointer hai, aur governing record confirm karta hai pehle ke kuch rely kiya jaaye.
+
+Warna indexed copy chupke se authority ban jaata hai, jo bhi version mein synchronize hua ho.
+
+## Yeh FDE AF Model mein kahan baithta hai
+
+**Sukhun mein**
+
+System of Context teesra System of Record nahi hai, aur shared kernel mein doosra permanent layer nahi hai. Vertical pattern tayyar karta hai. Customer deployment real applications, identities, aur records jodta hai.
+
+Yeh [FDE AF Model](/docs/ecosystem/fde-af-model) ke do layers pe do alag forms mein failta hai, aur galat karna mehenga hai.
+
+**[Layer 3](/docs/ecosystem/fde-af-model#layer-3-vertical-ecosystems) pattern tayyar karta hai.** Vertical ecosystem reusable pieces rakhta hai jismein koi customer data nahi hota. Profession ke liye source classes aur routing rules. Context packet ka shape. Metadata aur citation formats. Connector templates, retrieval evaluations, conflict tests, tool contracts, aur permission patterns.
+
+Sab kuch profession ke liye hai, kisi aik client ke liye nahi, aur sab tumhara hai.
+
+**[Layer 4](/docs/ecosystem/fde-af-model#layer-4-customer-instances) customer ko baandhta hai.** Instance woh sab supply karta hai jo aik company ke liye hai. Unke applications. Unka identity provider aur user groups. Unke contracts, records, policies, aur thresholds. Unke credentials aur source permissions. Unke case identifiers, approvals, aur audit rules.
+
+Woh jagah hai jahan System of Context real hota hai. Yeh ek company ke data, rules, workflows, aur logon ke liye fit hota hai, aur kahin aur nahi fit hota.
+
+Promotion law abhi bhi unke beech traffic govern karta hai. Connector pattern, authority rule, ya conflict test jo teen ya zyada customers mein safely repeat ho woh shared vertical mein neeche ja sakta hai. Customer records, credentials, messages, policies, aur private evidence kabhi neeche nahi jaate. Reuse private knowledge ko move karne ki wajah kabhi nahi.
+
+![System of Context FDE AF Model mein kahan baithta hai, do pattiyan ke taur pe. Upar ki patti, Layer 3, vertical ecosystem, generic reusable assets rakhta hai jismein koi customer data nahi: authority map, context packet schema, connector patterns, metadata aur citation formats, retrieval evaluations, conflict tests, tool contracts, aur permission patterns, sab yours, client se client tak carry. Arrow labeled fitted at deployment neeche ki patti pe jaata hai, Layer 4, customer instance, customer ke actual applications, identity provider aur groups, contracts aur records, local policies, credentials, source permissions, case identifiers, aur audit requirements rakhta hai, sab theirs, unki deewaron ke andar rehta hai. Neeche ki patti se fitted customer System of Context nikalta hai jo humans aur Workers use karte hain. Upar ki taraf ek channel: the promotion law, sirf de-identified, reviewed patterns carry karta hai, aur records, credentials, messages, aur private evidence ke liye blocked hai. Caption: pattern asset hai, fitting kaam hai](/img/fig-context-layer-3-and-4.webp)
+
+## Default mein consolidate karo, deliberately specialize karo
+
+**Sukhun mein**
+
+Pehle kitab mein kaha gaya: apna data ek jagah rakho. Yeh page aisa lagta hai ke opposite advice de raha hai. Aisa nahi hai.
+
+Yeh section explain karta hai kab ek store sahi hai, aur kab do stores sahi hain.
+
+Kitab ka infrastructure pe stance seedha hai, aur yeh page usay tootta lagta hai. Lekin nahi, aur reconciliation batana zaroori hai kyunki careful reader notice karega.
+
+[Thesis](/docs/thesis) kehti hai: default mein consolidate karo. Aik Postgres jo relational data, documents, full-text search, aur AI vectors sab rakhe, rather ke systems mein bikhre jo drift out of sync. [AI Searchable Context](/docs/postgres-ai-crash-course) kaise banate hain, aur tumhara governed record us stance pe exactly chalta hai.
+
+System of Context us rule ka doosra half hai. **Consolidation sahi hai jab aik set of invariants sab data pe govern kare. Specialization sahi hai jab do sets of invariants opposite direction mein khinchen.**
+
+Dekho ke har side ko asal mein kya chahiye. Tumhare record ko exactness, versioning, aur audit trail chahiye, aur har source ke liye rights basis. Customer ki duniya ko breadth, freshness, aur permission fidelity chahiye jo a dozen systems se aati hai jinhein tum control nahi karte. Unhein ek store mein force karo toh tumhein record milta hai jiska provenance ab uncertain hai aur index milta hai jiske permissions ab guesswork hain. Dono worse hote hain.
+
+Yeh stance ka exception nahi hai. Yeh uska sabse saaf example hai, aur jis ke liye word *deliberately* rakha gaya tha. Profession ke liye ek governed store. Customer ki duniya ke liye ek connecting layer. Shared discovery index dono pe madad kar sakta hai, aur woh kabhi source classes ko flatten nahi karna chahiye ya shared authority store nahi banana chahiye. Har governed item apni canonical identity rakhta hai, aur governing record use se pehle confirm karta hai.
+
+## Open reference implementation
+
+**Sukhun mein**
+
+Yeh page ek idea sikhata hai, product nahi. Lekin practice ke liye kuch real chahiye.
+
+Onyx woh open tool hai jo tum install, read, aur dismantle kar sakte ho. Glean woh paid product hai jo badi companies khareedti hain. Idea seekho. Products badhte rahenge.
+
+Jo reference products hain
+
+**Is kitab mein, Onyx System of Context ki open reference implementation hai. Glean sabse zyada jaana jaata commercial example hai.**
+
+Doctrine product-independent hai. Onyx us liye hai taake students architecture khule taur pe dekhen aur practice karein. Glean us liye hai taake woh commercial market category pehchan sakein.
+
+Hands-on build [Building the Context Layer](/docs/context-layer-crash-course) mein hai. Hum Onyx wahan sikhate hain usi wajah se jo yeh kitab OpenCode ko Claude Code ke sath sikhata hai. Discipline seekhne ke liye visible hona chahiye. Student multiple sources connect kar sakta hai, sync chalte hue dekh sakta hai, aik request ko identity se routing se returned packet tak trace kar sakta hai, citations inspect kar sakta hai, conflict test kar sakta hai, aur component replace kar sakta hai. Yeh woh lesson hai jo koi demo nahi deta. Onyx real companies mein real scale pe bhi chalta hai, jo doosri requirement hai: graduate jo deploy aur reason kar sake uske paas woh hai jo hiring manager pehchanta hai.
+
+Glean alag wajah se zaroori hai. Jab koi company enterprise AI search, work assistant, knowledge layer, ya enterprise context platform maangti hai, toh graduate ko category pehchanni chahiye aur product language ke neeche architecture padhna chahiye. Yeh woh jagah hai jahan is page ka top term aata hai. Aur sab se zyada jaane hue vendor ke layer ko kaise describe karte hain usay padhna sab se tez tarike hai kuch useful seekhne ka: is doctrine ke kaun se parts product asal mein implement karta hai, aur kaun se parts chupke se tum pe chhod deta hai.
+
+Chaar interfaces khule rehne chahiye, chahe koi bhi product deploy karo, kyunki yeh layer ko replaceable banate hain:
+
+1.  **MCP**, agent-facing knowledge aur tools ke liye.
+2.  **OpenAPI**, governed application capabilities ke liye.
+3.  **Connectors aur ingestion APIs**, synchronized content ke liye.
+4.  **Source-owned identifiers aur citations**, taake context layer swap ho sake bina record khoye.
+
+Onyx reference implementation hai, definition nahi. Customer baad mein Glean, Microsoft, Google, ServiceNow, Atlassian, ya custom stack chalata ho sakta hai. Is page ka koi bhi architectural test nahi badalta.
+
+### Tool kya sikhata hai, aur kya abhi bhi design karna hai
+
+Concept
+
+Student tool mein kya practice karta hai
+
+Kya abhi bhi explicitly design karna hai
+
+Connectors
+
+Kai sources ko aik retrieval experience mein lana
+
+Kaun se sources allowed hain, aur har connection ka kaun maalik hai
+
+Retrieval
+
+Sources ke beech relevant maloomat dhundhna
+
+Authority routing, applicability, aur freshness rules
+
+Citations
+
+Jawab ke sath source links dena
+
+Stable IDs, authority classes, versions, aur reviewer evidence
+
+Agents aur actions
+
+Workflow mein retrieved knowledge use karna
+
+Tool permissions, approval gates, aur write-back ownership
+
+Users aur access
+
+Shared organizational system chalana
+
+Production identity mapping aur source-permission fidelity
+
+Open deployment
+
+Implementation inspect aur extend karna
+
+Hardening, audit, scaling, backup, aur operations
+
+Do honest notes build course se pehle:
+
+Category abhi itna young hai ke names badhte rahenge. Logo mat seekho, layer seekho. Aath invariants list mein har product se zyada rahenge, aur jab tumhara tool teen saal baad alag naam ka ho, toh bhi wohi hain jis se tum judge karte ho.
+
+Aur koi tool invariants free nahi deta. Har ek apne open edition aur paid edition ke beech boundary draw karta hai, aur permission handling aksar us paid side pe hota hai. Onyx woh hai jo tum sab se pehle miloge, toh seedha naam do rather ke chhate haftay mein discover karo.
+
+Onyx Community Edition connectors, indexing, retrieval, citations, agents, aur actions seekhne ke liye kaafi hai. Yeh akele **nahi** kaafi hai different users ke liye production permission fidelity demonstrate karne ke liye.
+
+Onyx ki khud ki documentation permission-sync connectors list karti hai, jo external systems se user permissions inherit karti hain, sath mein user groups, RBAC, aur group-based permissions, jo Enterprise Edition features hain. Jo deployments ko external systems se permission inheritance chahiye unhein Enterprise pe move karne ki wajah naam di gayi hai.
+
+Yeh zaroori hai kyunki *permission before the model* is page ke aath invariants mein se aik hai. Toh student labs public, synthetic, ya class-authorized sources use karte hain, aur permission architecture ya khareeda jaata hai ya alag implement hota hai pehle ke koi bhi real corpus connect ho. [Building the Context Layer](/docs/context-layer-crash-course) mein students woh gate khud likhte hain aur usay us role se test karte hain jiska sahi jawab kuch nahi hai.
+
+**Feature list proof nahi hai.** Production deployment ko demonstrate karna chahiye ke chosen platform asal mein required identity, permission, synchronization, audit, aur isolation controls enforce karta hai, aur demonstration neeche diya gaya permission test hai. Students public, synthetic, ya class-authorized data ke saath kaam karte hain jab tak pass na ho.
+
+## Kab zaroorat nahi hoti
+
+**Sukhun mein**
+
+Har project ko is layer ki zaroorat nahi. Bahut jaldi build karna mahine barbad kar sakta hai.
+
+Yeh section batata hai kaise pata lagaaye ke tumhare project ko chahiye ya nahi.
+
+Har vertical ko is layer ki zaroorat nahi, aur bahut jaldi build karna quarter khone ka real tariqa hai.
+
+Tumhein is ki zaroorat tab nahi jab governed record aur customer ke operational systems mil kar har sawal ka jawab de dein jo outcome ke liye chahiye. Tax practice jiska kaam code, client ki filings, aur ledger se define hai usay kabhi shared drive search karne ki zaroorat nahi pad sakti. Numbers rakhne wale system ki aik MCP connection System of Context nahi hai. Yeh tool hai, aur tumhare Worker ke paas pehle se tools hain.
+
+Tumhein is ki zaroorat tab hai jab *kyun is tarah kiya gaya* ka jawab kisi bhi system ke bahar ho jo koi govern karta hai. Lambay professional rishte yeh naturally paida karte hain: audit firms jinke paas bees saal ke working papers hain, legal practices jinke paas matter files hain, consultancies jinka reasoning decks aur threads mein hai. Jab institutional memory deliverable ka hissa hai, toh layer apni cost ke qabil hai.
+
+Toh tab tak jab engagement is ke liye bulaaye, record ke baad automatically nahi. Aik gate non-negotiable hai: **System of Context tab tak mat banao jab tak tumhara thin slice khatam na ho aur tumhara pehla Worker usay cite na kare.** Connecting layer jismein governed kuch bhi na ho jodne ke liye woh search box hai jismein ambitions hain.
+
+## Do temperaments, aik layer
+
+**Sukhun mein**
+
+Record ek profession se doosre mein bahut badalta hai. Connecting layer bilkul nahi badalta. Jo badalta hai woh hai ke kaun se sources wazan rakhte hain, aur kaun si galti sab se zyada nuksan de sakti hai.
+
+[Design page](/docs/ecosystem/designing-the-vertical-sor#the-two-appendices-contrasted) ko do puri worked examples chahiye thin, kyunki method genuinely alag records banata hai. Sales ko shallow policy hierarchy aur Worker milta hai jo bhejta hai. Ledger ko deep law-governed hierarchy aur Worker milta hai jo sirf prepare karta hai.
+
+Wohi comparison is layer pe chalao toh kuch bhi nahi hilta. Aath invariants same hain. Teen sawal same hain. Indexing rules same hain. Do cheezein badalti hain:
+
+Sales
+
+General ledger
+
+Ungoverned material kahan baithta hai
+
+Center pe: transcripts, emails, aur threads deal file ka evidence base hain
+
+Edge pe: systems numbers rakhte hain, aur corpus past treatments explain karta hai
+
+Sabse bhaari connection
+
+Conversation records, indexed
+
+Accounting system, queried live
+
+Teesra sawal aksar kya puchta hai
+
+Buyer ne asal mein kya kaha, aur kab
+
+Is se pehle kyun is tarah treat kiya gaya
+
+Characteristic mistake
+
+Offhand remark jo confirmed field mein promote ho jaata hai
+
+Stale indexed balance jo current ke taur pe jawab diya jaata hai
+
+Permission failure ka kya hota hai
+
+Confidentiality breach
+
+Access review ab false picture certify karta hai
+
+**Sales uncomfortable case hai, kyunki wahan ungoverned material evidence hai.** Call transcript class se supporting context hai aur deal file ke liye primary evidence bhi ek sath. Yeh sab se qareeb ungoverned content record ke qareeb aata hai, aur invariant phir bhi hold karta hai. Jo hold karta hai woh hai deal file ki apni discipline: cheh evidence states. Transcript dikhata hai ke claim kahan se aaya. Yeh claim ke sahi hone ka proof kabhi nahi ban-ta, aur buyer ka offhand remark jo confirmed field mein badal jaata hai woh sales version hai invented citation ka. Aik aur rule connect karne pe lagta hai, aur yeh law hai design ki jagah. Jis conversation ko record karne ka tumhein haq nahi tha woh index karne ka bhi haq nahi.
+
+**Ledger tez sabak hai, aur yeh pehle ka control point hai.** Permission failure wahan sirf information expose nahi karta. Yeh firm ke access review ke model ke bahar effective access deta hai, aur us review ke upar ka har control assume karta hai ke neeche ka access governed hai.
+
+![Do temperaments, aik layer, paanch-row comparison ke taur pe. Bayein column axis names karta hai, aur do columns ek doosre se muh karte hain: sales terra mein, general ledger slate mein. Row ek, ungoverned material kahan baithta hai: sales ke liye center pe, kyunki transcripts aur threads evidence base hain, aur ledger ke liye edge pe, kyunki systems numbers rakhte hain. Row do, sabse bhaari connection: conversation records indexed, versus accounting system queried live. Row teen, teesra sawal aksar kya puchta hai: buyer ne kya kaha aur kab, versus is se pehle kyun is tarah treat kiya gaya. Row char, characteristic mistake: offhand remark jo confirmed field mein promote ho jaata hai, versus stale indexed balance jo current ke taur pe jawab diya jaata hai. Row paanch, permission failure ka kya hota hai: confidentiality breach, versus access review ab false picture certify karta hai. Dono columns ke neeche, same aur sone mein, shared spine: aath invariants, teen sawal, do boundaries, aik packet. Caption: record profession ke hisaab se badalta hai, layer bilkul nahi, jo badalta hai woh hai tum kya own aur carry karte ho aur jo same hai har jagah woh hai tum kya perform karte ho](/img/fig-two-temperaments-one-layer.webp)
+
+Ab is section ka shape dekho design page ki do puri appendices ke saath. Us page ko dono chahiye thin, puri, kyunki record har profession mein alag hai. Is ko sirf table chahiye, kyunki layer sab mein lagbhag same hai. Yeh asymmetry writing ka accident nahi hai. Yeh architecture apni economics dikhata hai: jo profession ke hisaab se badalta hai woh hai tum kya own aur carry karte ho, aur jo har jagah same hai woh hai tum kya perform karte ho.
+
+## Ayesha apna pehla customer jodti hai
+
+Uske paas uska slice hai. Aik outcome, poora covered: working paper, sort record, invariants, uski aunty ka derived reflex, checker, evaluation set. Chicago firm ke partner ne uska working-paper page padha, kaha ke uske juniors har file mein chaar ghantay lagate hain, aur pehla engagement sign kar liya. Ab woh uski firm ke andar hai, aur jo record usne banaya woh suddenly kamre mein sab se chhoti cheez hai.
+
+Firm ke paas SharePoint mein baees saal ke working papers hain. Engagement letters email mein hain. Unusual treatments ke peechay ka reasoning chat mein hai, aur ek senior manager ke dimagh mein jo aksar travel karta hai. Trial balance us system mein hai jo har ghanta badalta hai. Uska Worker standards bilkul jaanta hai aur yeh sab nahi jaanta.
+
+**Woh routing authority pehle karta hai pehle ke kuch bhi jode.** *Standard going-concern evidence ke liye kya require karta hai?* Yeh uska Vertical System of Record hai: governed, cited, versioned, unchanged. *Account 1200 mein abhi closing balance kya hai?* Yeh accounting system hai, typed query se, aur woh rule likhti hai jo baad mein usay bachayega. Yeh number kabhi index nahi hota. Jab colleague suggest karta hai ke trial-balance exports ko index karein taake Worker "bas dhoond le" toh woh mana karti hai, aur ek jumle mein keh sakti hai kyun: embedded balance us number ki photograph hai jo pehle se hil chuka hai. *Henderson lease ko 2023 mein finance lease kyun treat kiya?* Yeh SharePoint hai, aur yeh poora wajah hai ke is firm ko context layer ki zaroorat kyun hai. Memo hai. Iska author chala gaya. Koi governed system usay nahi rakhta, aur bina uske uska Worker defensible current-year paper prepare nahi kar sakta.
+
+**Phir woh permissions test karti hai pehle ke answers test kare.** Woh first-year junior ke taur pe login karti hai aur firm ki compensation policy ke baare mein broad question poochti hai. Sahi result kuch nahi hai, kyunki uss junior ko SharePoint mein woh documents nahi khol sakte. Woh engagement manager ke taur pe test karti hai, aur partner ke taur pe. Jab tak teeno woh na laayein jo har ek ko dekhne ki permission hai, tab tak woh doosra source nahi jodti. Uski aunty ka rule, bees saal ke practice se, woh hai jo woh follow karti hai: control ki value tab pata chalti hai jab usay pehle test karte ho.
+
+**Phir woh engagement ke design record mein ek line likhti hai**, aur yeh woh jumla hai jiske liye yeh poora page hai. *Firm ka apna material is client ke baare mein evidence hai. Profession ke requirements record se aate hain. Worker kabhi dono ko mix nahi karega, aur har jawab jo dikhayega woh batayega ke kaun sa kya hai.*
+
+Chhe hafte baad woh line apni value sabit karti hai, aur yeh answer ki jagah conflict ke taur pe mil-ti hai. Worker lease classification prepare karta hai. Yeh governed record se standard cite karta hai. 2023 ke memo ko alag attach karta hai, labeled as firm ki prior treatment. Aur phir woh karta hai jo search tool kabhi nahi karta: yeh report karta hai ke dono disagree karte hain, batata hai har ek kya kehta hai, batata hai kaunsa authority test lagaya gaya, aur partner ke paas escalate karta hai jo settle kar sakta hai. Woh padhta hai, agree karta hai, aur treatment correct karta hai jo uski firm ne teen saal se repeat kiya hai.
+
+Ordinary similarity search yeh akele nahi banata. Ise design karna aur test karna padta hai. Search tool memo dhundhta hai, relevant dhundhta hai, aur us se jawab deta hai. Dono outcomes ka farq poore page ka farq hai.
+
+## Failure modes
+
+**Sukhun mein**
+
+Log aksar sochte hain ke yeh layer paanch cheezon mein se aik hai. Yeh koi bhi nahi hai.
+
+Yeh document dump nahi, vector database nahi, model ki memory nahi, universal source of truth nahi, aur permissions ke tariqqa nahi. In mein se har ek real project hai jo ghalat hua.
+
+Gyarah tarike hain jismein ghalat hota hai. Inhein pehchanna seekho, aur tum har ek ko itni jaldi dekhoge ke rok sako.
+
+Gyarah tarike hain jismein ghalat hota hai, taake tum har ek early pehchan sako:
+
+1.  **Flat index.** Har source searchable, har result equally authoritative treat. Ilaaj [authority routing](#authority-is-scoped-across-many-records), retrieval se pehle settled.
+2.  **Flattened portfolio.** Kai governed records aik pool mein daal diye, toh sales rule accounting question ka jawab deta hai aur pichle saal ki policy is saal ki se upar hai. Ilaaj [federation](#the-portfolio-not-the-pair): pehle profession se route karo, aur kuch bhi merge mat karo.
+3.  **Copy pe rely karna.** Synchronized governed page jo authority ke taur pe use ho raha hai, jo bhi version index mein hai. Ilaaj [discovery confirmation nahi](#governed-knowledge-is-discovered-then-confirmed): search hit pointer hai, aur governing record confirm karta hai.
+4.  **Stale answer.** Synchronized copy jo us fact ke liye use ho raha hai jo live fetch hona chahiye tha. Ilaaj [indexed-or-live decision](#current-state-is-asked-for-every-time) har field ke liye jo outcome badal sakta hai.
+5.  **Pehle retrieve, baad mein chhupao.** Forbidden content model context mein filter se pehle aata hai. Ilaaj [permission model se pehle](#permission-comes-before-the-model), aur action se pehle bhi.
+6.  **Model chupke se source ban jaata hai.** Retrieval kuch nahi deta, aur model jo usay lagta hai us se jawab deta hai, form mein grounded se alag nahi. Ilaaj [model source nahi](#the-model-is-not-a-source-either): missing evidence packet mein field hai, aur reflex jo apna governing source nahi dhoond pata escalate karta hai.
+7.  **Prompt integration layer ban jaata hai.** Lamba prompt jo model ko batata hai das systems ko kaise interpret kare, jabke connections, identifiers, aur checks kabhi implement nahi hue. Ilaaj connectors, tools, schemas, aur deterministic policy.
+8.  **Citations bina provenance ke.** Jawab jo page pe link karta hai lekin authority class, version, scope, ya owner kho deta hai. Ilaaj pura [provenance envelope](#provenance-travels-with-every-item).
+9.  **Blended conflict.** Do disagreeing sources jo aik fluent sentence mein summarize ho gaye. Ilaaj [conflict preservation](#conflict-is-a-result-not-a-retrieval-failure), authority testing, aur escalation.
+10. **Shadow record.** Context platform transactions ka apna copy rakhta hai, aur chupke se woh jagah ban jaata hai jis pe log source se zyada bharosa karte hain. Ilaaj source-owned live retrieval aur governed write-back.
+11. **Product-shaped doctrine.** Architecture jo jo bhi vendor lab mein hai uske taur pe define hoti hai. Ilaaj [open interfaces](#the-open-reference-implementation) aur replaceable components.
+
+## Templates
+
+Chaar working documents. Har ek customer ke engagement record ke andar fill karo, tumhare shared vertical ke andar nahi, kyunki yeh sab us customer ka hai. [Building the Context Layer](/docs/context-layer-crash-course) sab charon ko ek worked customer case ke against fill karta hai.
+
+### Template 1: Connected source register
+
+Har source ke liye aik row. Pehle connector chalne se pehle fill karo.
+
+Source system
+
+Kya govern karta hai
+
+Kya nahi karta
+
+Mode (indexed / live / both)
+
+Max tolerated lag
+
+Permission origin
+
+Citable?
+
+Customer pe owner
+
+yes / no
+
+### Template 2: Authority routing map
+
+Har sawal ke liye aik row jo outcome ke liye chahiye. Yeh layer ka version hai decision map ka.
+
+Sawal
+
+Kaunsa profession maalik hai
+
+Governing source
+
+Scope aur jurisdiction
+
+Path (retrieval / typed query)
+
+Kya sirf supporting context hai
+
+Conflict rule
+
+resolved by scope / by authority / escalate
+
+### Template 3: Boundary contract
+
+Har engagement ke liye aik. Yeh woh document hai jo compliance officer ko dikhate ho.
+
+Field
+
+Tumhara entry
+
+Kya index ho sakta hai
+
+Kya live fetch hona chahiye, aur stale value kyun matter karega
+
+Kya kabhi connect nahi hota
+
+Har item ke access rules kaise travel karte hain
+
+Query time pe permission kaise re-check hota hai
+
+Jawab mein governed truth kya dikhta hai
+
+Jawab mein supporting context kya dikhta hai
+
+Action perform hone ke baad kahan record hota hai
+
+Is customer ki instance se kabhi bahar nahi jana chahiye
+
+Kuch bhi promote karne ka route kya hai
+
+Jab source unavailable ho toh kya hota hai
+
+### Template 4: Permission test set
+
+Layer ke pehle se pehle chalao.
+
+Role tested
+
+Pucha gaya sawal
+
+Role ko source system mein kya dekhne ki permission hai
+
+Layer ne kya return kiya
+
+Pass ya fail
+
+Date
+
+Retested
+
+Kam se kam aik sawal shamil karo jiska honest answer junior role ke liye *kuch bhi nahi* hai. Jo layer kabhi kuch nahi return nahi karta usay test nahi kaha ja sakta.
+
+## Definition of done
+
+System of Context Worker ko serve ke liye ready hai jab har box checked ho. Customer ki information owner permission boxes khud check karta hai.
+
+-   Thin slice khatam hai aur Worker pehle se cite karta hai, is layer se pehle.
+-   Har connected source ke paas register row hai jismein hai ke kya govern karta hai aur kya nahi (Template 1 complete).
+-   Outcome ke liye har sawal ke paas routed authority aur path hai (Template 2 complete).
+-   Jab customer ek se zyada vertical chalata hai, routing pehle profession resolve karta hai, aur kisi vertical ka methodology apni seam se paar nahi lagta.
+-   Boundary contract likha hai aur customer ne padha hai (Template 3 complete).
+-   Koi operational state index nahi hai. Har field jo outcome badal sakta hai live fetch hota hai, stated maximum tolerated lag ke sath.
+-   Governed knowledge discovery ke liye synchronize ho sakta hai, aur har synchronized item apni canonical identity, domain, authority class, aur version rakhta hai.
+-   Koi governed cheez sirf index se rely nahi hoti. Applicable record Worker ke cite karne se pehle confirm karta hai.
+-   Jab customer kai verticals chalata hai, packet mein har finding us record ka naam rakhta hai jisse aaya.
+-   Har item ke access rules uske sath travel karte hain, aur query time pe re-check hote hain.
+-   Permission test set har role pe pass hota hai, kam se kam aik test ke sath jiska sahi jawab kuch nahi hai (Template 4 complete).
+-   Packet mein har item pura provenance rakhta hai, aur summarizing utarta nahi.
+-   Conflict policy likhi hai, aur conflicts evidence organized hai escalate hote hain.
+-   Reflex jo apna governing source nahi dhoond pata escalate karta hai, aage nahi badhta, aur yeh test hai.
+-   Reviewer har conclusion ko record se rebuild kar sakta hai, model se baghair.
+-   Padh, recommend, prepare, aur execute alag grants hain, tool boundary pe enforce hote hain.
+-   Har perform action us system mein record hota hai jiske paas result hai, aur conclusion governed case record mein jaata hai.
+-   Source outage ke liye named fallback aur escalation path hai high-risk kaam ke dauran.
+-   Is instance se kuch bhi shared vertical mein nahi gaya promotion review ke baghair.
+-   Named technical, domain, security, aur business owners deployment ke liye hain.
+-   Customer ki information owner ne connected sources aur permission results approve kiye hain.
+
+Evaluation set mein successful searches se kai zyada hona chahiye. Ek relevant lekin non-authoritative message test karo. Ek retired policy jo wording bilkul match karte hai. Galat customer ki document. Galat jurisdiction. Live value jo indexing ke baad badal gayi. Reader bina source permission ke. Worker bina action permission ke. Do applicable sources jo conflict karte hain. Zaroori source jo missing hai. Aur source outage high-risk action ke dauran.
+
+Is list ko do baar padho, jaise aakhri padho. Yeh layer ki definition of done hai. Yeh tumhari **definition of safe to deploy** bhi hai, kyunki oopar har unchecked box ek tariqa hai ke helpful system galat insaan ko sahi document de.
+
+## Appendix: aik cross-domain request, end to end
+
+Is page ka sab kuch aik request pe chalta hai, Ayesha ki firm mein, engagement ke chhe mahine baad. Firm ke paas ab accounting Vertical System of Record hai, uski, aur sales ka kisi aur se khareeda. Yeh aik baar padho toh poora page in aath steps ka description hai.
+
+Partner client se message forward karta hai aur poochta hai: *kya hum is renewal pe twenty percent discount approve kar sakte hain aur revenue June mein book kar sakte hain?*
+
+**Step 1. Identify.** Partner pooch raha hai. Customer client firm hai. Case renewal contract hai. Task recommendation hai, approval nahi. Jurisdiction aur reporting basis customer instance se aate hain. Intended action *prepare aur recommend* hai, *approve* kabhi nahi.
+
+**Step 2. Decompose aur route.** Aik jumla, kai sawal. Kya discount commercial authority ke andar hai? Sales. Kya renewal terms enforceable hai? Legal. Revenue kab recognizable hai? Accounting, jo Ayesha ka apna record hai. Client ne asal mein kya agree kiya? Koi record govern nahi karta, toh supporting context hai. Kya last invoice post ho chuki hai? Traditional record, aur sirf live.
+
+**Step 3. Teen modes mein retrieve.** Sales record ka discount rule aur Ayesha ka recognition reflex discovery index mein milta hai, phir har record ke against confirm hota hai pehle ke kuch cite ho. Client ke messages aur purana renewal file SharePoint se aate hain, permission-checked. Current billing state aur contract ka active version live fetch hota hai, kyunki stale value yahan jawab badal dega.
+
+**Step 4. Filter.** Partner sab dekh sakta hai. Agar first-year junior ne same sawal poocha hota toh pricing history nahi aati, kyunki permission document ke sath travel karti hai.
+
+**Step 5. Assemble.** Aik packet. Governing rules, har ek apna record batata hai. Current facts, time-stamped. Client ke messages, supporting context labeled. Aik missing item: second deliverable ke liye sign kiya gaya acceptance nahi. Permission envelope: sirf prepare aur recommend.
+
+**Step 6. Conflict notice karo.** Sales record is contract size pe twenty percent permit karta hai. Ayesha ka accounting record kehta hai revenue June mein recognizable nahi hai bina acceptance evidence ke. Dono sahi hain. Dono alag sawalon ka jawab dete hain, aur yeh *resolved by scope* hai, ek record ke doosre se upar rank hone se nahi.
+
+**Step 7. Soch aur recommend.** Worker discount approve karne ki, aur June recognition ke khilaf recommend karta hai. Pehle ke liye sales rule cite karta hai aur doosre ke liye standard. Woh aik document name karta hai jo doosra jawab badal dega. Dono ko aik single cheerful yes mein mix nahi karta.
+
+**Step 8. Act aur record.** Partner discount approve karta hai. Sales record validate karta hai ke approval authority ke andar hai. CRM likhta hai aur record karta hai kisne approve kiya. Recognition question khula rehta hai, aur conclusion uske evidence ke sath governed case record mein jaata hai, jismein reviewer usay bina model ke puchhe rebuild kar sakta hai.
+
+Aath steps dobara padho aur notice karo ke kya kabhi nahi hua. Koi record doosre mein merge nahi hua. Koi indexed copy cite nahi hua. Koi live number index se jawab nahi diya gaya. Partner ko jo pehle se nahi dikh raha tha woh nahi aaya. Disagreement smooth nahi hua. Aur layer jo sab mumkin banata hai usne koi professional judgment nahi kiya aur koi authoritative fact apna nahi banaya.
+
+## Architecture aik jumle mein
+
+Poora page aik rule mein compress hota hai:
+
+> **Bohat saari domains. Bohat saare Vertical Systems of Record. Aik System of Context jo unhein baghair flatten kiye jodta hai. Records sach rakhte hain, layer relevance assemble karta hai, Worker sochta hai aur permission ke andar kaam karta hai, aur evidence us record mein laut-ta hai jiske paas result hai.**
+
+Pehle sach banao, Agent Factory record aur apne vertical record ke sath. Doosra context jodo, customer ke systems, identities, permissions, aur provenance ke sath. Task assemble karo, authority, current facts, support, gaps, aur citations ke sath. Worker ko governed tools aur human approval se operate karo. Result wahan record karo jahan sach hai.
+
+## Yahan se kahan jaana hai
+
+Yeh page record aur engagement ke beech hai. [Designing the Vertical SoR](/docs/ecosystem/designing-the-vertical-sor) ne governed truth banaya, aur build course us design ko running software mein badalta hai. Yeh page layer add karta hai jo usay customer ki duniya mein le jaata hai. Hands-on build [Building the Context Layer](/docs/context-layer-crash-course) hai: yeh deploy karta hai Onyx Standard, char source classes jodta hai, tumhare record ko MCP over serve karta hai, aur permission gate prove karta hai. Yeh Mode 2 mein directly [AI Searchable Context](/docs/postgres-ai-crash-course) ke baad hai, jo retrieval layer sikhata hai jis pe tumhara record khud built hai, aur dono milkar scope jump ko visible banate hain: aik ek single Worker ke liye store banata hai, agla poore workforce ke liye corpus banata hai.
+
+Phir fixed order jaata hai. [Skills & Connectors](/docs/skills-connectors-crash-course) MCP sikhata hai, jo agent-facing knowledge aur governed tools ke liye important interface hai, sath mein OpenAPI, connector, aur typed-query paths jo yeh page bhi use karta hai. [Eval-Driven Development](/docs/eval-driven-development-crash-course) proof sikhata hai. Is layer ko apna evaluation set chahiye, conflict cases ke around built: customer ka apna material ek cheez kehta hai, governed record doosri, aur passing answer woh hai jo dono dikhata hai aur batata hai kaunsa govern karta hai. [Building a Digital FTE](/docs/digital-fte-crash-course) Worker banata hai jo sab se padhta hai, aur [Human-Agent Teams](/docs/human-agent-teams-crash-course) us Worker ko logon ke sath rakhta hai jo uske jawabon pe bharosa karenge ya nahi.
+
+Aik aakhri framing, jab yeh layer us record ke barabar plumbing lage jis pe mahine lagaye.
+
+Yeh plumbing hai, aur yeh usi ki point hai. Koi plumbing nahi khareedta, aur har building mein hai. Asset jo tum client se client tak carry karte ho woh governed profession hai, plus Layer 3 pattern jo usay jodta hai. Fitting woh hai jo us asset ko us company ke andar usable banata hai jis ne kabhi suna nahi. Vertical Forward Deployed Engineer jo record ko customer ki real information se nahi jod sakta woh khoobsurat kitab haath mein hai kamre mein jismein koi shelf tak nahi pahunch sakta.
+
+Jo woh bhi honest wajah hai ke yeh page Ecosystem mein last hai. Record tumhein hire kiye jane ke qabil banata hai. Connecting layer tumhein rakhe jane ke qabil banata hai.
+
+## Page aik poster pe
+
+Share karne, sikhne, aur quick revision ke liye: poora architecture aik poster pe. Oopar ki page canonical wording rahegi, aur poster summary hai.
+
+![System of Context aik poster pe. Bayein, char source classes stacked: Agent Factory System of Record shared method ke liye, Vertical System of Record professional truth ke liye, customer ke systems current records ke liye, aur working context messages aur documents ke liye, pehle do band sone mein aur aakhire do khule. Darmiy mein, saat operations sequence mein: connect, identify, retrieve, filter, rank, assemble, deliver. Teen sone ke control bands har operation pe: authority routing, permission before retrieval, aur provenance with citations. Output temporary context packet hai jismein aath compartments hain, expiry stamp ke sath: request, governing authority, current facts, supporting context, conflicts, missing evidence, permission envelope, aur citations. Dayen, human aur AI Worker governed tools se sochte aur kaam karte hain, aur return arrow result aur evidence ko wapas us System of Record tak le jaata hai jiske paas hai. Neeche, teen lines: relevance is not authority, packet authority inherit karta hai aur permissions inherit karta hai aur expire hota hai, aur disagreement reviewable banaya jaata hai ghaib nahi kiya jaata](/img/system-of-context-overview.webp)
+
+## Flashcards — Apni Samajh Check Karo
+
+<Flashcard question="System of Context kya hai?" answer="Woh layer jo sources ko jodta hai aur current task ke liye zaruri cheezein assemble karta hai. Yeh apna koi sach nahi rakhta, sirf delivery karta hai." />
+
+<Flashcard question="System of Record aur System of Context ka kya farq hai?" answer="System of Record sach rakhta hai — facts aur rules. System of Context decide karta hai kya pahunchta hai — woh routing, filtering, aur assembly karta hai." />
+
+<Flashcard question="Authority routing kya hai?" answer="Ye decide karna ke har sawal ka kaunsa source governing hai — pehle retrieval se pehle, baad mein nahi." />
+
+<Flashcard question="Context packet kya hai?" answer="Ek temporary, cited bundle jo ek task ke liye assembled hota hai — governing rules, current facts, supporting context, conflicts, missing evidence, permissions, aur citations." />
+
+<Flashcard question="System of Context ka aik qanoon kya hai?" answer="Authority kabhi nahi hoti. Layer citations le ke chalta hai record ki taraf, aur na layer aur na model kabhi cited source ban-ta hai." />
+
+<Flashcard question="Model kyun source nahi hai?" answer="Model ke paas weights hain, source nahi. Koi register row nahi, koi version nahi, koi authority class nahi. Plausibility provenance nahi hai." />
+
+<Flashcard question="Chunking kyun governance ghaib karta hai?" answer="Generic indexing pipeline sentences preserve karta hai lekin 12 controls (stable ID, version, jurisdiction, etc.) chhod deta hai. Worker phir nahi bata sakta ke kya govern karta hai." />
+
+<Flashcard question="Permission model se pehle kyun aati hai?" answer="Reader ko jo nahi dikhna chahiye woh model context mein kabhi aana nahi chahiye. Model context mein chhupa passage chhupa nahi hai." />
+
+<Flashcard question="Conflict ke kitne outcomes hain?" answer="Teen: Resolved by scope (alag sawalon ka jawab), Resolved by authority (ek source govern karta hai), Unresolved (escalate karo evidence organized hai)." />
+
+<Flashcard question="Packet ke char rules kya hain?" answer="1) Authority inherit karta hai, 2) Permissions inherit karta hai, 3) Expires hota hai, 4) Evidence laut-ta hai record mein." />
+
+<Flashcard question="System of Context kab zaruri nahi hai?" answer="Jab governed record aur customer ke systems mil kar har sawal ka jawab dein. Ek MCP connection System of Context nahi hai — yeh tool hai." />
+
+<Flashcard question="Onyx kya hai?" answer="System of Context ki open reference implementation. Students isay install, read, aur dismantle kar sakte hain." />
+
+<Flashcard question="Chunking ka ilaaj kya hai?" answer="Har search hit ko pointer treat karo, answer nahi. Har synchronized item apni canonical identity rakhe taake confirmation step ke paas check karne ke liye ho." />
+
+<Flashcard question="Packet kyun temporary hai?" answer="Kyunki 10 minute baad facts badal sakte hain, doosre colleague ko different permission hai, aur doosre task ko different authority route chahiye." />
+
+<Flashcard question="FDE AF Model mein System of Context kahan baithta hai?" answer="Layer 3 (vertical ecosystem) pattern tayyar karta hai bina customer data ke. Layer 4 (customer instance) customer ke actual systems jodta hai." />
