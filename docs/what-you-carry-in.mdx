@@ -1,14 +1,386 @@
 ---
-id: what-you-carry-in
-title: "Aap Kya Le Ke Aate Hain?"
-sidebar_label: "Aap Kya Le Ke Aate Hain"
-description: "Prerequisites aur pehle se jo aap jaante hain"
+sidebar_position: 8
+title: "What You Carry In: Ownership ka Daawa"
+description: "Is daur mein tum kya apne paas rakh sakte ho — model rent pe hai, tools badal rahe hain, method free hai. Baki kya bachta hai? Sirf aik cheez: aik profession ka governed knowledge."
+keywords: ["ownership", "vendor-neutral", "System of Record", "vertical", "governed knowledge", "FDE", "asset"]
 ---
 
-# Aap Kya Le Ke Aate Hain?
+# Kya Cheez Tumhari Rehti Hai: Ownership ka Daawa
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**Is kitaab teen daawa karti hai.** [Thesis](/docs/thesis) wo architectural daawa hai: ye batati hai ke ek company is daur mein kya own karegi — jo ke AI Workers ki workforce hai, software licences ki catalogue nahi. [The Operating Layer](/docs/ai-operating-layer) wo interface daawa hai: ye batati hai ke agent ke chalane se software kya hona band ho jata hai. Ye page teesra sawaal poochta hai, aur ye tumhari apni position ke baare mein hai, kisi company ya product ke baare mein nahi.
 
-Aap ke paas jo bhi domain expertise hai — law, finance, healthcare, education — woh aap ki sab se badi asset hai. AI tools seekhna aasan hai, lekin domain knowledge rare hai.
+**Is daur mein model rent pe hai, runtime badal raha hai, aur method is kitaab jaisi kitaab se sabko free mein mil raha hai. Toh aakhir ek insaan kya own kar sakta hai?** Laghar har jawab fail hota hai. Ye page ek ek karke fail hone wale jawab door karta hai, wo aik bachne wala naam deta hai, aur dikhata hai ke tumhari umeed ki practice ke bina wo asset kaise kuch bhi nahi hai.
+
+Ye sawaal har practitioner ke liye hai is daur mein. Jawab sabse zyada us insaan ke liye hai apna kaam doosron ki company mein lekar jaata hai, aur agla section exact batata hai kaun hai wo.
+
+![Ek engineer seedhi khadi hai kholay hue double glass darwaze ke beech mein, peeche se dekhti hui, chalte hue, client ke boardroom mein ja rahi hai. Uske haath neeche hain aur wo aik aik kitab haath mein pakre hue hai, ek haath mein matte charcoal rang ki volume jiska title hai Agent Factory SoR, subtitle Shared Method, jis pe connected network ka chhota drawing hai — wo jo ecosystem ne use di hai, aur har graduate ke paas identical copy hai. Doosre haath mein brass gold rang ki volume jiska title hai Vertical SoR, subtitle Governed Knowledge, andar se roshan hai aur frame mein sabse chamkeeli cheez hai, uska roshan haath aur baazu par fail raha hai. Uske cover pe teen nishaan hain: aik classical institution facade jo profession aur uske regulator ke liye hai, ek khari ticked checkboxes wali column jo checker aur evaluation set ke liye hai, aur aik seal jo governance aur approval ke liye hai. Wo volume usne apne expert ke saath banayi hai, aur kisi ke paas wo nahi hai. Darwaze ke paara, dheere dheere out of focus, paanch log baithe hain lambay table ke ird gard roshan faza ke shehar ki skyline ke saamne — client, haqeeqi aur abhi tak engage nahi hua. Dheere dheere paleet line-art icons dark deewaron pe khuday hain jo uske dono taraf hain. Bayen taraf, charcoal volume ke peeche, databases, cloud, gears, aur network graph. Dayen taraf, gold volume ke peeche, aik document, flow diagram, charts, aur checkmark wala shield](/img/what-you-carry-in-hero.png) Do volumes ek darwaze se guzar rahi hain. Charcoal wali har graduate ke paas hai. Gold wali sirf uski hai.
+
+---
+
+## 📿 Taleemi Madad
+
+Puri Slideshow Kholein
+
+**[Puri Presentation Dekhein](https://docs.google.com/presentation/d/1XdCd55d7z-hSOyxPlwJovrs4DEDSbzzsCt0otw-WkOQ/edit?usp=sharing)** — Kya Cheez Tumhari Rehti Hai
+
+### Seedhi Zuban Mein
+
+Tum AI model own nahi kar sakte: tum use rent karte ho, aur sab karte hain. Tum tools own nahi kar sakte: wo har saal badalte hain. Tum apni ghante own nahi kar sakte: wo wohi cheez hai jo machine absorb kar rahi hai. Aur tum ye method own nahi kar sakte, kyunki ye kitaab har reader ko free mein deti hai.
+
+Toh kya bachta hai? Aik cheez. Aik profession ke likhay huay rules aur judgment, aik mulk mein, tumhari governance mein aur aik haqeeqi expert se licensed. Ye is daur mein wo aik cheez hai jo koi rival khareed nahi sakta aur koi vendor wapas nahi le sakta. Tum ise apne expert ke saath hold karte ho, akele nahi. Ye page explain karta hai kyun, aur jab tum ye qubool kar lete ho toh kya hota hai.
+
+### Lafz Jo Is Page Mein Use Huay
+
+Ye table aik dafa parho baqi poora page bohot aasan ho jayega. Ye wo lafz hain jo yahan kaam karte hain.
+
+| Lafz | Seedha Matlab |
+|---|---|
+| **Asset** | Wo cheez jo saal ke end pe tumhare paas abhi bhi ho. Skill se mukhtalif hai |
+| **Vendor-neutral** | Clienton ki service karte hue bina kisi vendor ke platform ya product ke |
+| **Refusal** | Ye page jin cheezon ko rule out karta hai. Paanch candidates hain, toh paanch refusals |
+| **Elimination** | Ek ek candidate ko rule out karne ka amal jab tak aik na bach jaye |
+| **Vertical** | Aik profession, aik mulk mein. "Pakistan mein tax accounting" vertical hai. "Accounting" nahi |
+| **Jurisdiction** | Aik mulk ya region jiske apne rules hain aur apna regulator hai |
+| **System of Record** | Wo aik governed source jo tumhare agents padhte hain, logon ko website aur agents ko MCP par serve hota hai |
+| **Corpus** | System of Record ke andar source documents ka collection jo tumhare agents cite karte hain |
+| **Slice** | Aik professional outcome, poora cover kiya hua, System of Record ke andar |
+| **Thin** | Aik System of Record jo aik outcome cover kare |
+| **Thick** | Aik System of Record jo bohot saare outcomes cover kare, har aik poora |
+| **Probe** | Sasti evidence jo domain score karte waqt ikathi hoti hai, System of Record ka part nahi |
+| **Sponsor** | Possible first customer ke andar wo naam wala insaan jo shuru ka number agree kar sake |
+| **Baseline** | Client ka kaam aaj kahan khada hai, client ke workflow mein measure kiya hua |
+| **Promotion** | Baar baar kaam neeche girna. Jo aik customer ke liye bana wo kai guzaron mein repeat hota hai aur neeche layer mein chala jaata hai, toh har baad ka client use paata hai |
+| **Premium** | Wo extra price jo tum charge kar sakte ho kyunki kisi ke paas tumhari cheez nahi |
+| **Gate** | Do maayne hain. Verb ke tor pe: decide karna ke tum kahan pahunch sakte ho. Noun ke tor pe (chaar gates): wo checkpoint jo aglay step se pehle guzarna zaroori hai |
+
+Poore kitaab mein use honay walay lafz [glossary](/docs/glossary) mein ikattha hain.
+
+---
+
+## Ye Page Kis Ke Liye Hai
+
+### Seedhi Zuban Mein
+
+Yahan ka sawaal sab ke liye hai. Jawab aik kisam ke reader ke liye sabse fit hai: wo jo clients ke liye kaam karta hai, aik employer ke liye nahi, aur apne saath kisi vendor ka product nahi laya. Agar abhi tum wo nahi ho, toh bhi parho. Ek section neeche bilkul us position ke liye likha hai.
+
+Ek lafz ko argument shuru hone se pehle fix karna hai, aur wo hai "tum."
+
+Sawaal sab ka hai. Is daur mein har practitioner ko ye poochna chahiye ke saal ke end pe kya bachega. Jawab tang hai, aur ek lafz jo sabse zyada kaam karta hai: **vendor-neutral**. Ye sabse zyada matter karta hai jab tum sirf ek employer ke liye nahi, balki clients ke liye service karte ho, aur apne saath kisi vendor ka platform nahi laye. Teen kisam ke reader us description mein aate hain: vendor-neutral Forward Deployed Engineer jo ye kitaab train karti hai, freelance ya fractional version usi role ka (fractional ka matlab hai kai clients ke liye ek saath part-time), aur Layer 3 pe domain startup ka founder, wo layer jahan vertical ko products mein badla jaata hai. Ye wo log hain jo kuch lekar client ke darwaze mein jaate hain, aur isi liye ye page ka title woh hai.
+
+Agar tum aik company ke andar employed ho, toh reasoning abhi bhi hold karti hai aur elimination abhi bhi chalane layak hai. Lekin aik limit tum pe lagti hai jo un pe nahi, aur wo seedha [Kaun kya rakhta hai](#kaun-kya-rakhta-hai) mein hai: jo asset tum apne employer ke liye banate ho wo employer ki hai.
+
+Aur agar tumhare paas abhi aisa role nahi hai, toh bhi ye page tumhari parhne ke liye hai. Is kitaab ke zyada tar readers service ladder pe shuru karenge, aur [Ye argument kya gate nahi karta](#ye-argument-kya-gate-karta-hai-aur-kya-nahi) section bilkul us position ke liye likha hai.
+
+---
+
+## Paanch Cheezein Jo Tum Own Nahi Kar Sakte
+
+### Seedhi Zuban Mein
+
+Tumhe decide karne se pehle ke kya own karo, test chahiye ke kya count karta hai. Do sawaal. Tumhare paas hai ya koi cheen sakta hai? Aur tumhare paas hai jab ke doosron ke paas nahi? Kuch dono pass karna chahiye. Laghar kuch nahi karta, aur agle paanch paragraph dikhate hain kyun.
+
+Ownership ek career ke baare mein poochna ajeeb hai, toh shuru se socho ke ye kyun sahi sawaal hai. Skill jo tumhe hire kiya ja sake wo asset se mukhtalif hai jo tum hold karte ho. Stable daur mein fark matter nahi karta, kyunki skill poora working life rehti hai. Is daur mein ye poora matter karta hai, kyunki zyada tar skills absorb ho rahi hain aur zyada tar tools replace ho rahe hain. Toh jo sustainable sawaal hai wo ye nahi ke tum kya kar sakte ho. Ye hai ke saal bhar kaam karne ke baad tumhare paas kya bachta hai.
+
+Toh ye raha test, aur iske do hissay hain. **Tumhare paas hai,** yaani rented nahi aur koi wapas nahi le sakta. **Aur sabke paas nahi hai,** yaani ye tumhe agle candidate se alag kar sakta hai. Kisi bhi hissay mein fail ho toh asset nahi hai, chahe baqi kuch bhi ho. Laghar har cheez jo practitioner value karta hai ya toh aik hissay mein ya doosre mein fail karti hai.
+
+Candidates check karo.
+
+**Tum model own nahi kar sakte.** Tum use rent karte ho, subscription ya token se. Wohi insaan jo tumhare against usi job ke liye bid kar raha hai, isi dopahar, usi price pe. Jab behtar model aata hai tum switch karte ho, aur yahi point hai: ye kitaab is tarah bani hai ke behtar models aane pe free upgrade milta hai. Lekin jo cheez koi tumhare rival se rok na sake wo advantage nahi hai.
+
+**Tum runtime own nahi kar sakte.** Harness wo software hai jo agent loop chalata hai, uska state hold karta hai, aur uske tools call karta hai. Ye kitaab jaan boojh kar [tumhe koi bhi use karna aur portable rehna](/docs/roles-this-book-trains) sikhata hai, kisi aik ko build karna nahi. Jo tool tum is saal use karte ho wo shayad agla saal na ho, aur tumhari discipline dono se zyada chalegi. Ye achi property hai, lekin ownership nahi.
+
+**Tum apni labour own nahi kar sakte.** Ghante aur syntax dono saath fail karte hain, aur usi wajah se. Insaano ke ghante bechna wo layer hai jo machine absorb kar rahi hai. Purani services pyramid bhi isi model pe bani thi, jismein kai junior log kuch senior ke under ghante bill karte hain. Toh client jo tumse staff shortage cover karne ko kahe wo tumhari ghantein rent pe maang raha hai. Saal bhar uske baad tumhare paas sirf invoices hain aur kuch nahi. Code likhna usi wajah se fail hota hai, aur ye wahi jagah hai jahan ye kitaab shuru hoti hai, Harari ke sawaal pe. AI syntax real time mein absorb kar raha hai. Toh syntax sikhana wo skill hai jo machine sabse tezi se le rahi hai.
+
+**Tum vendor ka platform own nahi kar sakte.** Engineer ko client ke paas bhejo jiske paas vendor ka ontology aur tools pehle se bane huay hain, toh uske paas real leverage hai: aik insaan ab kuch hafton mein wo kaam kar leta hai jo pehle team saalon mein karti thi. Ontology ka matlab hai company ke concepts ka map aur wo ek doosre se kaise judte hain. Lekin leverage uski nahi hai. Ye vendor ki hai, aur isi liye vendor engagement ke liye paisa deta hai. Jab wo vendor chhodti hai, platform peeche reh jata hai, aur uske paas kuch nahi bachta lane ke liye.
+
+Ye refusal paanch mein se aik sirf nahi hai. Ye woh wajah hai jo baaki chaar tumhe matter karti hain. Vendor ki payroll pe engineer ko is page ki zaroorat nahi: use asset diya gaya hai, aur uska kaam hai use deploy karna. Vendor hata do toh sawaal unavoidable ho jaata hai. **Toh vendor-neutrality ye kitaab recommend karni wali koi virtue nahi hai. Ye wo condition hai jo kuch own karna zaroori banati hai.** Jo kuch aage hai wo sab vendor-neutral Forward Deployed Engineer karta hai is baare mein.
+
+**Tum method own nahi kar sakte, aur ye uncomfortable hai.** Ye kitaab jo kuch sikhata hai, wo sabko sikhata hai. Spec-driven development, agent architecture, evaluation, oversight, deployment: har graduate ko same instruction milti hai. Wo bhi jo tumhari chahi hui job ke liye apply kar raha hai. Jo method sab readers share karein wo tumhe unse alag nahi kar sakta. Ye kitaab mein koi flaw nahi hai. Ye usi ki wajah se kitaab hai.
+
+Paanch candidates, paanch refusals, aur test ne kaam kiya, personal choice ne nahi. Teen pehle hissay mein fail: model, runtime, aur platform sab kisi aur ke hain aur cheene ja sakte hain. Doosre hissay mein fail: tumhari labour aur method tumhare hain aur sabke hain ek saath. Chhata candidate jaan boojh kar rakha gaya hai apne section ke liye neeche, kyunki jo objection wo uthata hai usko aik line se zyada chahiye.
+
+![Ownership test table ke tor pe draw kiya gaya. Upar test do dafa apply kiya gaya: tumhare paas hai, yaani rented nahi aur kisi aur ka nahi, aur sabke paas nahi hai, toh tumhe alag kar sakta hai. Kisi bhi mein fail ho toh asset nahi hai. Neeche do groups hain struck-through candidates ke. Pehle test mein fail kyunki ye kisi aur ke hain. Model, jo tum rent karte ho aur har rival bhi. Runtime, jo kisi ka hai aur har saal badalta hai. Aur vendor ka platform, jo real leverage hai jo vendor ke paas rehta hai. Doosre test mein fail kyunki ye tumhare hain lekin sabke hain. Tumhari labour, yaani ghante aur code, wo layer jo absorb ho rahi hai. Aur method, jo ye kitaab har reader ko deti hai. Unke paas note hai ke chhata candidate doosre test mein bhi fail hota hai, professional kaam ka general shape, aur page usko apna section deta hai. Phir, gold mein, wo aik candidate jo dono test pass karta hai: aik profession ka governed knowledge aik jurisdiction mein. Aur uske neeche aik final band passes both and still not the answer heading ke saath: reputation, speed, relationships, aur delivery ka record. Tumhare paas hai aur sabke paas nahi hai, toh premium earn karta hai, lekin teesre test mein fail hota hai, kyunki license nahi ho sakta, buyer ko transfer nahi hota, agent padh nahi sakta, aur tum band karte ho toh grow bhi band. Do akhri lines: surviving asset zyada charge karne ka iktida nahi hai, sirf wo durable, transferable, aur compounding hai, aur tang hona limitation nahi balki wo aik condition hai jismein knowledge worth paying for aur reusable dono hai](/img/ownership-test.png) Wohi test table ke tor pe, surviving candidate ke saath jo pass karta hai lekin abhi bhi jawab nahi hai.
+
+---
+
+## Aik Cheez Bachti Hai
+
+### Seedhi Zuban Mein
+
+Paanch failures hata do aur aik cheez khadi hai: aik profession kya jaanti hai, aik mulk mein, likha hua. Kaam kaise karna hai nahi, jo ye kitaab sabko deti hai, lekin kaun sa rule lagta hai, uska kaun sa version force mein tha, aur reviewer kya proof qubool karega. Likha hua aur governed, ye aik vertical System of Record hai. Tum akele nahi rakhte. Tum apne expert ke saath rakhte ho jiska judgment uske andar hai.
+
+Jo kuch upar hai wo hata do aur dekho kya bachta hai.
+
+Kaun sa standard is sawaal pe govern karta hai. Uska kaun sa version is reporting period mein effective tha. Kisi mulk ka regulator rules ka maalik hai. Partner ko kya personally sign karna hai aur delegate nahi kar sakta. Kaun sa chhota fark safe hai, aur kaun sa pehla sign hai asli problem ka. Reviewer kaun sa evidence qubool karega, aur kaun sirf lagta hai.
+
+Wo sab method nahi hai, toh kitaab tumhe nahi de sakti. Wo kisi vendor ka nahi hai, toh koi wapas nahi le sakta. Wo general nahi hai, toh audit files se customs declarations mein nahi jaata. Wo aik profession ka apna governed knowledge hai, aik jurisdiction mein, aur ye us sawaal ka jawab hai jo page ne shuru mein poocha.
+
+Likha hua, governed, aur dono readers ko serve kiya hua — yaani logon ko website aur agents ko MCP par — wo knowledge aik **vertical System of Record** hai.
+
+"Lafz tumhara" seedha exact ho jaye, kyunki loose version galat hai. Tum ye corpus personally own nahi karte, aur corpus ka matlab hai wo source documents ka collection jo tumhare agents cite karte hain. Ye tumhari domain startup hold karti hai jo tumne apne expert ke saath banayi, ismein uska material licensed hai, aur ismein third-party sources unki terms ke under hain. Jo tum jointly own karte ho wo assembly hai, governance hai, aur derived procedures hain uske judgment se. Toh daawa accurate hai lekin tang hai "tum profession ka knowledge own karte ho" se, aur ye mazboot bhi hai: ye argument mein wo aik asset hai jo competitor khareed nahi sakta aur vendor wapas nahi le sakta.
+
+Teen properties ise sustainable banati hain, aur na upar ke refusals ke liye koi true hai. **Ye badalta hai, lekin commodity kabhi nahi banata.** Commodity wo hai jo kahin bhi kisi ko bhi lagbhag usi price pe mil jaye, aur ye wohi hai jo rented model pehle se hai. Standards revise hote hain period pe, aur har revision wo kaam hai jo sirf profession ke andar wala kar sakta hai. Toh asset ko maintenance chahiye, replacement nahi.
+
+**Ise license kiya ja sakta hai.** Skill license nahi ho sakti. Judgment jo likha gaya ho wo ho sakta hai, aur yahi aik expert ke bees saal ko wo cheez banata hai jo business hold kar sake.
+
+**Ye badhta hai.** Har engagement aik aur outcome add karta hai. Toh saal teen mein saal ek se zyada value hai. Tool ulta karta hai.
+
+Aur ye kai assets mein se aik nahi hai. Ye wo asset hai jis pe poora practice khada hai, aur ye kitaab ka architecture pehle se kai jagah kehta hai bina ek jagah gather kiye. Domain trio ke andar System of Record pehle banta hai, hamesha. Doosre hissons ke paas kuch trusted nahi hota padhne ke liye jab tak ye na ho. [Expert twin](/docs/ecosystem/fde-af-model#layer-3-vertical-ecosystems), jo tumhare expert ki awaz mein jawab deta hai, isse padhata hai. Domain builder, jo is profession ke liye Workers manufacture karta hai, Workers ko ismein point karta hai. Aur har Worker apne rules reviewer ko cite karta hai, jo phir check karta hai. Paisa wala side usi natije pe pahunchta hai, opposite end se. Engagement us result pe price hota hai jo sirf ye asset tumhe prove karne deta hai. Retainer, jo build ke baad fix monthly fee hai, tumhe Workers operate karne ka paisa deta hai jo isse padhte hain. Layer 3 products iske against manufacture hote hain. Aur pehla sponsor conversation isliye hua kyunki iska aik governed page padhne layak tha.
+
+Toh ise hata do toh practice component se chhoti nahi hoti. Kuch bhi nahi bachta khade hone ke liye. Lekin exactly kaun sa practice, kyunki strong version galat hai. Service practice perfectly well khada hai bina vertical asset ke, sirf method pe, aur ye kitaab zyada tar readers ko exactly yahi recommend karti hai. Jo kuch khade hone ke liye nahi hai wo tumhara business hai jo tum own karne wale the. Asset hata do toh bachta hai aik capable insaan shared method ke saath, ghante rent pe, aur ye wohi position hai jo upar ke refusals ne describe ki.
+
+Aik honest limit yahan aana chahiye baad mein nahi, kyunki ye poora argument constrain karta hai. Ye asset tum akele author nahi kar sakte. Andar ke procedures practitioner ki awaz mein likhe huay hain aur practitioner ki asli files se derived hain, toh jo tum own karte ho wo jointly owned hai.
+
+Jointly kiske saath, exactly, concrete hona chahiye, kyunki "tum own karte ho" ek structure chhupa deta hai. Jo cheez asset hold karti hai wo **domain startup** hai jo tum aur tumhara expert milke banate ho. Wo apna persona aur apna likha hua material usmein license karti hai, aur wo abhi bhi own karti hai. Standards, statutes, aur third-party sources apne licenses ke under aate hain. Wo sab terms vertical shuru hone se pehle tay hoti hain, baad mein negotiate nahi hote. Toh sahi sentence ye nahi hai ke tum corpus own karte ho. Ye hai ke ek business jo tum jointly own karte ho wo governed corpus hold karti hai, aur us corpus ka kuch material abhi bhi doosron ki hai. Ye "tum asset own karte ho" se chhota daawa hai, aur ye haqeeqi hai.
+
+---
+
+## Ownership Ki Kya Value Hai
+
+### Seedhi Zuban Mein
+
+Kuch own karna tab tak kaam ka nahi jab tak ye tumhari charging aur tumhari refusal change na kare. Ye section dikhata hai ke paanch cheezein jo tum own nahi kar sakte wo wohi paanch hain jinke liye tum extra charge nahi kar sakte. Aik exception hai, aur wo cheez test se bach gayi hai.
+
+Elimination ne sirf asset identify nahi ki. Ye sirf cheez hai jiske liye tum premium charge kar sakte ho, aur dono results wohi result hain jo doosri taraf se dekhe gaye hain.
+
+Refusals pe wapas jao aur har negotiating table pe har ek ki kya value hai poochho. Kuch nahi, aur exactly usi wajah se jo fail kiya. Tum model pe premium charge nahi kar sakte, kyunki tumhara competitor usi ko is dopahar rent karta hai. Tum runtime pe charge nahi kar sakte, kyunki koi bhi le sakta hai aur client jaanta hai ke ye har saal badalta hai. Tum method pe charge nahi kar sakte, kyunki ye kitaab ka har reader ke paas hai. Aur tum ghante pe charge nahi kar sakte, kyunki ghante wohi hain jinhen machine absorb karke neeche price kar rahi hai, aur isi liye purani services pyramid jismein kai junior log ghante bill karte hain rate pe compete karti hai, value pe nahi. Pricing power chahiye ke buyer wo cheez kahin aur na paaye. Ye ownership test ka doosra hissa hai, commercial fact ke tor pe dubara bola gaya.
+
+Aik candidate ko yahan proper jawab chahiye, kyunki ye test pass karta hai aur list mein mention nahi tha. **Reputation** dono hissay pass karta hai. Tumhare paas hai, aur sabke paas nahi hai, toh premium support karta hai, aur speed, relationships, aur delivery ka record bhi karta hai. Ye objection fair hai aur honest jawab distinction hai, inkar nahi.
+
+Reputation aik mukhtalif kisam ka asset hai. Partner ko license nahi ho sakta. Buyer ko transfer nahi hota. Koi agent padh nahi sakta. Aur wo kuch aisa nahi badhta jo business hold kar sake, kyunki ye tumhare naam pe rehta hai aur tum band karte ho toh grow bhi band. Governed profession charon karta hai. Toh surviving asset zyada charge karne ka iktida nahi hai. Ye sirf **durable, transferable, aur compounding** hai, yaani chalta hai, kisi aur ko diya ja sakta hai, aur saal dar saal badhta hai, aur sirf ye hai jo agent act kar sake.
+
+Teen cheezein isse nikalti hain.
+
+**Tum result price kar sakte ho apne time ki jagah.** Buyer sirf result ke liye pay karega jab tak kisi ko uspe hold kiya ja sake. Professional result pe hold hona matlab jaanna kaun sa standard govern karta hai, kaun sa version time pe apply tha, aur reviewer kya evidence qubool karega. Bina asset ke koi honestly promise nahi kar sakta. Method wala sirf effort promise kar sakta hai.
+
+**Tum engagement decline kar sakte ho.** Asset jo ek mahine mein bhi bina kuch beche badhta hai har negotiation change deta hai. Client jo ghante rent karna chahe usko year waste kiye bina refuse kar sakte ho, kyunki jo cheez tumhe agle quarter valuable banati hai wo is quarter ka invoice nahi hai.
+
+**Tum permanently hire ho sakte ho, sirf borrowed nahi.** Practitioner jiska leverage vendor ke paas hai wo permanent loan pe hai, useful jab tak vendor relationship chale. Jo apna discipline aur profession apne saath leke chale wo bina kisi step ke in-house laya ja sakta hai, aur ye alag conversation hai alag price pe.
+
+Dekho market ne iske saath kya kiya hai, independently. AI agents ke liye pricing seats aur ghanton se door ja rahi hai. Do models zyada dikh rahe hain, aur dono ke peeche governed asset ke bina kaam nahi karta. Aik action ki jagah result charge karta hai. Doosra agent ko usi tarah price karta hai jaise tum full-time employee price karte ho, jo unit ye kitaab Digital FTE kehti hai, full-time equivalent ke short mein. Na hi koi practitioner bech sakta hai jo sirf effort promise kar sake. Market ne is kitaab ka framing adopt nahi kiya. Buyer ki taraf se usi jagah pe pahuncha, kyunki outcomes ke liye pay karne wala buyer ko dhoondna padta hai jo ek guarantee de sake.
+
+Aik caution, kyunki ye dono taraf kaam karta hai. Result ke liye charge karna matlab result fail hone ka cost uthana, toh pricing power jo asset create karta hai wo tab tak safe hai jab tak uska checker aur evaluation set real na ho. Ownership tumhe outcome price karne ka haq deta hai. Pehle prove karne se excused nahi karta. Aur kya charge karna hai, kaun se rung pe, ye operational question hai jo ye page jaan boojh kar [FDE AF Model ke business model](/docs/ecosystem/fde-af-model#the-fde-af-business-model-where-each-layer-earns) pe chhod deta hai.
+
+### Ye Argument Kya Gate Karta Hai Aur Kya Nahi
+
+### Seedhi Zuban Mein
+
+Is page pe kuch nahi kehta ke bina asset ke kaam nahi mil sakta. Tum hire ho sakte ho, freelance kar sakte ho, clients jeet sakte ho bina iske, aur zyada tar readers bilkul yahi se shuru karenge. Jo asset change karta hai wo hai kaun sa kaam tumhe offer hota hai, uske liye kya charge kar sakte ho, aur saal ke end pe kya bachta hai.
+
+Yahan exact ho, kyunki is daave ka strong version galat hai aur haath aata hai. Is page pe kuch nahi kehta ke bina asset ke kaam nahi ho sakta.
+
+Tum bina iske hire ho sakte ho. Role ke kai best paid versions iske bina depend karte hain. Vendor ki engineer ko platform diya jaata hai aur use apne asset ki zaroorat nahi, aur us tarah ki senior salaried roles bohot achi pay karti hain. Tum bina iske freelance kar sakte ho, generalist ki rates pe, usi ke saath jo kai capable generalists already same listings ke liye compete kar rahe hain. Aur tum bina iske clients jeet sakte ho, service ladder pe. Wahan tum [Layer 1 aur Layer 4](/docs/ecosystem/fde-af-model#the-fde-af-business-model-where-each-layer-earns) sirf shared System of Record se kamaate ho. Tum client ki apni manuals se governed Systems of Record banate ho. Tum generic tools se Workers manufacture karte ho jo pehle se deployed hain. Us kaam ko koi slice chahiye nahi, kyunki wo koi vertical bechta nahi. Ye wahi jagah hai jahan is kitaab ke zyada tar readers shuru karenge, aur jahan unhe karna chahiye, aur ye aksar expert milne ka tareeqa bhi hai.
+
+Toh asset kaam ki access gate nahi karta. Ye teen cheezein gate karta hai, aur teeno time ke saath build hoti hain. **Kaun sa kaam tumhe offer hota hai,** kyunki outcome ke liye pay karne wala buyer ko dhoondna padta hai jise hold kiya ja sake. **Kya charge kar sakte ho,** kyunki premium ke liye chahiye ke competitor wo cheez na paaye. **Aur saal ke end pe kya hai,** jo sawaal page ne shuru mein poocha.
+
+Ek jagah daawa firm ho jaata hai, aur narrow statement karna chahiye, kyunki narrow daawa credible daawa hai. Vertical ladder ke liye asset qareeb se necessary hai aur ye exact version hai. Expert ki referral tumhe meeting dila sakti hai. Jo nahi mil sakta wo agla step hai. Koi apna baseline us insaan ko nahi batata jo kuch dikhaya nahi, toh bina slice ke tum conversation toh kar loge lekin bina number ke jaoge, bina drafted contract of success ke, aur bina business ke chalane ke. Kaam ki access gated nahi hai. Signed outcome ki access hai.
+
+---
+
+## Jo Do Cheezein Tum Saath Leke Chalte Ho
+
+### Seedhi Zuban Mein
+
+Practitioner jo ye kaam kar chuka hai wo client ke paas do governed sources leke jaata hai, ek nahi. Pehli ye kitaab hai, aur har graduate ke paas identical copy hai, toh zaroori hai lekin koi advantage nahi hai. Doosri aik profession aik mulk mein, apne expert ke saath banayi, aur kisi ke paas ye nahi hai. Pehli batati hai kaam kaise hota hai. Doosri batati hai rules kya require karte hain.
+
+Toh practitioner jo ye kaam kar chuka hai do governed sources leke jaata hai ek ki jagah, aur fark poora point hai.
+
+**Jo tumhe di gayi.** [Agent Factory System of Record](/docs/ecosystem/system-of-record) ye kitaab hai, governed aur dono tarah ke readers ko serve hoti hai. Ismein method hai, aur method se zyada bhi hai: arguments, role map, vocabulary, aur ye page. Yahan matter karne wala ye nahi ke andar kya hai balki aur kaun hai. Iska content kisi aik profession ka nahi hai, aur isi liye reusable hai aur **shared** bhi hai. Aik accountant aur aik customs broker same pages padhte hain, aur har graduate bhi padhta hai. Toh ye physical form mein refusal hai: bina iske kaam nahi hota, aur ye tumhe koi advantage nahi deta. Jab ye page iske liye chhota naam chahiye, toh ye kehta hai **shared System of Record**.
+
+**Profession, jo tumne banaya.** Aik vertical, aik jurisdiction, committed domain expert se licensed. Ek outcome se poora cover hokar shuru hota hai aur engagement dar engagement badhta hai. Kisi ke paas ye wala nahi hai.
+
+Dono bagal mein bina kisi integration ke baithe hain. Dono same [Layer 1 kernel](/docs/ecosystem/fde-af-model#layer-1-the-content-system-of-record-component-the-sor-kernel) se bane hain, jo reusable software hai jo ecosystem har System of Record pe chalata hai. Markdown in, website out logon ke liye, MCP out agents ke liye. Yahan matter karne wala division of labour hai. Aik batata hai kaise, doosra batata hai kya chahiye, aur agent jo dono hold kare uske paas complete instruction hai jahan aik akela gap chhod deta hai.
+
+Doosron ko rule out karna ab yahan kaam aata hai, kyunki ye samjhata hai jo warna shortcut lagta hai. Doosra System of Record chhota ho sakta hai kyunki usmein method nahi: specification, evaluation, deployment, aur oversight pehle se pehle wale mein hai. Jo bachta hai wo sirf profession add karta hai, aur wo wohi hissa hai jo kisi ne nahi de sakta. Uska chhota hona jaldi ship karne ka compromise nahi hai. Wo asset ki shape hai jismein jo shared hai wo sab hata diya gaya hai.
+
+| | Shared wala | Jo tum banate ho |
+|---|---|---|
+| **Kahan se aaya** | Ecosystem ne tumhe diya | Tumne banaya, apne expert ke saath |
+| **Kitne hain** | Aik, har graduate share karta hai | Aik practitioner per, per vertical, per jurisdiction |
+| **Pehle engagement pe depth** | Deep aur mature | Aik proven outcome, poora |
+| **Kaise badhta hai** | Platform maintain karta hai | Engagement dar engagement, promotion se |
+| **Kaun hold karta hai** | Panaversity ka kernel aur content | Domain startup jo tumne aur tumhare expert ne banayi |
+| **Tumhare liye kya karta hai** | Wo harness hai jismein tum kaam karte ho | Wo hai jo buyer ko meeting ke liye convince karta hai |
+
+---
+
+## Asset Kaise Measure Hota Hai
+
+### Seedhi Zuban Mein
+
+Do lafz asset ko measure karte hain, aur unhe galat sunna aasan hai. Thin ka matlab hai aik professional outcome cover karta hai. Thick ka matlab hai kai outcomes cover karte hain. Koi bhi lafz quality ke baare mein nahi kehta, kyunki andar ka har outcome ya toh poora hai. Jo outcome missing evidence ya wrong jurisdiction ke saath fail hota hai wo thin nahi hai. Wo adhoora hai.
+
+Do lafz batate hain ke asset kitna profession cover karta hai, aur unhe galat sunna aasan hai, toh yahan seekh lo aur baqi kitaab mein har jagah use karo. Unit **slice** hai: aik professional outcome, poora cover kiya hua. Aik slice wala System of Record **thin** hai. Kai slices wala **thick** hai.
+
+Ye outcomes count karta hai, shortcuts nahi. Har outcome jo maujood hai wo dono states mein complete hai, toh jo outcome missing evidence ya wrong jurisdiction ke saath fail hota hai wo thin nahi adhoora hai. Thin draft, prototype, ya lightly governed content nahi hai, kyunki governance size pe scale nahi hota: pehle slice ka pehle week mein owner hai, versions hain, aur review hai. Aur thick finished nahi hai, kyunki law badalta hai aur naye outcomes aate rehte hain.
+
+Ye poora argument ke level pe itna hi hai: coverage badhta hai, completeness kabhi nahi badalta. [Designing the Vertical System of Record](/docs/ecosystem/designing-the-vertical-sor) working detail carry karta hai, beech ke states, do engines jo asset ko thick karte hain, aur additions jo weight add karti hain coverage ki jagah.
+
+---
+
+## Kyun Nahi Chauda Karo?
+
+### Seedhi Zuban Mein
+
+Chaar professions bahar se ek jaisi lag sakti hain, kyunki unmein se guzarne wala kaam same shape ka hai. Toh us shape ke liye aik asset kyun na banao aur charon ko serve karo? Kyunki shape method hai, aur method pehle se shared hai. Tumne aik khaali box banaya hota. Tang hona asset banata hai, tang hona asset limit nahi karta.
+
+Ye chhata candidate hai, jo list se upar hold back kiya gaya tha kyunki usko aik line nahi section chahiye. Agar surviving asset aik profession ka knowledge hai, toh obvious efficiency hai use chauda karna. Document rule ke against parho. Rule cite karo. Missing batao. Jo unclear hai usse aage bhejo. Usi shape ka kaam trade finance, medical coding, immigration, aur company filings mein bhi hai, aur isi liye wo char bahar se same shape ki dikhti hain. Toh us shape ke liye aik asset kyun na banao aur char professions ko serve karo?
+
+Kyunki shape doosre test mein fail hota hai, bilkul method ki tarah. Ye pehle se given hai, pehle se shared hai, aur corpus jo iske around bana ho uske andar rakhne ko kuch nahi hai. Koi source hierarchy nahi hai, yaani koi agreed order nahi jo decide kare kaun sa source jeeta hai jab do disagree karein, kyunki char professions ke chaar orders hain. Koi invariants bhi nahi hain. Invariant wo rule hai jo har case mein true rehna chahiye, aur wo aik profession ke law aur trust se aate hain. Tumne aik khaali container banaya hota: corpus ki shape lekin andar kuch nahi.
+
+Efficiency ulta chalta hai. Tang hona asset banata hai, kyunki tang hona wo aik condition hai jismein knowledge specific enough hai paying for layak aur stable enough hai reuse ke layak. Aik profession, aik jurisdiction.
+
+Aur ab is page ke do hissay milte hain. Vendor ki engineer platform pe specialize karti hai. Platform hata do toh specialization kahin land hona chahiye, nahi toh tum generalist consultant ho jis ke paas ek client se doosre tak reuse karne ke liye kuch nahi hai. Toh vendor-neutrality sirf vertical allow nahi karta. Ye require karta hai. Vendor-neutral Forward Deployed Engineer aur governed profession aik hi decision hain jo doosri taraf se dekha gaya hai.
+
+[Choosing Your Vertical](/docs/ecosystem/choosing-your-vertical) ye decide karne ka tareeqa hai ke kaun sa profession. [Designing the Vertical System of Record](/docs/ecosystem/designing-the-vertical-sor) ye build karne ka tareeqa hai.
+
+---
+
+## Ye Argument Tumhe Kya Karne Pe Majboor Karta Hai
+
+### Seedhi Zuban Mein
+
+Agar asset hi tumhe alag karta hai, toh ye customer ke paiso ka wait nahi kar sakta. Pehle build karo, phir becho. Pehla slice wo step nahi hai jo buyer ka wait kare. Ye wo step hai jo buyer produce karta hai, kyunki koi apna baseline stranger ko nahi batata jab tak stranger ne kuch dikhaya nahi.
+
+Ownership ke argument ka sequence pe bhi consequence hai, aur ye wo hissa hai jo practitioners resist karte hain.
+
+Agar asset hi tumhe distinguish karta hai, toh ye customer ke fund ka wait nahi kar sakta. Pehle build karo, phir becho. Pehla slice buyer ka wait karna step nahi hai. Ye step hai jo buyer produce karta hai.
+
+Ye kitaab us rule ko teen jagah imply karti hai bina naam diye. Portfolio credential hai. Résumé us systems pe judge hota hai jo tumne actually ship kiye. Aur sponsor jo starting number discuss nahi kare wo sponsor nahi hai. Sab milke aik cheez kehte hain. Koi stranger ko apna baseline nahi batata jab tak us stranger ne kuch dikhaya nahi.
+
+Slice sirf prove nahi karta ke tum credible ho. Tumhara argument tumhari jagah karta hai. Mid-size firm ke paas jao aik governed page leke us firm ke apne profession ka, toh buyer pitch nahi sun raha. Wo apna kaam padh raha hai, apni firm se behtar likha hua, aur agla sawaal uski side se aata hai. Kisi ne jaldi ki reason invent nahi karna pada.
+
+**Ye launch gates mein kahan baithta hai.** [Chaar validation gates](/docs/ecosystem/choosing-your-vertical#step-5-validate-against-four-gates-in-60-to-90-days) fixed order mein chalte hain, kisi order mein nahi. Gate 1 hai tumhara expert sign kar chuka hai. Gate 2 hai tumhara rights basis likha hua hai. Dono slice se pehle aate hain, kyunki slice dono pe depend karta hai. Tumhara expert uske procedures likhta hai aur tumhe apni files kholti hai. Rights basis decide karta hai kaun se sources legally andar baith sakte hain. Phir slice. Phir gate 3, named sponsor drafted contract of success ke saath. Contract of success teen numbers pe likha hua agreement hai: kaam aaj kahan hai, success kya count hoga, aur reviewer kaise check karega. Phir gate 4, real prices real suppliers se, guesses nahi.
+
+**Pehla sponsor kahan se aata hai.** Cold marketplace se nahi. Tumhara expert vertical ka pehla sales channel hai aur knowledge ka source bhi. Bees saal ki practice ye bhi hai ke bees saal ke professional relationships. Firm jo pehli meeting deta hai wo aksar uski pehle se trust karti hai. Freelance market aur local first proof agla hai. International engagement uske baad, jab measured outcome mojood ho dikhane ke liye.
+
+**Jo buyer deta hai wo number hai.** Contact se pehle baseline nahi ho sakta, kyunki ye client ke workflow mein measure hota hai, aur wo aik measurement hai jo buyer verify kar sakta hai. Tumhari expert ki files mein digging jo tumhara slice banaya uske material pe chali. Baseline tumhare customer pe chalti hai. Do sources, do moments, aur unmein koi contradiction nahi.
+
+Toh sequence aik line hai: **expert, slice, sponsor, baseline, contract, engagement, thick.** Har step se pehle aik step hai, aur wo slice hai.
+
+| Rule | |
+|---|---|
+| Build first, sell second | Sirf vertical ladder pe govern karta hai. Service ladder client se shuru hota hai, [upar ke section](#ye-argument-kya-gate-karta-hai-aur-kya-nahi) ke mutabiq. Vertical ladder slice se shuru hota hai. |
+
+---
+
+## Kaun Kya Rakhta Hai
+
+### Seedhi Zuban Mein
+
+Chaar short jawab. Tum aur tumhara expert profession ka System of Record rakhte ho, business ke through jo tumne milke banaya. Ecosystem method wala own karti hai, aur tum use karte ho. Customer working system rakhta hai jo wo badal sake aur tumhe hire karne ka haq rakhta hai. Aur koi customer ko profession ka System of Record promise nahi kar sakta, kyunki ye doosron ke licenses pe bana hai.
+
+Ownership ke argument ko boundaries exact chahiye, unmein bhi jo tumhare favour mein nahi hain. Ye honest division hai.
+
+**Jo tum own karte ho.** Vertical System of Record, domain startup ke through jo tumne aur tumhara expert milke banaya, tum personally nahi. Uski judgment aur authored material usmein licensed hai aur abhi bhi uski hai. Third-party sources apni terms ke under andar hain. Jo tum jointly own karte ho wo assembly hai, governance hai, aur derived procedures hain, jo real asset hai aur poori corpus se chhota.
+
+**Jo tum hold karte ho lekin own nahi karte.** Shared System of Record, Agent Factory wala. Ye ecosystem ki hai. Jo tumhe protect karta hai wo ownership nahi balki openness hai: plain versioned Markdown, standard Postgres with pgvector, aur open MCP protocol, toh jo kuch tum iske andar build karte ho wo sirf aik platform ke format mein phansa nahi rehta.
+
+**Jo customer rakhta hai.** Production mein working system, stack pe jo usne choose kiya. Apna instance, apna data, apni thresholds, aur confidential ontology. Models, runtimes, aur clouds switch karne ki azadi. Aur tumhe hire karne ka option.
+
+**Jo customer nahi rakhta.** Vertical System of Record. Ek tempting sentence hai jo ise de deta hai, aur uska naam lena chahiye ke koi bole: *Mein method laata hoon aur tumhara profession, aur tum doosra jab mein jata hoon toh rakho.* Generous lagta hai. Ye galat hai, aur ownership se bhi sharp wajah se. Wo System of Record tumhare expert ke licensed material se bana hai, aur third-party sources ki terms se. Tumhare system ke andar standard serve karne ki licence customer ki licence nahi ban jaati sirf kyunki tumne offer ki. Corpus dena agreements breach karega jis pe bana hai, tumhare expert ko business se kaatna toh bilkul hi.
+
+**Jo employer rakhta hai.** Ek case jo chaar jawabon se cover nahi hota, aur ye common hai. Governed profession employed hone pe build karo, employer ke time pe aur unke expert ke saath, toh employer own karti hai. Tum nahi. Ye unfair nahi hai, ye employment hai, aur isi liye ye argument clients ke liye serve karne wale practitioner ko address karta hai, aik employer ke liye nahi. Ye service ladder ki sabse sharp wajah hai ke earn karne ki jagah hai, accumulate karne ki nahi.
+
+Discipline hamesha portable hai. Asset ka owner hai. Dono hisse kehne padenge, nahi toh argument wo promise karta hai jo kar nahi sakta.
+
+![Kaun kya rakhta hai, ledger ke tor pe draw kiya. Char cells. Upar bayen, gold mein, tum through tumhari domain startup: vertical System of Record, startup ke through hold kiya jo tumne aur tumhare expert ne milke banaya, uski judgment aur authored material licensed hai aur abhi bhi uski hai, aur third-party sources apni terms ke under. Upar dayen, ecosystem: shared Agent Factory System of Record, jo tum hold karte ho lekin own nahi karte, aur jo tumhe protect karta hai wo ownership nahi openness hai, yaani plain versioned Markdown, standard Postgres with pgvector, aur open MCP. Neeche bayen, customer: system jo wo badal sake, apna instance jo apna data aur thresholds aur confidential ontology hold kare, models, runtimes, aur clouds switch karne ki azadi, aur tumhe hire karne ka option. Neeche dayen, terracotta mein outline, employer (agar ho): jo kuch tum unke time pe build karo, kyunki employed hone pe aur unke expert ke saath governed profession build karna matlab wo own karti hai tum nahi, jo unfair nahi hai lekin employment hai, aur isi liye ye argument clients ke liye serve karne wale practitioners ko address karta hai. Neeche, terracotta mein struck: Mein method laata hoon aur tumhara profession, aur tum doosra jab mein jata hoon toh rakho. Generous lagta hai aur galat hai, kyunki corpus tumhare expert ki licence aur third-party terms pe bana hai, toh ye dene ki tumhari nahi hai. Do akhri lines: sab kuch koi nahi rakhta, isliye division hold karta hai jab buyer test karta hai, aur discipline hamesha portable hai jab tak asset ka owner hai](/img/ownership-ledger.png) Division ledger ke tor pe draw kiya. Char parties, char cells, aur aik sentence jo kabhi nahi bolna chahiye.
+
+Un jawabon ko ledger ke tor pe padho, caveats ke set ke tor pe nahi, kyunki ye wo hain jo client actually khareed raha hai. Vendor ki engagement ke under leverage vendor ki column mein jamta hai aur client ki patli rehti hai. Yahan columns deliberately draw ki gayi hain, aur sab kuch koi nahi rakhta. Isliye ye hold karta hai jab buyer test karta hai.
+
+---
+
+## Ye Argument Kis Pe Depend Karta Hai
+
+### Seedhi Zuban Mein
+
+Ye section wo claims list karta hai jin ke bina ye page kaam nahi karta. Agar koi galat nikle toh argument band. Ye isliye list kiye gaye hain ke tum test kar sako, trust pe na lo.
+
+Load-bearing claims, is page ke establish kiye hue order mein. Koi bhi hata do toh baaki khade nahi rehte. Ye upar ke elimination ke refusals nahi hain, aur unpe map nahi hote.
+
+**Asset ke baare mein.** Jo assets agent act kar sake unmein, sirf governed profession ownership test ke dono hisse pass karta hai. Ye us expert ke saath jointly hold kiya jaata hai jisne judgment author kiya hai. Building ki unit aik vertical aik jurisdiction hai, toh doosre mulk ki service ke liye doosri build chahiye, pehli ka extension nahi. Aur bina committed author ke kuch build nahi hota aur kuch carry nahi hota.
+
+**Sequence ke baare mein.** Pehle build karo, phir becho, vertical ladder pe. Slice tumhari expert ki files pe banta hai aur awkward cases guzarta hai kisi ne dekhe se pehle, kyunki adhoora outcome thin nahi hota. Service ladder client se shuru hota hai.
+
+**Numbers ke baare mein.** Baseline client ke workflow se aata hai, kyunki wo aik number hai jo buyer verify kar sakta hai.
+
+**Boundaries ke baare mein.** Do System of Record tumhare saath chalte hain, method aur profession. Teesra nahi: customer ka apna instance, apna data aur thresholds hold karke, jo wahi rehta hai. [Promotion](/docs/ecosystem/fde-af-model#the-one-law-of-the-model-repeated-work-moves-down) unke beech ka aik bridge hai. Aur customer vertical System of Record nahi rakhta, kyunki tumhari domain startup hold karti hai aur ye licenses pe khada hai jo customer ki receive karne ki nahi hain.
+
+---
+
+## Honest Label
+
+### Seedhi Zuban Mein
+
+Is page pe aik daawa abhi proven nahi hai, aur ye section batata hai kaun sa. Kisi ne count nahi kiya ke kitne practitioners governed asset ki wajah se apna pehla customer jeete, kyunki category abhi nayi hai. Reasoning strong hai. Evidence abhi nahi aaya. Ye section ye bhi batata hai ke kya argument galat sabit karega.
+
+Is page pe aik daawa projection hai, aur wo labeled hai, bilkul ye kitaab har projection pe karti hai jo borrow karti hai. Isko just upar ke claim se alag karna chahiye, kyunki dono opposite direction mein jaate hain aur sirf aik uncertain hai. Ke slice tumhe customer jeetega ye projection hai. Ke bina uske tum sponsor conversation tak nahi pahunch sakte ye safer claim hai, kyunki ye us cheez se aata hai jo koi bhi verify kar sakta hai: buyers apna baseline strangers ko nahi batate jo kuch dikhaye nahi. Seedhi baat: negative claim safer hai. Hum zyada sure hain ke tumhe asset chahiye vs ke asset sirf kaam jeetega.
+
+Ke asset sirf durable hai ye elimination se aata hai, aur cheezen rule out karna reasoning hai, measuring nahi. Jo measure hota hai wo role ki demand hai. Abhi tak koi verified count nahi hai ke kitne practitioners ne governed corpus ko first customer mein convert kiya, kyunki category nayi hai aur laghar kisi ne nahi kiya. Reasoning sound hai aur alternatives worse hain, aur ye abhi proof nahi hai. Reader jo aik acha slice banaye aur phir bhi teen mahine meeting ka wait kare usne argument disprove nahi kiya.
+
+**Kya change karega.** Teen observations revision force karenge, aur har ek dekhne layak hai.
+
+Agar governed slices carry karne wale practitioners kaam jeetne mein sirf deployed Workers carry karne wale se aasan nahi milta, toh slice portfolio item hai, door-opener nahi. Ownership half survive karta hai, kyunki asset abhi bhi sirf durable hai, aur commercial half nahi hota.
+
+Agar char professions ki service aik asset se jo kaam ke shape pe bana hai real scale pe pahunch jaaye, toh chhata refusal galat hai, aur profession right unit nahi hai.
+
+Agar aik general model aur public corpus buyers ko apne jurisdictional questions ke jawab de de bina governed source ke, toh surviving asset survive karna band, aur ye page elimination se rewrite chahiye.
+
+Teeno mein se koi nahi hua. Kya argument todta hai ye batana argument ka part hai.
+
+---
+
+## Yahan Se Kahan Jaana Hai
+
+Ye page statement hai. Paanch pages ispe act karte hain.
+
+[The Roles This Book Trains](/docs/roles-this-book-trains) argument ko career pe apply karta hai. [The FDE AF Model](/docs/ecosystem/fde-af-model) five-layer blueprint hai jismein ye pairing baithta hai aur kaam price karta hai. [Choosing Your Vertical](/docs/ecosystem/choosing-your-vertical) ye decide karne ka tareeqa hai ke kaun sa profession. [Designing the Vertical System of Record](/docs/ecosystem/designing-the-vertical-sor) asset build karne ka tareeqa hai. Aur [How to Get Paid in the Agentic AI Era](/docs/how-to-get-paid-agentic-ai-era) charo ko chalne layak banata hai, phir batata hai ke teeno darwazon mein se har asli kya pay karta hai.
+
+Aur agar tumhara honest answer aaj ye hai ke tumhare paas committed expert nahi hai, toh ye argument abhi tumhare liye nahi hai. Service ladder pe shuru karo, kamao, aur engagements tumhe expert dhoond lein.
+
+---
+
+## Flashcards Taleemi Madad
+
+Is kitaab teen daawa karti hai. Ownership argument kaun sa sawaal poochta hai?
+
+Click to flip
+
+1 / 30 cards
+
+Space flip1 missed2 got it←→ navigateEsc exit
+
+[ⓘ Guide](/guide#flashcards "Flashcards kaise kaam karte hain")
+
+---
+
+## Apni Samajh Test Karo
+
+## Ownership Argument Assessment
+
+Question 1 of 20
+
+### Vertical asset practice se hata do. Page kehta hai kya bachta hai?
+
+Answered: 0 / 20
+
+Tum pehle question pe ho. Wapas nahi ja sakte. Pehle jawab do tab agla question aayega.
+
+🎯Chapter Quiz
+
+### Chapter Quiz Unlock Karo
+
+Apni samajh test karo interactive questions ke saath aur foran feedback pao apni progress pe.
+
+-   Apni learning progress track karo
+-   Tafseeli explanations pao
+-   Dobara leke apni behtari karo
+
+Hamesha free. Credit card ki zaroorat nahi.
+
+Quick pulse
+
+Ye chapter clear tha?
+
+---
+Source: https://agentfactory.panaversity.org/docs/what-you-carry-in
