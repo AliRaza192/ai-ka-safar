@@ -2,13 +2,500 @@
 id: ai-operating-layer
 title: "Operating Layer — Interface Argument"
 sidebar_label: "Operating Layer"
-description: "AI operating layer kya hai aur kyun zaroori hai"
 ---
 
-# Operating Layer — Interface Argument
+# Agent Operating Layer Hai
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+### Agentic Era SaaS, App, aur Personal Computer Ko Kaise Dissolve Karta Hai
 
-Operating layer woh interface hai jo insaan aur AI agent ke beech bridge banata hai. Yeh decide karta hai ke agent kaise communicate karega, kya tools use karega, aur kaise govern hoga.
+![Computer Jo Khud Control Karta Hai: insaan computer ko high-level goal deta hai ke AI software market analysis tayyar karo aur team ko bhej do. AI Operating Layer phir browser, internal files, spreadsheets, code aur analysis tools, communication systems, aur calendar par kaam karta hai. Tayyar report team ko deliver hoti hai, jabke permissions, guardrails, approval points, audit trail, aur local data protection insaan ko control mein rakhte hain.](/img/operating-layer-hero.png)
+
+---
+
+> *"Chalees saal tak, tumne apps launch kiye. Click. Type. RTX Spark aur Microsoft Windows ke saath, tum poochte ho — aur PC kaam karta hai."*
+
+> — Jensen Huang, NVIDIA, GTC Taipei, June 1, 2026¹
+
+June 1, 2026, NVIDIA ne Taipei mein stage par khade hokar personal computer ke khatme ka elaan kar diya — jaisa humne use jaana hai.
+
+Announcement chip launch jaisi dikhti thi. RTX Spark ek Arm-based processor, Blackwell GPU, lagbhag petaflop on-device AI compute, aur 128GB unified memory ko combine karta hai. NVIDIA ne ise Microsoft ke saath banaya hai taake agents Windows par locally chal sakein bina har task cloud par bheje.¹
+
+Press ne ise hardware story treat kiya: NVIDIA PC business mein enter kar raha hai aur Apple silicon aur Qualcomm ko challenge kar raha hai.
+
+Woh framing bahut chhoti hai. RTX Spark sirf ek tez laptop nahi hai. Yeh *kaun computer operate karta hai* uski change support karta hai.
+
+Chalees saal tak, jawab yeh tha: tum karte ho. Tum apps kholte ho. Windows move karte ho. Click, type, save, aur switch karte ho. Machine tumhare haathon ka wait karti hai.
+
+Yeh paper argue karta hai ke yeh arrangement khatam ho raha hai. Yeh do casualties saath le jaata hai.
+
+Pehli casualty SaaS hai. Doosri casualty khud PC hai.
+
+Ek clarification argument se pehle: yeh ek direction hai, raat-o-raat switch nahi. Yeh shuru hota hai jo kaam digital, bounded, aur recoverable hai, khaaskar knowledge work aur software development. Humans screen par sabse zyada tab tak rahenge jab stakes high hon, rules strict hon, ya kaam physical ho. Section 8 limits aur likely pace define karta hai.
+
+---
+
+## 1. Do mauten, ek nahi
+
+"SaaSpocalypse" ab familiar argument hai, aur yeh largely sahi hai. Ek general agent data padh sakta hai, uspar reason kar sakta hai, tools call kar sakta hai, aur workflow ko shuru se khatam tak complete kar sakta hai. Jab yeh hota hai, SaaS product ko woh jagah nahi rehti jahan user kaam karta hai.
+
+User login karna, screens navigate karna, aur har step perform karna band kar deta hai. Agent workflow perform karta hai.
+
+SaaS gaib nahi hota. Yeh **capabilities mein unbundle hota hai jo agents call karte hain**: API, MCP server, ya doosra tool. Interface, brand, seat-based pricing, aur daily-active-user moat apni taqat kho dete hain. Underlying capability zinda rehti hai, lekin as a function jo agent call karta hai.
+
+Yeh real hai, aur ho raha hai. Lekin yeh appetizer hai.
+
+Bada claim kehna mushkil hai: **personal computer, jaise insaan haath se operate karte hain, obsolete ho raha hai.** Yeh shuru hota hai digital, bounded, recoverable work se aur wahan se aage badhta hai.
+
+Silicon gaib nahi hota. Desk par ka box gaib nahi hota. Jo badalta hai woh *operating model* hai: apps on operating system, graphical shell ke through presented jo insaan ko seekhna aur drive karna padta hai.
+
+Woh stack us insaan ke liye banaya gaya tha jo kaam khud karna padta tha. Jab kaam delegate ho jaata hai, zyada tar interface unnecessary ho jaata hai.
+
+SaaS as a destination mar jaata hai kyunki agent app ko replace karta hai. Jaisa hum jaante hain woh PC mar jaata hai kyunki agent tumhe controls par replace karta hai.
+
+---
+
+## 2. SaaSpocalypse, poora
+
+Bade change se pehle, chhote change ka complete explanation hai. Yeh pehle se ho raha hai, aur iska mechanism baaki paper ke liye template ban jaata hai.
+
+[Preface](/docs/preface-agent-native) SaaSpocalypse ki *market* story aur February 2026 ki trillion-dollar repricing batata hai. Yeh section uske neeche ka mechanism explain karta hai.
+
+Software-as-a-service ek business model tha jo product ki tarah dressed hua tha. Packaging hatao aur SaaS application mein teen layers hain:
+
+1. **System of record** jo trusted data hold karta hai: customers, invoices, tickets, aur documents.
+2. **Capabilities ka set** jo us data ko create, query, transform, ya route kar sakti hai.
+3. **Workflow UI** jo insaan ko screens, forms, aur buttons ke through un capabilities operate karne deta hai.
+
+Tees saal tak, yeh layers ek product mein welded thin. Users login karte the, uska interface seekhte the, aur har seat ke liye pay karte the.
+
+Agent inhein alag kar deta hai.
+
+**Pehle workflow UI marta hai.** Iska maqsad tha ke insaan capabilities operate kar sake. Agent record padh sakta hai, operation choose kar sakta hai, aur bina un screens navigate kiye execute kar sakta hai.
+
+Woh dashboard jo tum har subah kholte the woh ek agent ban jaata hai jo wohi data padhta hai. Tumhe batata hai kya badla hai aur kis decision ki zaroorat hai. UI redesign nahi hota. Bypass ho jaata hai.
+
+**Capabilities zinda rehti hain, lekin product se function call mein demote ho jaati hain.** Useful operations ab bhi matter karti hain: invoice bhejo, ticket route karo, payroll run karo. Lekin agent unhein API ya MCP server ke through reach karta hai aur kabhi user se product kholne nahi kehta.
+
+Capability valuable rehti hai. Woh ab destination nahi hai. Product operations mein dissolve ho jaata hai jo agent ke workflow mein interchangeable parts ban jaate hain.
+
+**System of record prize hai.** Agent ko trusted data chahiye pehle ke woh safely act kar sake. Us record ka owner woh layer hold karta hai jo survive karta hai.
+
+Agents database ko displace nahi karte. Ise zyada strategic banate hain. Agent utna hi accha hai jitna uska record jispar woh reason karta hai. Jo SaaS vendors survive karenge woh samjhenge ke woh database the UI ke saath, aur UI disposable half tha.
+
+Knowledge-intensive work ke liye, woh logic transactional rows se aage badhta hai. Agents ko authoritative knowledge bhi chahiye: source material, policy, methods, decisions, provenance, aur context jo samjhata hai ke record ka matlab kya hai. Yeh **Knowledge System of Record (KSOR)** ka role hai. Models aur agent vendors badal sakte hain; trusted organizational knowledge persist karna chahiye.
+
+**Business model contact par toot jaata hai.** Seat-based pricing assume karta hai ke humans screens par click kar rahe hain. Un humans ko hatao aur per-seat revenue ke paas koi useful measurement nahi hai.
+
+Daily active users human attention measure karte hain. Lekin agents ko familiar menus ya product habits se koi matlab nahi. Woh tools compare kar sakte hain aur bina resistance ke switch kar sakte hain.
+
+Economics ulta ho jaati hai. Value *human attention occupy karne* se door jaati hai. Woh agent ke liye *callable, trustworthy, aur authoritative* banne ki taraf jaati hai.
+
+Toh SaaSpocalypse ka matlab yeh nahi ke saara SaaS gaib ho jaata hai. **Matlab hai SaaS unbundle hota hai, aur bundle business tha.**
+
+Capability tool ke roop mein zinda rehti hai. Record contested high ground ke roop mein zinda rehta hai. UI apna central role kho deta hai, uske saath pricing aur loyalty jo UI ke around built thi.
+
+Jo companies thrive karenge woh humans ko screens bechna band karenge. Woh agents ko capabilities aur trusted data bechenge, clear permissions ke governed.
+
+Section 3 wohi logic ek level aur gehraai mein apply karta hai. Agent SaaS ko capability, record, aur bypassed UI mein split karta hai. Woh *PC* ko compute, operating system jo plumbing ban jaata hai, aur shell jo central role kho deta hai mein split karta hai.
+
+Same mechanism. Bada system.
+
+---
+
+## 3. Chalees saal ka stack, aur kyun khatam ho raha hai
+
+Woh architecture socho jo hum 1980s se use kar rahe hain. Neeche operating system hai: Windows, macOS, ya Linux. Yeh files, memory, processes, devices, aur security manage karta hai.
+
+Uske upar applications hain: Word, Excel, Photoshop, Chrome, aur Slack. Graphical shell insaan aur machine ke beech baithta hai: desktop, taskbar, dock, windows, folders, aur app grid.
+
+Is design ka genius yeh tha ke yeh insaan ko machine ka *map* deta hai. Iska tragedy yeh hai ke insaan ko map padhna tha aur har rasta chalna tha. Quarterly report banane ke liye, tumne spreadsheet khola aur file dhundhi. Tumne formulas likhe aur result export kiya. Phir tumne document khola, data paste aur format kiya, email khola, file attach ki, aur bhej di. Har app apni UI ke saath ek silo tha jo tumhe seekhna padta tha. OS woh floor tha jispar tum khade the. Apps woh kamre the jinmein tum chalte the. *Tum* woh the jo chal rahe the.
+
+Har step us computer ke liye compensate karta tha jo intent samajh nahi sakta tha. Desktop metaphor chalees saal purani aid hai us limitation ke liye.
+
+Machine ko goal samajhne aur use carry karne ki ability de do. Us aid ki zyada tar zaroorat nahi rehti.
+
+Yeh exact sense hai jismein classical OS interface mar jaata hai. Kernel bacha rehta hai. TCP/IP aur BIOS ki tarah, yeh essential hai lekin mostly invisible.
+
+Jo gaib hota hai woh OS *insaan ka main interface* ke roop mein hai aur app *insaan ka kaam ka unit* ke roop mein hai. Shell woh jagah hona band kar deta hai jahan kaam hota hai.
+
+NVIDIA is era ke liye apna runtime **OpenShell** kehta hai. Yeh purane shell ke upar baithta hai aur decide karta hai ke agents kya chhu sakte hain. Microsoft Windows platform layer par aur aage ja raha hai: uski On-Device Registry (ODR) agents aur applications ko ek system-managed tareeqa deti hai MCP servers aur agent connectors ko discover karne ka, jabke Agent Launchers applications ko ek baar agent register karne dete hain taake supporting Windows experiences use discover aur invoke kar sakein.² ³
+
+Classical UI isliye ek thinner surface ban jaata hai over a growing agent substrate. Action uske peeche chala jaata hai.
+
+---
+
+## 4. AI Operating Layer
+
+Naya architecture operating system ko mitata nahi hai. Uske upar ek layer add karta hai jahan ab insaan kaam karta hai. OS background mein chala jaata hai.
+
+![AI Operating Layer: char-layer stack, OS ko plumbing mein demoted aur AI Operating Layer ko floor ke roop mein jispar insaan khada hai.](/img/operating-layer-stack.png)
+
+Yeh poora story hai. Purane model mein, insaan operating system par khada tha aur apps tak pahunchta tha. Naye model mein, insaan **AI Operating Layer** par khada hai.
+
+Yeh layer *operating system khud* nahi hai. Yeh human intent ko real kaam se connect karta hai. Insaan goal batata hai. Agent files kholta hai, browser drive karta hai, commands chalata hai, aur insaan ki taraf se tools call karta hai.
+
+Operating system background mein chala jaata hai, bilkul jaise engine timing modern car mein.
+
+Browser chat box ne pehle hint diya. Chat sawal ka jawab deta hai aur tumhe *chat ke andar* rakhta hai. General agent *environment ke andar* kaam karta hai aur wahan task complete karta hai.
+
+Assistant jagah par jawab deta hai. Operating layer duniya mein act karta hai.
+
+### 4.1 Model operating layer nahi hai
+
+Yeh farq important hai kyunki kai layers jo "AI" kehte hain woh asal mein alag cheezein hain.
+
+```
+                    HUMAN                      │               intent / judgment                      │                      ▼          ┌──────────────────────┐          │  AI OPERATING LAYER  │          │                      │          │ identity + context   │          │ memory + permissions │          │ orchestration        │          │ governance + audit   │          └──────────┬───────────┘                     │              AGENT / HARNESS                ┌────┴────┐                │         │                ▼         ▼        REASONING MODEL   CAPABILITIES        Claude / GPT      skills        Gemini / local    MCP / APIs / CLI                │         OS + app tools                └────┬────┘                     │              Windows / macOS /                   LinuxHost ↔ Agent: ACP or native integrationAgent/Host ↔ Tools & Data: MCP / APIs
+```
+
+Exact boundaries product ke hisaab se badalte hain, lekin architectural separation durable hai.
+
+**Model** reasoning aur generation supply karta hai. **Agent ya harness** us reasoning ko loop mein badalta hai jo plan, tools call, results inspect, recover, aur continue kar sake. **AI Operating Layer** us kaam ke charon taraf standing context add karta hai: identity, memory, permissions, orchestration, governance, auditability, aur environment tak access.
+
+Protocols ke alag kaam hain. **ACP** agent ko host se connect karta hai jaise Xcode. **MCP** agent ya host ko tools, data, aur external capabilities se connect karta hai. **Skills** reusable instructions aur procedures package karte hain. Inhein ek interchangeable layer samajhna architecture ko obscure karta hai.
+
+Iska matlab hai ke model architecture nahi ban na chahiye.
+
+Claude, GPT, Gemini, aur local models badal sakte hain. Agent implementations bhi badal sakte hain. Durable system unke acharon ka environment hai: trusted records, skills, tools, policies, permissions, evaluation criteria, aur organizational context jo agent ko safely act karne dete hain.
+
+Apple ab yeh separation unusually clearly expose karta hai. Xcode 27 Anthropic, Google, aur OpenAI se agents host kar sakta hai; plugins skills aur MCP tools add kar sakte hain; aur koi bhi compatible agent Agent Client Protocol (ACP) ke through connect ho sakta hai. Development environment rehta hai jabke intelligence provider badal sakta hai.⁴
+
+Local stack wohi point opposite direction se dikhata hai. Apple OpenCode aur doosre agents ko local MLX-LM server par standard API se point karta dikhata hai. Agent ko care nahi karna chahiye ke model hyperscale cloud mein hai ya uske bagal mein Mac par chal raha hai.⁵
+
+### 4.2 Operating systems pehle se bana rahe hain
+
+Yeh sirf forecast nahi hai ke personal computing kahan ja sakta hai. Windows ab agentic substrate ke OS-level pieces expose karta hai, jabki Apple ke developer aur system frameworks macOS par agents, models, tools, aur application capabilities ke beech same separation expose karte hain.
+
+**Windows: discovery, connectors, containment, aur invocation.**
+
+Microsoft ki On-Device Registry agents aur applications ko ek system-managed tareeqa deti hai MCP servers aur agent connectors ko discover aur use karne ka. Windows capabilities jaise File Explorer ko MCP ke through expose kar sakta hai, jabki registry ek common discovery point provide karta hai bina har agent ke har tool ke saath independently integrate kiye.²
+
+Windows mein **Agent Launchers** bhi hain. Ek application ek baar agent register kar sakta hai aur use supporting system experiences jaise Start, Search, ya doosre applications ke liye discoverable bana sakta hai. Operating system jaanna shuru kar raha hai ke agents first-class invokable entities hain.³
+
+Security architecture ka hissa hai, afterthought nahi. Windows ODR ke through access kiye gaye MCP servers alag agent session mein alag user account ke under chal sakte hain, sirf approved resources tak access ke saath. Wohi OS jo agent ko reach deta hai woh us reach ko contain bhi karta hai.⁶
+
+Emerging Windows stack isliye kam "Copilot added to Windows" jaisa dikhta hai aur zyada is tarah:
+
+```
+                 HUMAN                   │          Windows system surfaces                   │                   ▼       ┌─────────────────────────┐       │ WINDOWS AGENT SUBSTRATE │       │                         │       │ Agent Launchers         │──→ registered agents       │ On-Device Registry      │──→ MCP servers/connectors       │ App Actions + MCP       │       │ agent-session security  │       │ permissions/containment │       └────────────┬────────────┘                    │          files / apps / services
+```
+
+**macOS: multiple agents, open protocols, aur local models.**
+
+Apple wohi destination pehle development environment ke through pahuncha. Xcode 26.3 ne Anthropic ke Claude Agent aur OpenAI ke Codex ko directly Xcode mein laya. Xcode 27 us model ko Anthropic, Google, aur OpenAI se agents aur models tak expand karta hai, aur unhein tools deta hai plan, edit, tests run, previews inspect, aur simulator ke saath interact karne ke liye jabke wo apna kaam khud validate karte hain.⁷⁴
+
+Kisi ek vendor integration se zyada important architecture ki openness hai. Xcode plugins custom skills aur MCP tools package kar sakte hain, jabki koi bhi compatible agent Xcode se ACP ke through connect ho sakta hai. Iska matlab hai ke Xcode ek **agent host** ban raha hai, sirf ek proprietary assistant ke saath IDE nahi.⁴
+
+Broader platform level par, Apple ki App Intents framework application data aur actions Siri AI ko expose karti hai, personal context, app actions, aur onscreen awareness jaisi capabilities ke saath. Apple ke model frameworks Apple models, third-party cloud providers, aur custom on-device models dono support karte hain. Direction isliye coding se badi hai: applications ko sikhaya ja raha hai capabilities expose karne ko jo system intelligence discover aur invoke kar sake.⁴
+
+Apple poora agentic loop locally bhi demonstrate kar raha hai. Uski MLX guidance dikhata hai ke jaise OpenCode local model se use hota hai, tools call karta hai, files padhta hai, commands chalata hai, aur task complete hone tak iterate karta hai — poori tarah Mac par, sirf us external tools ke saath jo task ki zaroorat hai.⁵
+
+Emerging Mac stack isliye is tarah dikhta hai:
+
+```
+                 HUMAN                   │                  XCODE                   │       ┌───────────┼────────────┐       │           │            │       ▼           ▼            ▼  Agent host     Skills      MCP tools       │  native / ACP       │  ┌────┼─────┬─────────┐  ▼    ▼     ▼         ▼Claude Codex Gemini   otherAgent                  agent  │    │     │         │  └────┴─────┴─────────┘           │    local or cloud model           │     Xcode + macOS tools
+```
+
+**Linux: usi destination ki taraf alag raasta se.**
+
+Linux ke paas koi single vendor nahi hai jo ek canonical agent layer declare kar sake. Upar ke Windows aur Apple examples ke mukable, yeh section ek forecast hai ek shipped Linux-wide agent platform ki description ki bajaye. Uski likely path compositional hogi, centrally designed ki bajaye.
+
+Ingredients pehle se naturally fit hote hain: shell, filesystem, process model, system services, containers, permissions, desktop APIs, local models, aur open agent protocols. Claude Code, Codex, OpenCode, aur doosre general agents is environment mein already kaam kar sakte hain bina kisi single "Linux agent" product ka wait kiye.
+
+Future Linux agentic stack isliye ek open substrate ke roop mein emerge ho sakta hai:
+
+```
+                 HUMAN                   │            AGENT / HARNESS                   │       Claude / Codex / OpenCode                   │          Skills / MCP / tools                   │   shell / files / containers / APIs                   │            permissions / policy                   │                 LINUX
+```
+
+Windows agent substrate ko platform feature bana sakta hai. Apple ise apne tools aur hardware ke saath deeply integrated bana sakta hai. Linux ise sabse composable aur vendor-neutral version bana sakta hai.
+
+Teeno paths usi direction mein jaate hain: **operating system increasingly execution environment, identity, permissions, discovery, containment, aur tools supply karta hai; agent loop supply karta hai; model reasoning supply karta hai.**
+
+---
+
+## 5. Personal agents aur general agents
+
+AI Operating Layer mein do tarah ke agents rehte hain. Inhein confuse karna baaki architecture ko samajhne mushkil banata hai.
+
+Dono us layer mein rehte hain jahan insaan ab khada hai. Ek *kaam* ki taraf oriented hai. Doosra *insaan* ki taraf.
+
+**General agents operators hain. Woh kaam karte hain.**
+
+Developers ke liye, misaal hain Claude Code, Codex, OpenCode, aur Gemini CLI. Woh build, test, refactor, aur deploy karte hain. Knowledge workers aur domain experts ke liye, tools jaise Claude Cowork aur OpenWork research, analyze, write, aur coordinate karte hain.
+
+General agent kisi product ke attached chatbot nahi hai. Woh reason kar sakta hai, tools use kar sakta hai, aur real environment ke andar kaam complete kar sakta hai. Tum usse ek task ke liye bulaate ho. Woh task execute karta hai. Session khatam ho jaata hai. Yeh ek task-scoped specialist hai.
+
+Agent ko uske neeche ke model se bhi alag hona chahiye. Xcode multiple agent providers host kar sakta hai, aur Apple ka local MLX stack wohi agentic pattern local model endpoint ke against chalta dikhata hai. Yeh important hai kyunki yeh Claude, GPT, Gemini, ya local model ko permanent architectural dependency se replaceable reasoning engine mein badal deta hai.⁴⁵
+
+**Personal agents tumhare delegate hain. Woh tumhe jaante hain.**
+
+Woh tumhare saath rehte hain, tumhara context hold karte hain, aage plan karte hain, aur kai tasks mein kaam karte hain. Yeh category RTX Spark ke around ban rahi hai. Independent agent makers, jaise **OpenClaw** aur **Nous Research ke Hermes**, ne Windows-native agents ke liye commit kiya hai is stack par. Woh is fall pehle RTX Spark laptops ke saath dikhne ki umeed hai.
+
+Personal agent *tumhari* taraf oriented hai, kisi ek task ki taraf nahi. Woh private aur local reh sakta hai. Woh tumhara kaam aur preferences yaad rakhta hai, proactively act karta hai, aur tumhare apps aur files mein span karta hai. Woh tumhara standing representative hai us layer mein.
+
+Milkar, yeh agents operator aur delegate banate hain. *Agent Factory Thesis* is structure ko **[Two-Layer Model](/docs/thesis#personal-agents-and-the-enterprise-interface)** ke roop mein formalize karta hai.
+
+Edge Layer par personal agent hai jo principal ko represent karta hai. Thesis is self-sovereign agent ko *Identic AI* kehta hai: agent jo tum own karte ho, rent nahi karte. Uske neeche AI Workers ki workforce hai jo kaam perform karti hai.
+
+Thesis unke differences explain karta hai lifespan, memory, initiative, multiplicity, aur governance mein. Yeh paper ek narrow sawal puchta hai: yeh split *interface* ke saath kya karta hai?
+
+Interface argument ek relationship par depend karta hai. Tum personal agent ko **general agents jaise Claude Code aur OpenCode se build aur manage karte ho.** Woh tools uski memory, permissions, aur skills configure karte hain.
+
+Runtime par, relationship ulta ho jaata hai. Personal agent tumhara intent samajhta hai, general agents aur AI Workers dispatch karta hai, aur jawab deta hai. Tum developer tools use karte ho chief of staff ko manage karne ke liye. Chief of staff baaki ko manage karta hai.
+
+Thesis ise apne **[two modes of general-agent use](/docs/thesis#the-two-modes-of-general-agent-use)** ke roop mein develop karta hai.
+
+Yeh sirf forecast nahi hai. Ek narrow version pehle se scale par operate ho chuka hai.
+
+2024 mein, Klarna ne apne customer service ke aage AI agent rakh diya. Isne saari chats ka do-teen hissa handle kiya, pehle mahine mein 2.3 million conversations ke saath. Klarna ne kaha ke agent ne lagbhag 700 full-time employees ke barabar kaam kiya. Isne average resolution time 11 minute se kam se 2 ke neeche kaat diya. Company ne ise lagbhag $40 million annual profit improvement ka credit diya.⁸
+
+Yeh economics dikhata hai kaam ka jo agents ko diya jaata hai. Yeh boundary bhi dikhata hai. 2025 tak, Klarna ne complex cases ke liye human agents wapas bula liye.⁹ Customer service kaafi structured hai, lekin phir bhi human floor bana raha.
+
+Lesson dono taraf kaat-ta hai. Substitution bada hai jab task bounded hai. Kaam ambiguous, regulated, irreversible hone par kamzor ho jaata hai. Leading edge advance ho raha hai, lekin poora front ek saath nahi gir raha.
+
+Chip launches ek doosra consequence imply karte hain jo woh rarely naam lete hain: general agents sirf naye interface nahi hain. Woh naye **means of production** bhi hain.
+
+Manufacturing mode mein, jise thesis **[Mode 2](/docs/thesis#the-two-modes-of-general-agent-use)** kehta hai, general agent baaki system build karta hai. Yeh specialized AI Workers aur personal agent create karta hai jo unhein coordinate karta hai.
+
+Layer recursive hai: agents jo tumse baat karte hain woh agents build kar sakte hain jo kaam karte hain. Woh recursion **[AI-Native Company](/docs/ai-native-companies)** ko drive karta hai.
+
+[Thesis](/docs/thesis) ek line mein idea compress karta hai: **log direction set karte hain, agents kaam karte hain, aur companies intelligence scale karte hain headcount ki bajaye.**
+
+Thesis *architectural* case banata hai: kaun kaam karta hai aur workforce kaise banti hai. Yeh paper *interface* case banata hai: kaam kahan hota hai. Yeh operating system par ek app se operating layer mein shift hota hai.
+
+[What You Carry In](/docs/what-you-carry-in) set complete karta hai *ownership* case ke saath. Yeh puchta hai ke practitioner ke paas ab kya bacha hai jab models rent par hon, runtimes badlein, aur method freely book mein available ho.
+
+---
+
+## 6. Computer jo khud control karta hai
+
+CNN ne RTX Spark moment ko seedha shabdon mein describe kiya: duniya ki sabse badi technology companies computers par bet laga rahi hain jo khud control karte hain. Yeh phrase promise aur dono ko capture karta hai.
+
+Computer jo khud control karta hai, tumhara intent milne ke baad, exactly woh hai jo AI Operating Layer promise karta hai. Chalees saal ke human-run computing ne humein is idea ko unsettling train kiya.
+
+Mechanism concrete ho raha hai. RTX Spark lagbhag petaflop local AI compute aur 128GB unified memory supply karta hai. Yeh powerful models aur autonomous agents ko device par chalne deta hai bina har task cloud par bheje.
+
+NVIDIA ka OpenShell runtime decide karta hai ke agent kya kar sakta hai. Yeh sensitive work local models par route kar sakta hai aur personal information chhupa sakta hai kuch bhi machine se bahar jaane se pehle. Microsoft bhi agents ko Windows mein ek shared security layer ke neeche wire kar raha hai jo decide karta hai kya local rehta hai aur kya cloud par ja sakta hai.¹⁰
+
+NVIDIA ise "tool se teammate" ki taraf shift kehta hai. Microsoft ise PC ka naya chapter kehta hai. Dono wohi change describe karte hain: machine instrument hona band hoti hai jo tum operate karte ho aur actor ban jaati hai jo tum direct karte ho.
+
+Tumhari godh mein petaflop isliye nahi hai ke sundar windows render hon. Yeh support karta hai ke computer goal hold kar sake, reason, plan, aur locally act kar sake. Yeh privately aur continuously kar sakta hai.
+
+---
+
+## 7. Kyun is baar different hai
+
+Skeptics ne apna skepticism earn kiya hai. Kam se kam ek decade tak, badi technology companies ne computers promise kiye jo humari taraf se act karte. Humein jo mila woh Siri timers set kar raha tha aur Alexa music baja raha tha. CNN ke sources sahi hain ke woh efforts largely flat ho gaye. Kyun is generation ko different hona chahiye?
+
+Teen cheezein badli hain, aur woh saath mein badli hain.
+
+**Models ne capability threshold cross kiya.** 2010s ke assistants command parse kar sakte the. Woh plan nahi kar sakte the, goal ko break down nahi kar sakte the, tools use nahi kar sakte the, errors se recover nahi kar sakte the, ya kai applications mein kaam nahi kar sakte the. Aaj ke frontier models kar sakte hain.
+
+Parser is tarah ki request follow kar sakta hai jaise "alarm set karo." Agent zyada broad goal handle kar sakta hai, jaise quarterly expenses ko contracts se reconcile karna aur variance memo draft karna.
+
+Change ab measurable hai. OSWorld agent ko real desktop mein real applications ke saath rakhta hai. Woh partial credit nahi deta: task ya succeed hota hai ya fail. Stanford ka 2026 AI Index report karta hai ke average agent success lagbhag 12% se 66% mein do saal mein badha. Late 2025 mein, pehle agents OSWorld ke lagbhag 72% human baseline cross kar gaye.¹¹
+
+Result ko carefully padhna chahiye. 66% average ka matlab yeh nahi ke agents har task par logon se match karte hain. Matlab hai ke woh ab ek meaningful share par match karte hain. Siri generation kabhi us line ke qareeb nahi aayi.
+
+**Compute device par aa gaya.** Agentic work mehnga aur delay-sensitive ho sakta hai. Yeh files aur records bhi touch karta hai jo users server par bhejna nahi chahte.
+
+Local machine badi unified memory aur strong AI acceleration ke saath private, always-available agent compute de sakta hai. RTX Spark, Copilot+ PCs, aur Apple ka on-device AI push sab us goal ki taraf ja rahe hain.
+
+Yeh single-vendor story nahi hai. Apple ka M5 Max usi shift ka hissa hai local AI ki taraf. Yeh local language models, agents, aur generative tools ko Metal, Core ML, MLX, llama.cpp, Ollama, aur related software ke through chala sakta hai.¹²
+
+Apple aur NVIDIA alag routes lete hain. M5 Max Apple-native AI workstation hai: private, efficient, aur deeply integrated with macOS. RTX Spark CUDA-native local AI ko Windows PC market mein NVIDIA ke software stack, OpenShell, aur Microsoft ke agent layer ke through laya hai.
+
+Dono usi bade movement ko support karte hain. M5 Max prove karta hai ke local AI workstation real hai. RTX Spark CUDA-native agent PC ko mainstream banana chahta hai.
+
+Human-operated PC ki death local silicon par gated hai. RTX Spark ek gate hai jo Windows/CUDA side par khul raha hai. Apple Silicon doosra hai macOS side par. Bada point yeh nahi hai ke kaunsa vendor pehle jeeta hai. Bada point yeh hai ke agent-capable compute cloud se machine mein khud aa raha hai.
+
+Socho agents poore taur par cloud mein rehte. Har task jo agent ko diya jaaye woh per-token meter hota aur network round trip se delay hota. Zyada important, users ko files, code, client data, ya medical records device se bahar bhejna padta.
+
+Consumers ke liye, yeh serious privacy barrier hai. Regulated organizations ke liye, yeh procurement aur compliance problems create karta hai jo deployment rok sakte hain.
+
+Cloud-only agentic era isliye narrow rehta. Yeh low-sensitivity, low-volume kaam handle kar sakta hai lekin office ke darwaze par atak jaayega.
+
+Yeh hai kyun local hardware unlock hai, footnote nahi. Powerful compute **machine par, user ke control** mein agents ko sensitive, high-volume kaam tak pahunchne deta hai. Yeh hai kyun NVIDIA, Microsoft, aur Apple edge par computation invest kar rahe hain.
+
+**OS vendors uske around rebuild kar rahe hain.** Microsoft ab On-Device Registry expose karta hai MCP servers aur connectors discover karne ke liye, Agent Launchers agents register aur invoke karne ke liye, aur containment mechanisms jo MCP servers ko alag agent sessions mein isolate kar sakte hain.²³⁶
+
+Apple ne parallel mein move kiya hai. Xcode ab multiple providers se agents host karta hai, un agents ko Xcode capabilities expose karta hai, MCP tools aur skills support karta hai, aur compatible agents ko ACP ke through connect hone deta hai. Apple fully local agentic loops Mac par MLX ke through bhi demonstrate karta hai.⁴⁵
+
+Surface, Dell, HP, Lenovo, ASUS, aur MSI RTX Spark systems ship karne ki umeed rakhte hain, Acer aur GIGABYTE ke saath aane wale hain. Argument ek keynote se aage badh raha hai aur wider PC ecosystem mein ja raha hai.
+
+Char conditions ab saath aate hain: capable models, agent harnesses jo act kar sakein, local compute, aur platforms jo capabilities expose aur govern kar sakein. Jab yeh present hon, *khud karne* ke liye interface default nahi rehta. Woh cheez thi jo Siri decade mein missing thi. Ab woh missing nahi hai.
+
+---
+
+## 8. Seedhe objections
+
+Serious argument ko state karna chahiye ke kya unsettled hai. CNN do obstacles naam leta hai: cost aur trust. Poora list lamba hai. Yeh reliability, vendor incentives, aur full handoff ke sabse strong counterargument bhi shamil karta hai.
+
+**Cost.** Petaflop-class laptops is fall launch hongi aur sasti nahi hongi, aur AI-native PC abhi, filhal, premium category hai. Purane model ki mass obsolescence ek trajectory hai, single day ka event nahi. Human-run machines ki installed base bahut badi hai aur saalon tak rehne wali hai.
+
+**Trust aur control.** "Computer jo khud control karta hai" ek marketing line bhi hai aur security risk bhi. Agent jo files khol sakta hai, browser drive kar sakta hai, aur workflows chala sakta hai woh ghalat bhi ho sakta hai, hijack bhi ho sakta hai, ya scale par galat bhi kar sakta hai.
+
+Ek simple example socho. Tum personal agent ko apne email mein permanent access dete ho taake woh tumhara inbox manage kar sake. Ek counterparty lamba thread bhejta hai. Quoted history mein chhupa hua ek line hai jo agent instruction padhta hai. Phir woh ek contract amendment bhej deta hai jo tumne kabhi approve nahi kiya woh price change accept karta hai.
+
+Koi malware nahi hai aur koi technical breach nahi hai. Agent ke paas bas zyada authority thi aur koi approval checkpoint nahi tha.
+
+Yeh hai kyun sabse important engineering sirf petaflop nahi hai. Woh OpenShell aur Windows security layer hai. Yeh systems decide karte hain ke agent kya chhu sakta hai, kya local rehta hai, aur kya machine se bahar ja sakta hai.
+
+Safe permission model ko clear rules chahiye:
+
+- Agent *draft* kar sakta hai lekin *bhej* nahi sakta aisa message jo financial obligation create kare.
+- Defined threshold se upar ke actions ko human approval chahiye.
+- Har action logged aur reversible hai.
+
+Sabse mushkil problem raw capability nahi hai. **Governed** capability hai: permission, auditability, aur na kehne ki ability. Platform jo trust solve karega woh sabse zyada matter karega jo sabse zyada FLOPs rakhta hai.
+
+**Reliability gap.** Delegation tab kaam karta hai jab agent ko check karna khud kaam karne se kam pade.
+
+OSWorld progress aur gap dono dikhata hai. Lagbhag 66% ka average success rate matlab hai ke lagbhag har teesra task abhi bhi fail hota hai. Dus-step workflow mein, teen failed steps ka result 70% useful nahi produce karte. Woh poora workflow tod sakte hain.
+
+Agents ne kai low-stakes, bounded tasks ke liye line cross kar li hai. Unhone kai high-stakes, long-running, ya irreversible tasks ke liye nahi cross ki. Transition task by task aur domain by domain hoga.
+
+**Narrator chips bechta hai.** NVIDIA ne "computing ka naya era" declare kiya jab use chalane ke liye zaroori superchip bech raha tha. Microsoft bhi uske neeche ke platform se benefit karta hai.
+
+Iska matlab argument ghalat nahi hai. OSWorld results aur platform changes marketing se bahar exist karte hain. Lekin vendors ke paas incentive hai ke lambi transition ko ek keynote mein compress karein.
+
+Capability real hai. **Timeline** becha ja raha hai.
+
+**Hybrid objection sabse strong hai.** Durable model full handoff nahi ho sakta. Woh *collaboration* ho sakta hai: human plus UI plus agent.
+
+Us model mein, screen bacha rehta hai. Insaan inspect, correct, aur approve karta hai jo agent propose karta hai. UI agent-assisted ban jaata hai, gaib nahi hota. High-stakes work ke liye, yeh filhal sahi hai.
+
+Lekin hybrid model phir bhi structural change accept karta hai. Insaan operator se reviewer ban jaata hai. UI jagah se jahan kaam *hot hai* chhota ho jaata hai jagah par jahan kaam *check hota hai*. Diff view poora workspace nahi hai.
+
+Hybrid isliye is thesis ka opposite nahi hai. Yeh iska transitional phase hai.
+
+**Claim ko scope karna.** Yahan "obsolete" ka narrow matlab hai. Claim PC se related hai *jaise human-run artifact*: apps on operating system, graphical shell ke through haath se driven.
+
+Yeh operating model knowledge work aur software development mein pehle obsolete ki taraf ja raha hai. Un fields mein, tasks digital hain, data pehle se machine par hai, aur kai errors reverse ho sakte hain.
+
+Change sab jagah ek saath nahi aayega. Likely horizon saalon ka hai, mahino ka nahi. High-stacks, regulated, aur physical work insaanon ko screens par zyada tak rakhega.
+
+*Hardware* ke roop mein PC obsolete nahi hota. Yeh zyada important ban jaata hai kyunki agent ko local compute chahiye. Jo obsolete hota hai woh hai usse drive karne ka insaan ka kaam.
+
+In objections mein se koi bhi purane model ko rescue nahi karta. Yeh uski retirement ka *pace* set karte hain, scope karte hain *kahan* pehle retire hota hai, aur define karte hain *kahan naye moats honge*. Yeh direction reverse nahi karte.
+
+---
+
+## 9. Kya marta hai, kya zinda rehta hai, iska matlab kya hai
+
+Claims ko precise hona chahiye, kyunki precision woh cheez hai jo thesis ko slogan se alag karti hai.
+
+**Kya marta hai:**
+
+- **App as insaan ka kaam ka unit.** Tum "app khologe" kuch karne ke liye nahi. Tum intent bologe.
+- **Graphical shell as jagah jahan tum rehte ho.** Desktop, dock, app grid, window-shuffling: yeh legacy surfaces ban jaate hain, agent layer ke neeche demoted.
+- **SaaS as destination.** Login, navigation, aur seat-based UI agents ke liye callable capabilities mein unbundle hota hai.
+- **Insaan as operator.** Tum machine drive karna band karte ho. Tum direct karte ho.
+
+**Kya zinda rehta hai:**
+
+- **Operating system as plumbing.** Windows, macOS, aur Linux gaib nahi hote. Woh AI Operating Layer ke neeche dub jaate hain aur invisible infrastructure ban jaate hain.
+- **Aaj ke software ki underlying capabilities.** Woh APIs, tools, MCP servers, skills, aur doosre callable interfaces ke roop mein zinda rehti hain.
+- **Trusted record.** Transactional systems of record zyada strategic ban jaate hain kyunki agents ko authoritative state chahiye pehle ke woh act kar sakein. Knowledge work ke liye, woh logic **Knowledge System of Record (KSOR)** tak extend hota hai: source-backed knowledge, policy, methods, decisions, provenance, aur doosra context jo models aur agent vendors ke changes survive karna chahiye.
+- **Insaan as intent aur judgment ka source.** Jo automate nahi hota woh hai *kya chahiye* aur *result accha hai ya nahi*.
+
+**Kya replaceable ban jaata hai: reasoning engine.**
+
+Agar environment tools stable protocols se expose karta hai aur memory, permissions, governance, aur trusted records model ke bahar rakhta hai, toh kisi single model ko architecture own nahi karna chahiye.
+
+Claude ek workflow ke liye reasoning engine ho sakta hai, GPT doosre ke liye, Gemini teesre ke liye, aur local model sensitive work ke liye. Agent implementations bhi badal sakte hain. Jo stable rehna chahiye woh unke acharon ka system hai.
+
+Yeh hai kyun system of record prize ban jaata hai. Model rent ho sakta hai. Agent replace ho sakta hai. Authoritative knowledge aur operational state persist karna chahiye.
+
+**Blockers governance honge, nostalgia nahi.** Purane model isliye nahi bachega ke log apps se pyaar karte hain. Asal friction UI ke neeche hai.
+
+Jab agent interface ban jaata hai, char sawal critical ho jaate hain:
+
+1. **Agent ki memory kaun own karta hai:** tumhare baare mein, tumhare kaam ke baare mein, aur tumhari company ke baare mein accumulated context?
+2. **Permissions kaun define aur audit karta hai:** woh kya padh, bhej, kharch, ya delete kar sakta hai?
+3. **Audit trail kahan rehta hai** jab agent hazaaron actions leta hai?
+4. **Kaun liable hai** jab action galat ho aur asal money ya regulated records involve hon?
+
+Enterprises agents ko scale par tab tak deploy nahi karenge jab tak in sawalon ke aise answers hon jo procurement, security, aur legal teams ko satisfy karein.
+
+Isliye governance strategic prize ban jaata hai. Winners ke paas sabse cleverest agent nahi hoga. Woh agent memory, permissions, aur auditability ko enterprise use ke liye reliable banayenge.
+
+UI nostalgia purane model ko nahi bachayega. Unsolved governance naye model ko slow karega, aur isse solve karna business hai. Thesis mandate enforcement, audit trails, aur liability ko **[Agents as Economic Actors](/docs/thesis#agents-as-economic-actors)** mein usi frontier treat karta hai.
+
+**Builders ke liye kya hai.** Agar agent interface hai, strategic ground badal jaata hai.
+
+Sundar UI ya sticky destination kamzor moat ban jaata hai kyunki agent ko farq nahi padta interface kaisa dikhta hai. Mazboot positions hain:
+
+- woh layer jahan agent rehta hai;
+- capability jo agent ko call karna chahiye;
+- trusted record jo agent ko padhna chahiye;
+- ya governance layer jo agent ko obey karna chahiye.
+
+Organization ke liye, opportunity AI-Native Company hai. Yeh AI Workers design, build, aur deploy karta hai un labor ke roop mein jo uska output produce karta hai. Humans direction set karte hain aur teams compose karte hain.
+
+Bounded end par, economics pehle se visible hain. Klarna ne report kiya ke ek agent ne lagbhag 700 full-time staff ke barabar kaam kiya aur profit mein tens of millions of dollars add kiye. Yeh woh hai jo "intelligence scale karna headcount ki bajaye" balance sheet par dikh sakta hai.
+
+Firm jo agents manufacture aur coordinate karna seekhta hai woh ek firm se zyada produce kar sakta hai jo sirf purane software ke seats khareedta hai. Jo SaaS vendor abhi bhi seat par price kar raha hai woh woh unit bech raha hai jo uske customers ko ab kam chahiye.
+
+---
+
+## 10. Conclusion: log direction set karte hain, agents kaam karte hain
+
+June 1, 2026, NVIDIA ne argument aath shabdon mein rakha: tum poochte ho, aur PC kaam karta hai.
+
+Chip marketing hatao. Jo bachta hai woh human-computer interaction ke ek era ke khatme ka claim hai. Woh era graphical desktop se shuru hua. Ab woh agentic layer ki taraf de raha hai.
+
+SaaSpocalypse real hai, lekin yeh chhota event hai. App function call mein dissolve ho jaata hai.
+
+Bada event khud personal computer ki change hai. Yeh kam woh machine ban jaata hai jo tum operate karte ho aur zyada woh machine ban jaata hai jo tum direct karte ho. Operating system plumbing mein retreat karta hai. Graphical shell legacy surface ban jaata hai.
+
+Unke upar AI Operating Layer hai. Personal agents tumhe jaante hain. General agents kaam karte hain. Milkar woh tumhe intent se action mein badalte hain: files kholte hain, tools drive karte hain, task complete karte hain, aur result wapas laate hain.
+
+Agent model nahi hai, aur model operating layer nahi hai. Windows agent discovery, connectors, permissions, aur containment standardize karna shuru kar raha hai. Apple dikhata hai ke ek environment multiple agents, skills, MCP tools, ACP-compatible agents, aur local ya cloud models host kar sakta hai. Isliye durable architecture kisi ek model vendor se upar jaata hai.²⁴⁵
+
+Computer khud ko control karna seekh raha hai. Insaan ka kaam ab har step operate karna nahi hai.
+
+Insaan decide karta hai ke kya karne layak hai. Insaan judge karta hai ke accha kiya ya nahi. Insaan machine ke liye aur, badhte hue, agents ki workforce ke liye direction set karta hai jo baaki carry out kar sake.
+
+Yeh change sab jagah ek saath nahi aayega. Yeh shuru hota hai digital, bounded, recoverable work se jaise knowledge work aur software development. Yeh task by task advance hota hai. Humans screens par sabse zyada tab tak rahenge jab stakes high hon, rules strict hon, ya duniya physical ho.
+
+Horizon saalon ka hai, ek keynote ka nahi. Lekin direction reverse karna mushkil hai kyunki machines ab intent samajh sakti hain aur uspar act kar sakti hain.
+
+Purana era tha: "log apps use karte hain." Naya era hai: "log kaam delegate karte hain."
+
+Interface ab sirf icons se bhara screen nahi hai. **Interface agent hai.** Chahe woh RTX Spark, Apple Silicon, ya kisi doosre local AI platform par chale, direction wohi hai. Computer kam woh tool ban jaata hai jo tum operate karte ho aur zyada woh delegate ban jaata hai jo tum direct karte ho.
+
+---
+
+*Yeh paper NVIDIA ke RTX Spark announcement par GTC Taipei, June 1, 2026 se draw karta hai; Microsoft ke Windows agent platform documentation par, On-Device Registry, MCP on Windows, Agent Launchers, aur agent-session containment shamil; Apple ke Xcode 26.3 aur Xcode 27 agentic-coding architecture par, MCP, skills, ACP, aur local MLX-backed agents shamil; aur CNN ki reporting par computers jo khud control karte hain. Layered architecture aur personal-agent / general-agent / AI-Worker framing Agent Factory model follow karte hain.*
+
+---
+
+## Sources
+
+### Footnotes
+
+1. "NVIDIA and Microsoft Reinvent Windows PCs for the Age of Personal AI," NVIDIA Newsroom, June 2026: Huang ka "you ask — and the PC does the work" quote, RTX Spark as Arm-based superchip (20-core Grace CPU co-designed with MediaTek, Blackwell RTX GPU, NVLink-C2C), ~1 petaflop on-device AI, up to 128GB unified memory, built with Microsoft for local agents. [https://nvidianews.nvidia.com/news/nvidia-microsoft-windows-pcs-agents-rtx-spark](https://nvidianews.nvidia.com/news/nvidia-microsoft-windows-pcs-agents-rtx-spark) Corroborated by Fox Business aur Tom's Hardware jo 120B-parameter / 1M-token local-inference figures add karta hai. Launch partners is fall (ASUS, Dell, HP, Lenovo, Microsoft Surface, MSI, with Acer and GIGABYTE to follow) per CRN Asia.
+
+2. Microsoft, "Model Context Protocol (MCP) on Windows overview": Windows ek On-Device Registry (ODR) provide karta hai jiske through apps aur agents local aur remote MCP servers aur agent connectors discover aur use kar sakte hain; File Explorer ek Windows-provided MCP connector hai. [https://learn.microsoft.com/en-us/windows/ai/mcp/overview](https://learn.microsoft.com/en-us/windows/ai/mcp/overview)
+
+3. Microsoft, "Agent Launchers on Windows overview": Agent Launchers ek standardized way provide karte hain apps ke liye agents ko ek baar register karne aur use supporting experiences jaise Start, Search, aur doosre applications ke liye discoverable banane ka; registered agents On-Device Registry ke through retrieve kiye jaate hain. [https://learn.microsoft.com/en-us/windows/ai/agent-launchers/](https://learn.microsoft.com/en-us/windows/ai/agent-launchers/)
+
+4. Apple, "Apple accelerates app development with new intelligence frameworks and advanced tools," June 8, 2026, aur WWDC26 Platforms State of the Union: Xcode 27 Anthropic, Google, aur OpenAI se agents aur models integrate karta hai; agents tests, Playgrounds, previews, aur simulator interaction ke through validate kar sakte hain; plugins skills aur MCP tools add kar sakte hain; aur koi bhi compatible agent Agent Client Protocol ke through connect ho sakta hai. [https://www.apple.com/newsroom/2026/06/apple-aids-app-development-with-new-intelligence-frameworks-and-advanced-tools/](https://www.apple.com/newsroom/2026/06/apple-aids-app-development-with-new-intelligence-frameworks-and-advanced-tools/) See also WWDC26 session 102.
+
+5. Apple Developer, WWDC26, "Run local agentic AI on the Mac using MLX": Apple agentic workflows ko Mac par completely locally chalta dikhata hai, jismein OpenCode local model se hota hai jo MLX-LM Server ke through serve hota hai, tool calling, file access, command execution, aur Xcode integration shamil hai. [https://developer.apple.com/videos/play/wwdc2026/232/](https://developer.apple.com/videos/play/wwdc2026/232/)
+
+6. Microsoft, "Securely containing MCP servers on Windows": Windows ODR ke through access kiye gaye MCP servers alag agent session mein alag agent user account ke under chal sakte hain aur sirf approved resources tak limited hote hain. [https://learn.microsoft.com/en-us/windows/ai/mcp/servers/mcp-containment](https://learn.microsoft.com/en-us/windows/ai/mcp/servers/mcp-containment)
+
+7. Apple, "Xcode 26.3 unlocks the power of agentic coding," February 3, 2026: Xcode ne coding agents jaise Anthropic ke Claude Agent aur OpenAI ke Codex ke liye direct support add kiya, complex multi-step development work ke liye Xcode capabilities ke access ke saath. [https://www.apple.com/newsroom/2026/02/xcode-26-point-3-unlocks-the-power-of-agentic-coding/](https://www.apple.com/newsroom/2026/02/xcode-26-point-3-unlocks-the-power-of-agentic-coding/)
+
+8. "Klarna AI assistant handles two-thirds of customer service chats in its first month," Klarna press release, February 2024: Pehle mahine mein 2.3M conversations, ~700 full-time agents ke barabar kaam, resolution time 11 minute se kam se 2, 2024 ke liye ~$40M projected profit improvement. [https://www.klarna.com/international/press/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month/](https://www.klarna.com/international/press/klarna-ai-assistant-handles-two-thirds-of-customer-service-chats-in-its-first-month/)
+
+9. Klarna ka 2025 mein complex cases ke liye human agents ka wapas aana: CX Dive, "Klarna changes its AI tune and again recruits humans for customer service" (AI ab bhi ~two-thirds inquiries handle karta hai, humans high-value tier ke liye wapas jode gaye). [https://www.customerexperiencedive.com/news/klarna-reinvests-human-talent-customer-service-AI-chatbot/747586/](https://www.customerexperiencedive.com/news/klarna-reinvests-human-talent-customer-service-AI-chatbot/747586/)
+
+10. Microsoft agents ko Windows mein wiring aur shared local/cloud security layer upar ke joint NVIDIA-Microsoft announcement aur CNN ki June 3, 2026 report mein described hai. CNN, "The world's biggest tech companies are betting big on computers that control themselves." [https://www.cnn.com/2026/06/03/tech/nvidia-rtx-spark-microsoft-windows-ai-laptops](https://www.cnn.com/2026/06/03/tech/nvidia-rtx-spark-microsoft-windows-ai-laptops)
+
+11. OSWorld success-rate figures (~12% se ~66% ek saal mein, agents ne ~72% human baseline cross kiya) Stanford ke 2026 AI Index se, Simular ke Agent S ke saath jo December 2025 mein 72.6% par tha (72.36% human baseline se upar). Simular, "Simular's computer-use agent outperforms humans." [https://www.simular.ai/articles/simulars-computer-use-agent-outperforms-humans](https://www.simular.ai/articles/simulars-computer-use-agent-outperforms-humans)
+
+12. Apple ke MacBook Pro technical specifications M5 Max configurations list karte hain up to 40-core GPU, up to 614GB/s memory bandwidth, aur up to 128GB unified memory ke saath. Apple ka MLX ecosystem, MLX LM shamil, local LLM generation aur fine-tuning support karta hai Apple Silicon par. PyTorch bhi Metal Performance Shaders backend ke through Apple Silicon GPU acceleration support karta hai.
