@@ -35,6 +35,15 @@ const sidebars: SidebarsConfig = {
         "certifications/pcar-p",
       ],
     },
+    {
+      type: "category",
+      label: "FTE Startup Founders Program",
+      items: [
+        "founders-program",
+        "founders-program/first-pilot",
+        "founders-program/zia-developer-ai-requirements",
+      ],
+    },
     { type: "doc", id: "how-to-get-paid-agentic-ai-era", label: "Paisa Kamaana" },
     { type: "doc", id: "how-to-sell-agentic-ai-era", label: "Bechna" },
 
