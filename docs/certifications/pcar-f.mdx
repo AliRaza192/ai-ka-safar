@@ -1,14 +1,236 @@
 ---
-id: pcar-f
+sidebar_position: 2
 title: "PCAR-F: Architect, Foundations"
-sidebar_label: "PCAR-F"
-description: "Professional Certified AI Architect — Foundations level"
+description: "Panaversity Certified Architect: Foundations — Anthropic CCAR-F ki tayyari karne wali doosri exam, design layer test karti hai."
+keywords: ["PCAR-F", "CCAR-F", "Panaversity", "certification", "Anthropic", "FDE", "agentic architecture", "MCP"]
 ---
 
-# PCAR-F: Architect, Foundations
+[← Tamam Certifications](/docs/certifications)
 
-:::note
-Yeh page abhi under development hai. Jald hi complete content add kiya jayega.
-:::
+**PCAR-F — Required doosra**
 
-PCAR-F architect level hai — yeh prove karta hai ke tum AI systems design kar sakte ho. Foundations level architecture concepts shamil hain.
+# Panaversity Certified Architect: Foundations
+
+**PCAR-F tumhe Anthropic ki CCAR-F (Claude Certified Architect – Foundations) exam ki tayyari karne ke liye design kiya gaya hai.** Ye same published blueprint follow karta hai, same objectives ko same weights pe cover karta hai, lekin wahin nahi rukta.
+
+PCAR-F us blueprint ko ek level up le jaata hai concepts ko broader, vendor-neutral context mein test karke, related topics add karke jo real-world AI work mein important hain, aur wo gaps bharta hai jo official exam ke scope se bahar hain.
+
+PCAR-F pass karne se tumhe strong, low-cost signal milta hai ke tum official Anthropic certification attempt karne ke liye tayyar ho, aur saath hi practical AI engineering ke liye mukammal foundation bhi ban raha hai.
+
+[Official CCAR-F exam guide parhein](/docs/certifications#official-exam-guides).
+
+| Exam | Items | Duration | Cut score | Fee |
+|---|---|---|---|---|
+| **PCAR-F** (Panaversity) | 60 items | 120 minutes | 720 / 1,000 | Students: do free attempts, phir fee |
+| **CCAR-F** (Anthropic) | 60 items | 120 minutes | 720 / 1,000 | $125 per attempt |
+
+[Pehle se jaante ho kya chahiye? Schedule karo↓](#schedule-your-exam)
+
+PCAR-F FDE path pe doosra exam hai, aur wo gate band karta wala hai. Ye design layer examine karta hai: kaam agents ke beech kaise tootta hai, tool interface ko kya kehna zaroori hai ke model use sahi se use kare, MCP kahan sahi seam hai, aur context window khatam hone pe system karta kya hai.
+
+Ye us insaan ke liye likha gaya hai jisse system design karne ko kaha jayega, operate karne ko nahi. [PCAO-F](/docs/certifications/pcao-f) poochta hai ke tum AI responsibly use aur evaluate kar sakte ho. Ye poochta hai ke tum architecture pe bharosa layak ho. Dono usi order mein lo.
+
+Ghareeb ke liye, credential aik khaas baat kehta hai. Tumne Anthropic ke published Architect blueprint pe bana hua proctored exam diya aur 720 out of 1,000 clear kiya. Ye nahi ke tumne agent design ke baare mein parha hai. Ye ke tumhe trade-offs pe examine kiya gaya, clock ke saath, kisi ke dekhne ke saath.
+
+## Same Blueprint, Ek Level Upar
+
+**PCAR-F usi blueprint ko ek level up le jaata hai.** CCAR-F ka warm-up nahi, aur na hi uska knock-off: ye official blueprint poora examine karta hai, phir chalta rehta hai, kyunki courses bhi chalte hain, vendors ke across wohi judgment poochha jaata hai.
+
+Ye Anthropic ke Architect Foundations blueprint pe har task statement poochta hai, published weights pe. Twin **CCAR-F, Claude Certified Architect – Foundations** hai: 60 items 120 minutes mein $125 USD ke liye, chaar production scenarios mein framed jo chhe ke bank se drawn hain. Wo sab PCAR-F pe examine hota hai. Phir sitting uske aage chalti hai.
+
+Jo add hota hai wo vendor neutrality hai. CCAR-F architectural judgment aik vendor ke product surface ke andar test karta hai: Agent SDK ke hooks, `CLAUDE.md` hierarchy, plan mode, built-in tools. Wo asli hain aur jaanne layak hain. Wo ek implementation bhi hain us sawaal ki jo customer Claude chalaye ya na chalaye mojood rehta hai.
+
+**Aik graduate aise customer ke saamne khada hota hai jo Claude chalaye ya kuch aur, aur dono mein sahi hona padta hai.** Yahi poori wajah hai ke Panaversity sitting aage jaati hai.
+
+Wo sab CCAR-F ko chhota exam nahi banate. **Ye wo credential hai jo market recognize karta hai, Anthropic ne issue kiya hai aur koi bhi check kar sakta hai.** PCAR-F uske neeche baithne aur usse khada rakhne ke liye bana hai: wohi blueprint, pehle liya hua, aur saath mein vendor-neutral half jo customer tumse poochega pehle ke poochhe ke tumne kaun sa SDK use kiya.
+
+| | PCAR-F | CCAR-F |
+|---|---|---|
+| **Full name** | Panaversity Certified Architect: Foundations | Claude Certified Architect – Foundations |
+| **Blueprint** | Har CCAR-F domain published weight pe, phir vendor-neutral coverage | Paanch published domains |
+| **Passing score** | 720 out of 1,000 | 720 out of 1,000 |
+| **Fee** | Enrolled students ke liye pehle do attempts free | $125 USD list price |
+| **Proctored by** | Panaversity, independently | Pearson VUE, Partner Academy ke through register karke |
+
+## Study Guide
+
+**Ye courses padho exam ki tayyari ke liye.** Flashcards, knowledge checks, aur build projects raaste mein shamil hain madad ke liye.
+
+| Exam area | Parho |
+|---|---|
+| Loop, aur signal pe rukna | [The Loop by Hand](/docs/loop-by-hand-crash-course) |
+| Plan mode, direct execution, aur Explore subagent | [Claude Code and OpenCode](/docs/agentic-coding-crash-course) |
+| Agents, subagents, hooks, sessions, tools, aur context | [Claude Agent SDK](/docs/claude-agent-sdk-crash-course) |
+| Instructions kahan rehti hain, aur team kya share kar sakti hai | [Claude Code for Teams](/docs/claude-code-teams-crash-course) |
+| Bina kisi ke dekhe Claude Code chalana | [Claude Code as a CI Worker](/docs/claude-code-ci-crash-course) |
+| Schemas, retries, batches, aur calibrated human review | [Structured Extraction Pipelines](/docs/structured-extraction-crash-course) |
+| Kaam bina coverage khoye decompose karna, aur sources rakhna | [Graph Engineering](/docs/graph-engineering-crash-course) |
+| Provenance, conflicting sources, aur citation ko kya carry karna chahiye | [Building the Context Layer](/docs/context-layer-crash-course) |
+
+Aath mein se paanch `Exam link` callouts carry karte hain jo batate hain ke kaun sa task statement test ho raha hai, aur kai cases mein ke item kaunsa distractor offer karega. Blueprint ke tees task statements mein se chhe ke paas hai. Jahan callout missing hai, course phir bhi objective padhata hai; callout sirf label hai.
+
+**Vendor-neutral half.** Wo aath blueprint cover karte hain. PCAR-F phir teen sawaal poochta hai jo twin nahi poochta, What It Tests mein listed, aur un mein se koi aath exam depth pe jawab nahi deta. Ye saat dete hain, named sections mein. Pehle section parho; baaki course wohi hai agar chahiye ho.
+
+Aakhri do rows wo cover karte hain jo blueprint assume kar leta hai poochne ki jagah. Har CCAR-F scenario aise system ke andar se likha gaya hai jo tum khud chalate ho. Customer apna na chalaye, aur ye decide karna architecture call hai pehle ke kuch bhi. Pehle general case parho, phir uska Anthropic-hosted instance.
+
+| Exam area | Parho |
+|---|---|
+| Fixed pipeline ya adaptive decomposition, aur har handoff pe contract | [Choosing Agentic Architectures](/docs/choosing-agentic-architectures-crash-course) (Concepts 6, 8 aur 14) |
+| Handoff jo retry, crash, aur resume survive kare | [Give Your AI Agent a Nervous System](/docs/ai-agent-nervous-system-crash-course) (Concept 4, Decision 5) |
+| Prompt kya enforce nahi kar sakta, kisi bhi harness mein | [Harness Engineering](/docs/harness-engineering-crash-course) (Concept 3) |
+| Uska doosra half: koi permission layer hi nahi, toh prompt aik hi bound hai | [Claude Code Routines](/docs/claude-code-routines-crash-course) (Concepts 1 aur 2) |
+| Jab harness aisi chat hai jo tum configure nahi karte, app ke rules kahan rehte hain | [Connector-Native Apps](/docs/connector-native-apps) (Concept 9) |
+| Loop ke andar, pe, ya bahar, aur kaun kya ship karta hai | [Loop Engineering](/docs/loop-engineering-crash-course) (Concept 1, Part 6) |
+| Governance surface: failure kaun review karta hai, kaun audit karta hai, kaun rok sakta hai | [Designing Agent Experiences](/docs/designing-agent-experiences-crash-course) (Concept 16) |
+| Agent ke decisions apne se alag karna: ledger aur override | [Identic AI](/docs/identic-ai-crash-course) (Scenarios 4 aur 5) |
+| Agent kahan chalta hai, kaun use zinda rakhta hai, aur vendor ke console mein kya leak hota hai | [Leaving the Laptop](/docs/leaving-the-laptop-crash-course) (Concepts 2, 6, 7 aur 11) |
+| Harness khud chalane ki jagah rent karna, aur uska kitna cost hai | [Claude Managed Agents](/docs/claude-managed-agents-crash-course) (Concepts 7 aur 15) |
+
+## Ye Kya Test Karta Hai
+
+Paanch domains, official CCAR-F guide ke order mein. Weights guide ke apne hain, aur guide inhe scored items ke approximate proportions kehta hai.
+
+Blueprint table ka har course kahin na kahin har domain ko touch karta hai. Aakhri column wahan hai jahan har domain ka center of mass rehta hai: pehle parhne wala course, phir ek ya do jo baaki objectives carry karte hain.
+
+| # | Domain | Weight | Kahan padhaya jaata hai |
+|---|---|---|---|
+| 1 | Agentic Architecture & Orchestration | 27% | [Claude Agent SDK](/docs/claude-agent-sdk-crash-course) · [The Loop by Hand](/docs/loop-by-hand-crash-course) · [Graph Engineering](/docs/graph-engineering-crash-course) (decomposition jo coverage khota hai) · [Choosing Agentic Architectures](/docs/choosing-agentic-architectures-crash-course) (Concept 6, wo test jo fixed pipeline aur adaptive decomposition alag karta hai) |
+| 2 | Tool Design & MCP Integration | 18% | [Claude Agent SDK](/docs/claude-agent-sdk-crash-course) · [The Loop by Hand](/docs/loop-by-hand-crash-course) (tool aik description hai; model ko batana ke tool fail hua) |
+| 3 | Claude Code Configuration & Workflows | 20% | [Claude Code for Teams](/docs/claude-code-teams-crash-course) · [Claude Code as a CI Worker](/docs/claude-code-ci-crash-course) · [Claude Code and OpenCode](/docs/agentic-coding-crash-course) · [Claude Agent SDK](/docs/claude-agent-sdk-crash-course) (Concept 17, aur Part 5 mein Four Moves) |
+| 4 | Prompt Engineering & Structured Output | 20% | [Structured Extraction Pipelines](/docs/structured-extraction-crash-course) · [Claude Code as a CI Worker](/docs/claude-code-ci-crash-course) (criteria, examples, independent reviewer) · [The Loop by Hand](/docs/loop-by-hand-crash-course) (`tool_choice`) |
+| 5 | Context Management & Reliability | 15% | [Claude Agent SDK](/docs/claude-agent-sdk-crash-course) · [Structured Extraction Pipelines](/docs/structured-extraction-crash-course) (confidence aur review) · [Graph Engineering](/docs/graph-engineering-crash-course) · [Building the Context Layer](/docs/context-layer-crash-course) |
+
+**Teen domains iska do-teen hissa carry karte hain.** Agentic Architecture & Orchestration 27 percent, Claude Code Configuration & Workflows 20, aur Prompt Engineering & Structured Output 20 milke exam ka 67 percent banate hain. Table ko ulti taraf parho aur teen domains teen courses pe depend karte hain: Claude Agent SDK, Claude Code for Teams, aur Structured Extraction Pipelines. Ye percentages se bhi sharp study hint hai.
+
+Dekho kya top pe hai. Orchestration, prompting nahi.
+
+Sabse bharie domain loops ke baare mein hai jo right signal pe terminate karte hain, coordinators jo kaam bina coverage khoye decompose karte hain, subagents jo tumhari assumed context inherit nahi karte, aur sessions jo resume aur fork ho sakte hain. Ye credential ka thesis hai, number ke tor pe bola gaya.
+
+Aur kuch us se door nahi hai. Spread 15 se 27 percent tak hai, toh koi domain skip nahi kar sakte aur koi domain tumhe le nahi jayega. Scenario structure isse sharp karta hai: exam chhe ke bank se chaar scenarios draw karta hai, toh aik kamzor domain tumhare particular draw pe over-represented ho sakta hai aur kisi doosre ke pe under-represented.
+
+### Per-domain minimum nahi hai
+
+Tumhara CCAR-F score report domain-wise percent-correct dikhata hai, lekin guide clear hai ke wo section percentages pass ya fail decide karne ke liye use nahi hote. Natija tumhara total scaled score hai 720 cut score ke against. Kamzor domain akele fail nahi kar sakta. Phir bhi wo domain hai jo doosre scenario draw pe sabse zyada fail karne wala hai, aur isi liye strong total jo aik patli area chhupa de wo profile hai jis pe ghabrana chahiye.
+
+Bank ke chhe production contexts published hain, aur wo exam ki sabse achi description hain jo koi de sakta hai:
+
+- **Customer Support Resolution Agent.** Custom MCP tools pe high-ambiguity support agent, aur jaanna ke kab escalate karna hai.
+- **Code Generation with Claude Code.** Team ke workflow ke andar generation, refactoring, debugging, aur documentation.
+- **Multi-Agent Research System.** Coordinator jo search, analysis, synthesis, aur reporting subagents ko delegate karta hai.
+- **Developer Productivity with Claude.** Built-in tools aur MCP servers ke saath unfamiliar codebases explore karna.
+- **Claude Code for Continuous Integration.** Automated review aur test generation, false positives dushman ke roop mein.
+- **Structured Data Extraction.** Unstructured documents se extraction, JSON schemas ke against validate kiya hua.
+
+![Do exams, do bohot alag shapes. CCDV-F top-heavy hai, Applications aur Integration 33.1 percent pe, jabke CCAR-F zyada evenly distributed hai 15 se 27 percent tak.](/img/03-domain-weights.webp) *Shape numbers se zyada matter karta hai. CCAR-F ke paas koi dominant domain nahi jis pe depend kiya jaaye, aur ye us Developer exam ke ulta hai jo bagal mein hai.*
+
+Guide ka jawab do, product ka nahi
+
+Exam fixed snapshot ke against likha gaya hai aur products move kar chuke hain. Chaar jagah matter karti hain. Do pe ye kitaab tumhe aaj ka behavior sikhata hai, jo tumhare code mein sahi hai aur answer sheet pe galat.
+
+| Guide kehta hai | Product karta hai | Exam pe |
+|---|---|---|
+| `allowedTools` mein `"Task"` shamil hona chahiye subagents spawn karne ke liye | SDK metadata spawning `Agent` block kehta hai | Jawab `Task` |
+| Skill frontmatter mein `allowed-tools` tool access **restrict** karta hai | Ye invoking turn ke liye pre-approve karta hai: [Claude Code for Teams](/docs/claude-code-teams-crash-course), Concept 10 | Jawab **restricts** |
+| **PostToolUse** kehta hai, jabke pre-call blocking describe karta hai | `PreToolUse` blocking hook hai: [Claude Agent SDK](/docs/claude-agent-sdk-crash-course), Concept 11 | Jawab **described behaviour** |
+| JSON schema ke saath `tool_use` reliable structured-output path hai | `output_config.format` wo hai jo tum aaj likhte ho | Jawab `tool_use` |
+
+Guide ke apne sample distractors mein teen artifacts hain jo kisi product mein mojood nahi hain: commands array wala `.claude/config.json`, `CLAUDE_HEADLESS=true` variable, aur `--batch` flag.
+
+Har weight upar PCAR-F pe honor hota hai. Jo Panaversity sitting add karti hai wo har domain ka doosra half hai, bina vendor framing ke poochha hua:
+
+- **Agentic Architecture & Orchestration.** Twin poochta hai ke subagent Claude Agent SDK mein apna context kaise receive karta hai, diye hue ke wo coordinator ka history inherit nahi karta. PCAR-F ye poochta hai, phir poochta hai ke kisi bhi coordinator ko kisi bhi worker ko kaam dene se pehle kya true hona chahiye ke handoff safe ho.
+- **Claude Code Configuration & Workflows.** Twin poochta hai ke `CLAUDE.md` scoping aur path-specific rules resolve kaise hote hain. PCAR-F ye poochta hai, phir poochta hai ke agent ke standing instructions kahan aate hain jab harness Claude Code nahi hai, aur do sets disagree karein toh kya tootta hai.
+- **Context Management & Reliability.** Twin poochta hai ke scenario ke product surface ke andar kab human ko escalate karna hai. PCAR-F ye poochta hai, phir poochta hai ke escalation jo kabhi nahi hua uske liye kaun accountable hai, aur ye wo sawaal hai jo tumhara customer kisi vendor se pehle poochta hai.
+
+Blueprint ke aath courses mein se koi teeno sawaalon ko exam depth pe jawab nahi deta. Doosri study table ke saat courses dete hain. Har row mein pehle entry baaki se pehle parho.
+
+| PCAR-F poochta hai | Kahan padhaya jaata hai |
+|---|---|
+| Kisi bhi coordinator ko kisi bhi worker ko kaam dene se pehle kya true hona chahiye ke handoff safe ho | [Give Your AI Agent a Nervous System](/docs/ai-agent-nervous-system-crash-course) (Concept 4, Decision 5) · [Choosing Agentic Architectures](/docs/choosing-agentic-architectures-crash-course) (Concepts 8 aur 14) · [Harness Engineering](/docs/harness-engineering-crash-course) (Concept 3) |
+| Jab harness Claude Code nahi hai standing instructions kahan rehti hain, aur do sets disagree karein toh kya tootta hai | [Claude Code and OpenCode](/docs/agentic-coding-crash-course) (Section 8) · [Claude Code for Teams](/docs/claude-code-teams-crash-course) (Concept 3) · [Connector-Native Apps](/docs/connector-native-apps) (Concept 9, chat-host case) · [Leaving the Laptop](/docs/leaving-the-laptop-crash-course) (Concept 11, rule jo sirf vendor ke console mein rehta hai) |
+| Escalation jo kabhi nahi hua uske liye kaun accountable hai | [Loop Engineering](/docs/loop-engineering-crash-course) (Concept 1, aur Part 6 loop ke andar, pe, ya bahar) · [Designing Agent Experiences](/docs/designing-agent-experiences-crash-course) (Concept 16) · [Identic AI](/docs/identic-ai-crash-course) (Scenarios 4 aur 5) |
+
+Un courses mein se do, aur aik blueprint course, wo pattern sikhate hain jo key reward nahi karta. Choosing Agentic Architectures aur Claude Code and OpenCode dono reviewer ko alag model family se banate hain; exam ka multi-pass review item ka jawab aik independent instance hai bina generator ke context ke, doosra vendor nahi. Give Your AI Agent a Nervous System kaam ko subscription se bhi aur parent se bhi fan-out karta hai; exam ka routing item ka jawab hub-and-spoke hai coordinator ke through.
+
+## Pehle Sample Baitho
+
+**PCAR-F ke liye Panaversity sample exam jaldi aa raha hai.** Ye free hoga aur attempt consume nahi karega. Abhi koi date nahi hai, aur ye page date invent nahi karega.
+
+Jab tak na aaye, is kitaab mein sabse qareeb full rehearsal Anthropic-twin wala hai. **[CCAR-F Practice Exam](/docs/ccar-f-practice-exam)** 60 items hai 120 minutes mein, published blueprint pe weighted, chhe production scenarios ke andar framed jo tum din pe chaar draw karte ho, aur domain-wise scored. Har jawab batata hai ke sahi option kyun cause address karta hai aur har plausible alternative kyun nahi karta.
+
+Ye CCAR-F rehearsal hai, Panaversity sample nahi
+
+Ye Anthropic exam ki rehearsal hai. Ye PCAR-F sample nahi hai aur iska score PCAR-F result nahi hai. Apna per-domain breakdown parho total ki jagah: strong total jo aik kamzor domain chhupa de wo profile hai jo doosre scenario draw pe sabse zyada fail hone wali hai.
+
+Anthropic ki khud ki free material study week ka doosra half hai. [Anthropic Academy](https://anthropic.skilljar.com/) free hai; upar ke paanch domains se match karne wale courses karo, agents, context management, aur tool design ke official docs ke saath.
+
+## Apna Exam Schedule Karo
+
+PCAR-F proctored hai, aik waqt pe aik candidate, aur seat ke do raste hain. Matching Panaversity course mein enrolled ho toh tumhara attempt free hai aur tum apne teacher ke saath arrange karte ho. Enrolled nahi ho toh tum ek attempt khareedte ho aur one-on-one proctoring ke saath baithte ho. Neeche ki card dono handle karti hai, request form ke saath.
+
+Enrolled students ke liye do attempts free hain; retake fee aur external proctoring fee abhi announce nahi hui.
+
+[Schedule PCAR-F (proctored)](https://panaversity.org)
+
+Is exam ko baithne ke do tareeqe hain. Sign in ke baad wo chuno jo tumhe describe karta hai.
+
+**Mein course mein enrolled hoon**
+Attempt included
+Tumhare pehle do attempts free hain. Hum request tumhare teacher ko bhejte hain, jo tumhare class schedule ke andar sitting arrange karta hai.
+
+**Mein enrolled nahi hoon**
+Paid attempt
+Ek attempt khareedao aur one-on-one proctoring ke saath baitho humne tay waqt pe. Tumhe exam ke liye Panaversity ke saath padhna zaroori nahi.
+
+[Sign in karke attempt book karo](https://panaversity.org)
+
+Proctored exam verified identity se juda hota hai, toh schedule karne se pehle asli account chahiye. Tumhara free Panaversity account kaafi hai, aur details dobara type karne ki zaroorat nahi.
+
+## Pass Karne Ke Baad
+
+PCAR-F pass karna Panaversity qualification stage complete karta hai. PCAO-F pehle se piche, gate band ho gaya.
+
+**PCAO-F → PCAR-F → FDE Internship Program → CCAO-F → CCAR-F, agar tum baithna chaho**
+
+Internship us sequence ka practical part hai. Anthropic ke exams [Anthropic Partner Academy](https://anthropic-partners.skilljar.com/) ke through register hote hain aur eligible organisational account chahiye; personal addresses qubool nahi hote aur koi individual sign-up route nahi hai. Panaversity qualifying internship participants ki registration mein madad karta hai, aur Anthropic pair baithna optional hai.
+
+Anthropic ko PCAR-F, ya PCAO-F, ya koi aur Panaversity exam zaroori nahi. Gate Panaversity ki apni hai, do wajahon se rakhi gayi. Anthropic attempt pe fee lagti hai, aur fail hone pe 14, 30, aur 90 din lagte hain agle tak. Aur Panaversity apna naam tumhare naam ke peeche laga raha hai, aur ye daawa hai jise use khada karna chahiye.
+
+Plan karne se pehle jaanne layak aik baat: **CCAR-F Claude Partner Network tier eligibility mein count hota hai aur CCAO-F nahi.** Developer aur Architect Professional credentials bhi count karte hain. Agar tier standing tumhare organization ke liye matter karta hai, ye recommended pair ka wo half hai jo usmein aata hai.
+
+[PCDV-F](/docs/certifications/pcdv-f) aur [PCAR-P](/docs/certifications/pcar-p) baad mein aate hain, un logon ke liye jo chahein. Dono internship gate ka part nahi hain.
+
+## Anthropic Twin
+
+| Field | CCAR-F |
+|---|---|
+| **Credential** | Claude Certified Architect – Foundations |
+| **Exam code** | CCAR-F |
+| **Fee** | $125 USD |
+| **Items** | 60 |
+| **Structure** | 4 scenarios chhe ke bank se drawn; multiple-choice aur multiple-response, har item batata hai kitne responses select karne hain |
+| **Time limit** | 120 minutes |
+| **Passing score** | 720 scaled score, 100 se 1,000 scale pe |
+| **Delivery** | Proctored, online ya test centre pe, Pearson VUE ke through |
+| **Validity** | Credential milne ki date se 12 months |
+| **Renewal** | Free, non-proctored assessment Partner Academy pe agar time pe renew karo. Lapsed credential matlab full exam full fee pe dobara lena |
+
+Us table ke saath do caveats hain. **$125 list price hai**, aur checkout pe final fee dikhegi. Aur **720 scaled score hai, 72 percent nahi**. Exam criterion-referenced hai formal study se set kiye hue standard ke against, aur tumhare score report pe chhapa per-domain percent-correct explicitly wo nahi hai jo tumhara decide karta hai.
+
+Agar exam content significantly badalta hai, Anthropic holders ko full exam dobara lene ko keh sakta hai renewal assessment complete karne ki jagah.
+
+Retake limit waiting periods ke saath chalti hai: tum kisi bhi ek exam ko rolling twelve-month period mein chaar baar de sakte ho, aur fee har attempt pe lagti hai. Limits per exam lagti hain, toh ye fail hone se doosre ke liye register nahi rukta.
+
+Guide ka appendix ek explicit out-of-scope list bhi chhapta hai, aur use parhne se study week bach jayega. Fine-tuning, authentication aur billing, MCP hosting aur infrastructure, Constitutional AI aur RLHF, embeddings aur vector databases, computer use, vision, streaming, rate limits aur pricing math, OAuth aur key rotation, cloud-provider configuration, benchmarking, prompt-caching implementation, aur tokenization sab CCAR-F ke test se bahar hain.
+
+- Official guide: [Claude Certified Architect, Foundations, Exam Guide v1.0](https://everpath-course-content.s3-accelerate.amazonaws.com/instructor/6nizmqk8tpzpfjvt6qmmav7dh/public/1783542750/Claude+Certified+Architect+%E2%80%93+Foundations+Exam+Guide.pdf)
+- Registration aur current downloads: [Architect Foundations on the Partner Academy](https://anthropic-partners.skilljar.com/claude-certified-architect-foundations-certification)
+
+**Direct PDF link badal sakta hai.** Agar kaam karna band kare, Partner Academy page kholo aur current guide wahan se download karo. Us guide ko, is page ko nahi, CCAR-F ke test ki authority maano.
+
+## Agla Kahan Jaana Hai
+
+[Certification path](/docs/certifications) poora sequence rakhta hai, har stage ka kitna cost hai, aur registration aur renewal kaise kaam karte hain. [PCAO-F](/docs/certifications/pcao-f) wo exam hai jo is se pehle aata hai, aur agar tumne nahi di toh pehle dena chahiye. [PCDV-F](/docs/certifications/pcdv-f) implementation credential hai, aur [PCAR-P](/docs/certifications/pcar-p) professional capstone hai.
+
+---
+Source: https://agentfactory.panaversity.org/docs/certifications/pcar-f
